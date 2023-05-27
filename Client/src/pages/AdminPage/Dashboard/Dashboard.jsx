@@ -1,5 +1,10 @@
-import React from 'react'
-import img from '../img/Annotation 2023-05-22 185307.jpg'
+import React from 'react';
+import LineChart from './components/LineChart'
+import { MdOutlineNoteAdd, MdPermIdentity } from 'react-icons/md';
+import { BsFileEarmarkSpreadsheet } from 'react-icons/bs';
+import { HiArrowsRightLeft } from 'react-icons/hi2';
+import img from '../img/Annotation 2023-05-22 185307.jpg';
+
 
 const Section = () => {
   const statistics = [
@@ -7,25 +12,33 @@ const Section = () => {
       name : 'Uploads',
       amount : 345,
       amtlabel : 'Documents',
-      tracks : '36 New viewers'
+      tracks : '36 New viewers',
+      icon : <MdOutlineNoteAdd/>,
+      style : 'bg-green-100 text-tgreen'
     },
     {
       name : 'Users',
       amount : 800,
       amtlabel : 'Total Users',
-      tracks : '36 New Users'
+      tracks : '+ 80 New Users',
+      icon : <MdPermIdentity/>,
+      style : 'text-[#D4C433] bg-yellow-100'
     },
     {
       name : 'Downloads',
       amount : 750,
       amtlabel : 'Downloads',
-      tracks : '+ 400'
+      tracks : '+ 400',
+      icon : <BsFileEarmarkSpreadsheet/>,
+      style : 'text-[#114FF580] bg-blue-100'
     },
     {
       name : 'Traffic',
       amount : '375,455',
       amtlabel : 'Views',
-      tracks : '3600 views'
+      tracks : '3600 views',
+      icon : <HiArrowsRightLeft/>,
+      style : 'text-[#6835BA80] bg-purple-100'
     }
   ]
   return (
@@ -37,10 +50,10 @@ const Section = () => {
         <div className=' lg:mx-5 px-10 py-5 rounded-xl bg-white shadow-md w-full pb-20 '>
           <h1 className=' text-2xl lg:py-4 font-semibold'>Admin Overview</h1>
           <p>Statistics</p>
-          <div className=' md:flex block w-full justify-between pb-3 '>
+          <div className=' md:flex block w-[90%] justify-between pb-3 '>
             {statistics.map((opt, i) => (
-              <div key={i} className=' p-3 shadow-md rounded-md my-2 mx-2 lg:w-full lg:h-auto'>
-                <p className=' p-5'>{opt.name}</p>
+              <div key={i} className=' p-3 shadow-md rounded-md my-2 mx-2 lg:w-[23%] lg:h-auto'>
+                <p className=' py-3 px-2 flex text-[#71717A] justify-between'>{opt.name}<span className={`${opt.style} rounded-full p-2`}>{opt.icon}</span> </p>
                 <p className=' p-2'><span className=' font-bold text-xl'>{opt.amount}</span> {opt.amtlabel} </p>
                 <p className=' p-2 text-[#35BA83]'>{opt.tracks} </p>
               </div>
@@ -58,6 +71,7 @@ const Section = () => {
             </span>
           </div>
           <img src={img} alt="Chart" className=' w-full' />
+          <LineChart/>
           <div>
             <div className=' flex justify-between'>
               <div>
@@ -67,21 +81,21 @@ const Section = () => {
               <button className='float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm'>Weekly</button>
             </div>
             <table className=' border-t border-b w-full'>
-              <thead>
+              <tr>
                 <td><h4 className=' font-semibold text-lg'>Name</h4></td>
                 <td><h4 className=' px-14 font-semibold text-lg'>File</h4></td>
                 <td><h4 className=' px-14 font-semibold text-lg'>Category</h4></td>
                 <td><h4 className=' px-14 font-semibold text-lg'>Track</h4></td>
                 <td><h4 className=' px-14 font-semibold text-lg'>Author</h4></td>
                 <td><div  className=' text-sm flex justify-between mb-2'><p>status</p> <span>...</span></div></td>
-              </thead>
+              </tr>
               <tr className=''>
                 <td><p className=' text-sm'>Dont make me think</p></td>
                 <td><p className=' px-14 text-sm'>PDF</p></td>
                 <td><p className=' px-14 text-sm'>Book</p></td>
                 <td><p className=' px-14 text-sm'>Design</p></td>
                 <td><p className=' px-14 text-sm'>Don Norman</p></td>
-                <td> <span className=' bg-green-700 w-2 h-2 rounded-full'> </span><button className=' bg-green-300 rounded-full px-4 py-1 my-2'> Complete</button></td>
+                <td> <span className=' bg-green-700 w-2 h-2 rounded-full'> </span><button className=' bg-[#35BA834D] rounded-full px-4 py-1 my-2'> Complete</button></td>
               </tr>
               <tr className=' border-t'>
                 <td><p className=' text-sm'>Design of everyday thing</p></td>
@@ -89,7 +103,7 @@ const Section = () => {
                 <td><p className=' px-14 text-sm'>Book</p></td>
                 <td><p className=' px-14 text-sm'>Design</p></td>
                 <td><p className=' px-14 text-sm'>Oshin Timi</p></td>
-                <td> <span className=' bg-green-700 w-2 h-2 rounded-full'> </span><button className=' bg-green-300 rounded-full px-4 py-1 my-6'> Complete</button></td>
+                <td> <span className=' bg-green-700 w-2 h-2 rounded-full'> </span><button className=' bg-[#35BA834D] rounded-full px-4 py-1 my-6'> Complete</button></td>
               </tr>
               <tr className=' border-t'>
                 <td><p className=' text-sm'>Coding for Newbies</p></td>
@@ -97,7 +111,7 @@ const Section = () => {
                 <td><p className=' px-14 text-sm'>Book</p></td>
                 <td><p className=' px-14 text-sm'>Software Development</p></td>
                 <td><p className=' px-14 text-sm'>Esther Imodu</p></td>
-                <td> <span className=' bg-[#35BA834D] w-2 h-2 rounded-full'> </span><button className=' bg-green-300 rounded-full px-4 py-1 my-6'> Complete</button></td>
+                <td> <span className=' bg-green-700 w-2 h-2 rounded-full'></span><button className=' bg-[#35BA834D] rounded-full px-4 py-1 my-6 w-full'> Complete</button></td>
               </tr>
             </table>
           </div>
