@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 
 import { useLayoutEffect } from "react";
@@ -32,7 +32,7 @@ const cookies = new Cookies();
 
 function App() {
   const { isLoggedIn, setIsLoggedIn, dashboardToggle, setUserProfile } =
-    useContext(AppContext);
+    React.useContext(AppContext);
   const { displayToggle, toggleValue } = dashboardToggle;
 
   useEffect(() => {
@@ -56,6 +56,7 @@ function App() {
     }, [location.pathname]);
     return children;
   };
+
   return (
     <BrowserRouter>
       {displayToggle && <DashSelector />}
@@ -67,40 +68,28 @@ function App() {
               <NavBar />
             </div>
           </div>
-      </div>
-      <main className='lg:pt-16'>
-        <Wrapper>
-        <Routes>
-          <Route path= "/" element={<Home/>}/>
-          <Route path= "/Home" element={<Home/>}/>
-          <Route path= "/About-Us" element={<AboutUs/>}/>
-          <Route path= "/Contact-Us" element={<ContactUs/>}/>
-          <Route path= "/Resources" element={<Resources/>}/>
-          <Route path= "/Sign-Up" element={<SignUp/>}/>
-          <Route path="/User-Login" element={<UserLogin/>}/>
-      </Routes>
-      </Wrapper>
-  </main> 
 
-      <div>
-        <Footer/>
-      </div>
-      
-    </div> 
-    : 
-    <div className='h-full bg-[#f9f9f9] w-full pb-20 '>
+          <main className='lg:pt-16'>
+            <Wrapper>
+              <Routes>
+                <Route path= "/" element={<Home/>}/>
+                <Route path= "/Home" element={<Home/>}/>
+                <Route path= "/About-Us" element={<AboutUs/>}/>
+                <Route path= "/Contact-Us" element={<ContactUs/>}/>
+                <Route path= "/Resources" element={<Resources/>}/>
+                <Route path= "/Sign-Up" element={<SignUp/>}/>
+                <Route path="/User-Login" element={<UserLogin/>}/>
+              </Routes>
+            </Wrapper>
+          </main>
 
-        <div className='flex flex-start w-full top-0 z-50'>
-          <div className='w-full bg-white'>
-             <AdminNavBar/>
-
-          </div>
+          <Footer />
         </div>
       ) : (
-        <div className="h-full bg-[#f9f9f9] w-full pb-20">
-          <div className="flex flex-start w-full top-0  z-50">
-            <div className="w-full bg-white">
-              <AdminNavBar />
+        <div className='h-full bg-[#f9f9f9] w-full pb-20 '>
+          <div className='flex flex-start w-full top-0 z-50'>
+            <div className='w-full bg-white'>
+               <AdminNavBar/>
             </div>
           </div>
 
@@ -109,22 +98,18 @@ function App() {
               <AdminSideBar />
             </div>
 
-
             <div className='bg-[#f9f9f9] w-full grow lg:h-auto h-[1600px] pb-10 lg:pr-10 p-5'>
-              
-
               <Routes>
                 <Route path="/" element={<AdminDashboard />} />
                 <Route path="/Admin-Home" element={<AdminDashboard />} />
                 <Route path="/Job-Management" element={<JobManagement />} />
-                <Route
-                  path="/Resources-Management"
-                  element={<ResourceManagement />}
-                />
+                <Route path="/Resources-Management" element={<ResourceManagement />}/>
                 <Route path="/Event-Management" element={<EventManagement />} />
               </Routes>
             </div>
           </div>
+
+          <Footer />
         </div>
       )}
     </BrowserRouter>
