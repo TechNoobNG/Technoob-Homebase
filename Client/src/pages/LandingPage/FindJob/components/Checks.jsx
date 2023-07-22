@@ -4,8 +4,8 @@ import { RiArrowDownSLine } from 'react-icons/ri'
 const Checks = ( { checkList } ) => {
   return (
     <div>
-        {checkList.map((check)=> (
-          <div className={` p-2`}>                 
+        {checkList.map((check, i)=> (
+          <div key={i} className={` p-2`}>                 
             <div className='flex justify-between items-center p-2 cursor-pointer my-4'>
               <h1 className='text-xl font-bold'>{check.head}</h1>
               <RiArrowDownSLine/>
