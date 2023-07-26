@@ -13,8 +13,13 @@ const FindJobs = () => {
     const [active, setActive] = useState(false);
     const [toggle, setToggle] = useState(false);
     const [togggle, setTogggle] = useState(false);
+    const [title, setTitle] = useState('')
     const handleActive = () =>{
       setActive(!active)
+    }
+
+    const handleChange =(e)=>{
+      setTitle(e.target.value)
     }
 
     const Options = [
@@ -154,7 +159,7 @@ const FindJobs = () => {
           <form className=' w-[95%] flex flex-col sm:flex-row justify-start md:justify-center items-centers gap-6 '>
             <div className='flex justify-start items-center border border-[#BDBDBD] sm:w-[80%] h-[54px] rounded-md bg-transparent pl-7 '>
               <img src={SearchIcon} alt="icon" className='h-5 w-5 md:hidden' />    
-              <input type="text" placeholder='Job title or keyword' className='placeholder:italic placeholder:text-slate-400 focus:outline-none text-base w-full h-[100%] p-3 mr-2 focus:border-none focus:ring-[0] ' />
+              <input type="text" onChange={handleChange} placeholder='Job title or keyword' className='placeholder:italic placeholder:text-slate-400 focus:outline-none text-base w-full h-[100%] p-3 mr-2 focus:border-none focus:ring-[0] ' />
               <img 
                   src={filtersearch} alt="icon" onClick={(e)=> {setTogggle((prev) => !prev)
                   }} className='sm:hidden block mr-2 w-6 h-6' />                  
@@ -168,6 +173,7 @@ const FindJobs = () => {
             </div>                    
           </form>
           <MainSection/>
+          {title}
         </div>
       </div>
     </div>
