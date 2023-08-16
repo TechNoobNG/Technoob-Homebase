@@ -21,8 +21,9 @@ module.exports = {
 
     async get(req, res, next) { 
         const id = req.params.id
+        const user = req.user?._id || 0
         try {
-            const resources = await resource.get(id)
+            const resources = await resource.get(id,user)
             res.status(200).json({
                 status: "success",
                 message: `resource retrieved`,
@@ -79,6 +80,43 @@ module.exports = {
             res.status(200).json({
                 status: "success",
                 message: `resource deleted`,
+                data: resources
+            })
+        } catch (error) {
+            res.status(400).json({
+                status: "fail",
+                message: error.message
+            })
+        }
+    },
+
+    async getActivity(req, res, next) {
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+
+        try {
+            const activity = await resource.activity(page,limit)
+            res.status(200).json({
+                status: "success",
+                data: activity
+            })
+        } catch (err) {
+            res.status(400).json({
+                status: "fail",
+                message: err.message
+            })
+        }
+    },
+
+    async download(req, res, next) {
+        const id = req.params.id
+        const user = req.user?._id || 0
+
+        try {
+            const resources = await resource.download(id, user)
+            res.status(200).json({
+                status: "success",
+                message: `resource downloaded`,
                 data: resources
             })
         } catch (error) {
