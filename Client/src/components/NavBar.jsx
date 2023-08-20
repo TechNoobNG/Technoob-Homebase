@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 // import Cookies from "universal-cookie";
 // import Button from "../utility/button";
-import { navLinks } from "../data/contact";
-import { menu, close } from "../data/assets";
+import {navLinks} from "../data/contact";
+import {close, menu, TechNoobLogo} from "../data/assets";
 // import { useNavigate } from "react-router-dom";
-
 // import { AppContext } from "../AppContext/AppContext";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 // const cookies = new Cookies();
 
 const NavBar = () => {
@@ -60,9 +59,13 @@ const NavBar = () => {
   return (
     <nav className="w-full bg-white shadow-md ">
       <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-center items-center lg:h-[80px] ">
-        <div className="text-lg md:text-2xl font-extrabold text-[#5E7CE8] mr-32 cursor-pointer">
-          <Link to={"/"}>Tech Noob</Link>
-        </div>
+          <Link to={'/'}>
+              <a class="navbar-brand" href="#">
+                  <img src={TechNoobLogo} width="150" height="100"></img>
+              </a>
+          </Link>
+    
+
 
         <div className="hidden lg:flex w-[800px] justify-center">
           <ul className="flex font-normal justify-between gap-8">

@@ -1,18 +1,22 @@
 import React, {useState} from "react";
 import serverApi from "./server";
+import FileUploadSingle from "./Uploader";
 
 const LinkUpload = ({ closeModal }) => {
   const [dataUpload, setDataUpload] = useState({});
+    const [placeholderImage, setplaceholderImage] = useState(null);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [imageInfo, setImageInfo] = useState({});
 
   const handleChange = (e) => {
     setDataUpload({ ...dataUpload, [e.target.name]: e.target.value });
   };
     const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(dataUpload);
-        try {
-            const payload = dataUpload
 
+        try {
+            let payload = dataUpload
+            payload.image_placeholder = placeholderImage;
             const abortController = new AbortController();
             const response = await serverApi.post(
                 "/resources/create",
@@ -122,6 +126,8 @@ const LinkUpload = ({ closeModal }) => {
             onChange={handleChange}
           />
         </div>
+          <FileUploadSingle name={"Resource Image"} setlink={setplaceholderImage} type={"image"}
+                            setUploadingImage={setUploadingImage} setImageInfo={setImageInfo}></FileUploadSingle>
         <div className="w-full">
           <label htmlFor="Name" className="">
               Resource URL
@@ -136,12 +142,17 @@ const LinkUpload = ({ closeModal }) => {
           />
         </div>
         <div className="flex w-full justify-start items-start gap-3">
-          <button
-            onClick={handleSubmit}
-            className="flex justify-center items-center text-sm md:text-lg  md:font-semibold w-[310px] h-[54px] rounded-md bg-tblue text-white mb-4"
-          >
-            Publish Document
-          </button>
+            {
+                placeholderImage && (
+                    <button
+                        onClick={handleSubmit}
+                        className="flex justify-center items-center text-sm md:text-lg  md:font-semibold w-[310px] h-[54px] rounded-md bg-tblue text-white mb-4"
+                    >
+                        Publish Document
+                    </button>
+                )
+            }
+          
           <button
             onClick={handleClose}
             className="flex justify-center items-center text-sm md:text-lg font-semibold w-[150px] h-[54px] rounded-md bg-[#EFF0F5] mb-4"

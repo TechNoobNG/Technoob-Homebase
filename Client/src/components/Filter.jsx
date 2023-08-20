@@ -1,8 +1,10 @@
 import React, {useState} from 'react'
 import {RiArrowDownSLine} from 'react-icons/ri'
-import { filtersearch } from '../data/assets';
+import {filtersearch} from '../data/assets';
 import Checks from "../pages/LandingPage/FindJob/components/Checks";
 
+{/* <Filter passedOptions={passedOptions} setpassedOptions={setpassedOptions} options={options} selected={selected} setSelected={setSelected} handleBox1Change={handleBox1Change} box1={box1}/> */
+}
 const Filter = ({ selected, setSelected,options,passedOptions, setpassedOptions,handleBox1Change, box1 }) => {
 
     

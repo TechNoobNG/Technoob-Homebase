@@ -28,18 +28,24 @@ export function getFilters(data, component) {
     return filtersArray;
 }
 
-export async function fetchFilteredData(params, url, setData, component) {
+export async function fetchFilteredData(params, url, setData, component, setPagination) {
     try {
-        params.limit = 30;
         const response = await serverApi.get(url,
             {
                 params
             });
 
+
         if (response.status === 200) {
             let responseData = response.data.data
+            const pagination = {
+                total: responseData.total,
+                limit: responseData.limit,
+                page: responseData.page,
+                count: responseData.count
+            }
             setData(responseData[`${component}`])
-
+            if (setPagination) setPagination(pagination);
         } else {
             alert("No result found")
         }
@@ -50,22 +56,26 @@ export async function fetchFilteredData(params, url, setData, component) {
 
 }
 
-export async function fetchFirstData(url, setData, setFilterOptions, requiresAuth = false, component) {
+export async function fetchFirstData(url, setData, setFilterOptions, requiresAuth = false, component, setPagination, params) {
     if(requiresAuth){
         serverApi.requiresAuth(true)
     }
 
     return serverApi.get(url, {
-        params: {
-            limit: component === "metrics" ? null : 30,
-        }
+        params
     })
         .then(res => {
             const responseData = res.data.data
+            const pagination = {
+                total: responseData.total,
+                limit: responseData.limit,
+                page: responseData.page,
+                count: responseData.count
+            }
+            if (setPagination) setPagination(pagination);
             if (component !== "metrics") setData(responseData[`${component}`])
             if (component === "metrics") {
                 setData(responseData)
-                console.log(responseData)
             }
             if(setFilterOptions){
                 const filters = getFilters(responseData, component);

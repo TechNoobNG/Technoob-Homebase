@@ -33,6 +33,8 @@ const ResourceMng = () => {
   // }
   const { UserProfile } = useContext(AppContext);
 
+    console.log(statistics);
+
 
   useEffect(() => {
       fetchFirstData("/resources/activity", setResourceActivity, null, true, "activity").then(_r => setIsLoading(false))
@@ -40,14 +42,14 @@ const ResourceMng = () => {
       setStatsMap([
           {
               name: "Files Uploaded",
-              amount: statistics.uploads || '',
+              amount: statistics.uploads || '0',
               amtlabel: "Files Uploaded",
               icon: <AiOutlineCloudServer/>,
               style: "bg-green-100 text-tgreen",
           },
           {
               name: "Files Downloaded",
-              amount: statistics.downloads || '',
+              amount: statistics.downloads || '0',
               amtlabel: "Files Downloaded",
               // tracks: "203 Downloads",
               icon: <BiArchive/>,
@@ -122,7 +124,6 @@ const ResourceMng = () => {
           </div>
 
           <div className="mt-4 lg:mt-2">
-            <p className="text-xl mb-1">Statistics</p>
 
             <div className="flex w-[100%] justify-start flex-wrap gap-4 rounded-sm">
                 {statsMap.length && statsMap.map((opt, i) => (
@@ -140,7 +141,6 @@ const ResourceMng = () => {
                   </p>
                   <div className="flex justify-start items-end w-full">
                     <p className="p-2 mr-6 text-xl">
-                      <span className="font-bold text-3xl">{resourceActivity ? resourceActivity.length : 0}</span>{" "}
                         {`${opt.amount} ${opt.amtlabel}`}{" "}
                     </p>
                     <p className=" p-2 text-[#35BA83] flex gap-4 items-center">
@@ -166,7 +166,7 @@ const ResourceMng = () => {
           <div className="mt-16">
             <div className=" flex justify-between">
               <div>
-                <h2 className=" text-xl font-semibold pt-4">Recent Jobs</h2>
+                  <h2 className=" text-xl font-semibold pt-4">Recent Resources</h2>
                 <p className=" text-lg text-[#747272] mb-1">
                   See list of recently uploaded resources.
                 </p>
@@ -176,7 +176,7 @@ const ResourceMng = () => {
               {/*</button>*/}
             </div>
             <div className="flex overflow-x-auto">
-              {resourceActivity.activity ? (<Table resourceActivity={resourceActivity} />) : ''}
+                {resourceActivity ? (<Table resourceActivity={resourceActivity}/>) : ''}
             </div>
           </div>
         </div>

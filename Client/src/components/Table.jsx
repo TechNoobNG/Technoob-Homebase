@@ -26,7 +26,7 @@ const Table = ({resourceActivity}) => {
 
 
     <tbody>
-      {activityData ? resourceActivity?.activity.map((item) => (
+    {activityData ? resourceActivity.map((item) => (
        
         <tr>
         <td><p className=' text-sm my-4'>{item?.activity.activity}</p></td>
