@@ -23,7 +23,7 @@ const Footer = () => {
 
   return (
       <div
-          className="flex flex-col justify-center p-5 sm:p-10 items-center bg-[#3A3A3A] text-[#F5EFFB] h-[200px] w-full sm:h-[300px]">
+          className="flex flex-col justify-center p-5 sm:p-10 items-center bg-[#3A3A3A] text-[#F5EFFB] h-[300px] w-full sm:h-[300px]">
       <div className="flex flex-col sm:flex-row justify-start items-center  sm:h-auto w-full  gap-5 sm:mt-[3rem]">
         <div className="flex justify-center items-center w-full">
           <div className=" flex flex-col items-center justify-start w-full gap-y-4">

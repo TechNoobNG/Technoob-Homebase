@@ -58,14 +58,12 @@ const NavBar = () => {
 
   return (
     <nav className="w-full bg-white shadow-md ">
-      <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-center items-center lg:h-[80px] ">
+        <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-between items-center lg:h-[80px] ">
           <Link to={'/'}>
               <a class="navbar-brand" href="#">
-                  <img src={TechNoobLogo} width="150" height="100"></img>
+                  <img src={TechNoobLogo} width="150" height="50"></img>
               </a>
           </Link>
-    
-
 
         <div className="hidden lg:flex w-[800px] justify-center">
           <ul className="flex font-normal justify-between gap-8">
