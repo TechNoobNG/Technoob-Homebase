@@ -52,7 +52,6 @@ const FindJobs = () => {
         setFilter(true);
     };
 
-    console.log(options)
     const Options = options.map((option, index) => {
 
       let alias;
@@ -156,7 +155,6 @@ const FindJobs = () => {
 
   }, []);
 
-    console.log(Options)
 
   return (
     <div className={`${main.wraper}`}>
