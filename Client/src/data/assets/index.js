@@ -1,4 +1,3 @@
-
 import image2 from '../assets/image2.png';
 import image3 from '../assets/image3.png';
 import image4 from '../assets/image4.png';
@@ -15,6 +14,7 @@ import icon4 from '../assets/icon4.png';
 import icon5 from '../assets/icon5.png';
 import icon6 from '../assets/icon6.png';
 import TechNoob from '../assets/TechNoob.png';
+import TechNoobLogo from '../assets/TechnoobLogo.png'
 
 import SearchIcon from '../assets/SearchIcon.png';
 import filtersearch from '../assets/filtersearch.png';
@@ -31,41 +31,43 @@ import acheive_icon from '../assets/acheive_icon.png';
 import esther from '../assets/esther.png';
 
 export {
-image2,
-image3,
-image4,
-image5,
+    image2,
+    image3,
+    image4,
+    image5,
 
 
-Hero,
-menu,
-close,
-Vector1,
+    Hero,
+    menu,
+    close,
+    Vector1,
 
 
-icon1,
-icon2,
-icon3,
-icon4,
-icon5,
-icon6,
+    icon1,
+    icon2,
+    icon3,
+    icon4,
+    icon5,
+    icon6,
 
 
-TechNoob,
-esther,
-
-SearchIcon,
-filtersearch,
-SignUPIMG,
+    TechNoob,
+    esther,
+    TechNoobLogo,
 
 
-Layers,
-Catalog,
-Circooles,
-Sisyphus,
+    SearchIcon,
+    filtersearch,
+    SignUPIMG,
 
-storage_icon,
-storage,
-acheive_icon
+
+    Layers,
+    Catalog,
+    Circooles,
+    Sisyphus,
+
+    storage_icon,
+    storage,
+    acheive_icon
 
 };

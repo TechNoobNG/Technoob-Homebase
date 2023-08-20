@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import Header from './components/Header'
 import MainSection from './components/MainSection'
 import Checks from './components/Checks'
@@ -9,29 +9,50 @@ import {MdLocationOn} from 'react-icons/md'
 import {close, filtersearch, SearchIcon} from '../../../data/assets'
 import serverApi from "../../../utility/server";
 import {fetchFilteredData, fetchFirstData} from "../../../utility/filterGather.jsx";
+import FilterComponent from "../../../Modals/FilterModal";
 
 const FindJobs = () => {
     const [selected, setSelected] = useState('Select filter');
     const [passedOptions, setpassedOptions] = useState({})
     const [active, setActive] = useState(false);
     const [toggle, setToggle] = useState(false);
-    const [searchTitle, setSearchTitle] =  useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [filter, setFilter] = useState(false);
+    const [searchTitle, setSearchTitle] = useState("");
     const [togggle, setTogggle] = useState(false);
     const [box1, setBox1] = useState([]);
-    const [options , setOptions] = useState([]);
+    const [options, setOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [reset, setReset] = useState(false);
-  
-    const [ jobData,setJobData ] = useState([]);
-    const [ searchLocation, setSearchLocation] = useState("")
+    const [pagination, setPagination] = useState({});
+    const [jobData, setJobData] = useState([]);
+    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [searchLocation, setSearchLocation] = useState("");
+    const [loading, setLoading] = useState(false);
+    const isInitialRender = useRef(true);
     // const [, setJobMetrics] = useState({"total": 0,
     //   "views": 0})
-      
-    const handleActive = () =>{
+
+    const handleActive = () => {
       setActive(!active)
     }
 
+    const openFilterModal = () => {
+        setIsFilterModalOpen(true);
+    };
+    const closeFilterModal = () => {
+        setIsFilterModalOpen(false);
+    };
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handleFilter = () => {
+        setFilter(true);
+    };
+
+    console.log(options)
     const Options = options.map((option, index) => {
 
       let alias;
@@ -57,21 +78,20 @@ const FindJobs = () => {
     let params = {};
       if (box1.length > 0 && !isLoading){
           params[passedOptions.name] = box1.join(',');
-          fetchFilteredData(params, `/jobs/all`, setJobData, "jobs").then(r => {
+          fetchFilteredData(params, `/jobs/all`, setJobData, "jobs", setPagination).then(r => {
           })
       }
       if( reset){
-          fetchFirstData("/jobs/all", setJobData, setOptions, false, "jobs").then(_r => setIsLoading(false));
+          fetchFirstData("/jobs/all", setJobData, setOptions, false, "jobs", setPagination).then(_r => setIsLoading(false));
       }
 
-  }, [passedOptions.name, isLoading, box1, reset]);
+  }, [filter, reset]);
 
 
-      const handleBox1Change = (e) => {
-          e.preventDefault();
+    const handleBox1Change = (e) => {
+        e.preventDefault();
         const newValue = e.currentTarget.value;
-        console.log(newValue)
-          const updatedSelectedValues = box1.includes(newValue)
+        const updatedSelectedValues = box1.includes(newValue)
               ? box1.filter((val) => val !== newValue)
               : [...box1, newValue];
         setBox1(updatedSelectedValues)
@@ -79,6 +99,24 @@ const FindJobs = () => {
               setReset(true)
           }
       }
+
+    useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+        setLoading(true);
+        const params = {
+            page: currentPage,
+        }
+
+        fetchFirstData('/jobs/all', setJobData, setOptions, false, 'jobs', setPagination, params)
+            .then((_r) => {
+                setLoading(false);
+                setReset(false);
+            });
+
+    }, [currentPage]);
 
 
 
@@ -114,9 +152,11 @@ const FindJobs = () => {
 
   useEffect(() => {
     setIsLoading(true);
-      fetchFirstData("/jobs/all", setJobData, setOptions, false, "jobs").then(_r => setIsLoading(false));
+      fetchFirstData("/jobs/all", setJobData, setOptions, false, "jobs", setPagination).then(_r => setIsLoading(false));
 
   }, []);
+
+    console.log(Options)
 
   return (
     <div className={`${main.wraper}`}>
@@ -198,6 +238,37 @@ const FindJobs = () => {
 
         </div>
       </div>
+        <div className="flex justify-center items-center mt-20 mb-10">
+            {jobData.length > 0 && (
+                <div className="flex space-x-2">
+                    {Array.from({length: Math.ceil(pagination.total / pagination.limit)}).map((_, index) => (
+
+                        <button
+                            key={index}
+                            className={`px-2 py-1 rounded ${
+                                pagination.page === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'
+                            }`}
+                            onClick={() => handlePageChange(index + 1)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+        <FilterComponent
+            isOpen={isFilterModalOpen}
+            onRequestClose={closeFilterModal}
+            passedOptions={passedOptions}
+            setpassedOptions={setpassedOptions}
+            options={options}
+            selected={selected}
+            setSelected={setSelected}
+            handleBox1Change={handleBox1Change}
+            box1={box1}
+            closeFilterModal={closeFilterModal}
+            setFilter={handleFilter}
+        />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import {AiOutlineEye} from 'react-icons/ai'
 import serverApi from "../../../utility/server";
 import {fetchFirstData} from "../../../utility/filterGather";
 import Table from "../../../components/JobActivityTable";
+import FileUploadSingle from "../../../utility/Uploader";
 
 
 const JobManagement = () => {
@@ -13,9 +14,13 @@ const JobManagement = () => {
     "total": 0,
     "views": 0
   });
+  const [placeholderImage, setplaceholderImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageInfo, setImageInfo] = useState({});
   const [jobActivity, setJobActivity] = useState([]);
   const {UserProfile} = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
+
   const [formInput, setFormInput] = useState(
       {
         title:"",
@@ -25,7 +30,6 @@ const JobManagement = () => {
         workplaceType:"",
         expiryDate:"",
         link:"",
-        poster:"",
         uploader_id:"",
         contractType:""
       }
@@ -43,6 +47,7 @@ const JobManagement = () => {
     // console.log(formInput);
     try {
       serverApi.requiresAuth(true)
+      formInput.poster = placeholderImage
       const response = await serverApi.post(
           "/jobs/create",
           formInput
@@ -126,7 +131,6 @@ const JobManagement = () => {
         </div>
         <div className=' py-5'>
           <p className=' text-2xl font-semibold'>Add new job</p>
-          <p className=' text-[#71717A] text-[16px]'>Add Job Details</p>
         </div>
         <form id='job' onSubmit={handleSubmit}>
           <div>
@@ -175,12 +179,14 @@ const JobManagement = () => {
               </div>
             </div>
           </div>
+          <FileUploadSingle name={"Job Image"} setlink={setplaceholderImage} type={"image"}
+                            setUploadingImage={setUploadingImage} setImageInfo={setImageInfo}></FileUploadSingle>
           <div className='flex justify-between'>
             <div className=' w-[70%]'>
               <label htmlFor="Joblink" className=' text-lg font-semibold py-2 px-4 ' >Job link</label><br/>
               <input type="text" placeholder={'--Link here--'} className=' w-full mx-1 border py-3 px-2 my-4 outline-0 bg-white' name="link" value={formInput.link} onChange={handleChange}/>
             </div>
-            <div className=' w-[20%]'>
+            <div className={`${placeholderImage ? "" : "hidden"} w-[20%]`}>
               <button type="submit" className=' mt-11 bg-tblue text-twhite py-[12px] lg:w-full w-[100%] rounded'>Publish Job</button>
             </div>
           </div>

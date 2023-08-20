@@ -1,9 +1,8 @@
 import React from "react";
-import { TechNoob } from "../data/assets";
+import {TechNoob} from "../data/assets";
 // import { footerLinks } from '../data/contact';
-
-import { BsTwitter, BsInstagram} from "react-icons/bs";
-import { Link } from "react-router-dom";
+import {BsInstagram, BsTwitter} from "react-icons/bs";
+import {Link} from "react-router-dom";
 // import { FaFacebookF } from "react-icons/fa";
 
 const Footer = () => {
@@ -23,17 +22,12 @@ const Footer = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-center p-5 sm:p-10 items-center bg-[#3A3A3A] text-[#F5EFFB] h-[600px] w-full sm:h-[70vh]">
+      <div
+          className="flex flex-col justify-center p-5 sm:p-10 items-center bg-[#3A3A3A] text-[#F5EFFB] h-[200px] w-full sm:h-[300px]">
       <div className="flex flex-col sm:flex-row justify-start items-center  sm:h-auto w-full  gap-5 sm:mt-[3rem]">
         <div className="flex justify-center items-center w-full">
           <div className=" flex flex-col items-center justify-start w-full gap-y-4">
             <img src={TechNoob} alt="logo" className="w-[190px] h-[36px]" />
-
-            <p className="text-sm w-[80%] sm:w-[35%] text-center text-[#F8F8F8]">
-              Integrated People Platform for the easy to go community. Drive
-              better engagement and keep track of the indices that help your
-              business grow.
-            </p> */}
 
             <div className="flex gap-5 text-2xl text-white">
               {/* <BsWhatsapp className=''/> */}
