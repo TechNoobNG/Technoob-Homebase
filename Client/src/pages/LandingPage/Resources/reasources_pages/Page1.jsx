@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import {filtersearch, SearchIcon} from '../../../../data/assets';
 import Button from '../../../../utility/button';
 import Loader from '../../../../utility/Loader';
@@ -8,6 +8,7 @@ import Filter from '../../../../components/Filter';
 import serverApi from '../../../../utility/server';
 import {fetchFilteredData, fetchFirstData} from '../../../../utility/filterGather';
 import FilterComponent from '../../../../Modals/FilterModal';
+import {AppContext} from '../../../../AppContext/AppContext';
 
 const Page1 = () => {
 
@@ -25,6 +26,7 @@ const Page1 = () => {
     const itemsPerPage = 10;
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     const isInitialRender = useRef(true);
+    const {UserProfile} = useContext(AppContext);
 
     const openFilterModal = () => {
         setIsFilterModalOpen(true);
@@ -42,9 +44,26 @@ const Page1 = () => {
         setBox1(updatedSelectedValues);
 
         if (updatedSelectedValues.length === 0) {
-            setReset(true);
+            setReset(!reset);
         }
     };
+
+    const deleteResource = async (id) => { 
+        try {
+            if (UserProfile.role !== 'admin') {
+                throw new Error('You are not authorized to perform this action');
+            }
+            serverApi.requiresAuth(true);
+            const response = await serverApi.post(`/resources/delete/${id}`);
+            if (response.status === 200) {
+                setReset(!reset);
+            } else {
+                alert('Invalid ID');
+            }
+        } catch (e) {
+            alert(e.response.data.message);
+        }
+    }
 
     const handleClick = async (e) => {
         e.preventDefault();
@@ -181,6 +200,9 @@ const Page1 = () => {
                                             pText={feeds.description}
                                             subTitleText={feeds.type}
                                             link={feeds.file || feeds.url}
+                                            removeItem={deleteResource}
+                                            id={feeds._id}
+                                            user={UserProfile}
                                         />
                                     ))}
                                 {

@@ -15,7 +15,7 @@ const ResourceMng = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statistics, setStatistics] = useState([]);
-    const [statsMap, setStatsMap] = useState([])
+  const [statsMap, setStatsMap] = useState([])
   const [resourceActivity, setResourceActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -32,9 +32,6 @@ const ResourceMng = () => {
   //   console.log(e.target.value)
   // }
   const { UserProfile } = useContext(AppContext);
-
-    console.log(statistics);
-
 
   useEffect(() => {
       fetchFirstData("/resources/activity", setResourceActivity, null, true, "activity").then(_r => setIsLoading(false))

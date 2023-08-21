@@ -59,38 +59,33 @@ var requestOptions = {
 if(form.Password !== form.PasswordConfirm) alert('Passwords do not match')
 else{
   setLoading(true)
-  try {
-    const postUser = await fetch("https://technoob-staging.azurewebsites.net/api/v1/authenticate/register", requestOptions)
-    const cookies = postUser.headers.get('Set-Cookie');
-    if (cookies) {
-      const cookie = cookies.split(';')[0].split('=')[1];
-      console.log("cookie",cookie)
-      localStorage.setItem('connect-sid', cookie);
-      setIsLoggedIn(true);
-      navigate('/Dashboard')
-    }
-    const result = await postUser.json()
-    setUserProfile(result)
-       localStorage.setItem('user', JSON.stringify(result));
+      try {
+        const postUser = await fetch("https://technoob-staging.azurewebsites.net/api/v1/authenticate/register", requestOptions)
+        const cookies = postUser.headers.get('Set-Cookie');
+        if (cookies) {
+          const cookie = cookies.split(';')[0].split('=')[1];
+          console.log("cookie",cookie)
+          localStorage.setItem('connect-sid', cookie);
+          setIsLoggedIn(true);
+          navigate('/Dashboard')
+        }
+        const result = await postUser.json()
+        setUserProfile(result)
+          localStorage.setItem('user', JSON.stringify(result));
 
-    if(result.status === 'success') navigate('/');
-    
-   
+        if(result.status === 'success') navigate('/');
 
-  console.log(result)
-  } catch (error) {
-    console.log(error)
-    setIsLoggedIn(false)
-  }finally{
-    setLoading(false);
-    setIsLoggedIn(true)
-    console.log(isLoggedIn)
-  }}
-  
+      } catch (error) {
+        console.log(error)
+        setIsLoggedIn(false)
+      }finally{
+        setLoading(false);
+        setIsLoggedIn(true)
+      }}
+      
 
 
 
-    console.log(form)
     //navigate('/AdminDashboard')
     setForm({...form})
   }

@@ -43,6 +43,11 @@ export const navLinks = [
     title: "Contact Us",
     link: "Contact-Us",
   },
+  {
+    id: "switch-view",
+    title: "Switch to Admin View",
+    link: "Switch to Admin View",
+  },
 ];
 
 export const features = [

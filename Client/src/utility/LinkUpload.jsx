@@ -6,7 +6,8 @@ const LinkUpload = ({ closeModal }) => {
   const [dataUpload, setDataUpload] = useState({});
     const [placeholderImage, setplaceholderImage] = useState(null);
     const [uploadingImage, setUploadingImage] = useState(false);
-    const [imageInfo, setImageInfo] = useState({});
+  const [imageInfo, setImageInfo] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setDataUpload({ ...dataUpload, [e.target.name]: e.target.value });
@@ -14,7 +15,8 @@ const LinkUpload = ({ closeModal }) => {
     const handleSubmit = async (e) => {
     e.preventDefault();
 
-        try {
+      try {
+        setIsSubmitting(true);
             let payload = dataUpload
             payload.image_placeholder = placeholderImage;
             const abortController = new AbortController();
@@ -32,7 +34,8 @@ const LinkUpload = ({ closeModal }) => {
             if (response.status === 200 || 201) {
                 let message = response.data.message
 
-                setDataUpload({});
+              setDataUpload({});
+              setIsSubmitting(false);
                 closeModal()
                 alert(message)
             } else {
@@ -143,7 +146,7 @@ const LinkUpload = ({ closeModal }) => {
         </div>
         <div className="flex w-full justify-start items-start gap-3">
             {
-                placeholderImage && (
+               !isSubmitting && placeholderImage && (
                     <button
                         onClick={handleSubmit}
                         className="flex justify-center items-center text-sm md:text-lg  md:font-semibold w-[310px] h-[54px] rounded-md bg-tblue text-white mb-4"

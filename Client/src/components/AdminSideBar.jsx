@@ -63,8 +63,6 @@ function SwitchToUser() {
             displayToggle: true,
             toggleValue: "User Dashboard",
         });
-
-
     }
 
     const submit = async (e) => {

@@ -41,7 +41,7 @@ const Form = () => {
         
         const userContact = await fetch("https://technoob-staging.azurewebsites.net/api/v1/user/contact-us", requestOptions)  
         const result = await userContact.json()
-        console.log(result)
+        
         if(result.status === 'success'){
           alert('Message sent successfuly')
         }

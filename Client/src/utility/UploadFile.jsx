@@ -11,7 +11,8 @@ const UploadFile = ({ closeModal }) => {
     const [uploading, setUploading] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
     const [fileInfo, setFileInfo] = useState({});
-    const [imageInfo, setImageInfo] = useState({});
+  const [imageInfo, setImageInfo] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formInput, setFormInput] = useState(
       {
         name:"",
@@ -33,7 +34,8 @@ const UploadFile = ({ closeModal }) => {
   };
 
     const handlePublish = async (e) => {
-        e.preventDefault();
+      e.preventDefault();
+      
         try {
             const payload = {
                 ...formInput,
@@ -228,7 +230,7 @@ const UploadFile = ({ closeModal }) => {
           </div>
           <div className="flex w-full justify-start items-start gap-3">
               {
-                  placeholderImage && uploadedFile && (<button onClick={handlePublish}
+                  !uploading && placeholderImage && uploadedFile && (<button onClick={handlePublish}
                                                                className="flex justify-center items-center text-sm md:text-lg  md:font-semibold w-[310px] h-[54px] rounded-md bg-tblue text-white mb-4">
               Publish Document
                   </button>)

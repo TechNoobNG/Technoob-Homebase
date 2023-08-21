@@ -20,6 +20,7 @@ const JobManagement = () => {
   const [jobActivity, setJobActivity] = useState([]);
   const {UserProfile} = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formInput, setFormInput] = useState(
       {
@@ -44,6 +45,7 @@ const JobManagement = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
     // console.log(formInput);
     try {
       serverApi.requiresAuth(true)
@@ -66,6 +68,7 @@ const JobManagement = () => {
           uploader_id:"",
           contractType:""
         });
+        setIsSubmitting(false);
         alert("Job added successfully")
       }
     }catch (e) {
@@ -186,7 +189,7 @@ const JobManagement = () => {
               <label htmlFor="Joblink" className=' text-lg font-semibold py-2 px-4 ' >Job link</label><br/>
               <input type="text" placeholder={'--Link here--'} className=' w-full mx-1 border py-3 px-2 my-4 outline-0 bg-white' name="link" value={formInput.link} onChange={handleChange}/>
             </div>
-            <div className={`${placeholderImage ? "" : "hidden"} w-[20%]`}>
+            <div className={`${!isSubmitting && placeholderImage ? "" : "hidden"} w-[20%]`}>
               <button type="submit" className=' mt-11 bg-tblue text-twhite py-[12px] lg:w-full w-[100%] rounded'>Publish Job</button>
             </div>
           </div>

@@ -18,7 +18,6 @@ const CTA = () => {
 const handleClick = async (e) =>{
   e.preventDefault();
   if(regEx.test(email) === false){
-   console.log('please enter a valid email')
    alert('Please enter a valid Email')
   } else{
 
@@ -40,8 +39,6 @@ const handleClick = async (e) =>{
      const response = await fetch("https://technoob-staging.azurewebsites.net/api/v1/user/mailing-list", requestOptions)
       
      if(response.status){
-     const data = await response.json()
-     console.log('Success', data,  'Email is valid')
      alert('Email successfully added');
      }
     

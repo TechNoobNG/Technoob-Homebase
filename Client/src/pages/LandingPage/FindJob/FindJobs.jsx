@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState,useContext} from 'react'
 import Header from './components/Header'
 import MainSection from './components/MainSection'
 import Checks from './components/Checks'
@@ -10,6 +10,7 @@ import {close, filtersearch, SearchIcon} from '../../../data/assets'
 import serverApi from "../../../utility/server";
 import {fetchFilteredData, fetchFirstData} from "../../../utility/filterGather.jsx";
 import FilterComponent from "../../../Modals/FilterModal";
+import {AppContext} from "../../../AppContext/AppContext";
 
 const FindJobs = () => {
     const [selected, setSelected] = useState('Select filter');
@@ -30,6 +31,8 @@ const FindJobs = () => {
     const [searchLocation, setSearchLocation] = useState("");
     const [loading, setLoading] = useState(false);
     const isInitialRender = useRef(true);
+  const { UserProfile } = useContext(AppContext);
+  
     // const [, setJobMetrics] = useState({"total": 0,
     //   "views": 0})
 
@@ -51,6 +54,23 @@ const FindJobs = () => {
     const handleFilter = () => {
         setFilter(true);
     };
+  
+    const deleteJob = async (id) => { 
+      try {
+          if (UserProfile.role !== 'admin') {
+              throw new Error('You are not authorized to perform this action');
+          }
+          serverApi.requiresAuth(true);
+          const response = await serverApi.post(`/jobs/delete/${id}`);
+          if (response.status === 200) {
+              setReset(!reset);
+          } else {
+              alert('Invalid ID');
+          }
+      } catch (e) {
+          alert(e.response.data.message);
+      }
+  }
 
     const Options = options.map((option, index) => {
 
@@ -224,9 +244,13 @@ const FindJobs = () => {
             </div>                    
           </form>
           {jobData.length > 0 ? (
-              <MainSection data={jobData} />
+            <MainSection
+              data={jobData}
+              onDelete={ deleteJob}
+              isAdmin={UserProfile?.role === "admin"}
+            />
           ) : (
-              <div className='text-center mt-8'>
+              <div className='text-center mt-8 h-full'>
                 <h1 className='text-xl font-bold'>No job found</h1>
                 <p className='text-gray-500 mt-2'>
                   Unfortunately, we couldn't find any matching jobs.

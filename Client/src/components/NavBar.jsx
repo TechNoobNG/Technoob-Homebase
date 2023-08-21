@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, { useState, useContext } from "react";
+import { useNavigate} from "react-router-dom";
 // import Cookies from "universal-cookie";
 // import Button from "../utility/button";
 import {navLinks} from "../data/contact";
 import {close, menu, TechNoobLogo} from "../data/assets";
 // import { useNavigate } from "react-router-dom";
-// import { AppContext } from "../AppContext/AppContext";
+import { AppContext } from "../AppContext/AppContext";
 import {Link} from "react-router-dom";
 // const cookies = new Cookies();
 
@@ -15,6 +16,8 @@ const NavBar = () => {
 
   const [toggle, setToggle] = useState(false);
   const [active, setActive] = useState("");
+  const { UserProfile, setDashboardToggle } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const handleActive = (e) => {
     setActive(e.target.innerText);
@@ -55,6 +58,16 @@ const NavBar = () => {
   //   await logOut();
   //   navigate("/Home");
   // };
+  
+  const switchView = async () => {
+    
+    setDashboardToggle({
+        displayToggle: true,
+        toggleValue: "Admin Dashboard",
+    });
+    navigate("/");
+}
+
 
   return (
     <nav className="w-full bg-white shadow-md ">
@@ -70,9 +83,9 @@ const NavBar = () => {
             {navLinks.map((nav, i) => (
               <li key={i} className={`text-lg hover:text-[#27AE60]`}>
                 <Link
-                  className={` ${active === nav.title ? "text-[#27AE60]" : ""}`}
+                  className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} ${active === nav.title ? "text-[#27AE60]" : ""}`}
                   to={`/${nav.link}`}
-                  onClick={handleActive}
+                  onClick={nav.id === 'switch-view'? switchView:handleActive }
                 >
                   {nav.title}
                 </Link>
@@ -97,6 +110,7 @@ const NavBar = () => {
             <ul className="flex font-normal justify-start gap-7 list-none flex-col text-white">
               {navLinks.map((nav, i) => (
                 <li key={i} className={`text-2xl hover:text-tblue`}>
+                  {}
                   <Link
                     className={`sidebar ${"text-black"} `}
                     to={`/${nav.link}`}
