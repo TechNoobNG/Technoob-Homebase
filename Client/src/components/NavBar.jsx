@@ -73,8 +73,8 @@ const NavBar = () => {
     <nav className="w-full bg-white shadow-md ">
         <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-between items-center lg:h-[80px] ">
           <Link to={'/'}>
-              <a class="navbar-brand" href="#">
-                  <img src={TechNoobLogo} width="150" height="50"></img>
+              <a class="navbar-brand" href="/">
+                  <img src={TechNoobLogo} alt="technooblogo" width="150" height="50"></img>
               </a>
           </Link>
 

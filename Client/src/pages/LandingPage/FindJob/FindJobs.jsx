@@ -29,7 +29,7 @@ const FindJobs = () => {
     const [jobData, setJobData] = useState([]);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     const [searchLocation, setSearchLocation] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [, setLoading] = useState(false);
     const isInitialRender = useRef(true);
   const { UserProfile } = useContext(AppContext);
   
@@ -40,9 +40,9 @@ const FindJobs = () => {
       setActive(!active)
     }
 
-    const openFilterModal = () => {
-        setIsFilterModalOpen(true);
-    };
+    // const openFilterModal = () => {
+    //     setIsFilterModalOpen(true);
+    // };
     const closeFilterModal = () => {
         setIsFilterModalOpen(false);
     };

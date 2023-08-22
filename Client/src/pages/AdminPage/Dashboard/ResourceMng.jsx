@@ -18,7 +18,7 @@ const ResourceMng = () => {
   const [statsMap, setStatsMap] = useState([])
   const [resourceActivity, setResourceActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error] = useState(false);
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -34,8 +34,8 @@ const ResourceMng = () => {
   const { UserProfile } = useContext(AppContext);
 
   useEffect(() => {
-      fetchFirstData("/resources/activity", setResourceActivity, null, true, "activity").then(_r => setIsLoading(false))
-      fetchFirstData("/resources/metrics", setStatistics, null, true, "metrics").then(_r => setIsLoading(false))
+    fetchFirstData("/resources/activity", setResourceActivity, null, true, "activity").then(_r => setIsLoading(false));
+    fetchFirstData("/resources/metrics", setStatistics, null, true, "metrics").then(_r => setIsLoading(false));
       setStatsMap([
           {
               name: "Files Uploaded",
@@ -53,7 +53,7 @@ const ResourceMng = () => {
               style: "text-[#D4C433] bg-yellow-100",
           }
       ])
-  }, []);
+  }, [statistics.downloads,statistics.uploads]);
 
 
   if (isLoading) {

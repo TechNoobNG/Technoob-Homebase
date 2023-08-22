@@ -9,17 +9,17 @@ import FileUploadSingle from "../../../utility/Uploader";
 
 
 const JobManagement = () => {
-  const [ jobData,setJobData ] = useState([])
+
   const [jobMetrics, setJobMetrics] = useState({
     "total": 0,
     "views": 0
   });
   const [placeholderImage, setplaceholderImage] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [imageInfo, setImageInfo] = useState({});
+  const [, setUploadingImage] = useState(false);
+  const [, setImageInfo] = useState({});
   const [jobActivity, setJobActivity] = useState([]);
   const {UserProfile} = useContext(AppContext);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formInput, setFormInput] = useState(

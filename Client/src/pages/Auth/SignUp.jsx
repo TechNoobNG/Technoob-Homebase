@@ -7,7 +7,7 @@ import { AppContext } from '../../AppContext/AppContext';
 
 const SignUp = () => {
 
-  const { isLoggedIn, setIsLoggedIn,setUserProfile  } = useContext(AppContext);
+  const {  setIsLoggedIn,setUserProfile  } = useContext(AppContext);
   const navigate = useNavigate(); 
 
  

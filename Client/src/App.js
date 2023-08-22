@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useLayoutEffect} from "react";
 import "./App.css";
 import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
-import Cookies from "universal-cookie";
 import {Footer, NavBar} from "./components/index.js";
 
 import {SignUp} from "./pages/Auth";
@@ -17,7 +16,6 @@ import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
-const cookies = new Cookies();
 
 function App() {
   const { isLoggedIn, setIsLoggedIn, setDashboardToggle, dashboardToggle, setUserProfile } =
