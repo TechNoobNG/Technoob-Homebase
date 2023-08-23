@@ -50,6 +50,7 @@ const JobManagement = () => {
     try {
       serverApi.requiresAuth(true)
       formInput.poster = placeholderImage
+      formInput.datePosted = new Date().toISOString()
       const response = await serverApi.post(
           "/jobs/create",
           formInput
