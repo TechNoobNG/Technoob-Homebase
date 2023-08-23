@@ -142,7 +142,7 @@ const Page1 = () => {
 
     return (
         <div
-            className="flex flex-col w-full justify-start items-center sm:justify-center sm:items-center px-5 sm:px-0 pt-6 md:pt-16 relative">
+            className="flex flex-col w-full h-auto  justify-start items-center sm:justify-center sm:items-center px-5 sm:px-0 pt-6 md:pt-16 relative">
             <div className='mb-5 sm:mb-[3rem] w-[360px] h-[77px]'>
                 <header className='uni text-center md:text-6xl text-3xl font-bold md:py-3 py-10'>
                     <span className=' text-tblue'>RESOURCES</span>
@@ -175,22 +175,22 @@ const Page1 = () => {
             </div>
 
 
-            <div className=' flex md:gap-[1rem] h-[30rem] md:h-[35rem] md:justify-between w-[95%] md:ml-12 '>
+            <div className='flex md:gap-[1rem] h-auto md:justify-between w-[95%] md:ml-12 '>
                 <div className='hidden sm:hidden xl:block md:flex-[0.4] h-[35rem] p-4  shadow-md'>
                     <Filter passedOptions={passedOptions} setpassedOptions={setpassedOptions} options={options}
                             selected={selected} setSelected={setSelected} handleBox1Change={handleBox1Change}
                             box1={box1}/>
                 </div>
-                <div className=' w-full sm:min-h-[600px] md:flex-[1.5] md:pl-4 relative overflow-hidden'>
+                <div className='w-full sm:h-auto md:flex-[1.5] md:pl-4 relative overflow-hidden'>
                     {/* {resources ? <h1 className='text-xs md:text-xl text-[#3A3A3A] font-semibold mb-3 '><span
                             className='text-[#5E7CE8]'>{pagination.total}</span> RESULTS</h1> :
                         <h1 className='text-2xl text-[#3A3A3A] font-semibold'><span
                             className='text-[#5E7CE8]'>ALL</span> RESULTS</h1>
                     } */}
-                    <div className='border-b-[0.5px] border-[#C2C7D6] mb-[1rem] w-[95%] '/>
-                    <div className='flex-col flex items-start mb-[4rem] relative overflow-x-auto w-full h-screen gap-5'>
-                        <div className="flex mb-16 w-full h-full">
-                            <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className='border-b-[0.5px] border-[#C2C7D6] mb-[1rem] sm:w-[95%] '/>
+                    <div className='flex-col flex items-start mb-[4rem] relative w-full h-auto gap-5'>
+                        <div className="flex w-full px-1 h-full mb-3">
+                            <div className=" w-full grid grid-cols-2 flex-wrap md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                                 {
                                     displayedResources && displayedResources.length && displayedResources.map((feeds, i) => (
                                         <Card
@@ -242,7 +242,7 @@ const Page1 = () => {
                             <button
                                 key={index}
                                 className={`px-2 py-1 rounded ${
-                                    pagination.page === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'
+                                    pagination.page === index + 1 ? 'bg-blue-500 text-white font-bold' : 'bg-gray-300 text-gray-600'
                                 }`}
                                 onClick={() => handlePageChange(index + 1)}
                             >
