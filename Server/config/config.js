@@ -37,7 +37,8 @@ module.exports = {
                 "https://technoob.tech",
                 "https://www.technoob.tech",
                 "http://technoob.tech",
-                "http://www.technoob.tech"
+                "http://www.technoob.tech",
+                "technoob-78121a48c9b8.herokuapp.com"
             ]
         
     },
