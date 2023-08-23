@@ -112,7 +112,7 @@ const NavBar = () => {
                 <li key={i} className={`text-2xl hover:text-tblue`}>
                   {}
                   <Link
-                    className={`sidebar ${"text-black"} `}
+                    className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} sidebar ${"text-black"}`}
                     to={`/${nav.link}`}
                     onClick={() => setToggle((prev) => !prev)}
                   >
