@@ -19,15 +19,15 @@ const Card = ({ photo, titleText, subTitleText, pText, link, removeItem, id, use
         >
             <a className="flex flex-col justify-center items-center h-full w-full sm:w-full sm:h-full">
                 <div className="flex flex-col justify-center items-center w-[200px] h-[200px] sm:w-[250px] sm:h-[300px] ">
-                    <div className='flex flex-col justify-center  items-center w-[120px] sm:w-[200px] h-[320px] sm:h-[230px] mb-2'>
-                        <img src={photo} alt={titleText} className="w-full h-full object-cover p-1 bg-blue-500" />
+                    <div className='flex flex-col justify-center  items-center w-[120px] sm:w-[200px] h-[320px] sm:h-[300px] mb-2'>
+                        <img src={photo} alt={titleText} className="w-[120px] h-[200px] lg:w-[200px] lg:h-[300px] object-cover p-1 bg-blue-500" />
 
                     </div>
                     
-                    <div className="sm:flex flex-col gap-2 text-center justify-center items-center">
-                        <h1 className="text-xs  md:text-base font-bold">{titleText}</h1>
+                    <div className="sm:flex flex-col gap-1 w-[70%]  sm:w-full text-center justify-center items-center">
+                        <h1 className="text-xs text-center w-[100%] sm:w-[70%] md:text-sm font-bold truncate">{titleText}</h1>
                         <div className="hidden sm:flex items-center">
-                            <span className="rounded-full bg-blue-500 text-white px-2 text-xs">
+                            <span className="rounded-2xl py-1 bg-blue-500 text-white px-2 text-xs">
                                 {subTitleText.toUpperCase()}
                             </span>
                         </div>
