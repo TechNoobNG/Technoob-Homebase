@@ -101,18 +101,19 @@ const NavBar = () => {
             onClick={() => setToggle((prev) => !prev)}
             className="h-4 w-4 cursor-pointer"
           />
-
+          {/* togggle button on the nav bar for small screens */}
           <div
             className={`${
               toggle ? "flex" : "hidden"
-            } p-4 bg-white rounded-md absolute top-16 right-0 mx-1 my-2 w-[375px] z-10 h-[537px] sidebar flex-col transition`}
+            }  rounded-md absolute items-end top-20 right-0  my-2 w-full z-10 h-screen ${toggle ? 'sidebar' : 'sidebarClose'} flex-col `}
           >
-            <ul className="flex font-normal justify-start gap-7 list-none flex-col text-white">
+            <div className="bg-slate-300 opacity-50 z-[-2] w-full h-full absolute "  onClick={() => setToggle((prev) => !prev)}/>
+            <ul className="flex bg-white rounded-l-xl p-4 w-[80%] h-[75%] font-normal gap-7 list-none flex-col text-white">
               {navLinks.map((nav, i) => (
-                <li key={i} className={`text-2xl hover:text-tblue`}>
+                <li key={i} className={`text-2xl hover:text-tblue w-full`}>
                   {}
                   <Link
-                    className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} sidebar ${"text-black"}`}
+                    className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} sidebar ${"text-black border-b-2 hover:text-tblue"}`}
                     to={`/${nav.link}`}
                     onClick={() => setToggle((prev) => !prev)}
                   >

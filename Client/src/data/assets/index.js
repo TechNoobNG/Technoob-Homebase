@@ -29,6 +29,7 @@ import storage_icon from '../assets/storage_icon.png';
 import storage from '../assets/storage.png';
 import acheive_icon from '../assets/acheive_icon.png';
 import esther from '../assets/esther.png';
+import avatar from '../assets/avatar.png';
 
 export {
     image2,
@@ -68,6 +69,7 @@ export {
 
     storage_icon,
     storage,
-    acheive_icon
+    acheive_icon,
+    avatar,
 
 };
