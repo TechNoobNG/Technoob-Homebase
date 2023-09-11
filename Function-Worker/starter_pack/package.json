@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "cd Function-Worker/ &&func start",
+    "start": "cd Function-Worker/ && func start",
     "test": "echo \"No tests yet...\""
   }
 }
