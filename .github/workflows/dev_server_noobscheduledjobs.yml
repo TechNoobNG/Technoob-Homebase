@@ -35,13 +35,14 @@ jobs:
           npm run test --if-present 
           popd
 
-      - name: Replace main in package.json
+      - name: Replace IntendedFor in package.json
         run: |
-          # Replace the main value with "Function-Worker/src/functions/*.js" in package.json
-          jq '.main = "Function-Worker/src/functions/*.js"' package.json > new_package.json
+          # Replace the IntendedFor field using jq
+          jq --arg sub "Function-Worker/src/functions/*.js" '.IntendedFor |= sub("(?<=sub-)[^_]+"; $sub)' package.json > new_package.json
           cp new_package.json package.json
           rm new_package.json
-        working-directory: . 
+        working-directory: .
+        
 
 
       - name: 'Run Azure Functions Action'
