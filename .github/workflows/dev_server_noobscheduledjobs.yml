@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './Function-Worker' # set this to the path to your web app project, defaults to the repository root
+  # AZURE_FUNCTIONAPP_PACKAGE_PATH: './Function-Worker' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
@@ -29,6 +29,7 @@ jobs:
         shell: pwsh
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          cd Function-Worker/
           npm install
           npm run build --if-present
           npm run test --if-present
