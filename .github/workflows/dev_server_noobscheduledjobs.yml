@@ -39,8 +39,10 @@ jobs:
         run: |
           # Replace the main value with "Function-Worker/src/functions/*.js" in package.json
           jq '.main = "Function-Worker/src/functions/*.js"' package.json > new_package.json
-          mv new_package.json package.json
-        working-directory: .
+          cp new_package.json package.json
+          rm new_package.json
+        working-directory: . 
+
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
