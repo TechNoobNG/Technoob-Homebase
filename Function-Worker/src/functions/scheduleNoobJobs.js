@@ -3,7 +3,7 @@ const { deleteExpiredJobs } = require("../../Jobs/index")
 const honeybadger = require('../../../Server/utils/honeybadger');
 
 app.timer('scheduleNoobJobs', {
-    schedule: '0 */1 * * * *',
+    schedule: '0 * */12 * * *',
     handler: async (myTimer, context) => {
         context.log('Timer function processed request.');
         honeybadger.notify({
