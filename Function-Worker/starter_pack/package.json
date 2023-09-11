@@ -3,5 +3,5 @@
     "start": "cd Function-Worker/ && npm run start",
     "test": "echo \"No tests yet...\""
   },
-  "main": "/Function-Worker/src/functions/*.js"
+  "main": "Function-Worker/src/functions/*.js"
 }
