@@ -32,9 +32,8 @@ jobs:
           cd Function-Worker/
           npm install
           npm run build --if-present
-          npm run test --if-present
-          new_main_value="Function-Worker/src/functions/*.js" 
-          sed -i "s/\"main\": \".*\"/\"main\": \"$new_main_value\"/" package.json
+          npm run test --if-present 
+          sed -i "s/\"main\": \".*\"/\"main\": \"Function-Worker/src/functions/*.js"/" package.json
           popd
 
       - name: 'Run Azure Functions Action'
