@@ -224,7 +224,32 @@ module.exports = {
       
           if (expiredJobs.length > 0) {
             const expiredJobIds = expiredJobs.map((job) => job._id);
-            await Jobs.deleteMany({ _id: { $in: expiredJobIds } });
+              await Jobs.deleteMany({ _id: { $in: expiredJobIds } });
+              const activityPromises = expiredJobs.map((job) => {
+                const activity = {
+                  user_id: "64feb85db96fbbd731c42d5f",
+                  module: "job",
+                  activity: {
+                    activity: "Job Removal",
+                    title: job.title,
+                    location: job.location,
+                    company: job.company,
+                    datePosted: job.datePosted,
+                    expiryDate: job.expiryDate,
+                    workplaceType: job.workplaceType,
+                    contractType: job.contractType,
+                    status: "Successful"
+                  }
+                };
+                return Activity.create(activity); 
+              });
+              
+              try {
+                await Promise.all(activityPromises);
+              } catch (err) {
+                
+              }
+            
           }
       
           return true;
