@@ -33,7 +33,7 @@ jobs:
 
       - name: 'Copy package.json from starter_pack to root'
         run: |
-          cp starter_pack/package.json package.json
+          cp Function-Worker/starter_pack/package.json package.json
           ls
         working-directory: ${{ github.workspace }}
 
