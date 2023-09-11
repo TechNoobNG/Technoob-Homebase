@@ -35,13 +35,10 @@ jobs:
           npm run test --if-present 
           popd
 
-      - name: Replace IntendedFor in package.json
-        run: |
-          # Replace the IntendedFor field using jq
-          jq --arg sub "Function-Worker/src/functions/*.js" '.IntendedFor |= sub("(?<=sub-)[^_]+"; $sub)' package.json > new_package.json
-          cp new_package.json package.json
-          rm new_package.json
+      - name: Update 'main' in package.json
+        run: node update-package.js
         working-directory: .
+        
         
 
 
