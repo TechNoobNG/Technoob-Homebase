@@ -37,7 +37,7 @@ const app = subscriber.create({
         const data = JSON.parse(message.messageText);
         const method = data.method;
         const importedData = require(data.import);
-        await importedData[method](data.data);
+        await importedData[method](data.data ? data.data : null);
       } catch (err) {
         console.log(err);
         done()
