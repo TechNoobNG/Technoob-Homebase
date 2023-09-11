@@ -33,7 +33,7 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present 
-          sed -i "s/\"main\": \".*\"/\"main\": \"Function-Worker/src/functions/*.js"/" package.json
+          sed -i "s/\"main\": \".*\"/\"main\": \"Function-Worker\\/src\\/functions\\/\\*.js\"/" package.json
           popd
 
       - name: 'Run Azure Functions Action'
