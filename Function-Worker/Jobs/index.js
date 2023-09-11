@@ -1,10 +1,11 @@
-const queue = require('../../Server/azure_Queue/init');
-const honeybadger = require('../../Server/utils/honeybadger');
+
 
 module.exports = {
 
     async deleteExpiredJobs(context) {
         try {
+            const queue = require('../../Server/azure_Queue/init');
+            const honeybadger = require('../../Server/utils/honeybadger');
          await queue.sendMessage({
                 name: "deleteExpiredJobs",
                 import: "../services",
