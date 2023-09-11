@@ -25,18 +25,17 @@ jobs:
         shell: pwsh
         run: |
           pushd .
+          cp Function-Worker/package.json package.json
+          cp Function-Worker/host.json host.json
+          ls
+          npm install
           cd Function-Worker/
           npm install
           npm run build --if-present
           npm run test --if-present
+          new_main_value="Function-Worker/src/functions/*.js" 
+          sed -i "s/\"main\": \".*\"/\"main\": \"$new_main_value\"/" package.json
           popd
-
-      - name: 'Copy package.json from starter_pack to root'
-        run: |
-          cp Function-Worker/starter_pack/package.json package.json
-          cp Function-Worker/host.json host.json
-          ls
-        working-directory: ${{ github.workspace }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
