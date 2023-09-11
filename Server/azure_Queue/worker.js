@@ -23,7 +23,6 @@ const db = require("../utils/db_connector");
 
 })();
 
-console.log(" Queue Subscriber started");
 
 const app = subscriber.create({
     queueUrl: queueUrl,

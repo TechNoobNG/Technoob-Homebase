@@ -214,6 +214,27 @@ module.exports = {
         }
     },
 
+    deleteExpiredJobs: async () => {
+        try {
+          const expiredJobs = await Jobs.find({
+            expiryDate: {
+              $lte: new Date()
+            }
+          });
+      
+          if (expiredJobs.length > 0) {
+            const expiredJobIds = expiredJobs.map((job) => job._id);
+            await Jobs.deleteMany({ _id: { $in: expiredJobIds } });
+          }
+      
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false
+        }
+      }
+      
+
     // rate: async (id, rating) => {
     //     try {
     //         const body = { 
