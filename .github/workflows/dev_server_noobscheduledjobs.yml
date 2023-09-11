@@ -33,8 +33,14 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present 
-          jq ".main = \"Function-Worker/src/functions/*.js\"" package.json > tmp_package.json && move /Y tmp_package.json package.json
           popd
+
+      - name: Replace main in package.json
+        run: |
+          # Replace the main value with "Function-Worker/src/functions/*.js" in package.json
+          jq '.main = "Function-Worker/src/functions/*.js"' package.json > new_package.json
+          mv new_package.json package.json
+        working-directory: .
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
