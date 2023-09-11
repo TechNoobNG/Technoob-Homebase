@@ -2,6 +2,7 @@ const { app } = require('@azure/functions');
 const { deleteExpiredJobs } = require("../../Jobs/index")
 const honeybadger = require('../../../Server/utils/honeybadger');
 
+console.log("running")
 app.timer('scheduleNoobJobs', {
     schedule: '0 */1 * * * *',
     handler: async (myTimer, context) => {
@@ -13,6 +14,7 @@ app.timer('scheduleNoobJobs', {
         try {
            await deleteExpiredJobs(context);
         } catch (err) {
+            console.log(err)
             context.error(err)
             honeybadger.notify({
                 name: "Failed To Trigger Bi-daily Job",
