@@ -29,6 +29,7 @@ jobs:
         shell: pwsh
         run: |
           pushd '.'
+          ls
           cd Function-Worker/
           npm install
           npm run build --if-present
