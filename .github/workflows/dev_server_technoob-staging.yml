@@ -124,7 +124,7 @@ jobs:
 
       - name: Update 'main' in package.json
         run: |
-          cd ..
+          ls
           node update-package.js
         working-directory: .
         
