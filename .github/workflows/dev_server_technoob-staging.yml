@@ -118,6 +118,7 @@ jobs:
           npm run build --if-present
           npm run test --if-present 
           popd
+        working-directory: .
 
       - name: Update 'main' in package.json
         run: node update-package.js
