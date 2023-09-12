@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v2
         with:
-          node-version: '18.x'
+          node-version: '20.x'
 
       - name: npm install, build, and test
         run: |
@@ -109,6 +109,7 @@ jobs:
         shell: pwsh
         run: |
           pushd .
+          cd ..
           cp Function-Worker/package.json package.json
           cp Function-Worker/host.json host.json
           ls
@@ -118,13 +119,15 @@ jobs:
           npm run build --if-present
           npm run test --if-present 
           popd
-
-      - name: Update 'main' in package.json
-        run: node update-package.js
         working-directory: .
         
-        
 
+      - name: Update 'main' in package.json
+        run: |
+          cd ..
+          node update-package.js
+        working-directory: .
+        
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
@@ -132,7 +135,7 @@ jobs:
         with:
           app-name: 'NoobscheduledJobs'
           slot-name: 'Production'
-          package: '.'
+          package: '..'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_15F8E0BAAF7A44DE9CD7D39C0BE9E50B }}
 
             
