@@ -135,7 +135,7 @@ jobs:
         with:
           app-name: 'NoobscheduledJobs'
           slot-name: 'Production'
-          package: '..'
+          package: '.'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_15F8E0BAAF7A44DE9CD7D39C0BE9E50B }}
 
             
