@@ -235,7 +235,7 @@ module.exports = {
                   user_id: "64feb85db96fbbd731c42d5f",
                   module: "job",
                   activity: {
-                    activity: "Job Removal",
+                    activity: "Job Removal(Worker)",
                     title: job.title,
                     location: job.location,
                     company: job.company,
@@ -292,6 +292,31 @@ module.exports = {
                     timestamps: true
                 });
 
+                const activityPromises = dataUpload.map((jobs) => {
+                    const activity = {
+                      user_id: "64feb85db96fbbd731c42d5f",
+                      module: "job",
+                      activity: {
+                        activity: "Job Upload(Worker)",
+                        title: jobs.title,
+                        location: jobs.location,
+                        company: jobs.company,
+                        datePosted: jobs.datePosted,
+                        expiryDate: jobs.expiryDate,
+                        workplaceType: jobs.workplaceType,
+                        contractType: jobs.contractType,
+                        status: "Successful"
+                      }
+                    };
+                    return Activity.create(activity); 
+                  });
+                  
+                  try {
+                    await Promise.all(activityPromises);
+                  } catch (err) {
+                    console.log(err)
+                  }
+
                 return updatedJobs
             } else {
                 throw new Error({
@@ -301,7 +326,6 @@ module.exports = {
             }
         } catch (err) {
             console.log(err, err.message)
-
             if (err.message?.includes("TimeoutError")) {
                 throw new Error({
                     message: "timeout",
