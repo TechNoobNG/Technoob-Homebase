@@ -10,7 +10,7 @@ try {
     const honeybadger = require('../../../Server/utils/honeybadger');
 
     app.timer('scheduleNoobJobs', {
-        schedule: '0 0 */12 * * *',
+        schedule: '0 0 * * * *',
         handler: async (myTimer, context) => {
             context.log('Timer function processed request.');
             try {
@@ -33,7 +33,7 @@ try {
 
 
     app.timer('scrubNoobJobs', {
-        schedule: `0 0 */${posted} * * * `,
+        schedule: `0 0 */${posted} * * *`,
         handler: async (myTimer, context) => {
             context.log('Timer function processed request.');
             try {
