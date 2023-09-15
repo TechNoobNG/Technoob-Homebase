@@ -27,6 +27,9 @@ module.exports = {
         AZURE_QUEUE_NAME: process.env.AZURE_QUEUE_NAME,
         AZURE_QUEUE_URL: process.env.AZURE_QUEUE_URL,
         REQUEST_LIMIT: process.env.REQUEST_LIMIT || 500,
+        SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
+        SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
+        SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "http://localhost:3000",
@@ -40,7 +43,22 @@ module.exports = {
                 "http://www.technoob.tech",
                 "technoob-78121a48c9b8.herokuapp.com",
                 "https://technoob-78121a48c9b8.herokuapp.com"
-            ]
+            ],
+        SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
+            [
+                "junior software developer",
+                "junior designer",
+                "junior product manager",
+                "junior project manager",
+                "junior devops",
+                "junior cloud engineer",
+                "junior ui/ux designer",
+                "junior backend developer",
+                "junior QA",
+                "junior mobile developer",
+                "junior frontend developer",
+                "junior fullstack engineer"
+        ]
         
     },
     test: {

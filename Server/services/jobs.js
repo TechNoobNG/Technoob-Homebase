@@ -1,6 +1,7 @@
 const Jobs = require('../models/jobs.js');
 const Activity = require('../models/activity.js')
-const Resources = require("../models/resources");
+const scraper = require('../utils/scraper');
+const jobs = require('../models/jobs.js');
 
 module.exports = {
     get_all: async (query) => {
@@ -221,6 +222,10 @@ module.exports = {
               $lte: new Date()
             }
           });
+            
+            if (!expiredJobs || !expiredJobs.length) {
+                return true
+            }
       
           if (expiredJobs.length > 0) {
             const expiredJobIds = expiredJobs.map((job) => job._id);
@@ -230,7 +235,7 @@ module.exports = {
                   user_id: "64feb85db96fbbd731c42d5f",
                   module: "job",
                   activity: {
-                    activity: "Job Removal",
+                    activity: "Job Removal(Worker)",
                     title: job.title,
                     location: job.location,
                     company: job.company,
@@ -247,7 +252,7 @@ module.exports = {
               try {
                 await Promise.all(activityPromises);
               } catch (err) {
-                
+                console.log(err)
               }
             
           }
@@ -257,7 +262,80 @@ module.exports = {
           console.error(error);
           return false
         }
-      }
+    },
+    
+    createScrapedJobs: async ({ searchTag, q, posted,expires }) => {
+        try {
+
+            const dataUpload = []
+            let scrapedjobs = await scraper.scrapeJobsIndeed({searchTag,q})
+            let insertJobObj = {}
+
+            if (scrapedjobs && scrapedjobs.length) {
+                for (let scrapedJob of scrapedjobs) {
+                if (scrapedJob.details.posted * 1 > posted ) {
+                    insertJobObj.title = scrapedJob.title;
+                    insertJobObj.company = scrapedJob.company;
+                    insertJobObj.exp = "N/A";
+                    insertJobObj.location = `${scrapedJob.location}, Lagos, Nigeria`;
+                    insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
+                    insertJobObj.contractType = scrapedJob.type?.toLowerCase() || "full-time";
+                    insertJobObj.datePosted = new Date();
+                    insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
+                    insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
+                    insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
+                    insertJobObj.poster = scrapedJob.poster;
+                }
+                    dataUpload.push(insertJobObj);
+                }
+                const updatedJobs = await jobs.bulkSave(dataUpload, {
+                    timestamps: true
+                });
+
+                const activityPromises = dataUpload.map((jobs) => {
+                    const activity = {
+                      user_id: "64feb85db96fbbd731c42d5f",
+                      module: "job",
+                      activity: {
+                        activity: "Job Upload(Worker)",
+                        title: jobs.title,
+                        location: jobs.location,
+                        company: jobs.company,
+                        datePosted: jobs.datePosted,
+                        expiryDate: jobs.expiryDate,
+                        workplaceType: jobs.workplaceType,
+                        contractType: jobs.contractType,
+                        status: "Successful"
+                      }
+                    };
+                    return Activity.create(activity); 
+                  });
+                  
+                  try {
+                    await Promise.all(activityPromises);
+                  } catch (err) {
+                    console.log(err)
+                  }
+
+                return updatedJobs
+            } else {
+                throw new Error({
+                    message: "No jobs found",
+                    id: '00'
+                })
+            }
+        } catch (err) {
+            console.log(err, err.message)
+            if (err.message?.includes("TimeoutError")) {
+                throw new Error({
+                    message: "timeout",
+                    code: "01"
+                })
+            }
+            
+            throw err
+        }
+    }
       
 
     // rate: async (id, rating) => {
