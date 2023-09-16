@@ -1,5 +1,6 @@
 const { admin } = require("../services/index")
 const errorHandler = require("../utils/errorHandler");
+const queue = require('../azure_Queue/init');
 
 module.exports = {
     async dashboard(req, res) {
@@ -481,6 +482,34 @@ module.exports = {
                 status: "success",
                 message: `Added Contributor`,
                 data: contributor
+            })
+        }
+        catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                status: "error",
+                message: err.message
+            })
+
+        }
+    },
+    async triggerWorkerJobs(req, res) {
+        const { name, importString , service, method,data } = req.body;
+        try {
+            const sendMessage = await queue.sendMessage({
+                name: name,
+                import: importString,
+                service: service,
+                method: method,
+                data: data,
+                visibilityTimeout: 40,
+                delay: 3000
+            })
+
+            return res.status(201).json({
+                status: "success",
+                message: `Created Task for worker`,
+                data: sendMessage
             })
         }
         catch (err) {
