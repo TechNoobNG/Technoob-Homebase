@@ -37,26 +37,26 @@ module.exports = {
             if (!user) {
                 return false
             }
-            const token = await this.generateToken(32)
-            const resetToken = this.signToken(user._id,token);
+            const token = this.generateToken(32)
+            const resetToken = this.signToken(user._id, token);
+            
             user.passwordResetToken = token;
-            await user.save();
+            await User.updateOne({ _id: user._id }, { passwordResetToken: token });
             const constants = {
                 username: user.username,
-                reset_link: `${config.LIVE_BASE_URL}/api/v1/users/reset-password?token=${resetToken}`
+                reset_link: `https://${config.LIVE_BASE_URL}/api/v1/authenticate/change-password?token=${resetToken}`
             }
             const mailOptions = {
                 email: user.email,
                 subject: 'You requested a password reset',
                 constants,
-                template_id: "Reset Password",
+                template_id: "6504d0aa5a4e333d161d10ff",
                 username: user.username
             }
 
             await queue.sendMessage({
                 name: "SingleEmail",
                 import: "../utils/azure_mailer",
-                service: "mailer",
                 method: "sendEmail",
                 data: mailOptions,
                 visibilityTimeout: 40,
@@ -86,9 +86,52 @@ module.exports = {
             user.passwordConfirm = passwordConfirm;
             user.passwordResetToken = null;
             await user.save();
+
+            const constants = {
+                username: user.username
+            }
+            const mailOptions = {
+                email: user.email,
+                subject: 'Successful Password Reset',
+                constants,
+                template_id: "6504d0fd5a4e333d161d1106",
+                username: user.username
+            }
+
+            await queue.sendMessage({
+                name: "SingleEmail",
+                import: "../utils/azure_mailer",
+                method: "sendEmail",
+                data: mailOptions,
+                visibilityTimeout: 40,
+            })
             return true
         } catch (err) {
             console.log(err)
+            throw err
+        }
+    },
+
+    async checkResetToken(token) {
+        try {
+            const decoded = jwt.verify(token, config.JWT_SECRET);
+            if (!decoded) {
+                throw new Error({
+                    message: "Invalid token"
+                })
+            }
+
+            const findOption = {
+                passwordResetToken: decoded.token
+            }
+            const user = await User.find(findOption);
+            if (!user || !user.length) {
+                throw new Error({
+                    message: "Invalid token"
+                })
+            }
+            return user
+        } catch (err) {
             throw err
         }
     },
@@ -110,13 +153,12 @@ module.exports = {
                 email: user.email,
                 subject: 'Your password has been changed',
                 constants,
-                template_id: "Password Changed",
+                template_id: "6504d0fd5a4e333d161d1106",
                 username: user.username
             }
             await queue.sendMessage({
                 name: "SingleEmail",
                 import: "../utils/azure_mailer",
-                service: "mailer",
                 method: "sendEmail",
                 data: mailOptions
             })
@@ -140,14 +182,18 @@ module.exports = {
             try {
                 const constants = {
                     username: user.username,
-                    verification_link: `${config.LIVE_BASE_URL}/api/v1/users/verify-email?token=${token}`
+                    verification_link: `https://${config.LIVE_BASE_URL}/api/v1/users/verify-email?token=${token}`,
+                    message: `
+                    Welcome to Technoob! We're thrilled to have you as a part of our community. 😊
+                    Kindly hit the button below to verify your account
+                    `
                 }
 
                 const mailOptions = {
                     email: user.email,
                     subject: 'Welcome to TechNoob!',
                     constants,
-                    template_id: "6435a97404c5b38f7ba81a35",
+                    template_id: "643b20e047cb9cc5083f0dae",
                     username: user.username
 
                 }
@@ -155,7 +201,6 @@ module.exports = {
                 await queue.sendMessage({
                     name: "SingleEmail",
                     import: "../utils/azure_mailer",
-                    service: "mailer",
                     method: "sendEmail",
                     data: mailOptions
                 })
@@ -204,7 +249,7 @@ module.exports = {
             try {
                 const constants = {
                     username: user.username,
-                    verification_link: `${config.LIVE_BASE_URL}/api/v1/users/verify-email?token=${user.email}`,
+                    verification_link: `https://${config.LIVE_BASE_URL}/api/v1/users/verify-email?token=${user.email}`,
                     password: temp_password
                 }
 

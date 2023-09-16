@@ -15,6 +15,7 @@ router.post('/logout', auth.logout);
 router.post('verify-email', auth.verifyEmail)
 router.post('/forgot-password', auth.forgotPasswordEmail)
 router.post('/reset-password', auth.reset_password)
+router.get('/change-password', auth.change_password)
 router.get('/oauth2/google', auth.googlelogin);
 router.get('/oauth2/google/callback', auth.googleCallback, (req, res) => { res.redirect('/api/v1/user/dashboard') });
 router.get('/oauth2/github', auth.githublogin);

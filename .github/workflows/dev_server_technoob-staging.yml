@@ -89,7 +89,13 @@ jobs:
 
       - name: Restart Dyno
         run: heroku ps:restart --app technoob-worker
-      
+
+      - name: Innstall Pupetter globally
+        run: npm install -g puppeteer
+
+      - name: Innstall Packages
+        run: npm install
+
       - name: Start worker instance
         run: heroku ps:scale worker=1 --app technoob-worker
 

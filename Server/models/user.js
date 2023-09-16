@@ -123,7 +123,8 @@ const user = new Schema({
 
 user.pre('save', async function (next) {
   try {
-    // Only run this function if password was actually modified
+      // Only run this function if password was actually modified
+      console.log(this.isModified('password'))
       if (!this.isModified('password')) return next();
      console.log('child_worker.checkChild():', child_worker.checkChild());
       if (child_worker.checkChild() > 0) { 
