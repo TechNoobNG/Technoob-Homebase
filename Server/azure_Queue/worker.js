@@ -59,7 +59,7 @@ const app = subscriber.create({
           }
           await log.save()
         }
-        console.log(err);
+        console.log(err.message);
         done()
       }
       done();

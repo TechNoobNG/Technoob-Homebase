@@ -30,8 +30,6 @@ try {
     });
 
     
-
-
     app.timer('scrubNoobJobs', {
         schedule: `0 0 */${posted} * * *`,
         handler: async (myTimer, context) => {

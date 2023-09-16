@@ -128,7 +128,7 @@ module.exports = {
 
     async reset_password(req, res) {
         const { password, passwordConfirm } = req.body
-        const token = req.query.token
+        const token = req.query.token || req.body.token
         try {
             const reset = await auth.resetPassword(token, password, passwordConfirm)
             if (!reset) throw new Error("An error occured")
@@ -137,6 +137,26 @@ module.exports = {
                 message: `Password reset successful`,
             })
         } catch (err) {
+            return res.status(500).json({
+                status: 'Failed',
+                message: "User password reset failed, please contact admin",
+            })
+        }
+    },
+    async change_password(req, res) {
+        const token = req.query.token
+        try {
+            const user = await auth.checkResetToken(token);
+
+            const profile = {
+                username: user[0].username,
+                photo: user[0].photo,
+                token
+            }
+            if (!profile) throw new Error("Invalid Request")
+            return  res.render('reset-password.jade', {profile ,title: "Change Password" });
+        } catch (err) {
+            console.log(err)
             return res.status(500).json({
                 status: 'Failed',
                 message: "User password reset failed, please contact admin",
@@ -197,6 +217,14 @@ module.exports = {
         try {
             const profile = req.session.github_profile;
             res.render('email-form.jade', { profile: profile, title: "Github Email" });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    resetPasswordView(req, res, next) {
+        try {
+            res.render('reset-password.jade', { title: "Github Email" });
         } catch (error) {
             next(error);
         }
