@@ -39,5 +39,6 @@ router.get('/contact-us', middleware.auth.hasPermission('admin:ManageContactUs')
 router.post('/contact-us/:id/delete', middleware.auth.hasPermission('admin:ManageContactUs'), admin.deleteContactUs);
 router.post('/mailing-list/:id/delete', middleware.auth.hasPermission('admin:ManageMailingList'), admin.deleteMailingList);
 router.post('/frontend/resources/create', middleware.auth.hasPermission('admin:ManageFrontendResources'), admin.createFrontendResource);
+router.post('/worker/jobs/trigger', middleware.auth.hasPermission('admin:TriggerWorkerJobs'), admin.triggerWorkerJobs);
 
 module.exports = router;
