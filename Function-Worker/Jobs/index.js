@@ -42,7 +42,7 @@ module.exports = {
                 "junior fullstack engineer"
         ]
     
-            for (let keyword in stackKeywords) {
+            for (let keyword of stackKeywords) {
                 await queue.sendMessage({
                     name: "createScrapedJobs",
                     import: "../services",

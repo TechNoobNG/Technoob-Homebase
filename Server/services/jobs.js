@@ -267,6 +267,7 @@ module.exports = {
     createScrapedJobs: async ({ searchTag, q, posted,expires }) => {
         try {
 
+            const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
             const dataUpload = []
             let scrapedjobs = await scraper.scrapeJobsIndeed({searchTag,q})
             let insertJobObj = {}
@@ -279,7 +280,7 @@ module.exports = {
                     insertJobObj.exp = "N/A";
                     insertJobObj.location = `${scrapedJob.location}, Lagos, Nigeria`;
                     insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
-                    insertJobObj.contractType = scrapedJob.type?.toLowerCase() || "full-time";
+                    insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
                     insertJobObj.datePosted = new Date();
                     insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
                     insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
