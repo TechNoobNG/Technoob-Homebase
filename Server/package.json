@@ -8,7 +8,7 @@
     "dev": "node ./bin/www",
     "start-worker": "node ./azure_Queue/worker.js",
     "start-with-worker": "npm run start & sleep 60 && npm run start-worker &",
-    "heroku-postbuild": "bash postbuild.bash"
+    "heroku-postbuild": "bash puppeter_config.bash"
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0"
