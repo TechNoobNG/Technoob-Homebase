@@ -269,7 +269,15 @@ module.exports = {
 
             const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
             let dataUpload = []
-            let scrapedjobs = await scraper.scrapeJobsIndeed({searchTag,q})
+
+            let scrapedjobs = []
+             
+            try {
+                scrapedjobs = await scraper.scrapeJobsIndeed({ searchTag, q })
+            } catch (err) {
+                console.log(err)
+            }
+            
             let insertJobObj = {}
             let full_data = []
 
@@ -289,7 +297,9 @@ module.exports = {
                     insertJobObj.poster = scrapedJob.poster;
                     insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
                 }
-                    dataUpload.push(insertJobObj);
+                    
+                    if (JSON.stringify(insertJobObj) !== '{}') {
+                        dataUpload.push(insertJobObj);
 
                     const updatedJobs = await jobs.insertMany(dataUpload)
 
@@ -317,6 +327,8 @@ module.exports = {
                     } catch (err) {
                         console.log(err)
                     }
+                    }
+                    
                     full_data.push(updatedJobs)
                     dataUpload = []
                 }

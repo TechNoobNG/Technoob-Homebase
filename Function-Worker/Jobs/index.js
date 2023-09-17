@@ -29,7 +29,7 @@ module.exports = {
             const config = require('../../Server/config/config')['development'];
             const stackKeywords = config.SCRAPE_STACK_KEYWORDS || [
                 "junior software developer",
-                "junior designer",
+                "junior product designer",
                 "junior product manager",
                 "junior project manager",
                 "junior devops",
@@ -39,7 +39,7 @@ module.exports = {
                 "junior QA",
                 "junior mobile developer",
                 "junior frontend developer",
-                "junior fullstack engineer"
+                "Junior customer Service"
         ]
     
             for (let keyword of stackKeywords) {

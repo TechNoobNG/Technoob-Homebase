@@ -45,20 +45,20 @@ module.exports = {
                 "https://technoob-78121a48c9b8.herokuapp.com"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
-            [
-                "junior software developer",
-                "junior designer",
-                "junior product manager",
-                "junior project manager",
-                "junior devops",
-                "junior cloud engineer",
-                "junior ui/ux designer",
-                "junior backend developer",
-                "junior QA",
-                "junior mobile developer",
-                "junior frontend developer",
-                "junior fullstack engineer"
-        ]
+        [
+            "junior software developer",
+            "junior product designer",
+            "junior product manager",
+            "junior project manager",
+            "junior devops",
+            "junior cloud engineer",
+            "junior ui/ux designer",
+            "junior backend developer",
+            "junior QA",
+            "junior mobile developer",
+            "junior frontend developer",
+            "Junior customer Service"
+    ]
         
     },
     test: {
