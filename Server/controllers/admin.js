@@ -60,8 +60,10 @@ module.exports = {
     },
 
     async inviteAdmin(req, res) {
+        const inviter = req.user;
+        const invitee = req.body.email
         try {
-            const admin_response = await admin.inviteAdmin(req.body.email);
+            const admin_response = await admin.inviteAdmin(invitee,inviter);
             return res.status(201).json({
                 status: "success",
                 message: `Invited ${admin_response.user.username} to the platform`,

@@ -28,7 +28,6 @@ module.exports = {
             console.log("Added message to the queue: ", data);
             return { message: 'Action successfully added to job queue' };
         } catch (error) {
-            console.log(error);
             throw error;
         }
     },
