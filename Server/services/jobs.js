@@ -268,7 +268,7 @@ module.exports = {
         try {
 
             const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
-            const dataUpload = []
+            let dataUpload = []
             let scrapedjobs = await scraper.scrapeJobsIndeed({searchTag,q})
             let insertJobObj = {}
             let full_data = []
