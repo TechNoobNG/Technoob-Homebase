@@ -20,12 +20,9 @@ module.exports = {
     async verifyUserEmail(token) {
         try {
             const decoded = jwt.verify(token, config.JWT_SECRET);
-            const user = await User.findById(decoded.id);
-            if (!user) {
-                return false
-            }
-            user.verified = true;
-            await user.save();
+            await User.findByIdAndUpdate(decoded.id, {
+                verified: true
+            })
             return true
         } catch (err) {
             throw err

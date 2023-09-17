@@ -68,7 +68,7 @@ module.exports = {
             id: uuid.v4()
         })
     },
-    async inviteAdmin(email) {
+    async inviteAdmin(email,admin_user) {
         try {
             //check if user already exists
             const user = await User.findOneAndUpdate({ email }, { role: 'admin' }, { new: true });
@@ -85,13 +85,14 @@ module.exports = {
 
             if (sendemail) {
                 const constants = {
-                    username: user.username
+                    username: user.username,
+                    inviter: admin_user.username
                 }
                 const mailOptions = {
                     email: user.email,
                     subject: 'You have been invited to be an admin',
                     constants,
-                    template_id: "Admin Invite",
+                    template_id: "65073144b75ffcbbdac0cb82",
                     username: user.username
                 }
                 await mailer.sendEmail(mailOptions)
@@ -104,7 +105,6 @@ module.exports = {
 
             return response
         } catch (err) {
-            console.log(err)
             throw err
         }
     },

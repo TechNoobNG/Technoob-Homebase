@@ -37,3 +37,4 @@ node_modules/.package-lock.json
 Function-Worker/local.settings.json
 *local.settings.json
 Server/test.js
+email.html
