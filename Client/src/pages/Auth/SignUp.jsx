@@ -105,13 +105,18 @@ else{
             <div className='mb-4'>
               <label className='text-2xl font-semibold px-4 ' htmlFor="stack">Choose a Tech Stack</label>
               <select id='stack' name="Tech Stack" placeholder='Tech stack' className='w-full text-lg rounded-xl m-1 border placeholder:pl-2 px-2 py-4 outline-0 ring-1 bg-white'>
-                <option value="Frontend">Frontend stack</option>
-                <option value="">UI/UX Design</option>
-                <option value="Backend">Backend stack</option>
-                <option value="Backend">Mobile Design</option>
-                <option value="Backend">MAEN Stack</option>
-                <option value="Backend">Flutter Developer</option>
-                <option value="Backend">MERN Stack</option>
+                <option value="Frontend Development">Frontend Development</option>
+                <option value="UI/UX">UI/UX </option>
+                <option value="Backend Development">Backend Development</option>
+                <option value="Mobile Development">Mobile Development</option>
+                <option value="Product Management">Product Management</option>
+                <option value="Project Management">Project Management</option>
+                <option value="Technical Writing">Technical Writing</option>
+                <option value="Cloud Development">Cloud Development</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Software Testing">Software Testing</option>
+                <option value="DevOps">DevOps</option>
+                <option value="SEO">SEO</option>
               </select>
             </div>
 
