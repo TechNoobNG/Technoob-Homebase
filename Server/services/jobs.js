@@ -271,6 +271,7 @@ module.exports = {
             const dataUpload = []
             let scrapedjobs = await scraper.scrapeJobsIndeed({searchTag,q})
             let insertJobObj = {}
+            let full_data = []
 
             if (scrapedjobs && scrapedjobs.length) {
                 for (let scrapedJob of scrapedjobs) {
@@ -286,39 +287,41 @@ module.exports = {
                     insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
                     insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
                     insertJobObj.poster = scrapedJob.poster;
+                    insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
                 }
                     dataUpload.push(insertJobObj);
-                }
-                const updatedJobs = await jobs.bulkSave(dataUpload, {
-                    timestamps: true
-                });
 
-                const activityPromises = dataUpload.map((jobs) => {
+                    const updatedJobs = await jobs.insertMany(dataUpload)
+
+                    const activityPromises = dataUpload.map((jobs) => {
                     const activity = {
-                      user_id: "64feb85db96fbbd731c42d5f",
-                      module: "job",
-                      activity: {
-                        activity: "Job Upload(Worker)",
-                        title: jobs.title,
-                        location: jobs.location,
-                        company: jobs.company,
-                        datePosted: jobs.datePosted,
-                        expiryDate: jobs.expiryDate,
-                        workplaceType: jobs.workplaceType,
-                        contractType: jobs.contractType,
-                        status: "Successful"
-                      }
-                    };
-                    return Activity.create(activity); 
-                  });
-                  
-                  try {
-                    await Promise.all(activityPromises);
-                  } catch (err) {
-                    console.log(err)
-                  }
+                        user_id: "64feb85db96fbbd731c42d5f",
+                        module: "job",
+                        activity: {
+                            activity: "Job Upload(Worker)",
+                            title: jobs.title,
+                            location: jobs.location,
+                            company: jobs.company,
+                            datePosted: jobs.datePosted,
+                            expiryDate: jobs.expiryDate,
+                            workplaceType: jobs.workplaceType,
+                            contractType: jobs.contractType,
+                            status: "Successful"
+                        }
+                        };
+                        return Activity.create(activity); 
+                    });
+                    
+                    try {
+                        await Promise.all(activityPromises);
+                    } catch (err) {
+                        console.log(err)
+                    }
+                    full_data.push(updatedJobs)
+                    dataUpload = []
+                }
 
-                return updatedJobs
+                return full_data
             } else {
                 throw new Error({
                     message: "No jobs found",
