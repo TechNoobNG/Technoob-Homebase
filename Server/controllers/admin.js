@@ -96,8 +96,9 @@ module.exports = {
     },
 
     async getMailTemplates(req, res) {
+        const query = req.query
         try {
-            const templates = await admin.getMailTemplates();
+            const templates = await admin.getMailTemplates(query);
             return res.status(200).json({
                 status: "success",
                 message: `Retrieved all email templates`,

@@ -101,7 +101,12 @@ module.exports = {
                     template_id: "65073144b75ffcbbdac0cb82",
                     username: user.username
                 }
-                await mailer.sendEmail(mailOptions)
+                await queue.sendMessage({
+                    name: "SingleEmail",
+                    import: "../utils/azure_mailer",
+                    method: "sendEmail",
+                    data: mailOptions
+                })
 
             }
             const response = {
@@ -147,10 +152,16 @@ module.exports = {
                 email: email,
                 subject: "Your admin access has been revoked",
                 constants,
-                template_id: "Admin Removed",
+                template_id: "65089456f670e1f4a9ef29f8",
                 username: user.username
             }
-            await mailer.sendEmail(mailOptions)
+            await queue.sendMessage({
+                name: "SingleEmail",
+                import: "../utils/azure_mailer",
+                method: "sendEmail",
+                data: mailOptions
+            })
+  
             return response
         } catch (err) {
             console.log(err)
@@ -160,7 +171,6 @@ module.exports = {
     async create_permission(team, data) {
         try {
             const { name, description } = data;
-            console.log(name, description)
             const permission = `${team}:${name.split(' ').join('')}`
             const newPermission = new Permissions({ name, permission, team, description });
             await newPermission.save();
