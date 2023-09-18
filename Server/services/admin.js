@@ -77,10 +77,16 @@ module.exports = {
                 throw new Error('User not found')
             }
 
-            let admin = await Admin.findOrCreate(user._id, 'admin', ['*'])
+            let admin = await Admin.find({
+                user_id: user._id
+            })
+
             let sendemail = admin.isActive ? false : true
-            if (admin) {
-                admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: true }, { new: true })
+            if (!admin.length) {
+                admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: true, permissions: [], role: "admin" }, { new: true, upsert: true })
+                sendemail = true
+            } else {
+                admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: true, permissions: [] }, { new: true })
             }
 
             if (sendemail) {
