@@ -38,3 +38,4 @@ yarn-error.log*
 /.idea/rcb-settings.xml
 email.html
 Server/test.js
+Server/.cache
