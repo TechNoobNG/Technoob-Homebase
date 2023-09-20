@@ -171,7 +171,7 @@ const JobManagement = () => {
               </div>
               <div className=' block py-2 my-4'>
                 <div><label htmlFor="title" className=' text-base font-semibold p-1'>Expiry-Date / Deadline</label></div>
-                <input type="text" placeholder='Jan 16' className=' border px-2 py-[6px] my-2 w-[250px]' name="expiryDate" value={formInput.expiryDate} onChange={handleChange}/>
+                <input type="text" placeholder='Jan 16,2023' className=' border px-2 py-[6px] my-2 w-[250px]' name="expiryDate" value={formInput.expiryDate} onChange={handleChange}/>
               </div>
               <div className=' block py-2 my-4'>
                 <div><label htmlFor="title" className=' text-base font-semibold p-1' >Job type</label></div>
