@@ -26,28 +26,29 @@ const SignUp = () => {
 
 
   const handleChange = (e) => {
-    setForm({...form, [e.target.name.split(" ").join()]: e.target.value})
+    setForm({...form, [e.target.name.split(" ").join().replace(",","")]: e.target.value})
   }
+
+  console.log(form)
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
-    
   
 
     var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
-
       var raw = JSON.stringify(
   {
     "firstname": form.FirstName,
     "lastname": form.LastName,
     "password": form.Password,
-    "passwordConfirm": form.PasswordConfirm,
+    "passwordConfirm": form.ConfirmPassword,
     "email": form.Email,
     "username": form.Username,
     "stack": [form.TechStack]
   }
-);
+      );
+    
 
 var requestOptions = {
   method: 'POST',
@@ -55,8 +56,7 @@ var requestOptions = {
   body: raw,
   redirect: 'follow'
 };
-
-if(form.Password !== form.PasswordConfirm) alert('Passwords do not match')
+if(form.Password !== form.ConfirmPassword) alert('Passwords do not match')
 else{
   setLoading(true)
       try {
@@ -99,12 +99,13 @@ else{
         <img src={SignUPIMG} alt="Sign-Up" className=' xl:block hidden w-[50%]' />
 
         <form  onSubmit={handleSubmit} className='block bgcontact lg:p-20 p-5 w-full gap-4 rounded xl:w-[50%] '>
-            <InputField type={'text'}  name={'FullName'} placeholder={'Full Name'} onChange={handleChange}/>
-            <InputField type={'text'}  name={'Username'} placeholder={'User Name'} onChange={handleChange}/>
+          <InputField type={'text'} name={'First Name'} placeholder={'First Name'} onChange={handleChange} />
+          <InputField type={'text'}  name={'Last Name'} placeholder={'Last Name'} onChange={handleChange}/>
+            <InputField type={'text'}  name={'Username'} placeholder={'Username'} onChange={handleChange}/>
             <InputField type={'email'}  name={'Email'} placeholder={'Email'} onChange={handleChange}/>
             <div className='mb-4'>
               <label className='text-2xl font-semibold px-4 ' htmlFor="stack">Choose a Tech Stack</label>
-              <select id='stack' name="Tech Stack" placeholder='Tech stack' className='w-full text-lg rounded-xl m-1 border placeholder:pl-2 px-2 py-4 outline-0 ring-1 bg-white'>
+              <select id='stack' name="Tech Stack" onChange={handleChange} placeholder='Tech stack' className='w-full text-lg rounded-xl m-1 border placeholder:pl-2 px-2 py-4 outline-0 ring-1 bg-white'>
                 <option value="Frontend Development">Frontend Development</option>
                 <option value="UI/UX">UI/UX </option>
                 <option value="Backend Development">Backend Development</option>
