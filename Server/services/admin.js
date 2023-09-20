@@ -11,6 +11,7 @@ const contributors = require('../models/contributors');
 const resources = require('../services/resources')
 const users = require('../services/user');
 const traffic = require('../services/traffic');
+const queue = require('../azure_Queue/init');
 
 module.exports = {
 
