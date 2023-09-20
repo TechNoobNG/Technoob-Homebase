@@ -95,17 +95,22 @@ module.exports = {
         const token = req.query.token
         try {
             const user = await auth.verifyUserEmail(token)
-            if(!user) throw new Error("An error occured")
-            return  res.status(200).json({
+            if (!user) throw new Error("An error occured")
+            const render_payload = {
+                title: "Email Verifcation" ,
                 status: 'success',
-                message: `Verified ${user.username}`,
-            })
+                username: user.username,
+                message: `Email Verified  Successfully`,
+            }
+            return res.render('email-verification.jade', { render_payload, title: "Verify Email"});
         } catch (err) {
-            return res.status(500).json({
-                status: 'Failed',
-                message: "User verification failed, please contact admin",
-            })
-            
+            err.status = 500
+            err.message = "Internal Service Error"
+            if (err instanceof jwt.JsonWebTokenError || err instanceof jwt.TokenExpiredError) {
+                err.message = "Invalid/Expired Token"
+                err.status = 400
+            }
+            return res.render('error.jade', {err, title: "Error Page"});
         }
     },
 
@@ -224,7 +229,7 @@ module.exports = {
 
     resetPasswordView(req, res, next) {
         try {
-            res.render('reset-password.jade', { title: "Github Email" });
+           return res.render('reset-password.jade', { title: "Password Reset" });
         } catch (error) {
             next(error);
         }

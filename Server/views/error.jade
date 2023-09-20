@@ -1,6 +1,32 @@
 extends layout
 
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+  .error-page
+    h1 Error Occurred
+    h2 Status Code: #{err.status}
+    pre Error Message: #{err.message}
+
+style.
+  /* Add your CSS styling here */
+  .error-page {
+    text-align: center;
+    margin-top: 50px;
+    font-family: Arial, sans-serif;
+  }
+
+  h1 {
+    font-size: 36px;
+    color: #FF5733;
+  }
+
+  h2 {
+    font-size: 24px;
+    color: #FF5733;
+  }
+
+  pre {
+    font-size: 18px;
+    background-color: #FFC0CB;
+    padding: 10px;
+    border-radius: 5px;
+  }
