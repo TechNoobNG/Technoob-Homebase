@@ -3,7 +3,6 @@ const uuid = require('uuid');
 const Admin = require('../models/admin');
 const Permissions = require('../models/permissions');
 const User = require('../models/user');
-const mailer = require('../utils/azure_mailer');
 const mailing_list = require('../models/mailing_list');
 const contact_us = require('../models/contact_us');
 const frontend_resources = require('../models/frontend_resources');
@@ -376,8 +375,16 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            const mail_response = await mailer.sendToMany(mailOptions)
-            return mail_response
+            await queue.sendMessage({
+                name: "BulkStaticEmail",
+                import: "../utils/azure_mailer",
+                method: "sendToMany",
+                data: mailOptions
+            })
+
+            return {
+                message: "Email Queued Successfully"
+            }
         } catch (err) {
             console.log(err)
             throw err
@@ -409,8 +416,16 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            const mail_response = await mailer.sendToManyStatic(mailOptions)
-            return mail_response
+            await queue.sendMessage({
+                name: "BulkStaticEmail",
+                import: "../utils/azure_mailer",
+                method: "sendToManyStatic",
+                data: mailOptions
+            })
+
+            return {
+                message: "Email Queued Successfully"
+            }
         } catch (err) {
             console.log(err)
             throw err

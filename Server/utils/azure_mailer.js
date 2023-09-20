@@ -35,6 +35,7 @@ module.exports = {
         try {
             // 1) retrieve email template from database
             const template = await templates.findById(options.template_id);
+            if(!template) throw new Error ("Invalid template ID")
             let content = template.template.toString();
             Object.keys(options.constants).forEach((key) => {
                 content = content.split(`\#{${key}}`).join(options.constants[key]);
@@ -80,6 +81,7 @@ module.exports = {
             
             // 1) retrieve email template from database
             const template = await templates.findById(options.template_id);
+            if(!template) throw new Error ("Invalid template ID")
             let content = template.template.toString();
 
             let log = {
@@ -161,9 +163,10 @@ module.exports = {
         try {
             // 1) retrieve email template from database
             const template = await templates.findById(options.template_id);
+            if(!template) throw new Error ("Invalid template ID")
             let content = template.template.toString();
             Object.keys(options.constants).forEach((key) => {
-                content = content.split(`\${${key}}`).join(options.constants[key]);
+                content = content.split(`\#{${key}}`).join(options.constants[key]);
             });
             const mailOptions = {
                 senderAddress: config.SENDER_EMAIL_ADDRESS,
