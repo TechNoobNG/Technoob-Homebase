@@ -63,9 +63,7 @@ jobs:
         run: |
           ls
           pwd
-          cd Server  # Change to the 'Server' directory
-          unzip release.zip
-          cd ..  
+          unzip release.zip 
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
