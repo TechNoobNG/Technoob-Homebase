@@ -12,7 +12,7 @@ router.post('/login', auth.login);
 
 router.post('/register', auth.register);
 router.post('/logout', auth.logout);
-router.post('verify-email', auth.verifyEmail)
+router.get('/verify-email', auth.verifyEmail)
 router.post('/forgot-password', auth.forgotPasswordEmail)
 router.post('/reset-password', auth.reset_password)
 router.get('/change-password', auth.change_password)
