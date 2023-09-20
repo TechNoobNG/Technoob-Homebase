@@ -2,7 +2,6 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
 const { EmailClient } = require("@azure/communication-email");
 const templates = require('../models/email_templates');
-const email_templates = require('../models/email_templates');
 
 
 const connectionString = config.COMMUNICATION_SERVICES_CONNECTION_STRING;
@@ -41,7 +40,7 @@ module.exports = {
                 content = content.split(`\#{${key}}`).join(options.constants[key]);
             });
             const mailOptions = {
-                senderAddress: "Stacklite_Admin@2befcba4-7986-41ed-920a-5185024b5538.azurecomm.net",
+                senderAddress: config.SENDER_EMAIL_ADDRESS,
                 content: {
                     subject: options.subject,
                     html: content,
@@ -106,7 +105,7 @@ module.exports = {
                     content = content.split(`\#{${key}}`).join(value);
                 });
                 const mailOptions = {
-                    senderAddress: "Technoob@2befcba4-7986-41ed-920a-5185024b5538.azurecomm.net",
+                    senderAddress: config.SENDER_EMAIL_ADDRESS,
                     content: {
                         subject: options.subject,
                         html: content,
@@ -167,7 +166,7 @@ module.exports = {
                 content = content.split(`\${${key}}`).join(options.constants[key]);
             });
             const mailOptions = {
-                senderAddress: "Stacklite_Admin@2befcba4-7986-41ed-920a-5185024b5538.azurecomm.net",
+                senderAddress: config.SENDER_EMAIL_ADDRESS,
                 content: {
                     subject: options.subject,
                     html: content,

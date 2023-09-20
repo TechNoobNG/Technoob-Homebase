@@ -30,6 +30,7 @@ module.exports = {
         SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
         SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
         SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
+        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "http://localhost:3000",
