@@ -29,26 +29,26 @@ try {
         }
     });
 
-    
-    app.timer('scrubNoobJobs', {
-        schedule: `0 0 */${posted} * * *`,
-        handler: async (myTimer, context) => {
-            context.log('Timer function processed request.');
-            try {
-                honeybadger.notify({
-                        name: "Trigger Job scraping",
-                        message: myTimer
-                })
-            await scrapeJobs(q,posted,expires);
-            } catch (err) {
-                context.error(err)
-                honeybadger.notify({
-                    name: "Initiated Job scraping",
-                    message: err
-            })
-            }
-        }
-    });
+
+    // app.timer('scrubNoobJobs', {
+    //     schedule: `0 0 */${posted} * * *`,
+    //     handler: async (myTimer, context) => {
+    //         context.log('Timer function processed request.');
+    //         try {
+    //             honeybadger.notify({
+    //                     name: "Trigger Job scraping",
+    //                     message: myTimer
+    //             })
+    //         await scrapeJobs(q,posted,expires);
+    //         } catch (err) {
+    //             context.error(err)
+    //             honeybadger.notify({
+    //                 name: "Initiated Job scraping",
+    //                 message: err
+    //         })
+    //         }
+    //     }
+    // });
 
 
 } catch (error) {

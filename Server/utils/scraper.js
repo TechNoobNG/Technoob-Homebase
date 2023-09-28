@@ -3,12 +3,13 @@ const puppeteer = require('puppeteer');
 module.exports = {
   async scrapeJobsIndeed({ searchTag, q }) {
     try {
-      const browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
+        headless: true,
         args: [
           '--no-sandbox',
-          '--disable-setuid-sandbox',
-        ],
-      });
+          '--disable-gpu',
+        ]
+    });
       const page = await browser.newPage();
 
       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36');
@@ -16,7 +17,7 @@ module.exports = {
       await page.goto('https://ng.indeed.com', { waitUntil: 'domcontentloaded' });
 
       await page.setViewport({ width: 1080, height: 1024 });
-      
+
       await page.type('#text-input-what', searchTag);
 
       await page.click('.yosegi-InlineWhatWhere-primaryButton');
@@ -45,6 +46,8 @@ module.exports = {
 
         }, job)
 
+        console.log(jobObject)
+
         const detailsSelector = `#mosaic-provider-jobcards > ul > li:nth-child(${i}) > div > div.slider_container.css-8xisqv.eu4oa1w0 > div > div.slider_item.css-kyg8or.eu4oa1w0 > div > table.jobCardShelfContainer.big6_visualChanges`
 
         const jobDetails = await page.waitForSelector(detailsSelector)
@@ -55,7 +58,7 @@ module.exports = {
             .replace("EmployerActive", "")
             .replace("days ago", "")
             .trim();
-          
+
           return {
             posted
           }
