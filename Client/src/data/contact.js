@@ -277,28 +277,28 @@ export const AdminNavs = [
     id: "2",
     icon: <RiBankLine/>,
     title: "Job Management",
-    link: "Job-Management",
+    link: "/admin/Job-Management",
     color: 'text-purple-500'
    },
   {
     id: "3",
     icon: <FiLayers/>,
     title: "Resource Management",
-    link: "Resources-Management",
+    link: "/admin/Resources-Management",
     color: "text-tblue",
    },
   {
     id: "4",
     icon: <BsBank/>,
     title: "Event Management",
-    link: "Event-Management",
+    link: "/admin/Event-Management",
     color: "text-teal-500",
  },
   {
     id: "5",
     icon: <BsPuzzle/>,
     title: "Quizzes and Competition",
-    link: "Quizzes",
+    link: "/admin/Quizzes",
     color: "text-tblue",
  }
 ];

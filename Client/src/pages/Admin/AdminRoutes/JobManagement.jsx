@@ -70,10 +70,11 @@ const JobManagement = () => {
           contractType:""
         });
         setIsSubmitting(false);
-        alert("Job added successfully")
+        // alert("Job added successfully")
+        console.log('Job added successfully');
       }
     }catch (e) {
-        alert(e)
+        console.log(e)
     }
 
   };
@@ -94,6 +95,7 @@ const JobManagement = () => {
       style : 'text-[#D4C433] bg-yellow-100'
     },
   ]
+
   const fetchJobMetrics = async () => {
 
     try{
@@ -102,9 +104,10 @@ const JobManagement = () => {
       });
       if(response.status === 200){
         setJobMetrics(response.data.data)
+        console.log(response);
       }
-    }catch (e) {
-      alert(e.message)
+    }catch (error) {
+      console.log('job error',error)
     }
 
   }
@@ -112,7 +115,7 @@ const JobManagement = () => {
   useEffect(() => {
     fetchJobMetrics()
     fetchFirstData("/jobs/activity", setJobActivity, null, true, "activity").then(_r => setIsLoading(false))
-    ;
+    
   }, []);
 
   return ( 
