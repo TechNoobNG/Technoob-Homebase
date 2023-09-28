@@ -6,7 +6,6 @@ const templates = require('../models/email_templates');
 
 const connectionString = config.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
-
 // const catch429Policy = {
 //     name: "catch429Policy",
 //     async sendRequest(request, next) {
@@ -78,7 +77,7 @@ module.exports = {
 
     async sendToMany(options) {
         try {
-            
+
             // 1) retrieve email template from database
             const template = await templates.findById(options.template_id);
             if(!template) throw new Error ("Invalid template ID")
