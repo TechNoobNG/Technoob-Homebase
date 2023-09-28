@@ -71,8 +71,8 @@ function App() {
                 <Route path="/Contact-Us" element={<ContactUs />} />
                 <Route path="/Resources" element={<Resources />} />
                 <Route path="/all-resources" element={<AllResources />} />
-                <Route path="/Sign-Up" element={<SignUp />} />
-                <Route path="/User-Login" element={<UserLogin />} />
+                <Route path="/register" element={<SignUp />} />
+                <Route path="/login" element={<UserLogin />} />
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>
