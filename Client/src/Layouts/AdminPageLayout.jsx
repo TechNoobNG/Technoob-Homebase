@@ -27,10 +27,10 @@ const AdminPageLayout = () => {
         <div className='bg-[#f9f9f9] w-full grow lg:h-auto h-[1600px] pb-10 lg:pr-10 p-5'>
           
           <Routes>
-            <Route path='/' element={<AdminDashboard/>}/>
-            <Route path='/Job-Management' element={<JobManagement/>}/>
-            <Route path='/Resources-Management' element={<ResourceManagement/>}/>
-            <Route path='/Event-Management' element={<EventManagement/>}/>
+            <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
+            <Route path='/admin/Job-Management' element={<JobManagement/>}/>
+            <Route path='/admin/Resources-Management' element={<ResourceManagement/>}/>
+            <Route path='/admin/Event-Management' element={<EventManagement/>}/>
           </Routes>
          
         </div>

@@ -36,7 +36,7 @@ const AdminNavBar = () => {
                  <div className={`${toggle ? 'flex' : 'hidden'} p-4 bg-white rounded-md absolute top-16 right-0 mx-1 my-2 w-[375px] z-10 h-full sidebar flex-col transition`}>
                      <ul className='flex font-normal justify-center items-center gap-3 list-none flex-col text-white'>
 
-                     <NavLink to={'/'} onClick={()=> setToggle((prev) => !prev)}>
+                     <NavLink to={'/admin/dashboard'} onClick={()=> setToggle((prev) => !prev)}>
                      <div className='mb-12 w-[260px] h-[54px] flex items-center rounded-md text-black'>
                          <MdOutlineDashboard className='mr-5 text-2xl'/>
                          <h2 className='text-base capitalize'>dashboard</h2>

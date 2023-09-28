@@ -20,7 +20,7 @@ const Card = ({ photo, titleText, subTitleText, pText, link, removeItem, id, use
             <a className="flex flex-col justify-center items-center h-full w-full sm:w-full sm:h-full">
                 <div className="flex flex-col justify-center items-center w-[200px] h-[200px] sm:w-[250px] sm:h-[300px] ">
                     <div className='flex flex-col justify-center  items-center w-[120px] sm:w-[200px] h-[320px] sm:h-[300px] mb-2'>
-                        <img src={photo} alt={titleText} className="w-[120px] h-[200px] lg:w-[200px] lg:h-[300px] object-cover p-1 bg-blue-500" />
+                        <img src={photo} alt={titleText} className="w-[120px] h-[200px] lg:w-[200px] lg:h-[300px] object-cover p-1" />
 
                     </div>
                     
