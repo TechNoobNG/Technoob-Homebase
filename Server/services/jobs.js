@@ -63,7 +63,7 @@ module.exports = {
         }
     },
 
-    get: async (id,user) => { 
+    get: async (id,user) => {
         try {
             const jobs = await Jobs.findById(id);
 
@@ -78,7 +78,7 @@ module.exports = {
         }
     },
 
-    create: async (body) => { 
+    create: async (body) => {
         try {
             const jobs = await Jobs.create(body);
             if (jobs) {
@@ -142,7 +142,7 @@ module.exports = {
             if (activity) {
                 count = activity.length
             }
-            
+
 
             const total  = await Activity.countDocuments({
                 module: "job"
@@ -189,7 +189,7 @@ module.exports = {
             }
             return null
         } catch (error) {
-            
+
             throw error;
         }
     },
@@ -222,11 +222,11 @@ module.exports = {
               $lte: new Date()
             }
           });
-            
+
             if (!expiredJobs || !expiredJobs.length) {
                 return true
             }
-      
+
           if (expiredJobs.length > 0) {
             const expiredJobIds = expiredJobs.map((job) => job._id);
               await Jobs.deleteMany({ _id: { $in: expiredJobIds } });
@@ -246,24 +246,24 @@ module.exports = {
                     status: "Successful"
                   }
                 };
-                return Activity.create(activity); 
+                return Activity.create(activity);
               });
-              
+
               try {
                 await Promise.all(activityPromises);
               } catch (err) {
                 console.log(err)
               }
-            
+
           }
-      
+
           return true;
         } catch (error) {
           console.error(error);
           return false
         }
     },
-    
+
     createScrapedJobs: async ({ searchTag, q, posted,expires }) => {
         try {
 
@@ -271,13 +271,14 @@ module.exports = {
             let dataUpload = []
 
             let scrapedjobs = []
-             
+
             try {
                 scrapedjobs = await scraper.scrapeJobsIndeed({ searchTag, q })
+                return scrapedjobs
             } catch (err) {
                 console.log(err)
             }
-            
+
             let insertJobObj = {}
             let full_data = []
 
@@ -288,7 +289,7 @@ module.exports = {
                     insertJobObj.company = scrapedJob.company;
                     insertJobObj.exp = "N/A";
                     insertJobObj.location = `${scrapedJob.location}, Nigeria`;
-                    insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
+                    insertJobObj.workplaceType = scrapedJob.workplaceType || "Onsite";
                     insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
                     insertJobObj.datePosted = new Date();
                     insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
@@ -297,11 +298,12 @@ module.exports = {
                     insertJobObj.poster = scrapedJob.poster;
                     insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
                 }
-                    
+
                     if (JSON.stringify(insertJobObj) !== '{}') {
                         dataUpload.push(insertJobObj);
 
-                    const updatedJobs = await jobs.insertMany(dataUpload)
+                        console.log(dataUpload)
+                    //await jobs.insertMany(dataUpload)
 
                     const activityPromises = dataUpload.map((jobs) => {
                     const activity = {
@@ -319,16 +321,16 @@ module.exports = {
                             status: "Successful"
                         }
                         };
-                        return Activity.create(activity); 
+                        return Activity.create(activity);
                     });
-                    
+
                     try {
-                        await Promise.all(activityPromises);
+                       // await Promise.all(activityPromises);
                     } catch (err) {
                         console.log(err)
                     }
                     }
-                    
+
                     full_data.push(updatedJobs)
                     dataUpload = []
                 }
@@ -348,15 +350,15 @@ module.exports = {
                     code: "01"
                 })
             }
-            
+
             throw err
         }
     }
-      
+
 
     // rate: async (id, rating) => {
     //     try {
-    //         const body = { 
+    //         const body = {
     //             user_id: rating.user_id,
     //             rating: rating.rating
     //          };

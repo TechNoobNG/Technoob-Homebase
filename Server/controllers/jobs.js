@@ -2,7 +2,7 @@ const services = require('../services/index');
 const jobs = services.jobs;
 
 module.exports = {
-     async get_all (req, res) { 
+     async get_all (req, res) {
         const query = req.query
         try {
             const job = await jobs.get_all(query)
@@ -19,7 +19,7 @@ module.exports = {
         }
     },
 
-    async get(req, res, next) { 
+    async get(req, res, next) {
         const id = req.params.id
         const user = req.user?._id || 0
         try {
@@ -37,7 +37,7 @@ module.exports = {
         }
     },
 
-    async getMetrics(req, res, next) { 
+    async getMetrics(req, res, next) {
         try {
             const jobsMetrics = await jobs.getMetrics()
             res.status(200).json({
@@ -53,7 +53,7 @@ module.exports = {
         }
     },
 
-    async create (req, res, next) { 
+    async create (req, res, next) {
         const body = req.body
         if (!body.uploader_id) {
             body.uploader_id = req.user?._id || '643492bb86360e05476576f9'
@@ -122,5 +122,24 @@ module.exports = {
             })
         }
     },
+
+    async scrape(req, res) {
+
+        const { searchTag, q, posted, expires } = req.body;
+
+        try {
+            const jobScraped = await jobs.createScrapedJobs({ searchTag, q, posted, expires })
+            res.status(201).json({
+                status: "success",
+                data: jobScraped
+            })
+        } catch (err) {
+            res.status(400).json({
+                status: "fail",
+                message: err.message
+            })
+        }
+    },
+
 
 }

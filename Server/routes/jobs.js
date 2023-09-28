@@ -11,5 +11,5 @@ router.post('/create',  middleware.auth.isAuthenticated, middleware.auth.hasPerm
 router.get('/count',  middleware.auth.isAuthenticated, jobs.count)
 router.post('/delete/:id', middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:Removejobs'),jobs.remove)
 router.get('/activity', middleware.auth.isAuthenticated, jobs.getActivity)
-
+router.post('/automation/scrape',middleware.auth.isAuthenticated, jobs.scrape )
 module.exports = router;
