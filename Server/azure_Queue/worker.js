@@ -80,9 +80,6 @@ module.exports = function () {
       maximumRetries: 3
       });
 
-      app.on("starting", () => {
-        console.log("worker script start")
-      })
 
       app.on('error', async (err) => {
         console.log(err.message);
