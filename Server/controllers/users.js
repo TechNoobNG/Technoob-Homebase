@@ -1,4 +1,5 @@
-const services = require("../services/index")
+const services = require("../services/index");
+const { mailing_list } = require("../services/user");
 const users = services.user
 const db_worker = require('../utils/child')
 
@@ -168,12 +169,12 @@ module.exports = {
     },
 
     async getAll(req, res) {
-        const params = req.query
+        const query = req.query
         try {
-            const user = await users.getAll()
+            const user = await users.getAll(query)
             return res.status(201).json({
                 status: "success",
-                message: `${user.length} users found`,
+                message: `${user.count} users found`,
                 data: user
             })
         } catch (err) {
@@ -195,7 +196,26 @@ module.exports = {
                 data: contact
             })
         } catch (err) {
-            console.log(err)
+            return res.status(500).json({
+                status: "error",
+                message: err.message
+            })
+        }
+    },
+
+    async mailing_list(req, res) {
+        const { email } = req.body
+
+        try {
+            await users.mailing_list(email)
+            return res.status(201).json(
+                {
+                    status: "Success",
+                    message: "Added Successfully",
+                }
+            )
+        } catch (err) {
+            
             return res.status(500).json({
                 status: "error",
                 message: err.message

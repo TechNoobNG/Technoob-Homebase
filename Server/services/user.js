@@ -1,5 +1,7 @@
 const Contact = require('../models/contact_us');
+const mailing_list = require('../models/mailing_list');
 const User = require('../models/user');
+
 
 
 module.exports = {
@@ -12,6 +14,7 @@ module.exports = {
         if (invalidUpdate) {
             throw new Error('Invalid Parameters')
         }
+        
         try {
             const user = await User.findOneAndUpdate({ _id: id }, params, { new: true })
             return user
@@ -90,10 +93,24 @@ module.exports = {
         }
     },
 
-    async getAll() {
+    async getAll(query) {
         try {
+            let page = query.page || 1;
+            let limit = query.limit || 5;
+            let skip = (page - 1) * limit;
+            let count = 0;
             const users = await User.find().select('+active')
-            return users
+                .skip(skip)
+                .limit(limit);
+            if (users) {
+                count = users.length
+            }
+            return {
+                users,
+                page,
+                limit,
+                count
+            };
         } catch (err) {
             throw err
         }
@@ -107,6 +124,39 @@ module.exports = {
         } catch (err) {
             throw err
         }
+    },
+
+    async  mailing_list(email) {
+        const temporaryDomains = [
+            'tempmail.com',
+            'guerrillamail.com',
+            'mailinator.com',
+        ];
+        
+        const [, domain] = email.split('@');
+        if (temporaryDomains.includes(domain)) {
+            throw new Error('Invalid Email Address');
+        }
+
+        const response = await mailing_list.create({ email })
+       return response
+
+    },
+    
+    async getMetrics() {
+        try {
+            const users = await User.find().select('+active')
+            const total = users.length
+            const active = users.filter(user => user.active === true).length
+            const inactive = users.filter(user => user.active === false).length
+            return {
+                total,
+                active,
+                inactive
+            }
+        } catch (err) {
+            throw err
+        }
     }
-     
+
 }

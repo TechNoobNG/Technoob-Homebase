@@ -1,9 +1,11 @@
 const auth = require('./auth')
-const multer = require('./multer')
+const uploadStrategy = require('./uploadStrategy')
 const sanitizer = require('./sanitizer')
+const traffic = require('./traffic')
 
 module.exports = {
     auth,
-    multer,
-    sanitizer
+    uploadStrategy,
+    sanitizer,
+    traffic
 }

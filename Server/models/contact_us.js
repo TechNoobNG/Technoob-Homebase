@@ -3,8 +3,6 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(`${__dirname}/../config/config.js`)[env];
 const Schema = mongoose.Schema;
 
-
-
 const contact_us = new Schema({
     name: {
         type: String,
@@ -16,15 +14,18 @@ const contact_us = new Schema({
     email: {
         type: String,
         required: [true, 'Please provide your email'],
-        trim: true
+        trim: true,
+        unique: false
     },
     message: {
         type: String,
         required: [true, 'Please provide your Message'],
-        trim: true
+        unique: false
 
     }
 
+},{
+    timestamps: true
 });
 
 

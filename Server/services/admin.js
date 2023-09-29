@@ -3,10 +3,63 @@ const uuid = require('uuid');
 const Admin = require('../models/admin');
 const Permissions = require('../models/permissions');
 const User = require('../models/user');
-const mailer = require('../utils/azure_mailer');
-
+const mailing_list = require('../models/mailing_list');
+const contact_us = require('../models/contact_us');
+const frontend_resources = require('../models/frontend_resources');
+const contributors = require('../models/contributors');
+const resources = require('../services/resources')
+const users = require('../services/user');
+const traffic = require('../services/traffic');
+const queue = require('../azure_Queue/init');
 
 module.exports = {
+
+    async adminDashboard() {
+        try {
+            const resourceMetrics = await resources.getMetrics()
+            const userMetrics = await users.getMetrics()
+            const now = new Date();
+            const trafficMetric = await traffic.getMonthlyTrafficForYear(now.getFullYear())
+            return {
+                resourceMetrics,
+                userMetrics,
+                trafficMetric
+            }
+        } catch (err) {
+            throw err
+        }
+       
+    },
+
+    async traffic(range) {
+        try {
+            if (range.year) {
+                const now = new Date();
+                return traffic.getTotalTrafficByYear(now.getFullYear())
+            }
+            if (range.halfYear) {
+                return traffic.getMetricsForLastSixMonths
+            }
+
+            if (range.quaterYear) {
+                return traffic.getMetricsLastThreeMonths
+            }
+
+            if (range.month) {
+                return traffic.getMetricsLastThirtyDays
+            }
+
+            if (range.week) {
+                return traffic.getMetricsLastSevenDays
+            }
+
+            return null
+        } catch (err) {
+            throw err
+        }
+       
+    },
+
     async saveMailTemplate(data) {
         
         return await Templates.create({
@@ -15,7 +68,7 @@ module.exports = {
             id: uuid.v4()
         })
     },
-    async inviteAdmin(email) {
+    async inviteAdmin(email,admin_user) {
         try {
             //check if user already exists
             const user = await User.findOneAndUpdate({ email }, { role: 'admin' }, { new: true });
@@ -24,24 +77,36 @@ module.exports = {
                 throw new Error('User not found')
             }
 
-            let admin = await Admin.findOrCreate(user._id, 'admin', ['*'])
+            let admin = await Admin.find({
+                user_id: user._id
+            })
+
             let sendemail = admin.isActive ? false : true
-            if (admin) {
-                admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: true }, { new: true })
+            if (!admin.length) {
+                admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: true, permissions: [], role: "admin" }, { new: true, upsert: true })
+                sendemail = true
+            } else {
+                admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: true, permissions: [] }, { new: true })
             }
 
             if (sendemail) {
                 const constants = {
-                    username: user.username
+                    username: user.username,
+                    inviter: admin_user.username
                 }
                 const mailOptions = {
                     email: user.email,
                     subject: 'You have been invited to be an admin',
                     constants,
-                    template_id: "Admin Invite",
+                    template_id: "65073144b75ffcbbdac0cb82",
                     username: user.username
                 }
-                await mailer.sendEmail(mailOptions)
+                await queue.sendMessage({
+                    name: "SingleEmail",
+                    import: "../utils/azure_mailer",
+                    method: "sendEmail",
+                    data: mailOptions
+                })
 
             }
             const response = {
@@ -51,7 +116,6 @@ module.exports = {
 
             return response
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -88,10 +152,16 @@ module.exports = {
                 email: email,
                 subject: "Your admin access has been revoked",
                 constants,
-                template_id: "Admin Removed",
+                template_id: "65089456f670e1f4a9ef29f8",
                 username: user.username
             }
-            await mailer.sendEmail(mailOptions)
+            await queue.sendMessage({
+                name: "SingleEmail",
+                import: "../utils/azure_mailer",
+                method: "sendEmail",
+                data: mailOptions
+            })
+  
             return response
         } catch (err) {
             console.log(err)
@@ -101,7 +171,6 @@ module.exports = {
     async create_permission(team, data) {
         try {
             const { name, description } = data;
-            console.log(name, description)
             const permission = `${team}:${name.split(' ').join('')}`
             const newPermission = new Permissions({ name, permission, team, description });
             await newPermission.save();
@@ -111,10 +180,24 @@ module.exports = {
             throw err
         }
     },
-    async getMailTemplates() {
+    async getMailTemplates(query) {
         try {
-            const templates = await Templates.find();
-            return templates
+            let page = query.page || 1;
+            let limit = query.limit || 5;
+            let skip = (page - 1) * limit;
+            let count = 0;
+            const templates = await Templates.find()
+                .skip(skip)
+                .limit(limit);
+            if (templates) {
+                count = templates.length
+            }
+            return {
+                templates,
+                page,
+                limit,
+                count
+            };
         }
         catch (err) {
             console.log(err)
@@ -235,7 +318,6 @@ module.exports = {
             return admin
 
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -293,8 +375,16 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            const mail_response = await mailer.sendToMany(mailOptions)
-            return mail_response
+            await queue.sendMessage({
+                name: "BulkStaticEmail",
+                import: "../utils/azure_mailer",
+                method: "sendToMany",
+                data: mailOptions
+            })
+
+            return {
+                message: "Email Queued Successfully"
+            }
         } catch (err) {
             console.log(err)
             throw err
@@ -326,12 +416,146 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            const mail_response = await mailer.sendToManyStatic(mailOptions)
-            return mail_response
+            await queue.sendMessage({
+                name: "BulkStaticEmail",
+                import: "../utils/azure_mailer",
+                method: "sendToManyStatic",
+                data: mailOptions
+            })
+
+            return {
+                message: "Email Queued Successfully"
+            }
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
+    async getMailingList(query) {
+        try {
+            let page = query.page || 1;
+            let limit = query.limit || 5;
+            let skip = (page - 1) * limit;
+            let count = 0;
+            const mailingList = await mailing_list.find()
+                .skip(skip)
+                .limit(limit);
+
+            if (mailingList) {
+                count = mailingList.length
+            }
+            return {
+                mailingList,
+                page,
+                limit,
+                count
+            };
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+    
+    async getContactUs(query) {
+        try {
+            const contactUs = await contact_us.find();
+            return contactUs
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
+    async deleteContactUs(id) {
+        try {
+            const contactUs = await contact_us.findByIdAndRemove(id);
+            if (!contactUs) {
+                throw new Error('Contact Us not found')
+            }
+            const response = {
+                message: 'Contact Us deleted successfully',
+                contactUs
+            }
+            return response
+        }
+        catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
+    async deleteMailingList(id) {
+        try {
+            const mailingList = await mailing_list.findByIdAndRemove(id);
+            if (!mailingList) {
+                throw new Error('Mailing List not found')
+            }
+            const response = {
+                message: 'Mailing List deleted successfully',
+                mailingList
+            }
+            return response
+        }
+        catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
+
+    async addMailingList(email) {
+        try {
+            const check_mailing_list = await mailing_list.findOne({ email });
+            if (check_mailing_list) {
+                throw new Error('Email already exists')
+            }
+            const mailingList = await mailing_list.create({ email });
+            return mailingList
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
+    async getContactUsMessage(id) {
+        try {
+            const contactUs = await contact_us.findById(id);
+            if (!contactUs) {
+                throw new Error('Contact Us not found')
+            }
+            return contactUs
+        } catch (err) {
+            throw err
+        }
+    },
+
+    async createFrontendResource(data) {
+        try {
+            return frontend_resources.create(data)
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+
+    },
+
+    async getContributors() {
+        try {
+            return contributors.find()
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+
+    },
+
+    async addContributors(data) {
+        try {
+            return await contributors.create(data)
         } catch (err) {
             console.log(err)
             throw err
         }
     }
-
 }

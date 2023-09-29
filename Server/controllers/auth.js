@@ -6,6 +6,7 @@ const passport = require('passport');
 const services = require('../services/index');
 const auth = services.auth;
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken')
 const baseurl = config.LIVE_BASE_URL;
 const validator = require('../utils/joi_validator');
 
@@ -23,18 +24,35 @@ module.exports = {
                         message: info.message
                     })
                 }
-                req.login(user, (err) => {
-                    if (err) {
-                        return next(err);
-                    }
-                    res.status(200).json({
-                        status: 'success',
-                        message: `Logged in ${user.username}`,
-                        data: {
-                            user
+
+                if (user) {
+                    req.login(user,{ session: true }, async (err) => {
+                        if (err) {
+                            return next(err);
                         }
-                    })
-                });
+                        const token = jwt.sign({
+                            user: {
+                                _id: user._id,
+                                email: user.email,
+                                username: user.username
+                            }
+                        }, config.JWT_SECRET);
+
+                        // res.setHeader("isAuthenticated", true)
+                        // res.setHeader("userId", user._id)
+                        res.setHeader("sessionExpiresAt",req.session.cookie.expires)
+    
+                        res.status(200).json({
+                            status: 'success',
+                            message: `Logged in ${user.username}`,
+                            data: {
+                                user
+                            },
+                            token
+                        })
+                    });
+                }
+                
             })(req, res, next);
         } catch (err) { 
             next(err);
@@ -65,11 +83,90 @@ module.exports = {
             if (err) {
                 console.log(err);
             }
+            res.setHeader("isAuthenticated", false)
         });
         res.status(200).json({
             status: 'success',
             message: 'Logged out'
         })
+    },
+
+    async verifyEmail(req, res) {
+        const token = req.query.token
+        try {
+            const user = await auth.verifyUserEmail(token)
+            if (!user) throw new Error("An error occured")
+            const render_payload = {
+                title: "Email Verifcation" ,
+                status: 'success',
+                username: user.username,
+                message: `Email Verified  Successfully`,
+            }
+            return res.render('email-verification.jade', { render_payload, title: "Verify Email"});
+        } catch (err) {
+            err.status = 500
+            err.message = "Internal Service Error"
+            if (err instanceof jwt.JsonWebTokenError || err instanceof jwt.TokenExpiredError) {
+                err.message = "Invalid/Expired Token"
+                err.status = 400
+            }
+            return res.render('error.jade', {err, title: "Error Page"});
+        }
+    },
+
+    async forgotPasswordEmail(req,res) {
+        const { email } = req.body
+        try {
+            const reset = await auth.forgotPasswordEmail(email)
+            if(!reset) throw new Error("An error occured")
+            return  res.status(200).json({
+                status: 'success',
+                message: `Email Sent`,
+            })
+        } catch (err) {
+            return res.status(500).json({
+                status: 'Failed',
+                message: "User password reset failed, please contact admin",
+            })
+        }
+    },
+
+    async reset_password(req, res) {
+        const { password, passwordConfirm } = req.body
+        const token = req.query.token || req.body.token
+        try {
+            const reset = await auth.resetPassword(token, password, passwordConfirm)
+            if (!reset) throw new Error("An error occured")
+            return  res.status(200).json({
+                status: 'success',
+                message: `Password reset successful`,
+            })
+        } catch (err) {
+            return res.status(500).json({
+                status: 'Failed',
+                message: "User password reset failed, please contact admin",
+            })
+        }
+    },
+    async change_password(req, res) {
+        const token = req.query.token
+        try {
+            const user = await auth.checkResetToken(token);
+
+            const profile = {
+                username: user[0].username,
+                photo: user[0].photo,
+                token
+            }
+            if (!profile) throw new Error("Invalid Request")
+            return  res.render('reset-password.jade', {profile ,title: "Change Password" });
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                status: 'Failed',
+                message: "User password reset failed, please contact admin",
+            })
+        }
     },
 
     googlelogin(req, res) {
@@ -125,6 +222,14 @@ module.exports = {
         try {
             const profile = req.session.github_profile;
             res.render('email-form.jade', { profile: profile, title: "Github Email" });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    resetPasswordView(req, res, next) {
+        try {
+           return res.render('reset-password.jade', { title: "Password Reset" });
         } catch (error) {
             next(error);
         }

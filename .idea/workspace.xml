@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="00e7749f-a6c8-47fc-9b50-e9b4de138a83" name="Changes" comment="bug fixes and pagination">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Client/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/activity.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/activity.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/contact_us.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/contact_us.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/contributors.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/contributors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/email_templates.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/email_templates.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/events.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/events.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/frontend_resources.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/frontend_resources.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/jobs.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/jobs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/mailing_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/mailing_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/permissions.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/permissions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/quizTracker.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/quizTracker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/quizzes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/quizzes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/resources.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/resources.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/trafficMetrics.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/trafficMetrics.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/jobs.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/jobs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/resources.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/resources.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Oluwatobiloba &lt;oluwatobiloba.f.a@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev_client" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2T4VJW2olZcvLpq3gYuIbtLwLjU" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev__server&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="ReactDesignerToolWindowState">
+    <option name="myId2Visible">
+      <map>
+        <entry key="com.haulmont.rcb.reactComponents" value="false" />
+        <entry key="com.haulmont.rcb.reactInspector" value="false" />
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="npm.start">
+    <configuration name="default" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/Client/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="default" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/Server/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.default" />
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.default" />
+        <item itemvalue="npm.start" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="00e7749f-a6c8-47fc-9b50-e9b4de138a83" name="Changes" comment="Add contributors" />
+      <created>1690302273569</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1690302273569</updated>
+      <workItem from="1690302295113" duration="5475000" />
+      <workItem from="1692370181089" duration="7910000" />
+      <workItem from="1692470184753" duration="2371000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="upload progress pending server tweak" />
+    <MESSAGE value="bug fixes and pagination" />
+    <option name="LAST_COMMIT_MESSAGE" value="bug fixes and pagination" />
+  </component>
+</project>

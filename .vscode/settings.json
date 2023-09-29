@@ -1,3 +1,11 @@
 {
-    "dotenv.enableAutocloaking": false
+    "dotenv.enableAutocloaking": false,
+    "azureFunctions.deploySubpath": "Function-Worker",
+    "azureFunctions.postDeployTask": "npm install (functions)",
+    "azureFunctions.projectLanguage": "JavaScript",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.projectLanguageModel": 4,
+    "azureFunctions.preDeployTask": "npm prune (functions)",
+    "compile-hero.disable-compile-files-on-did-save-code": true
 }

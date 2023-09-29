@@ -6,7 +6,9 @@ const User = require('../models/user');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const crypto = require('crypto');
 const GithubStrategy = require('passport-github2').Strategy;
-const mailer = require('../utils/azure_mailer')
+const mailer = require('../utils/azure_mailer');
+const JWTstrategy = require('passport-jwt').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 passport.use(
     new LocalStrategy(
@@ -16,16 +18,52 @@ passport.use(
         },
         async (username, password, done) => {
             try {
-                const user = await User.findOne({ username }).select('+password').select('+active');
+                let user = await User.findOne({ username }).select('+password').select('+active');
                 if (!user) return done(null, false, { message: 'Incorrect email or password.' });
                 const isMatch = await user.comparePassword(password);
                 if (!isMatch) return done(null, false, { message: 'Incorrect email or password.' });
+
+                user = {
+                    _id: user._id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    username: user.username,
+                    email: user.email,
+                    stack: user.stack,
+                    photo: user.photo,
+                    active: user.active,
+                    role: user.role,
+                    verified: user.verified
+                }
                 return done(null, user);
             } catch (err) {
                 throw err;
             }
         },
     ),
+);
+
+
+passport.use('authenticate',
+  new JWTstrategy(
+    {
+      secretOrKey: config.JWT_SECRET,
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+    },
+    async (token, done) => {
+        try {
+            const username = token.user.username
+            let user = await User.findOne({ username });
+            if (user) {
+                return done(null,user)
+            }
+        
+        return done(null, false );
+      } catch (error) {
+        done(error,false);
+      }
+    }
+  )
 );
 
 
