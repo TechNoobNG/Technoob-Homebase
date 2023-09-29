@@ -1,8 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: staging-server-deployment-to-azure-app-service
-
+name: staging-server-deployment-to-aws-beanstalk
 on:
   push:
     branches:
@@ -26,6 +25,18 @@ jobs:
         with:
           node-version: '20.x'
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: npm install, build, and test
         run: |
           npm install
@@ -33,130 +44,39 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-      - name: Zip artifact for deployment
+      - name: Build and push
         run: |
-          zip release.zip ./* -r
-          ls
-          pwd
+          docker build --platform linux/amd64 -t oluwatobiiloba/technoobstaging:latest .
+          docker push oluwatobiiloba/technoobstaging:latest
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+      - name: Get Timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run String Replace
+        uses: frabert/replace-string-action@master
+        id: format-time
         with:
-            name: node-app
-            path: ./Server/release.zip
+          pattern: '[:\.]+'
+          string: "${{ steps.current-time.outputs.time }}"
+          replace-with: '-'
+          flags: 'g'
 
-  deploy-server:
-    runs-on: ubuntu-latest
-    needs: build-server
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      - name: Generate Deployment Package
+        run: zip -r deploy.zip * -x "**node_modules**"
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: node-app
-          path: Server
-
-      - name: unzip artifact for deployment
+      - name: npm install, build, and test
         run: |
           ls
-          pwd
-          unzip release.zip
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v21
         with:
-          app-name: 'technoob-staging'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1ED0C7AB1FD14BCEBAE4D5C3C50431DF }}
-          package: .
-
-  deploy-worker-instance:
-    runs-on: ubuntu-latest
-    needs: build-server
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18.x'
-
-      - name: Install Dependencies
-        run: |
-          npm install
-          npm run test --if-present
-
-
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: technoob-worker
-          heroku_email: ooluwatobiiloba@gmail.com
-          buildpack: 'heroku/nodejs'
-          app_dir: '.'
-
-      - name: Restart Dyno
-        run: heroku ps:restart --app technoob-worker
-
-      - name: Innstall Pupetter globally
-        run: npm install -g puppeteer
-
-      - name: Innstall Packages
-        run: npm install
-
-      - name: Start worker instance
-        run: heroku ps:scale worker=1 --app technoob-worker
-
-  deploy-cron-worker-instance:
-    runs-on: windows-latest
-    needs: deploy-worker-instance
-    steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v2
-
-      - name: Setup Node ${{ env.NODE_VERSION }} Environment
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: pwsh
-        run: |
-          pushd .
-          ls
-          cp Function-Worker/package.json package.json
-          cp Function-Worker/host.json host.json
-          ls
-          npm install
-          cd Function-Worker/
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-          popd
-        working-directory: .
-
-
-      - name: Update 'main' in package.json
-        run: |
-          ls
-          node update-package.js
-        working-directory: .
-
-
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
-        id: fa
-        with:
-          app-name: 'NoobscheduledJobs'
-          slot-name: 'Production'
-          package: '.'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_15F8E0BAAF7A44DE9CD7D39C0BE9E50B }}
-
-
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: technoobstaging
+          environment_name: Technoobstaging-env
+          version_label: "docker-app-${{ steps.format-time.outputs.replaced }}"
+          region: eu-west-2
+          deployment_package: ./Server/deploy.zip
 

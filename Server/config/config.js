@@ -21,7 +21,7 @@ module.exports = {
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
         COMMUNICATION_SERVICES_CONNECTION_STRING: process.env.COMMUNICATION_SERVICES_CONNECTION_STRING,
-        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'technoob-staging.azurewebsites.net',
+        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'http://technoobstaging-env.eba-izgw9fe4.eu-west-2.elasticbeanstalk.com',
         HONEYBADGER_KEY: process.env.HONEYBADGER_KEY,
         AZURE_STORAGE_CONNECTION_STRING: process.env.AZURE_STORAGE_CONNECTION_STRING,
         AZURE_QUEUE_NAME: process.env.AZURE_QUEUE_NAME,
@@ -34,32 +34,18 @@ module.exports = {
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "http://localhost:3000",
-                "https://technoob-client-staging.herokuapp.com",
-                "https://technoob-client.herokuapp.com",
                 "http://127.0.0.1:3000",
-                "https://technoob-staging.azurewebsites.net",
-                "https://technoob.tech",
                 "https://www.technoob.tech",
-                "http://technoob.tech",
-                "http://www.technoob.tech",
-                "technoob-78121a48c9b8.herokuapp.com",
-                "https://technoob-78121a48c9b8.herokuapp.com",
                 "http://technoobstaging.s3-website.eu-west-2.amazonaws.com"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
-                "junior software developer",
-                "junior product designer",
-                "junior product manager",
-                "junior project manager",
-                "junior devops",
-                "junior cloud engineer",
-                "junior ui/ux designer",
-                "junior backend developer",
+                "junior product ui/ux designer",
+                "junior product project manager scrum master",
+                "junior cloud devops engineer",
+                "junior backend software mobile frontend developer",
                 "junior QA",
-                "junior mobile developer",
-                "junior frontend developer",
-                "Junior customer Service"
+                "Junior customer Service support"
             ]
 
     },
@@ -77,7 +63,7 @@ module.exports = {
         JWT_COOKIE_EXPIRES_IN: process.env.JWT_COOKIE_EXPIRES_IN,
         SALT_ROUNDS: process.env.SALT_ROUNDS * 1 || 12,
         TOKEN_EXPIRATION_TIME: process.env.TOKEN_EXPIRATION_TIME || '10m',
-        SESSION_SECRET: process.env.SESSION_SECRET,
+        SESSION_SECRET: process.env.SESSION_SECRET || 'technoob',
         HOST: OS.hostname(),
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
@@ -97,32 +83,20 @@ module.exports = {
         SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
-                "http://localhost:3000",
-                "https://technoob-client-staging.herokuapp.com",
-                "https://technoob-client.herokuapp.com",
-                "http://127.0.0.1:3000",
-                "https://technoob-staging.azurewebsites.net",
                 "https://technoob.tech",
                 "https://www.technoob.tech",
                 "http://technoob.tech",
                 "http://www.technoob.tech",
                 "technoob-78121a48c9b8.herokuapp.com",
-                "https://technoob-78121a48c9b8.herokuapp.com"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
-                "junior software developer",
-                "junior product designer",
-                "junior product manager",
-                "junior project manager",
-                "junior devops",
-                "junior cloud engineer",
-                "junior ui/ux designer",
-                "junior backend developer",
+                "junior product ui/ux designer",
+                "junior product project manager scrum master",
+                "junior cloud devops engineer",
+                "junior backend software mobile frontend developer",
                 "junior QA",
-                "junior mobile developer",
-                "junior frontend developer",
-                "Junior customer Service"
+                "Junior customer Service support"
             ]
 
     },
@@ -157,33 +131,16 @@ module.exports = {
             SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
             ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
                 [
-                    "http://localhost:3000",
-                    "https://technoob-client-staging.herokuapp.com",
-                    "https://technoob-client.herokuapp.com",
-                    "http://127.0.0.1:3000",
-                    "https://technoob-staging.azurewebsites.net",
-                    "https://technoob.tech",
-                    "https://www.technoob.tech",
-                    "http://technoob.tech",
-                    "http://www.technoob.tech",
-                    "technoob-78121a48c9b8.herokuapp.com",
-                    "https://technoob-78121a48c9b8.herokuapp.com",
-                    "http://technoobstaging.s3-website.eu-west-2.amazonaws.com"
+                    "http://localhost:3000"
                 ],
             SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
                 [
-                    "junior software developer",
-                    "junior product designer",
-                    "junior product manager",
-                    "junior project manager",
-                    "junior devops",
-                    "junior cloud engineer",
-                    "junior ui/ux designer",
-                    "junior backend developer",
-                    "junior QA",
-                    "junior mobile developer",
-                    "junior frontend developer",
-                    "Junior customer Service"
+                "junior product ui/ux designer",
+                "junior product project manager scrum master",
+                "junior cloud devops engineer",
+                "junior backend software mobile frontend developer",
+                "junior QA",
+                "Junior customer Service support"
             ],
             LISTENER: process.env.LISTENER || true,
     }
