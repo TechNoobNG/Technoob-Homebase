@@ -44,8 +44,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
           push: true
           tags: technoob/technoobstaging:latest
           platforms: linux/arm64,linux/amd64
