@@ -111,7 +111,7 @@ jobs:
         run: npm install
 
       - name: Start worker instance
-        run: heroku ps:scale worker=3 --app technoob-worker
+        run: heroku ps:scale worker=1 --app technoob-worker
 
   deploy-cron-worker-instance:
     runs-on: windows-latest
