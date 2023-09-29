@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: technoob_staging
+          file: Dockerfile
           push: true
           tags: technoob/technoobstaging:latest
           platforms: linux/arm64,linux/amd64
