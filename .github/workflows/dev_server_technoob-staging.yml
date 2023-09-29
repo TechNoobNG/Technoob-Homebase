@@ -25,6 +25,10 @@ jobs:
         with:
           node-version: '20.x'
 
+      - name: npm install, build, and test
+        run: |
+          ls
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
