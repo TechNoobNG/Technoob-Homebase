@@ -61,8 +61,6 @@ jobs:
 
       - name: unzip artifact for deployment
         run: |
-          ls
-          pwd
           unzip release.zip
 
       - name: 'Deploy to Azure Web App'
@@ -104,10 +102,10 @@ jobs:
       - name: Restart Dyno
         run: heroku ps:restart --app technoob-worker
 
-      - name: Innstall Pupetter globally
+      - name: Install Pupetter globally
         run: npm install -g puppeteer
 
-      - name: Innstall Packages
+      - name: Install Packages
         run: npm install
 
       - name: Start worker instance

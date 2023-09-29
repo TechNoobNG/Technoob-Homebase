@@ -78,5 +78,5 @@ jobs:
           environment_name: Technoobstaging-env
           version_label: "docker-app-${{ steps.format-time.outputs.replaced }}"
           region: eu-west-2
-          deployment_package: deploy.zip
+          deployment_package: ./Server/deploy.zip
 
