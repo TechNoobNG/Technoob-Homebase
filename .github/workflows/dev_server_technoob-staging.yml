@@ -49,13 +49,9 @@ jobs:
           npm run test --if-present
 
       - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: .Server/Dockerfile
-          push: true
-          tags: technoob/technoobstaging:latest
-          platforms: linux/arm64,linux/amd64
+        run: |
+          docker build --platform linux/amd64 -t technoob/technoobstaging:latest .
+          docker push technoob/technoobstaging:latest
 
       - name: Get Timestamp
         uses: gerred/actions/current-time@master
