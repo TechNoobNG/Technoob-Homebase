@@ -8,7 +8,7 @@ on:
     branches:
       - dev_server
   workflow_dispatch:
-  
+
 defaults:
   run:
     working-directory: Server
@@ -17,7 +17,7 @@ defaults:
 jobs:
   build-server:
     runs-on: ubuntu-latest
-  
+
     steps:
       - uses: actions/checkout@v2
 
@@ -29,7 +29,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
-          npm install -g pm2@latest 
+          npm install -g pm2@latest
           npm run build --if-present
           npm run test --if-present
 
@@ -38,7 +38,7 @@ jobs:
           zip release.zip ./* -r
           ls
           pwd
-        
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
@@ -63,7 +63,7 @@ jobs:
         run: |
           ls
           pwd
-          unzip release.zip 
+          unzip release.zip
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -111,7 +111,7 @@ jobs:
         run: npm install
 
       - name: Start worker instance
-        run: heroku ps:scale worker=1 --app technoob-worker
+        run: heroku ps:scale worker=3 --app technoob-worker
 
   deploy-cron-worker-instance:
     runs-on: windows-latest
@@ -137,17 +137,17 @@ jobs:
           cd Function-Worker/
           npm install
           npm run build --if-present
-          npm run test --if-present 
+          npm run test --if-present
           popd
         working-directory: .
-        
+
 
       - name: Update 'main' in package.json
         run: |
           ls
           node update-package.js
         working-directory: .
-        
+
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
@@ -158,5 +158,5 @@ jobs:
           package: '.'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_15F8E0BAAF7A44DE9CD7D39C0BE9E50B }}
 
-            
-        
+
+
