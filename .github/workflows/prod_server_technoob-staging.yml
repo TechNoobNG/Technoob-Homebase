@@ -127,10 +127,8 @@ jobs:
         shell: pwsh
         run: |
           pushd .
-          ls
           cp Function-Worker/package.json package.json
           cp Function-Worker/host.json host.json
-          ls
           npm install
           cd Function-Worker/
           npm install
