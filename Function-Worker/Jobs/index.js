@@ -26,7 +26,7 @@ module.exports = {
         try {
             const queue = require('../../Server/azure_Queue/init');
             const honeybadger = require('../../Server/utils/honeybadger');
-            const config = require('../../Server/config/config')['development'];
+            const config = require('../../Server/config/config')['production'];
             const automations = require('../automations/scraper')
             const stackKeywords = config.SCRAPE_STACK_KEYWORDS || [
                 "junior product ui/ux designer",

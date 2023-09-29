@@ -1,7 +1,7 @@
 const { app } = require('@azure/functions');
 
 try {
-    const config = require('../../../Server/config/config')['development'];
+    const config = require('../../../Server/config/config')['production'];
     const q = config.SCRAPER_QUANTITY;
     const posted = config.SCRAPER_OLDEST_JOB_FETCH || 4;
     const expires = config.SCRAPED_JOBS_EXPIRES;
