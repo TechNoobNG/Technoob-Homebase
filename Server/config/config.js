@@ -43,7 +43,8 @@ module.exports = {
                 "http://technoob.tech",
                 "http://www.technoob.tech",
                 "technoob-78121a48c9b8.herokuapp.com",
-                "https://technoob-78121a48c9b8.herokuapp.com"
+                "https://technoob-78121a48c9b8.herokuapp.com",
+                "http://technoobstaging.s3-website.eu-west-2.amazonaws.com"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
