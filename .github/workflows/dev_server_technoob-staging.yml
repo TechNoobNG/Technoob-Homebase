@@ -47,7 +47,7 @@ jobs:
           context: .
           file: technoob_staging
           push: true
-          tags: technoob/technoobStaging:latest
+          tags: technoob/technoobstaging:latest
           platforms: linux/arm64,linux/amd64
 
       - name: Get Timestamp

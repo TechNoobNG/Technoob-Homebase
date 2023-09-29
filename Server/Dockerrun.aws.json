@@ -2,7 +2,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-        "Name": "technoob/technoobStaging:latest",
+        "Name": "technoob/technoobstaging:latest",
         "Update": "true"
     },
     "Ports": [
