@@ -50,8 +50,8 @@ jobs:
 
       - name: Build and push
         run: |
-          docker build --platform linux/amd64 -t technoob/technoobstaging:latest .
-          docker push technoob/technoobstaging:latest
+          docker build --platform linux/amd64 -t oluwatobiiloba/technoobstaging:latest .
+          docker push oluwatobiiloba/technoobstaging:latest
 
       - name: Get Timestamp
         uses: gerred/actions/current-time@master

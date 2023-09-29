@@ -2,7 +2,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-        "Name": "technoob/technoobstaging:latest",
+        "Name": "oluwatobiiloba/technoobstaging:latest",
         "Update": "true"
     },
     "Ports": [
