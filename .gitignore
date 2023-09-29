@@ -39,3 +39,5 @@ Function-Worker/local.settings.json
 Server/test.js
 Server/.cache
 email.html
+Server/package-lock.json
+Server/package-lock.json
