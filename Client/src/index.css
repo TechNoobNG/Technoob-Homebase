@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   --black-gradient: linear-gradient(
     144.39deg,
@@ -18,6 +19,7 @@
   scroll-behavior: smooth;
 }
 
+
 .text-gradient {
   background: radial-gradient(
     64.18% 64.18% at 71.16% 35.69%,
@@ -31,7 +33,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
 
 .bg-blue-gradient {
@@ -85,6 +86,41 @@
   animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
+.sidebarClose {
+  -webkit-animation: slide-inside 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-inside 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+/* Apply custom styles to the scrollbar */
+::-webkit-scrollbar {
+  width: 4px; /* Width of the vertical scrollbar */
+  height: 7px; /* Adjust the height of the scrollbar track */
+  cursor: pointer;
+}
+.scroll-container {
+  overflow: hidden; /* This hides both horizontal and vertical scrollbars */
+  cursor: pointer;
+}
+/* Track styles */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  cursor: pointer;
+}
+.scrollable-container::-webkit-scrollbar {
+  width: 4px; /* Adjust the width as needed */
+  cursor: pointer;
+}
+.scrollable-container::-webkit-scrollbar {
+  height: 4px; /* Adjust the height of the scrollbar track */
+  cursor: pointer;
+}
+
+/* Thumb styles */
+::-webkit-scrollbar-thumb {
+  background: #5E7CE8;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 @-webkit-keyframes slide-top {
   0% {
     -webkit-transform: translateY(100px);
@@ -104,6 +140,17 @@
   100% {
     -webkit-transform: translateY(0);
     transform: translateY(0);
+  }
+}
+
+@keyframes slide-inside {
+  100%{
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  0%{
+    -webkit-transform: translateX(100px);
+    transform: translateX(100px);
   }
 }
 
@@ -138,3 +185,5 @@
   background: rgba(255, 255, 255, 0.6);
   filter: blur(750px);
 }
+
+

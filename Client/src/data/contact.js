@@ -1,22 +1,52 @@
-import { people01, people02, people03, facebook, instagram, linkedin, twitter, airbnb, binance, coinbase, dropbox  } from "./assets/asset";
-import { icon1,icon2, icon3, icon4, icon5, icon6 } from "./assets";
+import {
+  airbnb,
+  binance,
+  coinbase,
+  dropbox,
+  facebook,
+  instagram,
+  linkedin,
+  people01,
+  people02,
+  people03,
+  twitter
+} from "./assets/asset";
+import {Catalog, Circooles, icon1, icon2, icon3, icon4, icon5, icon6, Layers, Sisyphus} from "./assets";
+import {RiBankLine} from 'react-icons/ri';
+import {FiLayers} from 'react-icons/fi'
+import {BsBank, BsPuzzle} from 'react-icons/bs'
+
 
 export const navLinks = [
   {
     id: "home",
     title: "Home",
+    link:     '' ,
   },
   {
     id: "resources",
     title: "Resources",
+    link: "Resources",
   },
   {
-    id: "about-us",
+    id: "find-job",
+    title: "Jobs",
+    link: "Find-Jobs"
+  },
+  {
+    id: "aboutUs",
     title: "About Us",
+    link: "About-Us",
   },
   {
     id: "contact-us",
     title: "Contact Us",
+    link: "Contact-Us",
+  },
+  {
+    id: "switch-view",
+    title: "Switch to Admin View",
+    link: "Switch to Admin View",
   },
 ];
 
@@ -24,37 +54,37 @@ export const features = [
   {
     id: "feature-1",
     icon: icon3,
-    title: "Connect with hiring managers",
+    title: "Supportive Learning Environment",
     content:
-      "It doesn’t matter what job position you apply to, you get direct access to hiring managers and have an understanding of what the vacancy requires",
+      "Join our  welcoming community where questions are encouraged, and you can learn without judgments.",
   },
   {
     id: "feature-2",
     icon: icon6,
-    title: "Flash Apply",
+    title: "Mentorship and Networking",
     content:
-      "Apply to multiple positions that fit your resume and get more value from us.",
+      "Join our community so you can connect with experienced mentors and like-minded newbies to guide and support you.",
   },
   {
     id: "feature-3",
     icon: icon1,
-    title: "Manage your application",
+    title: "Learning Resources",
     content:
-      "Measure what matters with our application metrics. You can filter, export, and drilldown on what works and what’s not.",
+      "Access a wealth of resources and articles to kickstart your tech journey.",
   },
   {
     id: "feature-4",
     icon: icon4,
-    title: "Connect with mentors and peers",
+    title: "Career Development",
     content:
-      "connect to fellow job seekers, seniors and experienced persons in the same role you’re applying and get tips",
+      "Explore a plethora of tech-related job opportunities, and excel in your tech career with us.",
   },
   {
     id: "feature-5",
     icon: icon5,
-    title: "Explore latest resources",
+    title: "Collaboration",
     content:
-      "Go through hundreds on standardized resources made available across tech stacks and  be prepared for anything.",
+      "Participate in engaging classes and workshops to expand your tech knowledge and skills. ",
   },
   {
     id: "feature-6",
@@ -176,6 +206,29 @@ export const footerLinks = [
   },
 ];
 
+export const HomeItems = [
+  {
+    id: "1",
+    title: "Layers",
+    img: Layers ,
+  },
+  {
+    id: "2",
+    title: "Sisyphus",
+    img: Sisyphus,
+  },
+  {
+    id: "3",
+    title: "Circooles",
+    img: Circooles,
+  },
+  {
+    id: "4",
+    title: "Catalog",
+    img: Catalog,
+  },
+];
+
 export const socialMedia = [
   {
     id: "social-media-1",
@@ -216,4 +269,36 @@ export const clients = [
     id: "client-4",
     logo: dropbox,
   },
+];
+
+export const AdminNavs = [
+  
+  {
+    id: "2",
+    icon: <RiBankLine/>,
+    title: "Job Management",
+    link: "Job-Management",
+    color: 'text-purple-500'
+   },
+  {
+    id: "3",
+    icon: <FiLayers/>,
+    title: "Resource Management",
+    link: "Resources-Management",
+    color: "text-tblue",
+   },
+  {
+    id: "4",
+    icon: <BsBank/>,
+    title: "Event Management",
+    link: "Event-Management",
+    color: "text-teal-500",
+ },
+  {
+    id: "5",
+    icon: <BsPuzzle/>,
+    title: "Quizzes and Competition",
+    link: "Quizzes",
+    color: "text-tblue",
+ }
 ];
