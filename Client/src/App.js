@@ -1,30 +1,46 @@
-import React, {useContext, useEffect, useLayoutEffect} from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import "./App.css";
-import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
-import {Footer, NavBar} from "./components/index.js";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import {SignUp} from "./pages/Auth";
-import {AboutUs, ContactUs, FindJobs, Home, Resources, UserLogin,} from "./pages/LandingPage";
+import { SignUp } from "./pages/Auth";
+import {
+  AboutUs,
+  ContactUs,
+  FindJobs,
+  Home,
+  Resources,
+  UserLogin,
+} from "./pages/LandingPage";
 
-import {AppContext} from "./AppContext/AppContext";
+import { AppContext } from "./AppContext/AppContext";
 import AdminNavBar from "./components/AdminNavBar";
 import AdminSideBar from "./components/AdminSideBar";
 
-import {AdminDashboard, EventManagement, JobManagement, ResourceManagement,} from "./pages/AdminPage/Dashboard";
+import {
+  AdminDashboard,
+  EventManagement,
+  JobManagement,
+  ResourceManagement,
+} from "./pages/AdminPage/Dashboard";
 import DashSelector from "./utility/DashSelector";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
+import PageLayout from "./pages/PageLayout";
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
-
 function App() {
-  const { isLoggedIn, setIsLoggedIn, setDashboardToggle, dashboardToggle, setUserProfile } =
-    useContext(AppContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    setDashboardToggle,
+    dashboardToggle,
+    setUserProfile,
+  } = useContext(AppContext);
   const { displayToggle, toggleValue } = dashboardToggle;
 
   useEffect(() => {
     const checkUserLogin = sessionStorage.getItem("userData");
-    const checkUserViewPreference = sessionStorage.getItem("viewPreference")
+    const checkUserViewPreference = sessionStorage.getItem("viewPreference");
 
     // const sessionCookie = cookies.get('session')
 
@@ -35,8 +51,8 @@ function App() {
       setIsLoggedIn(false);
     }
 
-    if(checkUserViewPreference) {
-      setDashboardToggle(JSON.parse(checkUserViewPreference))
+    if (checkUserViewPreference) {
+      setDashboardToggle(JSON.parse(checkUserViewPreference));
     }
   }, [isLoggedIn, setDashboardToggle, setIsLoggedIn, setUserProfile]);
 
@@ -54,33 +70,22 @@ function App() {
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
       {toggleValue === "User Dashboard" ? (
-        <div className="bg-primary w-full overflow-auto relative">
-          <div className="flex flex-start w-full top-0 lg:fixed z-50">
-            <div className="w-full">
-              <NavBar />
-            </div>
-          </div>
-          <main className="lg:pt-16 w-full">
-            <Wrapper>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/Home" element={<Home />} />
-                <Route path="/About-Us" element={<AboutUs />} />
-                <Route path="/Find-Jobs" element={<FindJobs />} />
-                <Route path="/Contact-Us" element={<ContactUs />} />
-                <Route path="/Resources" element={<Resources />} />
-                <Route path="/all-resources" element={<AllResources />} />
-                <Route path="/Sign-Up" element={<SignUp />} />
-                <Route path="/User-Login" element={<UserLogin />} />
-                {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
-              </Routes>
-            </Wrapper>
-          </main>
-
-          <div className="">
-            <Footer />
-          </div>
-        </div>
+        <Wrapper>
+          <Routes>
+            <Route element={<PageLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/Home" element={<Home />} />
+              <Route path="/About-Us" element={<AboutUs />} />
+              <Route path="/Find-Jobs" element={<FindJobs />} />
+              <Route path="/Contact-Us" element={<ContactUs />} />
+              <Route path="/Resources" element={<Resources />} />
+              <Route path="/all-resources" element={<AllResources />} />
+              <Route path="/Sign-Up" element={<SignUp />} />
+              <Route path="/User-Login" element={<UserLogin />} />
+              {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
+            </Route>
+          </Routes>
+        </Wrapper>
       ) : (
         <div className="h-full bg-[#f9f9f9] w-full">
           <div className="flex flex-start h-full w-full top-0  z-50">
@@ -105,7 +110,6 @@ function App() {
                   element={<ResourceManagement />}
                 />
                 <Route path="/Event-Management" element={<EventManagement />} />
-                
               </Routes>
             </div>
           </div>
