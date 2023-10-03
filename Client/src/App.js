@@ -2,31 +2,11 @@ import React, { useContext, useEffect, useLayoutEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import { SignUp } from "./pages/Auth";
-import {
-  AboutUs,
-  ContactUs,
-  FindJobs,
-  Home,
-  Resources,
-  UserLogin,
-} from "./pages/LandingPage";
-
 import { AppContext } from "./AppContext/AppContext";
-import AdminNavBar from "./components/AdminNavBar";
-import AdminSideBar from "./components/AdminSideBar";
 
-import {
-  AdminDashboard,
-  EventManagement,
-  JobManagement,
-  ResourceManagement,
-} from "./pages/AdminPage/Dashboard";
 import DashSelector from "./utility/DashSelector";
-import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
-import PageLayout from "./pages/PageLayout";
-
-// import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
+import { adminRoutes, routes } from "./RouteConfig";
+import { AdminPageLayout, PageLayout } from "./pages";
 
 function App() {
   const {
@@ -73,47 +53,20 @@ function App() {
         <Wrapper>
           <Routes>
             <Route element={<PageLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/Home" element={<Home />} />
-              <Route path="/About-Us" element={<AboutUs />} />
-              <Route path="/Find-Jobs" element={<FindJobs />} />
-              <Route path="/Contact-Us" element={<ContactUs />} />
-              <Route path="/Resources" element={<Resources />} />
-              <Route path="/all-resources" element={<AllResources />} />
-              <Route path="/Sign-Up" element={<SignUp />} />
-              <Route path="/User-Login" element={<UserLogin />} />
-              {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
+              {routes.map(({ path, element }) => (
+                <Route path={`${path}`} element={element} key={path} />
+              ))}
             </Route>
           </Routes>
         </Wrapper>
       ) : (
-        <div className="h-full bg-[#f9f9f9] w-full">
-          <div className="flex flex-start h-full w-full top-0  z-50">
-            <div className="w-full h-full">
-              <AdminNavBar />
-            </div>
-          </div>
-
-          <div className="flex justify-between h-auto">
-            <div className="hidden sm:block rounded-md shadow-md w-[380px] h-full ">
-              <AdminSideBar />
-            </div>
-
-            <div className="bg-[#f9f9f9] w-full grow h-auto pb-16 lg:pr-10 p-5">
-              <Routes>
-                <Route path="/" element={<AdminDashboard />} />
-                <Route path="/Home" element={<AdminDashboard />} />
-                <Route path="/Admin-Home" element={<AdminDashboard />} />
-                <Route path="/Job-Management" element={<JobManagement />} />
-                <Route
-                  path="/Resources-Management"
-                  element={<ResourceManagement />}
-                />
-                <Route path="/Event-Management" element={<EventManagement />} />
-              </Routes>
-            </div>
-          </div>
-        </div>
+        <Routes>
+          <Route element={<AdminPageLayout />}>
+            {adminRoutes.map(({ path, element }) => (
+              <Route path={`${path}`} element={element} key={path} />
+            ))}
+          </Route>
+        </Routes>
       )}
     </BrowserRouter>
   );
