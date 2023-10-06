@@ -1,5 +1,4 @@
 name: Client staging deployment to s3
-
 on:
   push:
     branches:
