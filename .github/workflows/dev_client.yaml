@@ -12,20 +12,16 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [15.x]
+    
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: '15.x'
-
-      - name: Install Dependencies
+      - uses: actions/checkout@v1
+      - name: Install dependecies
         run: npm install
-
-      - name: Build
-        run: npm run build
-        
+      - name: build
+        run: npm run build 
       - name: Deploy
         uses: jakejarvis/s3-sync-action@master
         with:
