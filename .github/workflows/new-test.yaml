@@ -1,0 +1,30 @@
+name: Client Deployment to Heroku Staging
+
+on:
+  push:
+    branches:
+      - S3_dev
+defaults:
+  run:
+    working-directory: Client
+
+jobs:
+   build:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: action/checkout@v2
+     - uses: action/setup-node@v2
+     - name: Install Dependencies
+       run: npm install
+     - name: build
+       run: npm run build
+     - name: Set AWS Credentials
+       uses: aws-actions/configure-aws-credentials@v1
+       with:
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         AWS_REGION: 'eu-west-2' 
+     - name: copy to s3
+       run: aws s3 sync ./build/. s3://staging.technoob.tech
+      
+ 
