@@ -1,5 +1,6 @@
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
+const config = require('../config/config')[env];
 const user = require('./users');
 const auth = require('./auth');
 const admin = require('./admin');
@@ -14,7 +15,10 @@ const prometheus = require('prom-client');
 const { register } = prometheus;
 
 router.get('/', (req, res) => {
-  res.render('index', { title: 'TechNoob API' });
+  res.render('index', {
+    title: 'TechNoob API',
+    environment: config.NODE_ENV
+  });
 
 });
 
