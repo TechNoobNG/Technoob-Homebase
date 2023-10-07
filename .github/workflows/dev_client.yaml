@@ -3,7 +3,7 @@ name: Client Deployment
 on:
   push:
     branches:
-      - S3_dev
+      - dev_client
 defaults:
   run:
     working-directory: Client
