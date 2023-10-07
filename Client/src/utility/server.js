@@ -8,7 +8,6 @@ const serverApi = axios.create({
 });
 
 
-
 serverApi.defaults.headers.common["Content-Type"] = "application/json";
 
 serverApi.requiresAuth = function (requiresToken){
