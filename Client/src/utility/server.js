@@ -1,7 +1,4 @@
 import axios from "axios";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const serverBaseURL = process.env.SERVER_BASE_URL || "http://dev_server.technoob.tech";
 
