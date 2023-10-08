@@ -12,6 +12,7 @@ const quizzes = require('./quizzes')
 const utils = require('./utils')
 const experimental = require('./experimental.js')
 const base = `/api/v1`
+const pool = require('../experimental/index')
 
 const prometheus = require('prom-client');
 const { register } = prometheus;
@@ -20,6 +21,12 @@ router.get('/', (req, res) => {
   res.render('index', {
     title: 'TechNoob API',
     environment: config.NODE_ENV,
+    repo_link: "https://github.com/TechNoobNG/Technoob-Homebase",
+    activeTasks: pool.stats().activeTasks,
+    totalWorkers: pool.stats().totalWorkers,
+    busyWorkers: pool.stats().busyWorkers,
+    idleWorkers: pool.stats().idleWorkers,
+    pendingTasks: pool.stats().pendingTasks,
     repo_link: "https://github.com/TechNoobNG/Technoob-Homebase"
   });
 
