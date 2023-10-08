@@ -1,8 +1,6 @@
-const zlib = require('zlib');
-const fs = require('fs');
-const path = require('path');
+
+const { createGzip } = require('node:zlib');
 const { Readable } = require('stream');
-const os = require('os');
 const uploadToBlob = require('../utils/multer_upload')
 
 module.exports = function (file) {
@@ -19,7 +17,7 @@ module.exports = function (file) {
             readable.push(uploadedFileBuffer);
             readable.push(null);
 
-            const gzip = zlib.createGzip();
+            const gzip = createGzip();
 
             const compressedStream = readable.pipe(gzip);
 
