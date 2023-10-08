@@ -10,6 +10,7 @@ const events = require('./events')
 const jobs = require('./jobs')
 const quizzes = require('./quizzes')
 const utils = require('./utils')
+const experimental = require('./experimental.js')
 const base = `/api/v1`
 
 const prometheus = require('prom-client');
@@ -34,6 +35,7 @@ router.use(`${base}/utils`, utils);
 router.use(`${base}/events`, events);
 router.use(`${base}/jobs`, jobs);
 router.use(`${base}/quizzes`, quizzes)
+router.use(`${base}/experimental`, experimental)
 
 // Prometheus middleware
 router.get('/metrics', async (req, res) => {

@@ -8,6 +8,7 @@ const utils = require("./utils");
 const events = require("./events");
 const jobs = require("./jobs");
 const quizzes = require("./quizzes")
+const experimental = require("./experimental.js")
 
 module.exports = {
     users,
@@ -17,5 +18,6 @@ module.exports = {
     utils,
     events,
     jobs,
-    quizzes
+    quizzes,
+    experimental
 };
