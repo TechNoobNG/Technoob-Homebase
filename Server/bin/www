@@ -14,6 +14,8 @@ const numCPUs = require('os').cpus().length;
 const azureQueueListener = require("../azure_Queue/worker")
 const WORKERS = process.env.WEB_CONCURRENCY || 1; //HEROKU CONFIG
 const HOST = process.env.HOST;
+
+
 //const breeRunner = require("../jobs/bree_jobs")
 
     // try {
@@ -24,7 +26,7 @@ const HOST = process.env.HOST;
     //     breeRunner.stopper();
     // }
 
-if (cluster.isMaster && HOST !== 'heroku' ) {
+if (cluster.isMaster && HOST !== 'heroku') {
   console.log(`Master ${process.pid} is running`);
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
@@ -35,11 +37,11 @@ if (cluster.isMaster && HOST !== 'heroku' ) {
 
 } else if (cluster.isMaster && HOST === 'heroku') {
   for (let i = 0; i < WORKERS; i++) {
-  cluster.fork();
+    cluster.fork();
   }
   cluster.on('exit', (worker, code, signal) => {
-      console.log(`Worker ${worker.process.pid} died`);
-    });
+    console.log(`Worker ${worker.process.pid} died`);
+  });
 
 } else {
   console.log(`Worker ${process.pid} started`);
