@@ -22,10 +22,10 @@ const multerFilter = (req, file, callback) => {
 
 const uploadParams = {
     limits: {
-        fileSize: 8 * 1024 * 1024, // 8 MB file size limit for all file types except zip
+        fileSize: 5 * 20 * 1024 * 1024, //100mb file limit
     },
     fileFilter: (req, file, callback) => {
-        const allowedTypes = ['application/pdf', 'application/msword', 'text/csv', 'text/css', 'audio/mpeg', 'video/mp4', 'application/vnd.ms-powerpoint', 'application/vnd.rar', 'application/zip', "application/json","application/html", "application/javascript","text/plain", "audio/mp4", "audio/mpeg", "audio/ogg", "audio/wav", "audio/webm", "video/mp4", "video/ogg", "video/webm" ];
+        const allowedTypes = ['application/pdf', 'application/msword', 'text/csv', 'text/css', 'audio/mpeg', 'video/mp4', 'application/vnd.ms-powerpoint', 'application/vnd.rar', 'application/zip', "application/json","application/html", "application/javascript","text/plain", "audio/mp4", "audio/mpeg", "audio/ogg", "audio/wav", "audio/webm", "video/*","video/mp4", "video/ogg", "video/webm" ];
         if (!allowedTypes.includes(file.mimetype)) {
             return callback(new Error(`${file.mimetype} is not allowed. Only PDF, DOC, CSV, CSS, MP3, MP4, PPT,and RAR files are allowed`));
         }
@@ -61,6 +61,7 @@ const uploadParams = {
                 
                 if (err instanceof multer.MulterError) {
                     // handle multer errors
+                    console.log(err)
                     res.status(400).json({
                         Status: "Failed",
                         Name: "Invalid File Type",
