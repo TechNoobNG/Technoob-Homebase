@@ -1,6 +1,6 @@
 
 {
-    "AWSEBDockerrunVersion": "1",
+    "AWSEBDockerrunVersion": "3",
     "Image": {
         "Name": "oluwatobiiloba/technoobstaging:latest",
         "Update": "true"
