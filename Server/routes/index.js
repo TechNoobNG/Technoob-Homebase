@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
     busyWorkers: pool.stats().busyWorkers,
     idleWorkers: pool.stats().idleWorkers,
     pendingTasks: pool.stats().pendingTasks,
-
+    repo_link: "https://github.com/TechNoobNG/Technoob-Homebase"
   });
 
 });
