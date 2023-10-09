@@ -5,7 +5,7 @@ name: staging-server-deployment-to-aws-beanstalk
 on:
   push:
     branches:
-      - ft/stagingcors
+      - dev_server
   workflow_dispatch:
 
 defaults:
