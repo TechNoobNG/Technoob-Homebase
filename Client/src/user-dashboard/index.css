@@ -1,0 +1,499 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #5e7ce8;
+  --tb-red: #ea929a;
+  --danger: #ea3c53;
+  --mild-green: #caecda;
+  --tb-green: #5ccd91;
+  --light-dark-green: #48b599;
+  --dark-green: #3db193;
+  --light-green: #eefaf7;
+  --tb-yellow: #fbb635;
+
+  --black: #3a3a3a;
+  --grey: #eff0f5;
+  --light-grey: #d9d9d9;
+  --dark-grey: #616161;
+  --white: #fff;
+}
+
+@layer base {
+  html {
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 62.5%;
+    line-height: 1.7;
+  }
+}
+
+.heading-primary {
+  color: var(--primary-color);
+}
+
+.app {
+  /* background-color: var(--grey); */
+  background-color: #fdfdfd;
+}
+
+@layer components {
+  /*********************************
+   *  GRID LAYOUTS
+   *********************************/
+  .content {
+    display: grid;
+    grid-template-columns: 32rem auto;
+    grid-template-areas: "aside main";
+    min-height: 100vh;
+    margin-top: calc(4rem + 2.4rem * 1.7); /*5.5rem*/
+    padding: 0 6.5rem;
+  }
+
+  .job-event {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 5rem;
+    grid-template-areas: "task job";
+    background-color: var(--white);
+    padding: 2rem 1.5rem;
+    min-height: 100%;
+  }
+
+  .heading-primary {
+    @apply font-bold text-[2.4rem];
+  }
+
+  .app {
+    @apply max-w-full min-h-screen relative;
+    /* display: grid;
+    grid-template-rows: min-content / 1rem auto;
+    grid-template-areas: "header content"; */
+  }
+
+  .header {
+    @apply flex items-center gap-x-12 bg-white fixed left-0 top-0 z-50 w-screen px-[8.5rem] py-[2rem] shadow-sm;
+  }
+
+  .aside {
+    @apply flex flex-col w-[32rem] min-h-[100vh] bg-[var(--white)]  px-[2.6rem] py-[2.4rem] rounded-[.5rem] border-r-[.03rem];
+    border-right-color: rgba(58, 58, 58, 0.2);
+    grid-area: aside;
+    margin-top: 6.5rem;
+
+    box-shadow: 0px 3px 24px 0px rgba(227, 227, 227, 0.24);
+  }
+
+  .main-content {
+    @apply /*bg-red-600*/ ml-[3rem];
+    max-width: calc(100vw - 32rem);
+    height: calc(100vh + 80.8px);
+    grid-area: main;
+    overflow-y: auto;
+  }
+
+  .main-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .banner {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+    column-gap: 5rem;
+    height: 22rem;
+    background-color: var(--mild-green);
+    padding: 0 5.7rem 0 3.4rem;
+    border-radius: 2rem 2rem 0 0;
+    font-size: 1.5rem;
+    color: var(--black);
+  }
+
+  .banner > *:first-child {
+    max-width: 32%;
+  }
+
+  .banner > *:last-child {
+    flex-basis: 20rem;
+    flex-shrink: 0;
+    /* margin-left: auto; */
+  }
+
+  .banner h2 {
+    font-size: 2.55rem;
+    line-height: 1.2;
+    font-weight: 600;
+    margin-bottom: 0.85rem;
+  }
+
+  .user-activity-overview {
+    padding: 4rem 0.5rem;
+    /* background-color: var(--white); */
+  }
+
+  .user-activity-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 2rem;
+    text-transform: capitalize;
+  }
+
+  .user-card {
+    box-shadow: 0px 2px 4px 0px rgba(46, 41, 78, 0.08),
+      0px 1px 2px 0px rgba(46, 41, 78, 0.02);
+
+    border-radius: 8px;
+    background-color: var(--white);
+  }
+
+  .user-card-top,
+  .participation-top,
+  .questions-top {
+    padding: 3rem 0;
+    color: var(--black);
+  }
+
+  .user-card-bottom,
+  .questions-bottom {
+    background-color: var(--mild-green);
+  }
+
+  .participation-bottom {
+    background-color: var(--primary-color);
+    color: var(--white);
+  }
+
+  .user-card-bottom,
+  .participation-bottom,
+  .questions-bottom {
+    padding: 1rem 0;
+    line-height: 1.3;
+  }
+
+  .user-card-bottom small,
+  .participation-bottom small,
+  .questions-bottom small {
+    font-size: 1.4rem;
+  }
+
+  .user-card-top,
+  .user-card-bottom,
+  .participation-top,
+  .participation-bottom,
+  .questions-top,
+  .questions-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .user-card-bottom p,
+  .user-card-top p,
+  .participation-top p,
+  .participation-bottom p,
+  .questions-top p,
+  .questions-bottom p {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .score-number,
+  .questions-number,
+  .participation-number {
+    font-size: 1.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .score-label,
+  .participation-label,
+  .questions-label {
+    font-size: 1.5rem;
+  }
+
+  .icon-textsms,
+  .icon-people,
+  .icon-check {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .icon-textsms,
+  .icon-check {
+    fill: var(--tb-green);
+  }
+
+  .icon-people {
+    fill: var(--primary-color);
+  }
+
+  .task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: inherit;
+    font-size: 1.5rem;
+    color: var(--black);
+    cursor: pointer;
+
+    padding: 2rem 4rem;
+    border: 1px solid var(--grey);
+    border-left-width: 0.7rem;
+    border-radius: 1.2rem;
+    background-color: var(--white);
+    /* box-shadow: 0px 2px 2px 0px rgba(225, 251, 247, 0.6),
+      0px 1px 2px 0px rgba(46, 41, 78, 0.02); */
+  }
+
+  .task-schedule > *:not(:first-child),
+  .trending-job > *:not(:first-child) {
+    margin-top: 2.85rem;
+  }
+
+  .task-event {
+    border-left-color: var(--primary-color);
+  }
+
+  .task-quiz {
+    border-left-color: var(--tb-green);
+  }
+
+  .task-competition {
+    border-left-color: var(--tb-red);
+  }
+
+  .task-description {
+    display: flex;
+    gap: 0.75rem;
+
+    flex-direction: column-reverse;
+  }
+
+  .task-heading {
+    font-size: 1.62rem;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+  }
+
+  .task-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .radio-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 2px solid var(--black);
+    border-radius: 50%;
+  }
+
+  .radio-btn::after {
+    width: 80%;
+    height: 80%;
+    content: "\2713";
+    color: transparent;
+    margin: 5px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    transform: rotate(18deg);
+    transition: all 500ms ease-in-out;
+  }
+
+  .quiz,
+  .event,
+  .competition {
+    opacity: 0;
+    position: absolute;
+    width: 2.2rem;
+    aspect-ratio: 1;
+    z-index: 1000;
+    cursor: pointer;
+  }
+
+  .quiz:checked + .radio-btn,
+  .event:checked + .radio-btn,
+  .competition:checked + .radio-btn {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+
+  .event:checked + .radio-btn::after,
+  .quiz:checked + .radio-btn::after,
+  .competition:checked + .radio-btn::after {
+    color: var(--white);
+  }
+
+  .job-opening {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+    padding: 1.5rem;
+    font-size: 1.35rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--grey);
+  }
+  .job-opening h4 {
+    flex: 2 1 100%;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  /* .job-opening > *:not(:first-child) {
+    flex: 1;
+  } */
+  .job-description {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .job-description p {
+    font-size: 1.4rem;
+    letter-spacing: 0.8px;
+  }
+
+  .job-application-status {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+  }
+
+  .job-application-status p {
+    font-size: 1.15rem;
+    white-space: nowrap;
+  }
+
+  .job-application-status progress {
+    height: 0.55rem;
+    width: 10rem;
+    border: 0;
+
+    border-radius: 4rem;
+    margin-bottom: 0.68rem;
+  }
+
+  .job-application-status progress::-webkit-progress-bar {
+    height: 0.55rem;
+    border: 0;
+    border-radius: 4rem;
+    background-color: var(--light-grey);
+  }
+
+  .job-application-status progress::-webkit-progress-value {
+    height: 0.55rem;
+    border: 0;
+    border-radius: 4rem;
+    background-color: var(--light-dark-green);
+  }
+
+  .job-application-status progress::-moz-progress-bar {
+    height: 0.55rem;
+    border: 0;
+    border-radius: 4rem;
+    background-color: var(--light-dark-green);
+  }
+
+  .job-application-btn {
+    outline: none;
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: var(--white);
+    font-size: 1.24rem;
+  }
+
+  .job-description,
+  .job-application-status {
+    /* flex: 1; */
+    color: var(--dark-grey);
+  }
+
+  .job-description ul {
+    display: flex;
+    gap: 0.35rem;
+    font-size: 1.24rem;
+    margin-top: 1rem;
+  }
+
+  .job-description li,
+  .job-application-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.95rem;
+    border-radius: 0.5rem;
+    letter-spacing: 0.1px;
+  }
+
+  .job-description li:first-child {
+    background-color: var(--light-green);
+    color: var(--dark-green);
+    border: 1px solid var(--light-green);
+  }
+
+  .job-description li:nth-child(2) {
+    color: var(--tb-yellow);
+    border: 1px solid var(--tb-yellow);
+  }
+
+  .job-description li:nth-child(3) {
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+  }
+
+  .job-application-status {
+    /* flex: 1; */
+    /* margin-left: auto; */
+  }
+}
+
+h3 {
+  font-size: 1.85rem;
+}
+
+nav {
+  margin-bottom: auto;
+}
+
+svg {
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--black);
+}
+
+svg.notification {
+  position: relative;
+  /* background-color: teal; */
+}
+
+svg.notification::after {
+  /* position: absolute; */
+  content: "Why nothing show";
+  width: 5px;
+  height: 5px;
+  display: block;
+  background-color: var(--danger);
+}
+
+a:link,
+a:visited {
+  color: var(--black);
+  border-radius: 0.375rem;
+}
+
+a:hover {
+  color: var(--white);
+  background-color: var(--primary-color);
+}
