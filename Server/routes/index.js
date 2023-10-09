@@ -33,7 +33,6 @@ router.get('/', (req, res) => {
 });
 
 
-
 router.use(`${base}/user`, user);
 router.use(`${base}/authenticate`, auth);
 router.use(`${base}/admin`, admin);
