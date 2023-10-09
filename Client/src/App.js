@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useLayoutEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, useLocation } from "react-router-dom";
 
 import { AppContext } from "./AppContext/AppContext";
 
 import DashSelector from "./utility/DashSelector";
-import { adminRoutes, routes } from "./RouteConfig";
-import { AdminPageLayout, PageLayout } from "./pages";
+import LandingPageRoute from "./RouteConfig/LandingPageRoute";
+import AdminPageRoute from "./RouteConfig/AdminPageRoute";
 
 function App() {
   const {
@@ -52,20 +52,12 @@ function App() {
       {toggleValue === "User Dashboard" ? (
         <Wrapper>
           <Routes>
-            <Route element={<PageLayout />}>
-              {routes.map(({ path, element }) => (
-                <Route path={`${path}`} element={element} key={path} />
-              ))}
-            </Route>
+            <LandingPageRoute />
           </Routes>
         </Wrapper>
       ) : (
         <Routes>
-          <Route element={<AdminPageLayout />}>
-            {adminRoutes.map(({ path, element }) => (
-              <Route path={`${path}`} element={element} key={path} />
-            ))}
-          </Route>
+          <AdminPageRoute />
         </Routes>
       )}
     </BrowserRouter>
