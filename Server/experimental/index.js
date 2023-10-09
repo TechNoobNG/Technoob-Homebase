@@ -1,7 +1,7 @@
-const workerpool = require('workerpool');
-const pool = workerpool.pool(`${__dirname}/node_worker.js`, {
-    workerType: "thread"
-});
+// const workerpool = require('workerpool');
+// const pool = workerpool.pool(`${__dirname}/node_worker.js`, {
+//     workerType: "thread"
+// });
 
 
-module.exports = pool;
+// module.exports = pool;
