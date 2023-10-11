@@ -1,8 +1,8 @@
 import axios from "axios";
-
+const serverBaseURL = process.env.SERVER_BASE_URL || "http://dev_server.technoob.tech";
 
 const serverApi = axios.create({
-    baseURL: 'https://technoob-staging.azurewebsites.net/api/v1/',
+    baseURL: `${serverBaseURL}/api/v1/`,
     withCredentials: true,
 });
 

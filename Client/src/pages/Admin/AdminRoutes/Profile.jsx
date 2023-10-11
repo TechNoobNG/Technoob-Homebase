@@ -5,11 +5,11 @@ import Button from "../../../utility/button";
 const Profile = () => {
   const [roles, setroles] = useState(false);
   const [permission, setpermission] = useState(true);
-  const [edit, setEdit] = useState(true);
+  const [edit, setEdit] = useState(false);
 
   return (
-    <div className=" min-h-[100vh] p-4 rounded-md">
-      <div className="bg-slate-50 px-2 flex rounded-md flex-col min-h-[100vh] gap-8">
+    <div className=" min-h-[100vh] pb-16 rounded-md">
+      <div className="bg-slate-50 flex rounded-md flex-col min-h-[100vh] gap-8">
         <div className="flex-1 flex flex-col rounded-md max-h-[70vh]">
           <div className="bg-gradient-to-r from-green-400 to-indigo-500 rounded-t-md w-full h-[25vh] "></div>
           <div className=" pt-20 pb-10 px-20 h-full w-full flex rounded-b-md bg-white relative">
@@ -41,17 +41,26 @@ const Profile = () => {
               <Button name={"Share Profile"} />
             </div>
             <div className="h-full flex-1 flex justify-end">
-              <button className="flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded">
-                Edit Profile
-              </button>
+           { !edit && <button onClick={() =>setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded`}>
+                {edit ? 'Cancel' : 'Edit Profile'}
+              </button>}
+              {edit && 
+                <div className="flex gap-5">
+                 <Button name={'Save'}/>
+                  <button onClick={() =>setEdit(false)} type='submit' className={`flex justify-center items-center border border-tblue text-tblue  w-[335px] sm:w-[201px] h-[54px] text-base font-[400] px-12 py-2 rounded`}>
+                    Cancel
+                  </button>
+                </div>
+                
+              }
             </div>
           </div>
         </div>
 
         {!edit && (
           <>
-            <div className="flex-1 flex flex-col gap-4 rounded-md h-full bg-white p-4">
-              <nav className=" border-b-2 w-[80%] flex gap-5 mb-10">
+            <div className="flex-1 flex flex-col gap-4 rounded-md h-full bg-white px-6 py-8">
+              <nav className=" border-b-2 w-[100%] flex gap-5 mb-10">
                 <div
                   onClick={() => {
                     setpermission(true);
@@ -146,7 +155,7 @@ const Profile = () => {
           </>
         )}
 
-        <div className="pb-5 flex">
+        {edit && <div className="pb-5 px-6 flex bg-white rounded-md">
           <form action="" className="py-10 flex flex-col w-full">
             <div className=" pl-20 flex justify-between items-start w-full">
               <label
@@ -297,7 +306,7 @@ const Profile = () => {
               </div>
             </div>
           </form>
-        </div>
+        </div>}
       </div>
     </div>
   );

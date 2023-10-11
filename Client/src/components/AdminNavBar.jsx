@@ -33,8 +33,8 @@ const AdminNavBar = () => {
           <div className='flex lg:hidden h-full items-center justify-center'>
                  <img src={toggle ? close : menu} alt="menu" onClick={()=> setToggle((prev) => !prev)} className='h-4 w-4 cursor-pointer'/>
 
-                 <div className={`${toggle ? 'flex' : 'hidden'} p-4 bg-white rounded-md absolute top-16 right-0 mx-1 my-2 w-[375px] z-10 h-full sidebar flex-col transition`}>
-                     <ul className='flex font-normal justify-center items-center gap-3 list-none flex-col text-white'>
+                 <div className={`${toggle ? 'flex' : 'hidden'} bg-gray-100 p-4 rounded-md absolute top-12 right-0 mx-1 my-2 w-[375px] z-10 h-[29rem] sidebar flex-col transition`}>
+                     <div className='flex font-normal justify-center items-center gap-3 list-none flex-col'>
 
                      <NavLink to={'/admin/dashboard'} onClick={()=> setToggle((prev) => !prev)}>
                      <div className='mb-12 w-[260px] h-[54px] flex items-center rounded-md text-black'>
@@ -54,10 +54,10 @@ const AdminNavBar = () => {
                              </NavLink>
                          ))}
 
-                      </ul>
-
-                      <div className='flex flex-col justify-center items-center mt-10 gap-5'>
                       </div>
+
+                      {/* <div className='flex flex-col justify-center items-center mt-10 gap-5'>
+                      </div> */}
                  </div>
              </div>   
     </div>
