@@ -41,14 +41,17 @@ module.exports = {
     githubCallbackAuthenticateMiddleware,
     isAuthenticated(req, res, next) {
         try { 
+
+            if (req.isAuthenticated()) {
+                return next();
+            } else {
                 passport.authenticate("authenticate", {
                     session: true
                 }, (err, user) => {
                     if (err) {
-                        console.log(err);
                         return next(err);
                     }
-                    if (!user) throw err
+                    if (!user) throw new Error ("Invalid Token")
 
                     req.user = user; 
                     const sessionExpiresAt = req.session.cookie.expires;
@@ -56,10 +59,10 @@ module.exports = {
                         req.logout((err) => {
                             if (err) {
                                 console.log(err);
+                                throw err
                             }
-                        })// Log out the user
-                        res.setHeader("isAuthenticated", false)
-                        return res.status(401).json({ isAuthenticated: false, message: 'Session expired' });
+                            return res.status(401).json({ message: 'Session expired' });
+                        })
                     } else {
                         req.session.cookie.expires = new Date(Date.now() + 3600000);
                     }
@@ -68,8 +71,9 @@ module.exports = {
                     res.setHeader("userId", req.user.id)
                     res.setHeader("sessionExpiresAt", sessionExpiresAt)
                     return next();
-                })(req, res, next);
-            } catch (err) {
+                })(req, res, next);   
+            }
+        } catch (err) {
             res.isAuthenticated = false;
             res.status(401).json({
                 status: 'fail',
