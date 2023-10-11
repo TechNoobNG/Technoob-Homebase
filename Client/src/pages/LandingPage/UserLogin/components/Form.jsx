@@ -61,6 +61,7 @@ const Form = () => {
     
     } catch (error) {
       setUser({ error: error.response?.data?.message || "Failed, Please contact admin", UserName: "", Password: "" });
+      console.log('the is the error',error);
     }
     
   }
@@ -70,7 +71,7 @@ const Form = () => {
     };
 
     const handleClick = () => {
-      navigate("/Sign-Up");
+      navigate("/register");
     };
 
     return (

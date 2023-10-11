@@ -120,11 +120,11 @@ const JobManagement = () => {
 
   return ( 
     <section>
-      <div className=' flex py-10 nun justify-start items-center'>
+      <div className='flex py-3 md:py-10 nun justify-start items-center'>
         <h1 className='  md:text-3xl text-xl font-semibold'>Hey,{UserProfile.firstname} -</h1>
         <p className='md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black '>Welcome the  job management console.</p>
       </div>
-      <div className=' lg:mx-4 p-5  rounded-md bg-white shadow-md w-full '>
+      <div className=' p-5  rounded-md bg-white shadow-md w-full '>
         <h1 className='text-xl font-semibold sm:ml-4 lg:py-4 sm:text-[#3A3A3A] sm:text-2xl'>Job Management</h1>
         <div className="md:flex block w-full justify-start pb-3">
           {statistics.map((opt, i) => (
@@ -210,7 +210,7 @@ const JobManagement = () => {
               <button className='float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm'>See all</button>
             </div>
 
-          <div className='flex overflow-x-auto'>
+          <div className=' flex overflow-x-auto'>
                 <Suspense fallback={<p>loading</p>}>
                   {jobActivity.length ? (<Table jobActivity={jobActivity}/>) : ''}
                 </Suspense>

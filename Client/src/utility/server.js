@@ -4,6 +4,7 @@ const serverBaseURL = process.env.SERVER_BASE_URL || "http://dev_server.technoob
 
 const serverApi = axios.create({
     baseURL:   `${serverBaseURL}/api/v1/`,
+
     withCredentials: true,
 });
 
