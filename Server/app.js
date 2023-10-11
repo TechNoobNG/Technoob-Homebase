@@ -4,7 +4,7 @@ const express = require("express");
 const flash = require("connect-flash");
 const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
-const passport = require("passport");
+const passport = require("./config/passportConfig");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const path = require("path");
@@ -105,8 +105,7 @@ const cookieConfig = {
   httpOnly: true,
   secure: env === 'development' ? false : true,
   sameSite:  'none' ,
-  maxAge: 60 * 60 * 1000
-
+  maxAge: 60 * 60 * 1000,
 };
 
 app.use(
@@ -117,17 +116,15 @@ app.use(
     rolling: true,
     store: MongoStore.create({
       mongoUrl: config.DATABASE_URL,
-      ttl: 60 * 60, // 1 hour
+      ttl: 60 * , // 1 hour
       autoRemove: "native",
     }),
-    cookie: {
-      cookieConfig
-    }
+    cookie: cookieConfig
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
-require("./config/passportConfig");
 app.use(Honeybadger.requestHandler);
 //app.use(helmet({
 //crossOriginEmbedderPolicy: false
@@ -140,7 +137,6 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again in an hour",
 });
 
-require("./config/passportConfig");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

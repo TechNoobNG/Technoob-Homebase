@@ -24,7 +24,6 @@ module.exports = {
                         message: info.message
                     })
                 }
-
                 if (user) {
                     req.login(user,{ session: true }, async (err) => {
                         if (err) {
@@ -33,13 +32,14 @@ module.exports = {
                         const token = jwt.sign({
                             user: {
                                 _id: user._id,
-                                email: user.email,
                                 username: user.username
                             }
-                        }, config.JWT_SECRET);
+                        }, config.JWT_SECRET, {
+                            expiresIn: config.JWT_EXPIRES,
+                            issuer: config.LIVE_BASE_URL,
 
-                        // res.setHeader("isAuthenticated", true)
-                        // res.setHeader("userId", user._id)
+                        });
+
                         res.setHeader("sessionExpiresAt",req.session.cookie.expires)
     
                         res.status(200).json({
@@ -80,16 +80,14 @@ module.exports = {
 
     logout(req, res) {
         req.logout((err) => {
-            if (err) {
-                console.log(err);
-            }
-            res.setHeader("isAuthenticated", false)
+            if (err) return next(err); 
+            res.setHeader("isAuthenticated", false).status(200).json({
+                status: 'success',
+                message: 'Logged out'
+            })
         });
-        res.status(200).json({
-            status: 'success',
-            message: 'Logged out'
-        })
     },
+
 
     async verifyEmail(req, res) {
         const token = req.query.token

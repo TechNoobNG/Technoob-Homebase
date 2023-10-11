@@ -151,6 +151,26 @@ module.exports = {
     },
 
     async getOne(req, res) {
+        try {
+            const user_id = req.params.id
+                if(!user_id) {
+                    throw new Error("Please provide a user Id")
+            }
+            const user = await users.getOne(user_id)
+            return res.status(201).json({
+                status: "success",
+                message: `User found`,
+                data: user
+            })
+        } catch (err) {
+            return res.status(500).json({
+                status: "error",
+                message: "User Not Found"
+            })
+        }
+    },
+
+    async getProfile(req, res) {
         const user_id = req.user._id
         try {
             const user = await users.getOne(user_id)
@@ -163,7 +183,7 @@ module.exports = {
             console.log(err)
             return res.status(500).json({
                 status: "error",
-                message: err.message
+                message: "User Not Found"
             })
         }
     },

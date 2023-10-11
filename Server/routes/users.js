@@ -12,7 +12,7 @@ router.post('/mailing-list', users.mailing_list)
 //middleware to check if user is authenticated
 router.use(middleware.auth.isAuthenticated)
 
-/* GET users listing. */
+
 router.get('/dashboard', users.dashboard);
 router.post('/dashboard', users.dashboard);
 router.post('/edit', users.edit)
@@ -22,6 +22,7 @@ router.post('/deactivate', users.deactivate)
 router.post('/activate', users.activate)
 router.post('/delete', users.delete)
 router.post('/link-github', users.linkGithub)
+router.get('/profile', users.getProfile)
 router.get('/:id', users.getOne)
 router.get('/', users.getAll)
 
