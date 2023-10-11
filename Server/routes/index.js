@@ -1,5 +1,7 @@
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config')[env];
 const user = require('./users');
 const auth = require('./auth');
 const admin = require('./admin');
@@ -8,13 +10,25 @@ const events = require('./events')
 const jobs = require('./jobs')
 const quizzes = require('./quizzes')
 const utils = require('./utils')
+const experimental = require('./experimental.js')
 const base = `/api/v1`
+const pool = require('../experimental/index')
 
 const prometheus = require('prom-client');
 const { register } = prometheus;
 
 router.get('/', (req, res) => {
-  res.render('index', { title: 'TechNoob API' });
+  res.render('index', {
+    title: 'TechNoob API',
+    environment: config.NODE_ENV,
+    repo_link: "https://github.com/TechNoobNG/Technoob-Homebase",
+    activeTasks: pool.stats().activeTasks,
+    totalWorkers: pool.stats().totalWorkers,
+    busyWorkers: pool.stats().busyWorkers,
+    idleWorkers: pool.stats().idleWorkers,
+    pendingTasks: pool.stats().pendingTasks,
+
+  });
 
 });
 
@@ -28,6 +42,7 @@ router.use(`${base}/utils`, utils);
 router.use(`${base}/events`, events);
 router.use(`${base}/jobs`, jobs);
 router.use(`${base}/quizzes`, quizzes)
+router.use(`${base}/experimental`, experimental)
 
 // Prometheus middleware
 router.get('/metrics', async (req, res) => {

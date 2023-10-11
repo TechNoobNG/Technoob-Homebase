@@ -3,7 +3,7 @@ info:
   title: technoob
   version: 1.0.0
 servers:
-  - url: https://technoob-staging.azurewebsites.net
+  - url: http://dev_server.technoob.tech
     description: Staging server
   - url: http://127.0.0.1:3000
     description: Local server
@@ -33,7 +33,7 @@ paths:
                 lastname: LiveQueue
                 password: testing00
                 passwordConfirm: testing00
-                email: oluwatobiloba.aremu@flutterwavego.com
+                email: ooluwatobiiloba@gmail.com
                 username: TestWorker2
                 stack:
                   - Project Management

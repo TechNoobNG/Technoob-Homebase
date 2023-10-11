@@ -18,8 +18,8 @@ const indexRouter = require("./routes/index");
 const app = express();
 const prometheus = require("prom-client");
 const trafficMiddleware = require("./middleware/traffic");
-const swaggerJSDoc = require('swagger-jsdoc');  
-const swaggerUI = require('swagger-ui-express');  
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
 //const swaggerDocument = yamljs.load('./swagger.yaml');
 
@@ -29,17 +29,17 @@ const swaggerDocument = yamljs.load(path.join(__dirname, 'swagger.yaml'));
 const allowedOrigins = config.ALLOWED_ORIGINS;
 
 
-// const swaggerOptions = { 
+// const swaggerOptions = {
 //   failOnErrors: true,
-//   swaggerDefinition: {  
-//       info: {  
-//           title:'Technoob API',  
-//           version:'1.0.0'  
-//       }  
+//   swaggerDefinition: {
+//       info: {
+//           title:'Technoob API',
+//           version:'1.0.0'
+//       }
 //   },
 //   apis: ['./routes/*.js'],
-// }  
-//const swaggerDocs = swaggerJSDoc(swaggerOptions);  
+// }
+//const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 
 // Set up the CORS headers
@@ -52,7 +52,7 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','DELETE'],
     credentials: true,
     exposedHeaders: "Set-Cookie",
   })
@@ -104,7 +104,7 @@ app.use(logger("combined"));
 const cookieConfig = {
   httpOnly: true,
   secure: env === 'development' ? false : true,
-  sameSite:  'none' , 
+  sameSite:  'none' ,
   maxAge: 60 * 60 * 1000
 
 };
@@ -164,7 +164,7 @@ app.use(express.static(path.join(__dirname, "public")));
 /* GET home page. */
 // app.use(trafficMiddleware);
 app.use("/", limiter); // implementing rate limiter middleware
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));  
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
 app.use("/", trafficMiddleware, indexRouter);
 
 app.use(Honeybadger.errorHandler);

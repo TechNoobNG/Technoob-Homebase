@@ -38,6 +38,7 @@ module.exports = {
                 "https://www.technoob.tech",
                 "http://technoobstaging.s3-website.eu-west-2.amazonaws.com",
                 "http://staging.technoob.tech"
+
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [

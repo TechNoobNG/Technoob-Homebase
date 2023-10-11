@@ -179,7 +179,7 @@ module.exports = {
             try {
                 const constants = {
                     username: user.username,
-                    verification_link: `https://${config.LIVE_BASE_URL}/api/v1/users/verify-email?token=${token}`,
+                    verification_link: `https://${config.LIVE_BASE_URL}/api/v1/authenticate/verify-email?token=${token}`,
                     message: `
                     Welcome to Technoob! We're thrilled to have you as a part of our community. 😊
                     Kindly hit the button below to verify your account
