@@ -84,17 +84,15 @@ const user = new Schema({
 
     },
     passwordChangedAt: {
-        type: Date
+        type: Date,
+        select: false
     },
     passwordResetToken: {
-        type: String
+        type: String,
+        select: false
     },
     passwordResetExpires: {
-        type: Date
-    },
-    active: {
-        type: Boolean,
-        default: true,
+        type: Date,
         select: false
     },
     role: {
@@ -124,9 +122,7 @@ const user = new Schema({
 user.pre('save', async function (next) {
   try {
       // Only run this function if password was actually modified
-      console.log(this.isModified('password'))
       if (!this.isModified('password')) return next();
-     console.log('child_worker.checkChild():', child_worker.checkChild());
       if (child_worker.checkChild() > 0) { 
         try {
             const [hash] = await Promise.all([
@@ -136,7 +132,6 @@ user.pre('save', async function (next) {
             this.password = hash;
           } catch (err) {
             Honeybadger.notify(`Password hashing failed with error: ${err}`);
-            
             const salt =  await bcrypt.genSalt(SALT_ROUNDS)
             this.password = await bcrypt.hash(this.password, salt);
           }
@@ -156,7 +151,6 @@ user.pre('save', async function (next) {
 
 user.pre('save', function (next) {
     if (!this.isModified('password') || this.isNew) return next();
-
     this.passwordChangedAt = Date.now() - 1000;
     next();
 }
@@ -181,7 +175,6 @@ user.methods.comparePassword = async function (password) {
 user.methods.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
-
         return JWTTimestamp < changedTimestamp;
     }
 
