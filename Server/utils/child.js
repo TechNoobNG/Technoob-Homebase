@@ -1,69 +1,71 @@
 const { fork } = require('child_process');
-// Create a pool of child processes
-const pool = [];
 const path = require('path');
 
 const childPath = path.join(__dirname, 'child_worker.js');
+const pool = [];
 
-try {
-
-  for (let i = 0; i < 2; i++) {
-    const child = fork(childPath, [], { env: process.env });
-    pool.push(child);
-  }
-} catch (error) {
-  
+function checkChild() {
+  return pool.length;
 }
 
-// Export a function that returns a Promise
-module.exports = {
-   checkChild() {
-      return pool.length;
-    
-  },
+async function work(params, timeout = 5000) {
+  if (pool.length === 0) {
+    throw new Error('No child processes available in the pool');
+  }
 
-  async work (params) {
-    return new Promise((resolve, reject) => {
-     
-      if (pool.length === 0) {
-        reject(new Error('No child processes available in the pool'));
-        return;
-      }
-      const child = pool.shift();
-      if (!child) { 
-        reject(new Error('No child processes available in the pool'));
-        return;
-      }
-      let dead_child = false
-      try {
-        process.kill(worker.threadId, 0);
-      } catch (error) {
-        dead_child = true
-      }
+  const child = pool.shift();
+  if (!child) {
+    throw new Error('No child processes available in the pool');
+  }
 
-      if (dead_child) { 
-        reject(new Error('No child processes available in the pool'));
-        return;
+  return new Promise(async (resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      pool.push(child);
+      reject(new Error('Child process timed out'));
+    }, timeout);
+
+    try {
+      const response = await sendMessageToChild(child, params);
+      clearTimeout(timeoutId);
+      pool.push(child);
+      if (response.type === 'error') {
+        reject(new Error(response.data));
       } else {
-        child.send({
-          payload: params.payload,
-          activity: params.activity,
-        });
-
-        child.once('message', resp => {
-          pool.push(child);
-          try {
-            if (resp.type === 'error') {
-              throw new Error(resp.data);
-            }
-            resolve(resp.data);
-          } catch (error) {
-            reject(error);
-          }
-        })
+        resolve(response.data);
       }
-     
-    })
-  }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      pool.push(child);
+      reject(error);
+    }
+  });
 }
 
+function sendMessageToChild(child, params) {
+  return new Promise((resolve, reject) => {
+    child.send({
+      payload: params.payload,
+      activity: params.activity,
+    });
+
+    child.once('message', (resp) => {
+      resolve(resp);
+    });
+
+    child.once('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+
+const numChildProcesses = 2;
+for (let i = 0; i < numChildProcesses; i++) {
+  const child = fork(childPath, [], { env: process.env });
+  pool.push(child);
+}
+
+module.exports = {
+  checkChild,
+  work,
+};
