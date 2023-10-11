@@ -47,8 +47,11 @@ passport.use(
 passport.use('authenticate',
   new JWTstrategy(
     {
-      secretOrKey: config.JWT_SECRET,
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+          secretOrKey: config.JWT_SECRET,
+          jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+          issuer: config.LIVE_BASE_URL,
+          ignoreExpiration: true, 
+          clockTolerance: 60
     },
     async (token, done) => {
         try {
@@ -200,3 +203,5 @@ passport.deserializeUser(async (id, done) => {
         done(err);
     }
 });
+
+module.exports = passport
