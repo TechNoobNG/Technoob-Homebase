@@ -116,7 +116,7 @@ app.use(
     rolling: true,
     store: MongoStore.create({
       mongoUrl: config.DATABASE_URL,
-      ttl: 60 * , // 1 hour
+      ttl: 60 * 60, // 1 hour
       autoRemove: "native",
     }),
     cookie: cookieConfig
