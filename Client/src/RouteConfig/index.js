@@ -15,6 +15,10 @@ import {
   JobManagement,
   ResourceManagement,
 } from "../pages/AdminPage/Dashboard";
+import UserDashboard from "../user-dashboard/components/UserDashboard";
+import UserEvents from "../user-dashboard/components/UserEvents";
+import Resource from "../user-dashboard/components/Resources";
+import Quiz from "../user-dashboard/components/Quiz";
 
 export const routes = [
   { path: "/", element: <Home /> },
@@ -37,4 +41,10 @@ export const adminRoutes = [
   { path: "Event-Management", element: <EventManagement /> },
 ];
 
+export const userDashboardRoutes = [
+  { path: "/user/dashboard", element: <UserDashboard /> },
+  { path: "user/resources", element: <Resource /> },
+  { path: "user/event", element: <UserEvents /> },
+  { path: "user/quiz", element: <Quiz /> },
+];
 // export default routes;
