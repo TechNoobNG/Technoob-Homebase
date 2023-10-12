@@ -1,11 +1,13 @@
+import { NavLink } from "react-router-dom";
+
 function Aside() {
   return (
     <aside className="aside">
       <nav>
         <ul className="space-y-2">
           <li className="  text-[1.6rem] border-b border-1 mb-24">
-            <a
-              href="home"
+            <NavLink
+              to="/user"
               className="flex items-center gap-x-10 w-full rounded-md text-white px-[2rem] py-[1rem] mb-[2.4rem] bg-[#5e7ce8]"
             >
               <svg
@@ -31,11 +33,11 @@ function Aside() {
                 />
               </svg>
               Dashboard
-            </a>
+            </NavLink>
           </li>
           <li className="  text-[1.6rem]">
-            <a
-              href="home"
+            <NavLink
+              to="/resources"
               className="flex items-center gap-x-10 w-full px-[2rem] py-[1rem]"
             >
               <svg
@@ -68,11 +70,11 @@ function Aside() {
                 />
               </svg>
               Resources
-            </a>
+            </NavLink>
           </li>
           <li className="  text-[1.6rem]">
-            <a
-              href="home"
+            <NavLink
+              to="/event"
               className="flex items-center gap-x-10 w-full px-[2rem] py-[1rem]"
             >
               <svg
@@ -99,11 +101,11 @@ function Aside() {
                 />
               </svg>
               Event
-            </a>
+            </NavLink>
           </li>
           <li className="  text-[1.6rem]">
-            <a
-              href="home"
+            <NavLink
+              to="/quiz"
               className="flex items-center gap-x-10 w-full px-[2rem] py-[1rem]"
             >
               <svg
@@ -121,7 +123,7 @@ function Aside() {
                 />
               </svg>
               Quizzes and Competition
-            </a>
+            </NavLink>
           </li>
         </ul>
       </nav>
