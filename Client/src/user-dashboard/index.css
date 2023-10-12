@@ -487,13 +487,27 @@ svg.notification::after {
   background-color: var(--danger);
 }
 
-a:link,
-a:visited {
+a.active:link,
+a.active:visited {
   color: var(--black);
   border-radius: 0.375rem;
 }
 
-a:hover {
-  color: var(--white);
+a.active:hover,
+a.active:active,
+a.active {
+  color: var(--white) !important;
+  fill: var(--white) !important;
+  stroke: var(--white);
   background-color: var(--primary-color);
+}
+
+.aside li:hover {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.aside li:hover svg {
+  fill: var(--white);
+  stroke: transparent;
 }
