@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useLayoutEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, useLocation } from "react-router-dom";
 
 import { AppContext } from "./AppContext/AppContext";
 
 import DashSelector from "./utility/DashSelector";
 import LandingPageRoute from "./RouteConfig/LandingPageRoute";
 import AdminPageRoute from "./RouteConfig/AdminPageRoute";
+import UserDashboardRoute from "./RouteConfig/UserDashboardRoute";
 
 function App() {
   const {
@@ -49,16 +50,13 @@ function App() {
     <BrowserRouter>
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
+      <Wrapper>
+        <LandingPageRoute />
+      </Wrapper>
       {toggleValue === "User Dashboard" ? (
-        <Wrapper>
-          <Routes>
-            <LandingPageRoute />
-          </Routes>
-        </Wrapper>
+        <UserDashboardRoute />
       ) : (
-        <Routes>
-          <AdminPageRoute />
-        </Routes>
+        <AdminPageRoute />
       )}
     </BrowserRouter>
   );
