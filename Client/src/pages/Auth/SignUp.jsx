@@ -48,15 +48,7 @@ const SignUp = () => {
     "username": form.Username,
     "stack": ['frontend']
   }
-      
-    
 
-var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: raw,
-  redirect: 'follow'
-};
 if(form.Password !== form.ConfirmPassword) alert('Passwords do not match')
 else{
   setLoading(true)
