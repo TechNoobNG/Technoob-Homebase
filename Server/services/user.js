@@ -157,6 +157,20 @@ module.exports = {
         } catch (err) {
             throw err
         }
+    },
+
+    async fetchDastData() {
+        try {
+            //most recent quiz attempt
+            //recommended quiz
+            //Upcoming event of interest
+            //Active    quiz
+            //Recent Jobs
+            //Ranking and leader board
+            //pending quiz
+        } catch (error) {
+            
+        }
     }
 
 }
