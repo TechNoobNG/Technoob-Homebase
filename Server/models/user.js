@@ -110,8 +110,8 @@ const user = new Schema({
     },
 
     quiz_record: {
-        type: Object,
-        default: []
+        type: Schema.Types.ObjectId,
+        ref: 'QuizTracker'
     }
 
 
