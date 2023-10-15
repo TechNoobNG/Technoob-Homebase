@@ -48,7 +48,21 @@ module.exports = {
                 "junior backend software mobile frontend developer",
                 "junior QA",
                 "Junior customer Service support"
-            ]
+            ],
+        AVAILABLE_STACKS:  [
+            "Frontend Development",
+            "UI/UX",
+            "Backend Development",
+            "Mobile Development",
+            "Product Management",
+            "Project Management",
+            "Technical Writing",
+            "Cloud Development",
+            "Cybersecurity",
+            "Software Testing",
+            "DevOps",
+            "SEO"
+        ]
 
     },
     test: {
@@ -99,7 +113,21 @@ module.exports = {
                 "junior backend software mobile frontend developer",
                 "junior QA",
                 "Junior customer Service support"
-            ]
+            ],
+        AVAILABLE_STACKS:  [
+            "Frontend Development",
+            "UI/UX",
+            "Backend Development",
+            "Mobile Development",
+            "Product Management",
+            "Project Management",
+            "Technical Writing",
+            "Cloud Development",
+            "Cybersecurity",
+            "Software Testing",
+            "DevOps",
+            "SEO"
+        ]
 
     },
 
@@ -144,6 +172,20 @@ module.exports = {
                 "junior QA",
                 "Junior customer Service support"
             ],
-            LISTENER: process.env.LISTENER || true,
+        LISTENER: process.env.LISTENER || true,
+        AVAILABLE_STACKS:  [
+            "Frontend Development",
+            "UI/UX",
+            "Backend Development",
+            "Mobile Development",
+            "Product Management",
+            "Project Management",
+            "Technical Writing",
+            "Cloud Development",
+            "Cybersecurity",
+            "Software Testing",
+            "DevOps",
+            "SEO"
+        ]
     }
 }

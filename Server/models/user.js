@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const env = process.env.NODE_ENV || 'development';
-const config = require(`${__dirname}/../config/config.js`)[env];
+const config = require("../config/config")[env];
 const Schema = mongoose.Schema;
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
@@ -9,6 +9,7 @@ const SALT_ROUNDS = config.SALT_ROUNDS
 const TOKEN_EXPIRATION_TIME = config.TOKEN_EXPIRATION_TIME;
 const child_worker = require('../utils/child');
 const Honeybadger = require('../utils/honeybadger');
+
 
 const user = new Schema({
     firstname: {
@@ -109,10 +110,11 @@ const user = new Schema({
         select: false
     },
 
-    quiz_record: {
+    quiz_record: [{
         type: Schema.Types.ObjectId,
-        ref: 'QuizTracker'
-    }
+        ref: 'QuizTracker' 
+    }],
+
 
 
 },{
@@ -130,7 +132,8 @@ user.pre('save', async function (next) {
             ]);
           
             this.password = hash;
-          } catch (err) {
+        } catch (err) {
+            console.log(err)
             Honeybadger.notify(`Password hashing failed with error: ${err}`);
             const salt =  await bcrypt.genSalt(SALT_ROUNDS)
             this.password = await bcrypt.hash(this.password, salt);
@@ -180,6 +183,23 @@ user.methods.changedPasswordAfter = function (JWTTimestamp) {
 
     return false;
 }
+
+user.virtual('lastCompletedAttempt').get(function () {
+    const quizRecord = this.quiz_record;
+    if (quizRecord.length > 0) {
+      const sortedQuizRecords = quizRecord.slice().sort((a, b) => b.updatedAt - a.updatedAt);
+      const mostRecentAttempt = sortedQuizRecords.find((quiz) => quiz.completed);
+      if (mostRecentAttempt) {
+        return mostRecentAttempt;
+      }
+    }
+    return null;
+  });
+  
+  user.virtual('pendingQuizzes').get(function () {
+    return this.quiz_record.filter((quiz) => !quiz.completed);
+  });
+  
 
 
 const UserModel = mongoose.model('User', user);
