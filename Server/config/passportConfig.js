@@ -6,7 +6,9 @@ const User = require('../models/user');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const crypto = require('crypto');
 const GithubStrategy = require('passport-github2').Strategy;
-const mailer = require('../utils/azure_mailer')
+const mailer = require('../utils/azure_mailer');
+const JWTstrategy = require('passport-jwt').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 passport.use(
     new LocalStrategy(
@@ -20,6 +22,7 @@ passport.use(
                 if (!user) return done(null, false, { message: 'Incorrect email or password.' });
                 const isMatch = await user.comparePassword(password);
                 if (!isMatch) return done(null, false, { message: 'Incorrect email or password.' });
+
                 user = {
                     _id: user._id,
                     firstname: user.firstname,
@@ -29,9 +32,8 @@ passport.use(
                     stack: user.stack,
                     photo: user.photo,
                     active: user.active,
-                    role: user.admin,
+                    role: user.role,
                     verified: user.verified
-                    
                 }
                 return done(null, user);
             } catch (err) {
@@ -39,6 +41,32 @@ passport.use(
             }
         },
     ),
+);
+
+
+passport.use('authenticate',
+  new JWTstrategy(
+    {
+          secretOrKey: config.JWT_SECRET,
+          jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+          issuer: config.LIVE_BASE_URL,
+          ignoreExpiration: true, 
+          clockTolerance: 60
+    },
+    async (token, done) => {
+        try {
+            const username = token.user.username
+            let user = await User.findOne({ username });
+            if (user) {
+                return done(null,user)
+            }
+        
+        return done(null, false );
+      } catch (error) {
+        done(error,false);
+      }
+    }
+  )
 );
 
 
@@ -175,3 +203,5 @@ passport.deserializeUser(async (id, done) => {
         done(err);
     }
 });
+
+module.exports = passport

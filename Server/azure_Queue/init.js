@@ -14,13 +14,20 @@ module.exports = {
             if (!data) throw Error('No data found');
             if (typeof data !== 'string') data = JSON.stringify(data);
 
-            const options = { visibilityTimeout: data.visibilityTimeout || 30 };
+            const options = {
+                visibilityTimeout: data.visibilityTimeout || 30
+            };
+
+            if (data.delay) {
+                setTimeout(async () => await queueClient.sendMessage(data, options), delay )
+            } else {
+                await queueClient.sendMessage(data, options);
+            }
             
-            await queueClient.sendMessage(data, options);
+            
             console.log("Added message to the queue: ", data);
-            return { message: 'Action successfully to job queue' };
+            return { message: 'Action successfully added to job queue' };
         } catch (error) {
-            console.log(error);
             throw error;
         }
     },
@@ -47,31 +54,3 @@ module.exports = {
 
     }
 }
-// async function main() {
-//     console.log("Azure Queue Storage client library - JavaScript quickstart sample");
-
-//     // Instantiate a QueueClient which will be used to create and interact with a queue
-  
-//     messageText = {
-//         "id": 1,
-//         "name": "John Doe",
-//         "email": "qwer",
-//         "phone": "12345",
-//     };
-//     let data = JSON.stringify(messageText);
-//     console.log("Adding message to the queue: ", data);
-
-//     // Add a message to the queue
-//     await queueClient.sendMessage(data);
-
-//         // Get next message from the queue
-//     // receivedMessages = await queueClient.receiveMessages();
-//     // var message = receivedMessages
-//     // console.log("Processing & deleting message with content:", message);
-//     // Create the queue
-//     // const createQueueResponse = await queueClient.create();
-//     // console.log("Queue created, requestId:", createQueueResponse.requestId);
-// }
-
-// main().then(() => console.log("\nDone")).catch((ex) => console.log(ex.message));
-

@@ -1,24 +1,25 @@
 const services = require("../services/index");
 const { mailing_list } = require("../services/user");
 const users = services.user
-const db_worker = require('../utils/child')
+const worker = require('../utils/child')
 
 module.exports = {
     async dashboard(req, res) {
-     
+        const userId = req.user._id 
         try {
-            db_worker.send({ modelName: 'User', method: 'findById', payload: req.user._id });
-            db_worker.on('message', (result) => {
-                return res.status(201).json({
-                    status: "success",
-                    message: `Welcome ${req.user.username}, you successfully logged in with Github`,
-                    data: result
-    
-                })
-            });   
+            const reponse = await users.getDashboard(userId)
+            return res.status(200).json({
+                status: "success",
+                message: `User dashboard loaded`,
+                data: reponse
+            })
         } catch (err) {
             console.log(err)
-            return res.status(500).json(err)
+            return res.status(500).json(
+                {
+                    message: "An error occured, please contact admin"
+                }
+            )
         }
     },
 
@@ -151,9 +152,29 @@ module.exports = {
     },
 
     async getOne(req, res) {
+        try {
+            const user_id = req.params.id
+                if(!user_id) {
+                    throw new Error("Please provide a user Id")
+            }
+            const user = await users.getOne(user_id)
+            return res.status(201).json({
+                status: "success",
+                message: `User found`,
+                data: user
+            })
+        } catch (err) {
+            return res.status(500).json({
+                status: "error",
+                message: "User Not Found"
+            })
+        }
+    },
+
+    async getProfile(req, res) {
         const user_id = req.user._id
         try {
-            const user = await users.getOne(user_id)
+            const user = await users.getOne(user_id);
             return res.status(201).json({
                 status: "success",
                 message: `User found`,
@@ -163,18 +184,18 @@ module.exports = {
             console.log(err)
             return res.status(500).json({
                 status: "error",
-                message: err.message
+                message: "User Not Found"
             })
         }
     },
 
     async getAll(req, res) {
-        const params = req.query
+        const query = req.query
         try {
-            const user = await users.getAll()
+            const user = await users.getAll(query)
             return res.status(201).json({
                 status: "success",
-                message: `${user.length} users found`,
+                message: `${user.count} users found`,
                 data: user
             })
         } catch (err) {

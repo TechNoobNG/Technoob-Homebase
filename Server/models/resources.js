@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const env = process.env.NODE_ENV || 'development';
-const config = require(`${__dirname}/../config/config.js`)[env];
+const config = require("../config/config")[env];
 const Schema = mongoose.Schema;
 const User = require('./user');
 
@@ -18,7 +18,8 @@ const resources = new Schema({
     stack: {
         type: String,
         required: [true, 'Please provide the applicable stack'],
-        trim: true
+        trim: true,
+        enum: config.AVAILABLE_STACKS
     },
     description: {
         type: String,
@@ -36,7 +37,11 @@ const resources = new Schema({
     file: {
         type: String,
         trim: true
+    },
 
+    url: {
+        type: String,
+        trim: true
     },
 
     uploader_id: {
@@ -48,17 +53,14 @@ const resources = new Schema({
 
     image_placeholder: {
         type: String,
-        trim: true,
-        default: 'https://res.cloudinary.com/dx0hz2ziy/image/upload/v1595513899/placeholder.png'
+        trim: true
     },
 
     createdAt: {
         type: Date,
-        default: Date.now
     },
     updatedAt: {
-        type: Date,
-        default: null
+        type: Date
     },
 
     meta: {
@@ -82,11 +84,28 @@ const resources = new Schema({
     averageRating: {
         type: Number,
         default: null
+    },
+
+    users: {
+        type: Object,
+        default: []
+    },
+
+    downloads: {
+        type: Number,
+        default: 0,
+        min:0 
+    },
+
+    traffic: {
+        type: Number,
+        default: 0,
+        min: 0
     }
 
 
-
-
+},{
+    timestamps: true
 })
 
 resources.pre('save', async function (next) {

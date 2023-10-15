@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const env = process.env.NODE_ENV || 'development';
-const config = require(`${__dirname}/../config/config.js`)[env];
+const config = require("../config/config")[env];
 const Schema = mongoose.Schema;
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
@@ -9,6 +9,7 @@ const SALT_ROUNDS = config.SALT_ROUNDS
 const TOKEN_EXPIRATION_TIME = config.TOKEN_EXPIRATION_TIME;
 const child_worker = require('../utils/child');
 const Honeybadger = require('../utils/honeybadger');
+
 
 const user = new Schema({
     firstname: {
@@ -84,31 +85,21 @@ const user = new Schema({
 
     },
     passwordChangedAt: {
-        type: Date
+        type: Date,
+        select: false
     },
     passwordResetToken: {
-        type: String
+        type: String,
+        select: false
     },
     passwordResetExpires: {
-        type: Date
-    },
-    active: {
-        type: Boolean,
-        default: true,
+        type: Date,
         select: false
     },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now()
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now()
     },
     verificationToken: {
         type: String
@@ -119,15 +110,21 @@ const user = new Schema({
         select: false
     },
 
+    quiz_record: [{
+        type: Schema.Types.ObjectId,
+        ref: 'QuizTracker' 
+    }],
 
 
+
+},{
+    timestamps: true
 });
 
 user.pre('save', async function (next) {
   try {
-    // Only run this function if password was actually modified
+      // Only run this function if password was actually modified
       if (!this.isModified('password')) return next();
-     console.log('child_worker.checkChild():', child_worker.checkChild());
       if (child_worker.checkChild() > 0) { 
         try {
             const [hash] = await Promise.all([
@@ -135,9 +132,9 @@ user.pre('save', async function (next) {
             ]);
           
             this.password = hash;
-          } catch (err) {
+        } catch (err) {
+            console.log(err)
             Honeybadger.notify(`Password hashing failed with error: ${err}`);
-            
             const salt =  await bcrypt.genSalt(SALT_ROUNDS)
             this.password = await bcrypt.hash(this.password, salt);
           }
@@ -157,7 +154,6 @@ user.pre('save', async function (next) {
 
 user.pre('save', function (next) {
     if (!this.isModified('password') || this.isNew) return next();
-
     this.passwordChangedAt = Date.now() - 1000;
     next();
 }
@@ -182,13 +178,28 @@ user.methods.comparePassword = async function (password) {
 user.methods.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
-
         return JWTTimestamp < changedTimestamp;
     }
 
-    // False means NOT changed
     return false;
 }
+
+user.virtual('lastCompletedAttempt').get(function () {
+    const quizRecord = this.quiz_record;
+    if (quizRecord.length > 0) {
+      const sortedQuizRecords = quizRecord.slice().sort((a, b) => b.updatedAt - a.updatedAt);
+      const mostRecentAttempt = sortedQuizRecords.find((quiz) => quiz.completed);
+      if (mostRecentAttempt) {
+        return mostRecentAttempt;
+      }
+    }
+    return null;
+  });
+  
+  user.virtual('pendingQuizzes').get(function () {
+    return this.quiz_record.filter((quiz) => !quiz.completed);
+  });
+  
 
 
 const UserModel = mongoose.model('User', user);

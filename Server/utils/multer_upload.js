@@ -24,7 +24,7 @@ const uploadParams = {
 module.exports = {
     async uploadFile(file) {
         return new Promise(async (resolve, reject) => {
-            console.log(file);
+            try {
                 const timestamp = new Date().toISOString().replace(/:/g, '-');
                 const fileName = `${timestamp}-${file.originalname}`;
 
@@ -34,9 +34,9 @@ module.exports = {
                     
                     uploadResponse = await blob.upload('images', resizedImage, fileName);
                 } else {
-                    const sizeLimit = file.mimetype === 'application/zip' ? 15 * 1024 * 1024 : 8 * 1024 * 1024;
+                    const sizeLimit = file.mimetype === 'application/zip' ? 15 * 1024 * 1024 : 30 * 1024 * 1024;
                     if (file.size > sizeLimit) {
-                        return reject(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
+                        throw new Error(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
                     }
                     const uploadedFile = new stream.PassThrough();
                     uploadedFile.end(file.buffer);
@@ -51,9 +51,67 @@ module.exports = {
                     message: `File was uploaded successfully.`
 
                 }
-                // Return a response indicating that the upload was successful
-            resolve(response);
+                resolve(response);
+            } catch (err) {
+                reject(err)
+            }
         })
+               
+    },
+
+    async uploadFileAsStream(fileStream, originalname, mimetype) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const timestamp = new Date().toISOString().replace(/:/g, '-');
+                const fileName = `${timestamp}-${originalname}`;
+    
+                if (mimetype === 'image/jpeg' || mimetype === 'image/png') {
+                    const resizedImageStream = fileStream.pipe(sharp().resize(800).jpeg({ quality: 80 }));
+    
+                    const uploadResponse = await blob.upload('images', resizedImageStream, fileName);
+                    
+                    const response = {
+                        name: fileName,
+                        url: uploadResponse.url,
+                        requestId: uploadResponse.requestId,
+                        message: `File was uploaded successfully.`
+                    };
+    
+                    resolve(response);
+                } else {
+                    const sizeLimit = mimetype === 'application/zip' ? 15 * 1024 * 1024 : 100 * 1024 * 1024;
+                    let uploadedFileSize = 0;
+    
+                    const sizeCounterStream = new stream.Transform({
+                        transform(chunk, encoding, callback) {
+                            uploadedFileSize += chunk.length;
+                            this.push(chunk);
+                            callback();
+                        }
+                    });
+    
+                    fileStream.pipe(sizeCounterStream);
+    
+                    if (uploadedFileSize > sizeLimit) {
+                         throw new Error(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
+                    }
+    
+                    const uploadResponse = await blob.upload(mimetype.split('/')[1], sizeCounterStream, fileName, true);
+    
+                    const response = {
+                        name: fileName,
+                        url: uploadResponse.url,
+                        requestId: uploadResponse.requestId,
+                        message: `File was uploaded successfully.`
+                    };
+    
+                    resolve(response);
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                reject(error);
+            }
+        });
     }
 }
 

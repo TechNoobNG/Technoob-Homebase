@@ -1,6 +1,9 @@
+const { tryCatch } = require('bullmq');
 const Contact = require('../models/contact_us');
 const mailing_list = require('../models/mailing_list');
 const User = require('../models/user');
+const leaderboard = require("./leaderboard");
+const mongoose = require("mongoose")
 
 
 
@@ -86,17 +89,31 @@ module.exports = {
     async getOne(id) {
         try {
             if (!id) throw new Error('Id is required')
-            const user = await User.findById({ _id: id }).select('+active')
+            const user = await User.findById({ _id: id }).select('+active').populate('quiz_record')
             return user
         } catch (err) {
             throw err
         }
     },
 
-    async getAll() {
+    async getAll(query) {
         try {
+            let page = query.page || 1;
+            let limit = query.limit || 5;
+            let skip = (page - 1) * limit;
+            let count = 0;
             const users = await User.find().select('+active')
-            return users
+                .skip(skip)
+                .limit(limit);
+            if (users) {
+                count = users.length
+            }
+            return {
+                users,
+                page,
+                limit,
+                count
+            };
         } catch (err) {
             throw err
         }
@@ -127,6 +144,252 @@ module.exports = {
         const response = await mailing_list.create({ email })
        return response
 
-         }
+    },
+    
+    async getMetrics() {
+        try {
+            const users = await User.find().select('+active')
+            const total = users.length
+            const active = users.filter(user => user.active === true).length
+            const inactive = users.filter(user => user.active === false).length
+            return {
+                total,
+                active,
+                inactive
+            }
+        } catch (err) {
+            throw err
+        }
+    },
+
+    async getDashboard(id) {
+        try {
+            let dashObject = {
+                recommendations: { }
+            }
+            //Ranking and leader board
+            const userId = new mongoose.Types.ObjectId(id);
+            const aggregationPipeline =[
+                {
+                  $match: {
+                    _id: userId,
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "quiztrackers",
+                    localField: "_id",
+                    foreignField: "user_id",
+                    as: "quiz_records",
+                  },
+                },
+                {
+                  $addFields: {
+                    pendingQuizzes: {
+                      $filter: {
+                        input: "$quiz_records",
+                        as: "quizRecord",
+                        cond: {
+                          $eq: ["$$quizRecord.completed", false],
+                        },
+                      },
+                    },
+                    lastCompletedAttempt: {
+                      $arrayElemAt: [
+                        {
+                          $map: {
+                            input: {
+                              $filter: {
+                                input: "$quiz_records",
+                                as: "quizRecord",
+                                cond: {
+                                  $eq: ["$$quizRecord.completed", true],
+                                },
+                              },
+                            },
+                            as: "quiz",
+                            in: {
+                              quiz: "$$quiz",
+                            },
+                          },
+                        },
+                        -1,
+                      ],
+                    },
+                  },
+                },
+                {
+                  $project: {
+                    email: 1,
+                    stack: 1,
+                    role: 1,
+                    active: 1,
+                    quiz_records: 1,
+                    lastCompletedAttempt: 1,
+                    pendingQuizzes: 1,
+                  },
+                },
+                {
+                  $unwind: "$stack",
+                },
+                {
+                  $lookup: {
+                    from: "resources",
+                    let: {
+                      stackValue: "$stack",
+                    },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $eq: ["$stack", "$$stackValue"],
+                          },
+                        },
+                      },
+                      {
+                        $sort: {
+                          createdAt: -1,
+                        },
+                      },
+                      {
+                        $limit: 4,
+                      },
+                    ],
+                    as: "matched_resources",
+                  },
+                },
+                {
+                  $unwind: {
+                    path: "$matched_resources",
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "quizzes",
+                    let: {
+                      stackValue: "$stack",
+                    },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $eq: ["$stack", "$$stackValue"],
+                          },
+                        },
+                      },
+                      {
+                        $sort: {
+                          createdAt: -1,
+                        },
+                      },
+                      {
+                        $limit: 4,
+                      },
+                    ],
+                    as: "matched_quizzes",
+                  },
+                },
+                {
+                  $unwind: {
+                    path: "$matched_quizzes",
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "jobs",
+                    localField: "stack",
+                    foreignField: "searchKeywords",
+                    as: "matched_jobs",
+                  },
+                },
+                {
+                    $unwind: {
+                      path: "$matched_jobs",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                {
+                  $group: {
+                    _id: "$_id",
+                    email: {
+                      $first: "$email",
+                    },
+                    stack: {
+                      $addToSet: "$stack",
+                    },
+                    role: {
+                      $first: "$role",
+                    },
+                    active: {
+                      $first: "$active",
+                    },
+                    quiz_records: {
+                      $first: "$quiz_records",
+                    },
+                    lastCompletedAttempt: {
+                      $first: "$lastCompletedAttempt",
+                    },
+                    pendingQuizzes: {
+                      $first: "$pendingQuizzes",
+                    },
+                    matched_resources: {
+                      $addToSet: "$matched_resources",
+                    },
+                    matched_quizzes: {
+                      $push: "$matched_quizzes",
+                    },
+                    matched_jobs: {
+                      $addToSet: "$matched_jobs",
+                    },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    email: 1,
+                    stack: 1,
+                    role: 1,
+                    active: 1,
+                    quiz_records: 1,
+                    lastCompletedAttempt: 1,
+                    pendingQuizzes: 1,
+                    matched_resources: {
+                      _id: 1,
+                      name: 1,
+                      type: 1,
+                      image_placeholder: 1,
+                      stack: 1,
+                    },
+                    matched_jobs: {
+                      $slice: ["$matched_jobs", 4], // Limit the number of jobs to 4
+                    },
+                    matched_quizzes: {
+                      _id: 1,
+                      deadline: 1,
+                      type: 1,
+                      theme: 1,
+                      stack: 1,
+                      datePosted: 1,
+                    },
+                  },
+                },
+              ];
+            const user = await User.aggregate(aggregationPipeline);
+            dashObject.recommendations.quiz = user[0].matched_quizzes
+            dashObject.recommendations.resources = user[0].matched_resources
+            dashObject.recommendations.jobs = user[0].matched_jobs
+            dashObject.lastCompletedQuizAttempt = user[0].lastCompletedAttempt;
+            dashObject.pendingQuizzes = user[0].pendingQuizzes;
+            const getRanking = await leaderboard.getUser(userId);
+            dashObject.rank = getRanking.rank;
+            dashObject.leaderboardRecord = getRanking.record;
+            dashObject.leaderBoardUsers = getRanking.total;
+            return dashObject
+        } catch (error) {
+             throw error
+        }
+    }
 
 }

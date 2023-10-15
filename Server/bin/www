@@ -11,8 +11,22 @@ const http = require('http');
 const db = require('../utils/db_connector');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
+const azureQueueListener = require("../azure_Queue/worker")
+const WORKERS = process.env.WEB_CONCURRENCY || 1; //HEROKU CONFIG
+const HOST = process.env.HOST;
 
-if (cluster.isMaster ) {
+
+//const breeRunner = require("../jobs/bree_jobs")
+
+    // try {
+    //   breeRunner.runner();
+    //   //breeRunner.stopper();
+    // } catch (err) {
+    //     console.log("bree runner error",err)
+    //     breeRunner.stopper();
+    // }
+
+if (cluster.isMaster && HOST !== 'heroku') {
   console.log(`Master ${process.pid} is running`);
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
@@ -20,13 +34,35 @@ if (cluster.isMaster ) {
     cluster.on('exit', (worker, code, signal) => {
       console.log(`Worker ${worker.process.pid} died`);
     });
-    
+
+} else if (cluster.isMaster && HOST === 'heroku') {
+  for (let i = 0; i < WORKERS; i++) {
+    cluster.fork();
+  }
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
 
 } else {
   console.log(`Worker ${process.pid} started`);
   /**
  * Get port from environment and store in Express.
  */
+
+  /**
+   * Run multiple azure subscribers
+   */
+
+
+  if (config.LISTENER) {
+    let scriptCount = config.LISTENER_COUNT * 1 || 5;
+    let i = 0;
+    do {
+      azureQueueListener();
+      i++
+    }while(i < scriptCount)
+
+  }
 
 let port = normalizePort(config.PORT || '3000');
 app.set('port', port);
@@ -46,25 +82,6 @@ const initialise_db = async () => {
   });
 
 }
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-
-(async () => {
-
-  await Promise.all([
-    initialise_db(),
-  ])
-
-  const port = config.PORT;
-
-  // Start listening for incoming connections on specified port and log to console when server has started
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening);
-
-})();
 
 
 
@@ -127,6 +144,26 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+  /**
+ * Listen on provided port, on all network interfaces.
+ */
+
+
+(async () => {
+
+  await Promise.all([
+    initialise_db(),
+  ])
+
+  const port = config.PORT;
+
+  // Start listening for incoming connections on specified port and log to console when server has started
+  server.listen(port);
+  server.on('error',onError)
+
+})();
 
 }
 
