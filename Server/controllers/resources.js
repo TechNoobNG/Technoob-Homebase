@@ -71,10 +71,11 @@ module.exports = {
     },
 
     async create (req, res, next) { 
-        const body = req.body
-        if (!body.uploader_id) {
-            body.uploader_id = req.user?._id || '643492bb86360e05476576f9'
-        }
+        let payload = req.body
+        payload.uploader_id = req.user?._id;
+
+        if(! payload.uploader_id ) throw new Error("Invalid user")
+        
         try {
             const resources = await resource.create(body)
             res.status(201).json({

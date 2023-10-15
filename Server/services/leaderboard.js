@@ -9,7 +9,6 @@ module.exports = {
         
             return leaderboard_Ranking;
           } catch (error) {
-            console.error('Error fetching leaderboard:', error);
             throw error;
           }
     },
@@ -24,7 +23,6 @@ module.exports = {
             const total = sortedLeaderboard.length
             return { record, rank, total  };
           } catch (error) {
-            console.error('Error fetching leaderboard:', error);
             throw error;
           }
     }
