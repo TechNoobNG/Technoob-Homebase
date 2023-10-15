@@ -1,5 +1,7 @@
 const services = require('../services/index');
 const resource = services.resources;
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config')[env];
 
 module.exports = {
      async get_all (req, res) { 
@@ -10,6 +12,21 @@ module.exports = {
                 status: "success",
                 message: `${resources.count} resource(s) retrieved`,
                 data: resources
+            })
+        } catch (error) {
+            res.status(400).json({
+                status: "fail",
+                message: error.message
+            })
+        }
+    },
+    getStacks(_req, res) {
+        try {
+            const stackOptions = config.AVAILABLE_STACKS
+            res.status(200).json({
+                status: "success",
+                message: `${stackOptions.count} stacks(s) retrieved`,
+                data: stackOptions
             })
         } catch (error) {
             res.status(400).json({

@@ -40,6 +40,12 @@ module.exports = {
                 prompt.location = query.location
             }
 
+            if (query.stack) {
+                prompt.searchKeywords =  {
+                    $in: query.stack
+                }
+            }
+
             const jobs = await Jobs.find(prompt)
                 .skip(skip)
                 .limit(limit)

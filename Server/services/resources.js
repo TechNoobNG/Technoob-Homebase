@@ -215,5 +215,26 @@ module.exports = {
         } catch (error) {
             throw error;
         }
+    },
+
+    fetchUserRecommendations: async (stack) => {
+        try {
+            const searchRecommendations = await Resources.find({
+                stack: {
+                    $in: stack
+                }
+            },
+            {
+                _id: 1, 
+                name: 1, 
+                type: 1,
+                image_placeholder: 1,
+                stack: 1
+               
+              })
+            return searchRecommendations
+        } catch (err) {
+            console.log(err)
+        }
     }
 };

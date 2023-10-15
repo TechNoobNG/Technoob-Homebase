@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config')[env];
 
 const quizzes = new Schema({
     theme: {
@@ -15,6 +17,7 @@ const quizzes = new Schema({
     stack: {
         type: String,
         required: [true, 'Please provide the stack for the quiz'],
+        enum: config.AVAILABLE_STACKS
     },
 
     instructions: {

@@ -182,13 +182,12 @@ module.exports = {
             })
             quiz.questions_answers = excludeCorrectAnswer
 
-
             const attempt = {
                 user_id: user._id,
                 quiz_id: quiz._id,
                 duration_in_secs: quiz.duration || (quiz.deadline && Math.floor((new Date(quiz.deadline).getTime() - new Date().getTime()) / 1000))
             }
-            const options = { upsert: true };
+            const options = { upsert: true, new: true };
             await QuizTracker.findOneAndUpdate({quiz_id: id,user_id: user._id}, attempt, options)
             return quiz
             
@@ -236,4 +235,25 @@ module.exports = {
             throw error;
         }
     },
+
+    fetchUserRecommendations: async (stack) => {
+        try {
+            const searchRecommendations = await Quizzes.find({
+                stack: {
+                    $in: stack
+                }
+            },
+            {
+                _id: 1, 
+                theme: 1, 
+                type: 1,
+                duration: 1,
+                stack: 1
+               
+              })
+            return searchRecommendations
+        } catch (err) {
+            console.log(err)
+        }
+    }
 };

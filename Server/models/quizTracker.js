@@ -49,4 +49,24 @@ const quizTracker = new Schema({
     timestamps: true
 });
 
+quizTracker.post('findOneAndUpdate', async function (doc) {
+  try {
+      const user = await mongoose.model('User').findById(this._conditions.user_id);
+
+      if (user) {
+        const updatedQuizTrackerId = doc._id;
+
+      user.quiz_record.push(updatedQuizTrackerId);
+      const new_record = user.quiz_record;
+      await mongoose.model('User').findOneAndUpdate(
+        { _id: user._id },
+        { $addToSet: { quiz_record: new_record } },
+        { new: true }
+      );
+
+      }
+  } catch (error) {
+     console.log(error)
+  }
+});
 module.exports = mongoose.model('QuizTracker', quizTracker);

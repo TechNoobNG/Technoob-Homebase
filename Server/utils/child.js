@@ -1,8 +1,6 @@
 const { fork } = require('child_process');
-// Create a pool of child processes
 const pool = [];
 const path = require('path');
-
 const childPath = path.join(__dirname, 'child_worker.js');
 
 try {
@@ -12,7 +10,7 @@ try {
     pool.push(child);
   }
 } catch (error) {
-  
+  console.log(error)
 }
 
 // Export a function that returns a Promise
@@ -24,25 +22,19 @@ module.exports = {
 
   async work (params) {
     return new Promise((resolve, reject) => {
-     
-      if (pool.length === 0) {
+      if (!pool.length) {
         reject(new Error('No child processes available in the pool'));
         return;
       }
       const child = pool.shift();
       if (!child) { 
-        reject(new Error('No child processes available in the pool'));
+        reject(new Error('No child processes available to use in the pool'));
         return;
       }
-      let dead_child = false
-      try {
-        process.kill(worker.threadId, 0);
-      } catch (error) {
-        dead_child = true
-      }
+      let dead_child = child.killed;
 
       if (dead_child) { 
-        reject(new Error('No child processes available in the pool'));
+        reject(new Error(' child processes is dead available in the pool'));
         return;
       } else {
         child.send({
