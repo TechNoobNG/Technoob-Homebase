@@ -32,8 +32,13 @@ module.exports = {
             if (quiz) {
                 count = quiz.length
             }
+
+            const quizzes = quiz.map((quiz) => {
+                quiz.questions_answers = []
+                return quiz
+            })
             return {
-                quiz,
+                quizzes,
                 page,
                 limit,
                 count
@@ -172,7 +177,6 @@ module.exports = {
 
             if (!quiz) {throw new Error("Quiz not found")}
             const excludeCorrectAnswer = quiz.questions_answers.map((question) => {
-                delete question.answers[question.correctAnswerId + 1 ].isCorrect
                 delete question.correctAnswerId
                 return question
             })
@@ -183,7 +187,7 @@ module.exports = {
                 quiz_id: quiz._id,
                 duration_in_secs: quiz.duration || (quiz.deadline && Math.floor((new Date(quiz.deadline).getTime() - new Date().getTime()) / 1000))
             }
-            const options = { upsert: true };
+            const options = { upsert: true, new: true };
             await QuizTracker.findOneAndUpdate({quiz_id: id,user_id: user._id}, attempt, options)
             return quiz
             
@@ -205,27 +209,22 @@ module.exports = {
             const currentQuizTracker = await QuizTracker.findOne({ quiz_id: id, user_id: user._id });
             if (!currentQuizTracker) throw new Error("Quiz not Started")
             if (currentQuizTracker && currentQuizTracker.completed) throw new Error("Quiz already completed");   
-            if (!(currentQuizTracker && Date.now() < currentQuizTracker.date_started.getTime() + (currentQuizTracker.duration_in_secs * 1000))) throw new Error("Quiz time has elapsed");
+            if (!(currentQuizTracker && Date.now() < currentQuizTracker.createdAt.getTime() + (currentQuizTracker.duration_in_secs * 1000))) throw new Error("Quiz time has elapsed");
             if (currentQuizTracker.attempted >= currentQuizTracker.maxAttempts) throw new Error("Maximum number of attempts reached");
-    
+            if (currentQuizTracker.attempted === undefined || Number.isNaN(currentQuizTracker.attempted)) currentQuizTracker.attempted  = 0
             await answerObj.forEach(async (userAnswer, index) => {
                 const question = quiz.questions_answers.find((q) => q.id === userAnswer.questionId);
                 if (question && userAnswer.selectedAnswerId === question.correctAnswerId) {
                     score++;
                 }
-                if (index + 1 === totalQuestions) {
-                    tracker.completed = true;
-                    tracker.score = score;
-                    tracker.attempted += 1;
-                    await QuizTracker.findOneAndUpdate({ quiz_id: id, user_id: user._id }, tracker);
-                } else {
-                    tracker.completed = false;
-                    tracker.score = score;
-                    tracker.attempted += 1;
-                    await QuizTracker.findOneAndUpdate({ quiz_id: id, user_id: user._id }, tracker);
-                }
             });
-    
+
+            tracker.completed = true;
+            tracker.score = score;
+            tracker.attempted = currentQuizTracker.attempted + 1;
+
+            await QuizTracker.findOneAndUpdate({ quiz_id: id, user_id: user._id }, tracker);
+           
             return {
                 score,
                 totalQuestions,
@@ -236,4 +235,25 @@ module.exports = {
             throw error;
         }
     },
+
+    fetchUserRecommendations: async (stack) => {
+        try {
+            const searchRecommendations = await Quizzes.find({
+                stack: {
+                    $in: stack
+                }
+            },
+            {
+                _id: 1, 
+                theme: 1, 
+                type: 1,
+                duration: 1,
+                stack: 1
+               
+              })
+            return searchRecommendations
+        } catch (err) {
+            console.log(err)
+        }
+    }
 };

@@ -74,9 +74,32 @@ const jobs = new Schema({
         type: Date
     },
 
+    searchKeywords: {
+        type: Schema.Types.Array,
+        default: []
+    }
+    
+
 },{
     timestamps: true
 });
 
+jobs.pre("save", function(next) {
+    const jobTitle = this.title;
+    const keywords = [];
+
+    const words = jobTitle.split(' ');
+
+    for (let i = 0; i < words.length; i++) {
+        for (let j = i; j < words.length; j++) {
+            const keyword = words.slice(i, j + 1).join(' ');
+            keywords.push(keyword);
+            keywords.push(keyword.toLowerCase());
+        }
+    }
+
+    this.searchKeywords = [...this.searchKeywords,...keywords];
+    next();
+});
 
 module.exports = mongoose.model('Jobs', jobs);

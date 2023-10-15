@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config')[env];
 
 const events = new Schema({
     theme: {
@@ -50,6 +52,9 @@ const events = new Schema({
         required: [true, 'Please provide user id'],
         trim: true
     },
+    stack: {
+        type: Schema.Types.Array
+    }
 
 
 },{
