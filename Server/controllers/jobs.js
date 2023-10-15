@@ -54,15 +54,15 @@ module.exports = {
     },
 
     async create (req, res, next) {
-        const body = req.body
+        const payload = req.body
 
-        body.uploader_id = req.user?._id
+        payload.uploader_id = req.user?._id
 
-        if (!body.uploader_id) {
+        if (!payload.uploader_id) {
             throw new Error("Invalid user")
         }
         try {
-            const job = await jobs.create(body)
+            const job = await jobs.create(payload)
             res.status(200).json({
                 status: "success",
                 message: `Job created`,
