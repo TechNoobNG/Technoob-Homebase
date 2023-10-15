@@ -24,6 +24,7 @@ const uploadParams = {
 module.exports = {
     async uploadFile(file) {
         return new Promise(async (resolve, reject) => {
+            try {
                 const timestamp = new Date().toISOString().replace(/:/g, '-');
                 const fileName = `${timestamp}-${file.originalname}`;
 
@@ -33,9 +34,9 @@ module.exports = {
                     
                     uploadResponse = await blob.upload('images', resizedImage, fileName);
                 } else {
-                    const sizeLimit = file.mimetype === 'application/zip' ? 15 * 1024 * 1024 : 8 * 1024 * 1024;
+                    const sizeLimit = file.mimetype === 'application/zip' ? 15 * 1024 * 1024 : 30 * 1024 * 1024;
                     if (file.size > sizeLimit) {
-                        return reject(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
+                        throw new Error(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
                     }
                     const uploadedFile = new stream.PassThrough();
                     uploadedFile.end(file.buffer);
@@ -50,8 +51,12 @@ module.exports = {
                     message: `File was uploaded successfully.`
 
                 }
-            resolve(response);
+                resolve(response);
+            } catch (err) {
+                reject(err)
+            }
         })
+               
     },
 
     async uploadFileAsStream(fileStream, originalname, mimetype) {
@@ -88,7 +93,7 @@ module.exports = {
                     fileStream.pipe(sizeCounterStream);
     
                     if (uploadedFileSize > sizeLimit) {
-                        return reject(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
+                         throw new Error(`File size exceeds limit of ${sizeLimit / 1024 / 1024} MB`);
                     }
     
                     const uploadResponse = await blob.upload(mimetype.split('/')[1], sizeCounterStream, fileName, true);
