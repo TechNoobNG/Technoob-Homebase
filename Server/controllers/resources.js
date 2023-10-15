@@ -77,7 +77,7 @@ module.exports = {
         if(! payload.uploader_id ) throw new Error("Invalid user")
         
         try {
-            const resources = await resource.create(body)
+            const resources = await resource.create(payload)
             res.status(201).json({
                 status: "success",
                 message: `resource created`,
