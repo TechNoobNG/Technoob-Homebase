@@ -17,7 +17,7 @@ module.exports = {
         if (invalidUpdate) {
             throw new Error('Invalid Parameters')
         }
-        
+
         try {
             const user = await User.findOneAndUpdate({ _id: id }, params, { new: true })
             return user
@@ -25,13 +25,13 @@ module.exports = {
             throw err
         }
     },
-       
-    async editPassword(id, password, previous_password) { 
+
+    async editPassword(id, password, previous_password) {
         try {
                if(!id || !password || !previous_password) throw new Error('Id, Password and Previous Password are required')
             const user = await User.findOne({ _id: id }).select('+password');
             const check = await user.comparePassword(previous_password,this.password)
-            if (!check) { 
+            if (!check) {
                   throw new Error('Invalid Password, please check and retry')
             }
             user.password = password
@@ -45,8 +45,8 @@ module.exports = {
                 throw err
             }
     },
-    
-    async editPhoto(id, photo) { 
+
+    async editPhoto(id, photo) {
         try {
             if(!id || !photo) throw new Error('Id and Photo are required')
             const user = await User.findByIdAndUpdate({ _id: id }, { photo: photo }, { new: true })
@@ -56,7 +56,7 @@ module.exports = {
         }
     },
 
-    async deactivate(id) { 
+    async deactivate(id) {
         try {
             if (!id) throw new Error('Id is required')
             const user = await User.findByIdAndUpdate({ _id: id }, { active: false }, { new: true })
@@ -66,7 +66,7 @@ module.exports = {
         }
     },
 
-    async activate(id) { 
+    async activate(id) {
         try {
             if (!id) throw new Error('Id is required')
             const user = await User.findByIdAndUpdate({ _id: id }, { active: true }, { new: true })
@@ -75,7 +75,7 @@ module.exports = {
             throw err
         }
     },
-       
+
     async delete(id) {
         try {
             if (!id) throw new Error('Id is required')
@@ -135,7 +135,7 @@ module.exports = {
             'guerrillamail.com',
             'mailinator.com',
         ];
-        
+
         const [, domain] = email.split('@');
         if (temporaryDomains.includes(domain)) {
             throw new Error('Invalid Email Address');
@@ -145,7 +145,7 @@ module.exports = {
        return response
 
     },
-    
+
     async getMetrics() {
         try {
             const users = await User.find().select('+active')
@@ -162,6 +162,21 @@ module.exports = {
         }
     },
 
+    /**
+     * Retrieves the user's dashboard data from multiple collections in a MongoDB database.
+     * The method fetches user information, quiz records, and matches resources, quizzes, and jobs based on the user's stack.
+     * It also retrieves the user's ranking and leaderboard record.
+     *
+     * @param {string} id - The ID of the user for whom the dashboard is being fetched.
+     * @returns {Object} - The dashboard data in the form of a 'dashObject' containing the following fields:
+     *   - recommendations: An object containing matched quizzes, resources, and jobs based on the user's stack.
+     *   - lastCompletedQuizAttempt: The details of the user's last completed quiz attempt.
+     *   - pendingQuizzes: An array of pending quizzes for the user.
+     *   - rank: The user's ranking.
+     *   - leaderboardRecord: The user's leaderboard record.
+     *   - leaderBoardUsers: The total number of users in the leaderboard.
+     * @throws {Error} - If there is an error while fetching the dashboard data.
+     */
     async getDashboard(id) {
         try {
             let dashObject = {
