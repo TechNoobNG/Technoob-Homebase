@@ -2,9 +2,7 @@ const { tryCatch } = require('bullmq');
 const Contact = require('../models/contact_us');
 const mailing_list = require('../models/mailing_list');
 const User = require('../models/user');
-const quizServices = require('../services/quizzes');
-const resourceServices = require('../services/resources');
-const quiz_tracker = require("../models/quizTracker")
+const leaderboard = require("./leaderboard");
 const mongoose = require("mongoose")
 
 
@@ -384,6 +382,10 @@ module.exports = {
             dashObject.recommendations.jobs = user[0].matched_jobs
             dashObject.lastCompletedQuizAttempt = user[0].lastCompletedAttempt;
             dashObject.pendingQuizzes = user[0].pendingQuizzes;
+            const getRanking = await leaderboard.getUser(userId);
+            dashObject.rank = getRanking.rank;
+            dashObject.leaderboardRecord = getRanking.record;
+            dashObject.leaderBoardUsers = getRanking.total;
             return dashObject
         } catch (error) {
              throw error
