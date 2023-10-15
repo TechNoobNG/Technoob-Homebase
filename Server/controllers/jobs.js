@@ -55,8 +55,11 @@ module.exports = {
 
     async create (req, res, next) {
         const body = req.body
+
+        body.uploader_id = req.user?._id
+
         if (!body.uploader_id) {
-            body.uploader_id = req.user?._id || '643492bb86360e05476576f9'
+            throw new Error("Invalid user")
         }
         try {
             const job = await jobs.create(body)
