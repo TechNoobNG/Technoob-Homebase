@@ -58,9 +58,7 @@ const uploadParams = {
             },
         file: (req, res, next) => { 
             multer(uploadParams).single('file')(req, res, (err) => {
-                
                 if (err instanceof multer.MulterError) {
-                    // handle multer errors
                     console.log(err)
                     res.status(400).json({
                         Status: "Failed",
@@ -69,6 +67,7 @@ const uploadParams = {
                     });
                 } else if (err) {
                     // handle custom errors
+                    console.log(err)
                     res.status(500).json({
                         Status: "Failed",
                         Name: "Invalid File Type",
