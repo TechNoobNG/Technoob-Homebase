@@ -13,14 +13,15 @@ module.exports = {
           }
     },
     async getUser(userId) {
-        try {
-            const sortedLeaderboard = await leaderboard.find().sort({ score: -1 });
-            const record = sortedLeaderboard.find(entry => entry.userId.toString() === userId.toString());
-            if (!record) {
-            throw new Error('Record not found');
-            }
-            const rank = sortedLeaderboard.findIndex(entry => entry.userId.toString() === userId.toString()) + 1;
-            const total = sortedLeaderboard.length
+      try {
+        let rank
+        let total
+        const sortedLeaderboard = await leaderboard.find().sort({ score: -1 });
+        const record = sortedLeaderboard.find(entry => entry.userId.toString() === userId.toString());
+        if (record) {
+          rank = sortedLeaderboard.findIndex(entry => entry.userId.toString() === userId.toString()) + 1;
+          total = sortedLeaderboard.length
+        }
             return { record, rank, total  };
           } catch (error) {
             throw error;
