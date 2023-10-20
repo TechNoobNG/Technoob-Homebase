@@ -182,7 +182,6 @@ module.exports = {
             let dashObject = {
                 recommendations: { }
             }
-            //Ranking and leader board
             const userId = new mongoose.Types.ObjectId(id);
             const aggregationPipeline =[
                 {
