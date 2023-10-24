@@ -13,11 +13,10 @@ try {
   console.log(error)
 }
 
-// Export a function that returns a Promise
 module.exports = {
    checkChild() {
       return pool.length;
-    
+
   },
 
   async work (params) {
@@ -27,13 +26,13 @@ module.exports = {
         return;
       }
       const child = pool.shift();
-      if (!child) { 
+      if (!child) {
         reject(new Error('No child processes available to use in the pool'));
         return;
       }
-      let dead_child = child.killed;
+      let connected_child = child.connected;
 
-      if (dead_child) { 
+      if (!connected_child) {
         reject(new Error(' child processes is dead available in the pool'));
         return;
       } else {
@@ -42,7 +41,7 @@ module.exports = {
           activity: params.activity,
         });
 
-        child.once('message', resp => {
+        child.on('message', resp => {
           pool.push(child);
           try {
             if (resp.type === 'error') {
@@ -54,7 +53,7 @@ module.exports = {
           }
         })
       }
-     
+
     })
   }
 }
