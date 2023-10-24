@@ -11,7 +11,9 @@
     "@azure/storage-queue": "^12.14.0",
     "@honeybadger-io/js": "^6.4.3",
     "dotenv": "^16.3.1",
-    "puppeteer": "^21.3.6"
+    "puppeteer": "^21.3.6",
+    "puppeteer-core": "21.4.1"
+
   },
   "main": "src/functions/*.js"
 }

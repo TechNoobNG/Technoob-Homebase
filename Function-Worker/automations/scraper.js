@@ -8,7 +8,7 @@ module.exports = {
         args: [
           '--no-sandbox',
           '--disable-gpu',
-        ]
+      ]
     });
       const page = await browser.newPage();
 
