@@ -22,7 +22,7 @@ module.exports = {
         }
     },
 
-    async scrapeJobs(q, posted, expires) {
+    async scrapeJobs(q, posted, expires,context) {
         try {
             const queue = require('../../Server/azure_Queue/init');
             const honeybadger = require('../../Server/utils/honeybadger');
