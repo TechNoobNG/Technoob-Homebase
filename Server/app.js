@@ -41,8 +41,8 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
-
-// Set up the CORS headers
+//CORS setup
+app.options('*', cors())
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -54,7 +54,7 @@ app.use(
     },
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','DELETE'],
     credentials: true,
-    exposedHeaders: "Set-Cookie",
+    exposedHeaders: "Set-Cookie"
   })
 );
 
