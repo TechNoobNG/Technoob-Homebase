@@ -49,6 +49,26 @@ try {
         }
     });
 
+    app.timer('scrubNoobJobsTest', {
+        schedule: `0 */8 * * * *`,
+        handler: async (myTimer, context) => {
+            context.log('Timer function processed request.');
+            try {
+                honeybadger.notify({
+                        name: "Trigger Job scraping",
+                        message: myTimer
+                })
+            await scrapeJobs(q,posted,expires);
+            } catch (err) {
+                context.log(err)
+                honeybadger.notify({
+                    name: "Initiated Job scraping",
+                    message: err
+            })
+            }
+        }
+    });
+
 
 } catch (error) {
     console.error(error)
