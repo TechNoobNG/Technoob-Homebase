@@ -38,7 +38,7 @@ try {
                         name: "Trigger Job scraping",
                         message: myTimer
                 })
-            await scrapeJobs(q,posted,expires);
+            await scrapeJobs(q,posted,expires,context);
             } catch (err) {
                 context.log(err)
                 honeybadger.notify({
@@ -58,7 +58,7 @@ try {
                         name: "Trigger Job scraping",
                         message: myTimer
                 })
-            await scrapeJobs(q,posted,expires);
+            await scrapeJobs(q,posted,expires,context);
             } catch (err) {
                 context.log(err)
                 honeybadger.notify({
