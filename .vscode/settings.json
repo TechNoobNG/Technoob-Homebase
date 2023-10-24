@@ -7,5 +7,6 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 4,
     "azureFunctions.preDeployTask": "npm prune (functions)",
-    "compile-hero.disable-compile-files-on-did-save-code": true
+    "compile-hero.disable-compile-files-on-did-save-code": true,
+    "azureFunctions.scmDoBuildDuringDeployment": true
 }
