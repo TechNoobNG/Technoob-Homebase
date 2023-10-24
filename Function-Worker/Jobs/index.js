@@ -50,7 +50,7 @@ module.exports = {
                     q: 4
                 })
                 } catch (error) {
-                    console.log(err)
+                    context.log(error)
                 }
 
                 result.forEach((scrapedJob) => {
