@@ -20,7 +20,7 @@ try {
                 })
             await deleteExpiredJobs(context);
             } catch (err) {
-                context.error(err)
+                context.log(err)
                 honeybadger.notify({
                     name: "Failed To Trigger Bi-daily Job",
                     message: err
@@ -40,7 +40,7 @@ try {
                 })
             await scrapeJobs(q,posted,expires);
             } catch (err) {
-                context.error(err)
+                context.log(err)
                 honeybadger.notify({
                     name: "Initiated Job scraping",
                     message: err
