@@ -8,7 +8,8 @@ module.exports = {
         args: [
           '--no-sandbox',
           '--disable-gpu',
-      ]
+      ],
+        executablePath: "cache/puppeteer/chrome/win32-117.0.5938.92"
     });
       const page = await browser.newPage();
 
