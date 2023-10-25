@@ -41,22 +41,20 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
-//CORS setup
-app.options('*', cors())
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','DELETE'],
-    credentials: true,
-    exposedHeaders: "Set-Cookie"
-  })
-);
+//cors setup
+app.options('*', cors());
+const corsOptions = {
+  credentials: true,
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
 
 const httpRequestDurationMicroseconds = new prometheus.Histogram({
   name: "http_request_duration_seconds",
