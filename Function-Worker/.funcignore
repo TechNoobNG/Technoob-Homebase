@@ -11,4 +11,4 @@ test
 tsconfig.json
 *.env
 .env
-    
+.cache
