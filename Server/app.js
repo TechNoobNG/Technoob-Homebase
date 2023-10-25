@@ -41,17 +41,19 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.);
+  next();
+});
+
+
 //cors setup
 app.options('*', cors());
 const corsOptions = {
   credentials: true,
-  origin: (origin, callback) => {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: allowedOrigins,
+  preflightContinue: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
