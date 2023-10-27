@@ -4,8 +4,8 @@ module.exports = {
 
     async deleteExpiredJobs(context) {
         try {
-            const queue = require('../../Server/azure_Queue/init');
-            const honeybadger = require('../../Server/utils/honeybadger');
+            const queue = require('../utils/azure_queue');
+            const honeybadger = require('../utils/honeybadger');
             await queue.sendMessage({
                 name: "deleteExpiredJobs",
                 import: "../services",
@@ -24,9 +24,9 @@ module.exports = {
 
     async scrapeJobs(q, posted, expires,context) {
         try {
-            const queue = require('../../Server/azure_Queue/init');
-            const honeybadger = require('../../Server/utils/honeybadger');
-            const config = require('../../Server/config/config')['production'];
+            const queue = require('../utils/azure_queue');
+            const honeybadger = require('../utils/honeybadger');
+            const config = require('../utils/config')['production'];
             const automations = require('../automations/scraper')
             const stackKeywords = config.SCRAPE_STACK_KEYWORDS || [
                 "junior product ui/ux designer",
@@ -47,7 +47,7 @@ module.exports = {
                 try {
                     result = await automations.scrapeJobsIndeed({
                     searchTag: keyword,
-                    q: 4
+                    q: q * 1
                 })
                 } catch (error) {
                     context.log(error)
