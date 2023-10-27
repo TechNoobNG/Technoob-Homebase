@@ -136,6 +136,7 @@ jobs:
 
       - name: Build and Push to DockerHub
         run: |
+          ls
           docker build --platform linux/amd64 -t technoob/function-worker:latest .
           docker push technoob/function-worker:latest 
         working-directory: Function-Worker-2.0
