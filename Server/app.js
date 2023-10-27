@@ -51,10 +51,17 @@ app.use((req, res, next) => {
 app.options('*', cors());
 const corsOptions = {
   credentials: true,
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   preflightContinue: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 
 app.use(cors(corsOptions));
 
