@@ -138,7 +138,7 @@ jobs:
         run: |
           ls
           docker build --platform linux/amd64 -t oluwatobiiloba/function-worker:latest .
-          docker push technoob/function-worker:latest 
+          docker push oluwatobiiloba/function-worker:latest
         working-directory: Function-Worker-2.0
 
 
