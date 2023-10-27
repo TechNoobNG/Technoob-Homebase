@@ -1,0 +1,9 @@
+NODE_ENV=production
+AZURE_STORAGE_ACCOUNT_NAME=stackliteblob
+COMMUNICATION_SERVICES_CONNECTION_STRING=endpoint=https://technoob.europe.communication.azure.com/;accesskey=UnO1IJ4X8uFH/kNOacS9SO3p2UInwKqFdP3WgPpV5Tqg10RsTdHPdmC9Uc4qZn1QRqmH6ooPr0m/hZJ/X91Y9Q==
+LIVE_BASE_URL=http://technoobstaging-env.eba-izgw9fe4.eu-west-2.elasticbeanstalk.com'
+HONEYBADGER_KEY=hbp_StE3bD1IUGTh2amn4eCj6eCwiBV6vs0ZobUf
+AZURE_QUEUE_NAME=noob-queue
+AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=stackliteblob;AccountKey=QO2/E8LUfg0GBKrOFQEO2NheHPISgGecLdonsVDNy1P4re9Bj27VpR+3kTAtHHsQgEubbyUYd/5P+AStvRfQXg==;EndpointSuffix=core.windows.net
+AZURE_QUEUE_URL=https://stackliteblob.queue.core.windows.net/noob-queue
+AzureWebJobsStorage=DefaultEndpointsProtocol=https;AccountName=technoobsuba95a;AccountKey=YJMscgAFKbdF/wPJ9BjjdMGvW2AvBU1hKXq6OpLDdCcGF8mRgKrRXxXSKITIBUEn784D6lPRpGA5+AStowpMLQ==;EndpointSuffix=core.windows.net

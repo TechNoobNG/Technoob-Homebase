@@ -112,49 +112,35 @@ jobs:
         run: heroku ps:scale worker=1 --app technoob-worker
 
   deploy-cron-worker-instance:
-    runs-on: windows-latest
-    needs: deploy-worker-instance
-    steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v2
+    runs-on: ubuntu-latest
 
-      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js version
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '20.x'
 
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: pwsh
-        run: |
-          pushd .
-          cp Function-Worker/package.json package.json
-          cp Function-Worker/host.json host.json
-          npm install
-          cd Function-Worker/
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-          popd
-        working-directory: .
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Update 'main' in package.json
-        run: |
-          ls
-          node update-package.js
-        working-directory: .
-
-
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
-        id: fa
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
         with:
-          app-name: 'NoobscheduledJobs'
-          slot-name: 'Production'
-          package: '.'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_15F8E0BAAF7A44DE9CD7D39C0BE9E50B }}
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push to DockerHub
+        run: |
+          docker build --platform linux/amd64 -t technoob/function-worker:latest .
+          docker push technoob/function-worker:latest 
+        working-directory: Function-Worker-2.0
+
+
 
 
 
