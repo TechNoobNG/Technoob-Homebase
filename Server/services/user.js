@@ -3,7 +3,8 @@ const Contact = require('../models/contact_us');
 const mailing_list = require('../models/mailing_list');
 const User = require('../models/user');
 const leaderboard = require("./leaderboard");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const quizzes = require('./quizzes');
 
 
 
@@ -390,13 +391,17 @@ module.exports = {
                   },
                 },
               ];
-            const user = await User.aggregate(aggregationPipeline);
-            dashObject.recommendations.quiz = user[0].matched_quizzes
-            dashObject.recommendations.resources = user[0].matched_resources
-            dashObject.recommendations.jobs = user[0].matched_jobs
-            dashObject.lastCompletedQuizAttempt = user[0].lastCompletedAttempt;
-            dashObject.pendingQuizzes = user[0].pendingQuizzes;
-            const getRanking = await leaderboard.getUser(userId);
+          const user = await User.aggregate(aggregationPipeline);
+          dashObject.recommendations.quiz = user[0].matched_quizzes
+          dashObject.recommendations.resources = user[0].matched_resources
+          dashObject.recommendations.jobs = user[0].matched_jobs
+          dashObject.lastCompletedQuizAttempt = user[0].lastCompletedAttempt;
+          dashObject.pendingQuizzes = user[0].pendingQuizzes;
+          const getRanking = await leaderboard.getUser(userId);
+          if (dashObject.lastCompletedQuizAttempt) {
+            const getQuizAttemptInfo = await quizzes.get(user[0].lastCompletedAttempt.quiz.quiz_id);
+            dashObject.lastCompletedQuizAttempt.quizInfo = getQuizAttemptInfo
+          }
             dashObject.rank = getRanking.rank;
             dashObject.leaderboardRecord = getRanking.record;
             dashObject.leaderBoardUsers = getRanking.total;

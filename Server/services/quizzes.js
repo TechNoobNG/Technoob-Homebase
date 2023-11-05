@@ -50,7 +50,7 @@ module.exports = {
 
     get: async (id,user) => { 
         try {
-            const quizzes = await Quizzes.findById(id);
+            const quizzes = await Quizzes.findById(id).select('theme type stack duration deadline');
             return quizzes;
         } catch (error) {
             throw error;
