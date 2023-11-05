@@ -48,7 +48,7 @@ module.exports = {
         }
     },
 
-    async get (id,user){ 
+    async get (id,user){
         try {
             const events = await Events.findById(id);
             return events;
@@ -57,7 +57,7 @@ module.exports = {
         }
     },
 
-    create: async (body) => { 
+    create: async (body) => {
         try {
             const events = await Events.create(body);
             if (events) {
@@ -133,7 +133,7 @@ module.exports = {
     },
 
     remove: async (id) => {
-       
+
         try {
             const event = await Events.findById(id)
             if (event) {
@@ -189,7 +189,7 @@ module.exports = {
 
     // rate: async (id, rating) => {
     //     try {
-    //         const body = { 
+    //         const body = {
     //             user_id: rating.user_id,
     //             rating: rating.rating
     //          };
@@ -199,4 +199,4 @@ module.exports = {
     //         throw error;
     //     }
     //}
-};
+}

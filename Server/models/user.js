@@ -114,8 +114,14 @@ const user = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'QuizTracker' 
     }],
-
-
+    country: String,
+    bio: String,
+    employmentHistory: [{
+        role: String,
+        company: String,
+        country: String,
+        jobType: String
+    }]
 
 },{
     timestamps: true
