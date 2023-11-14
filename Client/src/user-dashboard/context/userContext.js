@@ -33,24 +33,24 @@ function UserProvider({ children }) {
     [BASE_URL, dispatch]
   );
 
-  async function fetchQuiz(id) {
-    dispatch({ type: "loading" });
-    try {
-      const res = await fetch(`${BASE_URL}/api/v1/quizzes/get/${id}`, {
-        headers: { Authorization: `Bearer ${process.env.REACT_APP_TOKEN}` },
-      });
+  // async function fetchQuiz(id) {
+  //   dispatch({ type: "loading" });
+  //   try {
+  //     const res = await fetch(`${BASE_URL}/api/v1/quizzes/get/${id}`, {
+  //       headers: { Authorization: `Bearer ${process.env.REACT_APP_TOKEN}` },
+  //     });
 
-      if (!res.ok) throw new Error("Quiz data failed to load");
-      const quiz = await res.json();
+  //     if (!res.ok) throw new Error("Quiz data failed to load");
+  //     const quiz = await res.json();
 
-      dispatch({ type: "dataLoaded", payload: quiz });
-    } catch (error) {
-      dispatch({ type: "rejected", payload: error });
-    }
-  }
+  //     dispatch({ type: "dataLoaded", payload: quiz });
+  //   } catch (error) {
+  //     dispatch({ type: "rejected", payload: error });
+  //   }
+  // }
 
   return (
-    <UserContext.Provider value={{ ...userDetails, fetchQuiz }}>
+    <UserContext.Provider value={{ ...userDetails }}>
       {children}
     </UserContext.Provider>
   );
