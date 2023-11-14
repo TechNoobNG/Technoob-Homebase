@@ -1,0 +1,59 @@
+.avatarSk {
+  /* display: block; */
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 1rem;
+  background-color: var(--grey);
+  border-radius: 50%;
+  animation: loading 500ms alternate infinite ease-in-out;
+  /* animation-iteration-count: infinite; */
+}
+
+.usernameSk,
+.dateSk {
+  height: 1.5rem;
+  width: 10rem;
+  border-radius: 0.3rem;
+  margin-bottom: 0.75rem;
+  background-color: var(--grey);
+  animation: loading 500ms alternate infinite ease-in-out;
+}
+
+.usernameSk {
+  height: 1.5rem;
+  width: 10rem;
+}
+
+.dateSk {
+  height: 1.5rem;
+  width: 18rem;
+  margin-bottom: 2.25rem;
+}
+
+.bannerSk {
+  height: 22rem;
+  background-color: var(--grey);
+  border-radius: 2rem 2rem 0 0;
+  margin-bottom: 4rem;
+  animation: loading 500ms infinite alternate ease-in-out;
+}
+
+.cardsSk {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 2rem;
+}
+
+.cardSk {
+  height: 16.406rem;
+  width: 27.733rem;
+  border-radius: 0.8rem 0.8rem 0 0;
+  background-color: var(--grey);
+  animation: loading 500ms infinite alternate ease-in-out;
+}
+
+@keyframes loading {
+  to {
+    opacity: 0.5;
+  }
+}
