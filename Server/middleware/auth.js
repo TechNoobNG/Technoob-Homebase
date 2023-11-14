@@ -41,38 +41,45 @@ module.exports = {
     githubCallbackAuthenticateMiddleware,
     isAuthenticated(req, res, next) {
         try { 
-
             if (req.isAuthenticated()) {
                 return next();
-            } else {
-                passport.authenticate("authenticate", {
-                    session: true
-                }, (err, user) => {
-                    if (err) {
-                        return next(err);
-                    }
-                    if (!user) throw new Error ("Invalid Token")
-
-                    req.user = user; 
-                    const sessionExpiresAt = req.session.cookie.expires;
-                    if (sessionExpiresAt && new Date() > sessionExpiresAt) {
-                        req.logout((err) => {
-                            if (err) {
-                                console.log(err);
-                                throw err
-                            }
-                            return res.status(401).json({ message: 'Session expired' });
-                        })
-                    } else {
-                        req.session.cookie.expires = new Date(Date.now() + 3600000);
-                    }
-        
-                    res.setHeader("isAuthenticated", true)
-                    res.setHeader("userId", req.user.id)
-                    res.setHeader("sessionExpiresAt", sessionExpiresAt)
-                    return next();
-                })(req, res, next);   
             }
+            //} else {
+            //     passport.authenticate("authenticate", {
+            //         session: true
+            //     }, (err, user) => {
+            //         if (err) {
+            //             return next(err);
+            //         }
+            //         if (!user) throw new Error("Invalid Token")
+            //         req.login(user,{ session: true }, async (err) => {
+            //             if (err) {
+            //                 return next(err);
+            //             }
+            //             res.setHeader("sessionExpiresAt",req.session.cookie.expires)
+            //         });
+
+            //         req.user = user; 
+
+            //         const sessionExpiresAt = req.session.cookie.expires;
+            //         if (sessionExpiresAt && new Date() > sessionExpiresAt) {
+            //             req.logout((err) => {
+            //                 if (err) {
+            //                     console.log(err);
+            //                     throw err
+            //                 }
+            //                 return res.status(401).json({ message: 'Session expired' });
+            //             })
+            //         } else {
+            //             req.session.cookie.expires = new Date(Date.now() + 3600000);
+            //         }
+        
+            //         res.setHeader("isAuthenticated", true)
+            //         res.setHeader("userId", req.user.id)
+            //         res.setHeader("sessionExpiresAt", sessionExpiresAt)
+            //         return next();
+            //     })(req, res, next);   
+            // }
         } catch (err) {
             res.isAuthenticated = false;
             res.status(401).json({
