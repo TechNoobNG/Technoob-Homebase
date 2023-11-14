@@ -17,11 +17,11 @@ module.exports = {
         try {
             let filter = {};
     
-            if (query) {
+            if (query && Object.keys(query).length) {
                 const names = Object.keys(query);
                 filter = { name: { $in: names } };
             }
-    
+
             const placeholders = await defaults.find(filter);
     
             return placeholders;
