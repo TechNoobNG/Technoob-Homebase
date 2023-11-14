@@ -20,6 +20,8 @@
   --light-grey: #d9d9d9;
   --dark-grey: #616161;
   --white: #fff;
+
+  --grey: #bcbcbc;
 }
 
 @layer base {
@@ -92,6 +94,7 @@
     height: calc(100vh + 80.8px);
     grid-area: main;
     overflow-y: auto;
+    padding-top: 3rem;
   }
 
   .main-content::-webkit-scrollbar {
@@ -210,24 +213,26 @@
 
   .score-label,
   .participation-label,
-  .questions-label {
+  .questions-label,
+  .icon-title {
     font-size: 1.5rem;
   }
 
   .icon-textsms,
-  .icon-people,
-  .icon-check {
-    width: 3rem;
-    height: 3rem;
+  .icon-leaderboard,
+  .icon-quiz {
+    width: 2.2rem;
+    height: 2.2rem;
+    line-height: 1.2;
   }
 
-  .icon-textsms,
-  .icon-check {
+  .icon-textsms {
     fill: var(--tb-green);
   }
 
-  .icon-people {
-    fill: var(--primary-color);
+  .icon-leaderboard,
+  .icon-quiz {
+    fill: none;
   }
 
   .task {
@@ -473,41 +478,46 @@ svg {
   color: var(--black);
 }
 
-svg.notification {
+/* svg.notification {
   position: relative;
-  /* background-color: teal; */
-}
+  background-color: teal; I comment out this
+} */
 
-svg.notification::after {
-  /* position: absolute; */
+/* svg.notification::after {
+  position: absolute; I comment out this
   content: "Why nothing show";
   width: 5px;
   height: 5px;
   display: block;
   background-color: var(--danger);
+} */
+
+.aside path {
+  stroke: var(--black);
 }
 
-a.active:link,
-a.active:visited {
+.aside a:link,
+.aside a:visited {
   color: var(--black);
   border-radius: 0.375rem;
 }
 
-a.active:hover,
-a.active:active,
-a.active {
-  color: var(--white) !important;
-  fill: var(--white) !important;
-  stroke: var(--white);
-  background-color: var(--primary-color);
-}
-
-.aside li:hover {
+.aside a:hover {
   background-color: var(--primary-color);
   color: var(--white);
 }
 
-.aside li:hover svg {
-  fill: var(--white);
-  stroke: transparent;
+.aside a:hover path {
+  stroke: var(--white);
+}
+
+.aside a.active:hover,
+.aside a.active:active,
+.aside a.active {
+  color: var(--white);
+  background-color: var(--primary-color);
+}
+
+a.active path {
+  stroke: var(--white);
 }
