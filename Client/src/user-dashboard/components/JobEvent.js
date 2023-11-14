@@ -2,7 +2,7 @@ function JobEvent() {
   return (
     <section className="job-event">
       <article className="task-schedule">
-        <h3>Tasks for today</h3>
+        <h3>Active Tasks</h3>
         <label htmlFor="event" className="task task-event">
           <div className="task-description">
             <h4 className="task-heading">Women in tech summit</h4>
@@ -42,7 +42,7 @@ function JobEvent() {
       </article>
 
       <article className="trending-job">
-        <h3>Trending Jobs</h3>
+        <h3>Recent Jobs</h3>
         <div className="job-opening">
           <h4>Social Media Assistant</h4>
           <div className="job-description">
