@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AppLayout from "./layout/AppLayout";
 import UserDashboard from "./components/UserDashboard";
@@ -12,6 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<AppLayout />}>
+            <Route path="/" element={<Navigate to="/user" />} />
             <Route path="/user" element={<UserDashboard />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/event" element={<UserEvents />} />
