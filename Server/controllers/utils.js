@@ -18,5 +18,40 @@ module.exports = {
                 message: error.message
             })
         }
+    },
+
+    async getPlaceholders(req, res) {
+        try {
+            const query = req.query;
+            const fetchDefaults = await services.utils.getPlaceholders(query);
+            res.status(200).json({
+                status: "success",
+                message: `Fetched Successfully`,
+                data: fetchDefaults
+            })
+        } catch (err) {
+            res.status(400).json({
+                status: "fail",
+                message: err.message
+            })
+        }
+    },
+
+    async setPlaceholders(req, res) {
+        try {
+            const { placeholders, name } = req.body;
+
+            const setDefaults = await services.utils.setPlaceholders({placeholders, name});
+            res.status(200).json({
+                status: "success",
+                message: `Defaults set`,
+                data: setDefaults
+            })
+        } catch (err) {
+            res.status(400).json({
+                status: "fail",
+                message: err.message
+            })
+        }
     }
 }

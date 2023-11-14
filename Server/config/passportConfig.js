@@ -50,7 +50,7 @@ passport.use('authenticate',
           secretOrKey: config.JWT_SECRET,
           jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
           issuer: config.LIVE_BASE_URL,
-          ignoreExpiration: true, 
+          ignoreExpiration: false, 
           clockTolerance: 60
     },
     async (token, done) => {
