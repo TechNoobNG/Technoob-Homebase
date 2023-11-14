@@ -43,8 +43,8 @@ export const adminRoutes = [
 
 export const userDashboardRoutes = [
   { path: "/user/dashboard", element: <UserDashboard /> },
-  { path: "user/resources", element: <Resource /> },
-  { path: "user/event", element: <UserEvents /> },
-  { path: "user/quiz", element: <Quiz /> },
+  { path: "/user/resources", element: <Resource /> },
+  { path: "/user/event", element: <UserEvents /> },
+  { path: "/user/quiz", element: <Quiz /> },
 ];
 // export default routes;
