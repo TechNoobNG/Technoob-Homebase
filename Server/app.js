@@ -161,7 +161,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // }));
 
 /* GET home page. */
-app.use(trafficMiddleware);
 app.use("/", limiter); // implementing rate limiter middleware
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
 app.use("/", trafficMiddleware, indexRouter);
