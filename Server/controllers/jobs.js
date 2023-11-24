@@ -6,13 +6,13 @@ module.exports = {
         const query = req.query
         try {
             const job = await jobs.get_all(query)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `${job.count} Job(s) retrieved`,
                 data: job
             })
         } catch (error) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -24,13 +24,13 @@ module.exports = {
         const user = req.user?._id || 0
         try {
             const job = await jobs.get(id,user)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Job retrieved`,
                 data: job
             })
         } catch (error) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -40,13 +40,13 @@ module.exports = {
     async getMetrics(req, res, next) {
         try {
             const jobsMetrics = await jobs.getMetrics()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Job metrics retrieved`,
                 data: jobsMetrics
             })
         } catch (error) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -63,13 +63,14 @@ module.exports = {
         }
         try {
             const job = await jobs.create(payload)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Job created`,
-                data: job
+                data: job,
+                statusCode: 201 
             })
         } catch (error) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -79,13 +80,13 @@ module.exports = {
     async count(req, res, next) {
         try {
             const count = await jobs.count()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `job count`,
                 data: count
             })
         } catch (error) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -96,12 +97,13 @@ module.exports = {
         const id = req.params.id
         try {
             await jobs.remove(id, req.user?._id )
-            res.status(200).json({
+            res.ok({
                 status: "success",
-                message: `Job deleted`
+                message: `Job deleted`,
+                statusCode: 204
             })
         } catch (error) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -114,12 +116,12 @@ module.exports = {
 
         try {
             const activity = await jobs.activity(page,limit)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 data: activity
             })
         } catch (err) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: err.message
             })
@@ -132,12 +134,13 @@ module.exports = {
 
         try {
             const jobScraped = await jobs.createScrapedJobs({ searchTag, q, posted, expires })
-            res.status(201).json({
+           res.ok({
                 status: "success",
-                data: jobScraped
+                data: jobScraped,
+                statusCode: 201
             })
         } catch (err) {
-            res.status(400).json({
+           res.fail({
                 status: "fail",
                 message: err.message
             })

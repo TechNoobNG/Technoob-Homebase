@@ -7,13 +7,13 @@ module.exports = {
         const file = req.file
         try {
             const file_uloaded = await resource.upload_file(file)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `file uploaded`,
                 data: file_uloaded
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -24,13 +24,13 @@ module.exports = {
         try {
             const query = req.query;
             const fetchDefaults = await services.utils.getPlaceholders(query);
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Fetched Successfully`,
                 data: fetchDefaults
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })
@@ -42,13 +42,13 @@ module.exports = {
             const { placeholders, name } = req.body;
 
             const setDefaults = await services.utils.setPlaceholders({placeholders, name});
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Defaults set`,
                 data: setDefaults
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })

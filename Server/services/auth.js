@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const mailer = require('../utils/azure_mailer')
 const jwt = require('jsonwebtoken');
 const queue = require('../azure_Queue/init');
-
+const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
     signToken(id,token=null) {
@@ -113,9 +113,10 @@ module.exports = {
         try {
             const decoded = jwt.verify(token, config.JWT_SECRET);
             if (!decoded) {
-                throw new Error({
-                    message: "Invalid token"
-                })
+                throw new ErrorResponse(
+                    400,
+                    "Invalid/Expired token"
+                )
             }
 
             const findOption = {
@@ -123,9 +124,10 @@ module.exports = {
             }
             const user = await User.find(findOption);
             if (!user || !user.length) {
-                throw new Error({
-                    message: "Invalid token"
-                })
+                throw new ErrorResponse(
+                    400,
+                    "Invalid/Expired token"
+                )
             }
             return user
         } catch (err) {

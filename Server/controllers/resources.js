@@ -8,13 +8,13 @@ module.exports = {
         const query = req.query
         try {
             const resources = await resource.get_all(query)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `${resources.count} resource(s) retrieved`,
                 data: resources
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -23,13 +23,13 @@ module.exports = {
     getStacks(_req, res) {
         try {
             const stackOptions = config.AVAILABLE_STACKS
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `${stackOptions.count} stacks(s) retrieved`,
                 data: stackOptions
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -41,13 +41,13 @@ module.exports = {
         const user = req.user?._id || 0
         try {
             const resources = await resource.get(id,user)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `resource retrieved`,
                 data: resources
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -57,13 +57,13 @@ module.exports = {
     async getMetrics(req, res, next) {
         try {
             const resources = await resource.getMetrics()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Resource Metrics retrieved`,
                 data: resources
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -78,13 +78,14 @@ module.exports = {
         
         try {
             const resources = await resource.create(payload)
-            res.status(201).json({
+            res.ok({
                 status: "success",
                 message: `resource created`,
-                data: resources
+                data: resources,
+                statusCode: 201
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -94,13 +95,13 @@ module.exports = {
     async count(req, res, next) {
         try {
             const count = await resource.count()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `resource count`,
                 data: count
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -111,13 +112,14 @@ module.exports = {
         const id = req.params.id
         try {
             const resources = await resource.remove(id, req.user?._id )
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `resource deleted`,
-                data: resources
+                data: resources,
+                statusCode: 204
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -130,12 +132,12 @@ module.exports = {
 
         try {
             const activity = await resource.activity(page,limit)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 data: activity
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })
@@ -148,13 +150,13 @@ module.exports = {
 
         try {
             const resources = await resource.download(id, user)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `resource downloaded`,
                 data: resources
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -169,13 +171,13 @@ module.exports = {
         }
         try {
             const resources = await resource.rate(id, rating)
-            res.status(201).json({
+            res.ok({
                 status: "success",
                 message: `resource rated`,
                 data: resources
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })

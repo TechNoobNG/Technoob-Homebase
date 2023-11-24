@@ -9,7 +9,7 @@ module.exports = {
             const result = await pool.exec('compress',[file])
             return result
         } catch (error) {
-            console.log(error)
+            throw error
         }
     }
 }
