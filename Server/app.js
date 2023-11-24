@@ -21,6 +21,8 @@ const trafficMiddleware = require("./middleware/traffic");
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
+const errorHandler = require("./middleware/errorHandler")
+const response = require("./middleware/customResponse")
 //const swaggerDocument = yamljs.load('./swagger.yaml');
 
 const swaggerDocument = yamljs.load(path.join(__dirname, 'swagger.yaml'));
@@ -55,6 +57,9 @@ app.use(
     exposedHeaders: "Set-Cookie",
   })
 );
+
+
+app.use(response);
 
 const httpRequestDurationMicroseconds = new prometheus.Histogram({
   name: "http_request_duration_seconds",
@@ -156,7 +161,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // }));
 
 /* GET home page. */
-// app.use(trafficMiddleware);
+app.use(trafficMiddleware);
 app.use("/", limiter); // implementing rate limiter middleware
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
 app.use("/", trafficMiddleware, indexRouter);
@@ -168,18 +173,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
-
-  let message = process.env.NODE_ENV === "development" ? err.message : "An error occured";
- let error = process.env.NODE_ENV === "development" ? err : {};
-
-  // return error as json
-  return res.status(err.status || 500).json({
-    status: "error",
-    message: message ,
-    error: error
-  });
-});
+app.use(errorHandler);
 
 app.use((req, res, next) => {
   const start = Date.now();

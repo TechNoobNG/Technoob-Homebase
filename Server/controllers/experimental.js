@@ -10,14 +10,14 @@ module.exports = {
             const uploadedFile = req.file;
             const compressedFile = await experimental.compressFile(uploadedFile);
 
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `File Compressed`,
                 data: compressedFile
             })
 
           } catch (error) {
-            res.status(500).send('Error compressing file.');
+            res.fail('Error compressing file.');
           }
     }
 }

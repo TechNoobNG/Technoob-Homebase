@@ -6,13 +6,13 @@ module.exports = {
         const query = req.query
         try {
             const quizzes = await Quizzes.get_all(query)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `${quizzes.count} quiz(es) retrieved`,
                 data: quizzes
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -30,7 +30,7 @@ module.exports = {
                 data: quizzes
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -40,13 +40,13 @@ module.exports = {
     async getMetrics(req, res, next) { 
         try {
             const quizzesMetrics = await Quizzes.getMetrics()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Quiz metrics retrieved`,
                 data: quizzesMetrics
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -63,13 +63,14 @@ module.exports = {
         }
         try {
             const quizzes = await Quizzes.create(payload)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Quiz created`,
-                data: quizzes
+                data: quizzes,
+                statusCode: 201
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -79,13 +80,13 @@ module.exports = {
     async count(req, res, next) {
         try {
             const count = await Quizzes.count()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `Quiz count`,
                 data: count
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -96,12 +97,13 @@ module.exports = {
         const id = req.params.id
         try {
             await quizzes.remove(id)
-            res.status(200).json({
+            res.ok({
                 status: "success",
-                message: `Quiz deleted`
+                message: `Quiz deleted`,
+                statusCode: 204
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -114,12 +116,12 @@ module.exports = {
 
         try {
             const activity = await Quizzes.activity(page,limit)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 data: activity
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })
@@ -132,12 +134,12 @@ module.exports = {
 
         try {
             const questions =  await Quizzes.getQuestion(id,user)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 data: questions,
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })
@@ -152,12 +154,12 @@ module.exports = {
 
         try {
             const result =  await Quizzes.submit(id,answers,user)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 data: result,
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })

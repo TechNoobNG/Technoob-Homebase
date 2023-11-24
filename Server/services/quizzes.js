@@ -1,6 +1,7 @@
 const Quizzes = require('../models/quizzes');
 const Activity = require('../models/activity');
 const QuizTracker = require('../models/quizTracker')
+const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
     get_all: async (query) => {
@@ -48,9 +49,15 @@ module.exports = {
         }
     },
 
-    get: async (id,user) => { 
+    get: async (id) => { 
         try {
             const quizzes = await Quizzes.findById(id).select('theme type stack duration deadline');
+            if (!quizzes) {
+                throw new ErrorResponse(
+                    404,
+                    "No Quiz/Competition found"
+                )
+            }
             return quizzes;
         } catch (error) {
             throw error;
@@ -175,7 +182,12 @@ module.exports = {
         try {
             const quiz = await Quizzes.findById(id);
 
-            if (!quiz) {throw new Error("Quiz not found")}
+            if (!quiz) {
+                throw new ErrorResponse(
+                    404,
+                    "Quiz not found"
+                )
+            }
             const excludeCorrectAnswer = quiz.questions_answers.map((question) => {
                 delete question.correctAnswerId
                 return question
@@ -202,10 +214,14 @@ module.exports = {
             let score = 0;
             let tracker = {};
             const quiz = await Quizzes.findById(id);
-            if (!quiz) throw new Error("Quiz not found");
+            if (!quiz) {
+                throw new ErrorResponse(
+                    404,
+                    "Quiz not found"
+                )
+            };
             const totalQuestions = quiz.questions_answers.length;
       
-            if (!quiz) throw new Error("Quiz not found")
             const currentQuizTracker = await QuizTracker.findOne({ quiz_id: id, user_id: user._id });
             if (!currentQuizTracker) throw new Error("Quiz not Started")
             if (currentQuizTracker && currentQuizTracker.completed) throw new Error("Quiz already completed");   

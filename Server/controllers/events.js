@@ -6,13 +6,13 @@ module.exports = {
         const query = req.query
         try {
             const event = await events.get_all(query)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `${event.count} event(s) retrieved`,
                 data: event
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -23,14 +23,14 @@ module.exports = {
         const id = req.params.id
         const user = req.user?._id || 0
         try {
-            const event = await events.get(id,user)
-            res.status(200).json({
+            const event = await events.get(id, user)
+            res.ok({
                 status: "success",
                 message: `event retrieved`,
                 data: event
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -40,13 +40,13 @@ module.exports = {
     async getMetrics(req, res, next) { 
         try {
             const eventsMetrics = await events.getMetrics()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `event metrics retrieved`,
                 data: eventsMetrics
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -70,7 +70,7 @@ module.exports = {
                 data: event
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -80,13 +80,13 @@ module.exports = {
     async count(req, res, next) {
         try {
             const count = await events.count()
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `event count`,
                 data: count
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -97,12 +97,12 @@ module.exports = {
         const id = req.params.id
         try {
             await events.remove(id)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 message: `event deleted`
             })
         } catch (error) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: error.message
             })
@@ -115,12 +115,12 @@ module.exports = {
 
         try {
             const activity = await events.activity(page,limit)
-            res.status(200).json({
+            res.ok({
                 status: "success",
                 data: activity
             })
         } catch (err) {
-            res.status(400).json({
+            res.fail({
                 status: "fail",
                 message: err.message
             })
