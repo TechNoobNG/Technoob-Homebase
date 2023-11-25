@@ -8,9 +8,8 @@ import serverApi from "../../../../utility/server";
 const Form = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
-    UserName: null,
-    Password: null,
-    error: null,
+    UserName: '',
+    Password: '',
   });
   const {setIsLoggedIn, setUserProfile, setDashboardToggle} =
       useContext(AppContext);
@@ -27,7 +26,6 @@ const Form = () => {
     const abortController = new AbortController();
 
     try {
-
       const response = await serverApi.post(
           '/authenticate/login',
           raw,
@@ -61,6 +59,7 @@ const Form = () => {
     
     } catch (error) {
       setUser({ error: error.response?.data?.message || "Failed, Please contact admin", UserName: "", Password: "" });
+      console.log('the is the error',error);
     }
     
   }
@@ -70,7 +69,7 @@ const Form = () => {
     };
 
     const handleClick = () => {
-      navigate("/Sign-Up");
+      navigate("/register");
     };
 
     return (
@@ -90,7 +89,6 @@ const Form = () => {
             <input
                 type="username"
                 name="UserName"
-                value={user.UserName}
                 placeholder="Username"
                 className=" w-[100%] rounded-xl m-1 border px-5 py-4 my-10 outline-0 ring-1 bg-white"
                 onChange={handleChange}
@@ -106,7 +104,6 @@ const Form = () => {
                 type="password"
                 name="Password"
                 placeholder="Password"
-                value={user.Password}
                 className=" w-[100%] rounded-xl m-1 border px-5 py-4 my-10 outline-0 ring-1 bg-white"
                 autoComplete="current-password"
                 onChange={handleChange}

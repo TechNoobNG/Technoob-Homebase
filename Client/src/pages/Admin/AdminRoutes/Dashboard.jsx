@@ -4,7 +4,7 @@
 import { MdOutlineNoteAdd, MdPermIdentity } from 'react-icons/md';
 import { BsFileEarmarkSpreadsheet } from 'react-icons/bs';
 import { HiArrowsRightLeft } from 'react-icons/hi2';
-import img from '../img/Annotation 2023-05-22 185307.jpg'
+// import img from '../img/Annotation 2023-05-22 185307.jpg'
 // import { AppContext } from '../../../AppContext/AppContext';
 // import Cookies from "universal-cookie";
 // const cookies = new Cookies();
@@ -80,7 +80,7 @@ const Dashboard = () => {
               '>7 Days</button>
             </span>
           </div>
-          <img src={img} alt="Chart" className=' w-full' />
+          {/* <img src={img} alt="Chart" className=' w-full' /> */}
           <div>
             <div className=' flex justify-between'>
               <div>

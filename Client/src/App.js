@@ -9,6 +9,7 @@ import LandingPageRoute from "./RouteConfig/LandingPageRoute";
 import AdminPageRoute from "./RouteConfig/AdminPageRoute";
 import UserDashboardRoute from "./RouteConfig/UserDashboardRoute";
 
+
 function App() {
   const {
     isLoggedIn,
@@ -57,6 +58,7 @@ function App() {
         <UserDashboardRoute />
       ) : (
         <AdminPageRoute />
+
       )}
     </BrowserRouter>
   );
