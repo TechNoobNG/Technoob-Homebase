@@ -55,8 +55,11 @@ module.exports = {
                 
             })(req, res, next);
         } catch (err) { 
-            next(err);
-
+            return res.fail({
+                status: 'Failed',
+                message: "User password/email Invalid",
+                statusCode: 401
+            })
         }
 
        
