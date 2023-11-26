@@ -97,6 +97,7 @@ jobs:
           heroku_app_name: technoob-worker
           heroku_email: ooluwatobiiloba@gmail.com
           buildpack: 'heroku/nodejs'
+          branch: main_server
           app_dir: '.'
 
       - name: Restart Dyno
