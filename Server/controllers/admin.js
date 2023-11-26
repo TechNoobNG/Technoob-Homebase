@@ -1,6 +1,6 @@
 const { admin } = require("../services/index")
 const errorHandler = require("../utils/errorFormater");
-const queue = require('../azure_Queue/init');
+const queue = require('../azureQueue/init');
 
 module.exports = {
     async dashboard(req, res) {
@@ -373,6 +373,23 @@ module.exports = {
                 message: `Created frontend resource`,
                 data: resource,
                 statusCode: 201
+            })
+        }
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
+
+        }
+    },
+
+    async getFrontendResources(req, res) {
+        const { name, description, url } = req.body;
+        try {
+            const resources = await admin.getFrontendResources({ name, description, url });
+            return res.ok({
+                status: "success",
+                data: resources,
+                statusCode: 200
             })
         }
         catch (error) {

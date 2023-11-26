@@ -21,10 +21,10 @@ const trafficMiddleware = require("./middleware/traffic");
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
-const errorHandler = require("./middleware/errorHandler")
-const response = require("./middleware/customResponse")
-//const swaggerDocument = yamljs.load('./swagger.yaml');
+const errorHandler = require("./middleware/errorHandler");
+const response = require("./middleware/customResponse");
 
+//const swaggerDocument = yamljs.load('./swagger.yaml');
 const swaggerDocument = yamljs.load(path.join(__dirname, 'swagger.yaml'));
 
 

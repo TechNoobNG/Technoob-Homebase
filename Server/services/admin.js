@@ -10,7 +10,7 @@ const contributors = require('../models/contributors');
 const resources = require('../services/resources')
 const users = require('../services/user');
 const traffic = require('../services/traffic');
-const queue = require('../azure_Queue/init');
+const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
@@ -576,6 +576,15 @@ module.exports = {
             throw err
         }
 
+    },
+
+    async getFrontendResources() {
+        try {
+            return frontend_resources.find()
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
     },
 
     async getContributors() {

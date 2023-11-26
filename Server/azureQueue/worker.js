@@ -5,11 +5,10 @@ const azureStorageConnectionString= config.AZURE_STORAGE_CONNECTION_STRING;
 const queueName = config.AZURE_QUEUE_NAME;
 const queueUrl = config.AZURE_QUEUE_URL;
 const subscriber = require('azure-queue-subscriber');
-//const db = require("../utils/db_connector");
 const worker_logs = require("../models/workerJobLogs")
-
 const logBuffer = [];
-const logBatchSize = 10;
+const logBatchSize = config.WORKER_LOG_BATCH_SIZE;
+
 
 //  initialise_db = async () => {
 //   db.on('error', console.error.bind(console, 'connection error:'));

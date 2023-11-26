@@ -6,13 +6,14 @@
     "start": "node ./bin/www",
     "stop": "pm2-runtime stop ecosystem.config.js --env development",
     "dev": "node ./bin/www",
-    "start-worker": "node ./azure_Queue/worker.js",
+    "start-worker": "node ./azureQueue/worker.js",
     "start-with-worker": "npm run start & sleep 60 && npm run start-worker &"
   },
   "engines": {
     "node": ">=18.0.0 <21.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.454.0",
     "@azure/communication-email": "^1.0.0",
     "@azure/communication-phone-numbers": "^1.2.0",
     "@azure/identity": "^3.1.3",
@@ -63,7 +64,9 @@
     "prom-client": "^14.2.0",
     "promisify": "^0.0.3",
     "puppeteer": "^21.2.1",
+    "redis": "^4.6.11",
     "sharp": "^0.32.0",
+    "sqs-consumer": "^5.8.0",
     "stream": "^0.0.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",

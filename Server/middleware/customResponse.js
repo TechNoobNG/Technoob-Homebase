@@ -1,14 +1,27 @@
 const ErrorResponse = require('../utils/errorResponse');
 const errorFormater = require('../utils/errorFormater');
 function extendResponseObject(req, res, next) {
-    res.ok = function (  { data = undefined, message = 'Successful',  statusCode = 200 } = {} ) {
+    async function processPostExecMiddlewares(req, res, next) {
+        for (const middleware of req.postExecMiddlewares ?? []) {
+            await middleware(req, res, next);
+        }
+    }
+
+    res.ok = async function ({ data = undefined, message = 'Successful', statusCode = 200 } = {}) {
+        
+        res.locals.data = data;
         const response = {
             success: true,
             message,
             data
         };
-
         res.status(statusCode).json(response);
+        try {
+            processPostExecMiddlewares(req, res, next);
+        } catch (err) {
+            console.log(err)
+        }
+
     };
 
     const defaultErrorMessages = {
