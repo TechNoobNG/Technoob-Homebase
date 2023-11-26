@@ -43,6 +43,11 @@ module.exports = {
         try { 
             if (req.isAuthenticated()) {
                 return next();
+            } else {
+                res.status(401).json({
+                    status: 'fail',
+                    message: 'Unauthorized access'
+                })
             }
             //} else {
             //     passport.authenticate("authenticate", {

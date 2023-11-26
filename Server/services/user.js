@@ -5,26 +5,32 @@ const User = require('../models/user');
 const leaderboard = require("./leaderboard");
 const mongoose = require("mongoose");
 const quizzes = require('./quizzes');
-
+const ErrorResponse = require('../utils/errorResponse');
 
 
 module.exports = {
     async edit(id, params) {
-        if (!id || !params) {
-            throw new Error('Id and Params are required')
-        }
-        const invalidKeys = ['password', 'passwordConfirm', 'passwordChangedAt', 'passwordResetToken', 'passwordResetExpires', 'active', 'role']
-        const invalidUpdate = Object.keys(params).some(key => invalidKeys.includes(key))
-        if (invalidUpdate) {
-            throw new Error('Invalid Parameters')
-        }
+    if (!id || !params) {
+      throw new ErrorResponse(
+          404,
+        "Quiz not found"
+      )
+    }
+    const invalidKeys = ['password', 'passwordConfirm', 'passwordChangedAt', 'passwordResetToken', 'passwordResetExpires', 'active', 'role', "passwordResetAttempt", "lockoutUntil" ,"passwordResetAttempt"]
+    const invalidUpdate = Object.keys(params).some(key => invalidKeys.includes(key))
+    if (invalidUpdate) {
+          throw new ErrorResponse(
+            400,
+            'Invalid Parameters'
+        )
+    }
 
-        try {
-            const user = await User.findOneAndUpdate({ _id: id }, params, { new: true })
-            return user
-        } catch (err) {
-            throw err
-        }
+    try {
+        const user = await User.findOneAndUpdate({ _id: id }, params, { new: true })
+        return user
+    } catch (err) {
+        throw err
+    }
     },
 
     async editPassword(id, password, previous_password) {
@@ -90,7 +96,7 @@ module.exports = {
     async getOne(id) {
         try {
             if (!id) throw new Error('Id is required')
-            const user = await User.findById({ _id: id }).select('+active').populate('quiz_record')
+            const user = await User.findById({ _id: id }).select('+active -password -createdAt -updatedAt -passwordResetAttempt -lockoutUntil -passwordResetAttempt').populate('quiz_record')
             return user
         } catch (err) {
             throw err
@@ -103,7 +109,7 @@ module.exports = {
             let limit = query.limit || 5;
             let skip = (page - 1) * limit;
             let count = 0;
-            const users = await User.find().select('+active')
+            const users = await User.find().select('+active -password -createdAt -updatedAt -passwordResetAttempt -lockoutUntil -passwordResetAttempt')
                 .skip(skip)
                 .limit(limit);
             if (users) {
@@ -138,12 +144,15 @@ module.exports = {
         ];
 
         const [, domain] = email.split('@');
-        if (temporaryDomains.includes(domain)) {
-            throw new Error('Invalid Email Address');
-        }
+      if (temporaryDomains.includes(domain)) {
+        throw new ErrorResponse(
+          400,
+          'Invalid Email Address'
+        )
+      }
 
-        const response = await mailing_list.create({ email })
-       return response
+      const response = await mailing_list.create({ email })
+      return response
 
     },
 

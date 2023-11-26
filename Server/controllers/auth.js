@@ -18,45 +18,57 @@ module.exports = {
                 if (err) {
                     return next(err);
                 }
-                if (!user) {
-                    return res.status(401).json({
+
+                if (info) {
+                    return res.fail({
                         status: 'fail',
-                        message: info.message
+                        message: info.message || err?.message,
+                        statusCode: info.statusCode || 401
                     })
                 }
-                if (user) {
-                    req.login(user,{ session: true }, async (err) => {
-                        if (err) {
-                            return next(err);
-                        }
-                        const token = jwt.sign({
-                            user: {
-                                _id: user._id,
-                                username: user.username
-                            }
-                        }, config.JWT_SECRET, {
-                            expiresIn: config.JWT_EXPIRES,
-                            issuer: config.LIVE_BASE_URL,
-
-                        });
-
-                        res.setHeader("sessionExpiresAt",req.session.cookie.expires)
-    
-                        res.status(200).json({
-                            status: 'success',
-                            message: `Logged in ${user.username}`,
-                            data: {
-                                user
-                            },
-                            token
-                        })
-                    });
+                if (!user) {
+                    return res.fail({
+                        status: 'fail',
+                        message: info.message || err?.message,
+                        statusCode: 401
+                    })
                 }
+                
+                req.login(user,{ session: true }, async (err) => {
+                    if (err) {
+                        return next(err);
+                    }
+                    const token = jwt.sign({
+                        user: {
+                            _id: user._id,
+                            username: user.username
+                        }
+                    }, config.JWT_SECRET, {
+                        expiresIn: config.JWT_EXPIRES,
+                        issuer: config.LIVE_BASE_URL,
+
+                    });
+
+                    res.setHeader("sessionExpiresAt",req.session.cookie.expires)
+
+                    res.status(200).json({
+                        status: 'success',
+                        message: `Logged in ${user.username}`,
+                        data: {
+                            user
+                        },
+                        token
+                    })
+                });
+                
                 
             })(req, res, next);
         } catch (err) { 
-            next(err);
-
+            return res.fail({
+                status: 'Failed',
+                message: "User password/email Invalid",
+                statusCode: 401
+            })
         }
 
        
@@ -94,7 +106,20 @@ module.exports = {
         const token = req.query.token
         try {
             const user = await auth.verifyUserEmail(token)
-            if (!user) throw new Error("An error occured")
+            if (!user) {
+                const err = {
+                    status: 401,
+                    message: "Invalid token"
+                }
+                return res.render('error.jade', {err, title: "Error Page"});
+            }
+            // if (user.passwordResetAttempt > 3) {
+            //     const err = {
+            //         status: 401,
+            //         message: "Max reset attempts reached, kindly attempt a new reset"
+            //     }
+            //     return res.render('error.jade', {err, title: "Error Page"});
+            // }
             const render_payload = {
                 title: "Email Verifcation" ,
                 status: 'success',
@@ -118,14 +143,15 @@ module.exports = {
         try {
             const reset = await auth.forgotPasswordEmail(email)
             if(!reset) throw new Error("An error occured")
-            return  res.status(200).json({
+            res.status(200).json({
                 status: 'success',
                 message: `Email Sent`,
             })
         } catch (err) {
-            return res.status(500).json({
+            res.fail({
                 status: 'Failed',
                 message: "User password reset failed, please contact admin",
+                statusCode: 401
             })
         }
     },
@@ -136,14 +162,15 @@ module.exports = {
         try {
             const reset = await auth.resetPassword(token, password, passwordConfirm)
             if (!reset) throw new Error("An error occured")
-            return  res.status(200).json({
+            return res.ok({
                 status: 'success',
                 message: `Password reset successful`,
             })
         } catch (err) {
-            return res.status(500).json({
+            return res.fail({
                 status: 'Failed',
                 message: "User password reset failed, please contact admin",
+                statusCode: 401
             })
         }
     },
@@ -160,10 +187,10 @@ module.exports = {
             if (!profile) throw new Error("Invalid Request")
             return  res.render('reset-password.jade', {profile ,title: "Change Password" });
         } catch (err) {
-            console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: 'Failed',
-                message: "User password reset failed, please contact admin",
+                message: err.message || "User password reset failed, please contact admin",
+                statusCode: 401
             })
         }
     },

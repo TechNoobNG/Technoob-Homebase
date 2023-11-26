@@ -1,5 +1,6 @@
 const Events = require('../models/events.js');
 const Activity = require('../models/activity.js')
+const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
     get_all: async (query) => {
@@ -155,7 +156,10 @@ module.exports = {
 
                 await Activity.create(activity)
             } else {
-                throw new Error("Event does not exist")
+                throw new ErrorResponse(
+                    400,
+                    "Event does not exist"
+                )
             }
             return Events;
         } catch (error) {

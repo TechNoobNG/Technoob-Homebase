@@ -1,6 +1,6 @@
 // const config = require('../config/config')['development'];
 // const scraper = require('../services/jobs')
-// const queue = require('../azure_Queue/init');
+// const queue = require('../azureQueue/init');
 // const honeybadger = require('../utils/honeybadger');
 // const { exec } = require('child_process');
 

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const trafficMetric = new Schema({
   endpoint: String,
   method: String,
+  ip: String
 
 },{
   timestamps: true

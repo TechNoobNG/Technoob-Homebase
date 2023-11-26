@@ -4,7 +4,7 @@ const controller = require('../controllers/index');
 const quizzes = controller.quizzes;
 const middleware = require('../middleware/index');
 
-router.get('/all',  middleware.auth.isAuthenticated ,quizzes.get_all)
+router.get('/all',  middleware.auth.isAuthenticated ,middleware.redisCache.getCache,quizzes.get_all)
 router.get('/metrics',  middleware.auth.isAuthenticated, quizzes.getMetrics)
 router.get('/get/:id',  middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:GetQuizzes'), quizzes.get)
 router.post('/create',  middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:CreateQuizzes'),quizzes.create)

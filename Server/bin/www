@@ -11,10 +11,10 @@ const http = require('http');
 const db = require('../utils/db_connector');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
-const azureQueueListener = require("../azure_Queue/worker")
+const queueWorker = require(`../${config.WORKER_QUEUE_PLATFORM}Queue/worker`)
 const WORKERS = process.env.WEB_CONCURRENCY || 1; //HEROKU CONFIG
 const HOST = process.env.HOST;
-
+const redisHelper = require("../utils/redishelper")
 
 //const breeRunner = require("../jobs/bree_jobs")
 
@@ -58,7 +58,7 @@ if (cluster.isMaster && HOST !== 'heroku') {
     let scriptCount = config.LISTENER_COUNT * 1 || 5;
     let i = 0;
     do {
-      azureQueueListener();
+      queueWorker();
       i++
     }while(i < scriptCount)
 
@@ -84,7 +84,14 @@ const initialise_db = async () => {
 }
 
 
-
+  const connectToRedis = async () => {
+    await redisHelper
+      .on('error', err => console.log('Redis Client Error', err))
+      // .on('connect', () => {
+      //   console.log("connected to redis server")
+      // } )
+      .connect();
+}
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -155,6 +162,7 @@ function onListening() {
 
   await Promise.all([
     initialise_db(),
+    connectToRedis()
   ])
 
   const port = config.PORT;

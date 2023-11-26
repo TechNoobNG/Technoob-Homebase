@@ -8,14 +8,13 @@ module.exports = {
         const userId = req.user._id 
         try {
             const reponse = await users.getDashboard(userId)
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `User dashboard loaded`,
                 data: reponse
             })
         } catch (err) {
-            console.log(err)
-            return res.status(500).json(
+            return res.fail(
                 {
                     message: "An error occured, please contact admin"
                 }
@@ -25,10 +24,11 @@ module.exports = {
 
     async edit(req, res) {
         const { update_params } = req.body
+        let updateObject = update_params;
         const user_id = req.user._id
         try {
-            const updated_user = await users.edit(user_id, update_params)
-            return res.status(201).json({
+            const updated_user = await users.edit(user_id, updateObject)
+            return res.ok({
                 status: "success",
                 message: `User information updated`,
                 data: updated_user
@@ -36,7 +36,7 @@ module.exports = {
             
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -47,14 +47,14 @@ module.exports = {
         const user_id = req.user._id
         try {
             const response = await users.editPassword( user_id , password, previous_password)
-            return res.status(201).json({
+            return res.ok({
                 status: "Success",
                 message: `User Password updated`,
                 data: response
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -67,14 +67,14 @@ module.exports = {
         
         try {
             const user = await users.editPhoto( user_id, photo)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `User photo updated`,
                 data: user
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -86,14 +86,14 @@ module.exports = {
 
         try {
             const user = await users.deactivate(user_id)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `User deactivated`,
                 data: user
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -104,14 +104,14 @@ module.exports = {
         const user_id = req.user._id
         try {
             const user = await users.activate(user_id)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `User activated`,
                 data: user
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -122,14 +122,14 @@ module.exports = {
         const user_id = req.user._id
         try {
             const user = await users.delete(user_id)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `User deleted`,
                 data: user
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -144,7 +144,7 @@ module.exports = {
             res.redirect('/auth/github')
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -158,13 +158,13 @@ module.exports = {
                     throw new Error("Please provide a user Id")
             }
             const user = await users.getOne(user_id)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `User found`,
                 data: user
             })
         } catch (err) {
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: "User Not Found"
             })
@@ -175,14 +175,14 @@ module.exports = {
         const user_id = req.user._id
         try {
             const user = await users.getOne(user_id);
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `User found`,
                 data: user
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: "User Not Found"
             })
@@ -193,14 +193,14 @@ module.exports = {
         const query = req.query
         try {
             const user = await users.getAll(query)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `${user.count} users found`,
                 data: user
             })
         } catch (err) {
             console.log(err)
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -211,13 +211,13 @@ module.exports = {
         const { name, email, message } = req.body
         try {
             const contact = await users.contact_us(name, email, message)
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Message sent`,
                 data: contact
             })
         } catch (err) {
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })
@@ -229,7 +229,7 @@ module.exports = {
 
         try {
             await users.mailing_list(email)
-            return res.status(201).json(
+            return res.ok(
                 {
                     status: "Success",
                     message: "Added Successfully",
@@ -237,7 +237,7 @@ module.exports = {
             )
         } catch (err) {
             
-            return res.status(500).json({
+            return res.fail({
                 status: "error",
                 message: err.message
             })

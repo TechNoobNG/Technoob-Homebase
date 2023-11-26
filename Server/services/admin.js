@@ -10,7 +10,8 @@ const contributors = require('../models/contributors');
 const resources = require('../services/resources')
 const users = require('../services/user');
 const traffic = require('../services/traffic');
-const queue = require('../azure_Queue/init');
+const queue = require('../azureQueue/init');
+const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
 
@@ -30,35 +31,45 @@ module.exports = {
         }
        
     },
-
+    
     async traffic(range) {
         try {
-            if (range.year) {
-                const now = new Date();
-                return traffic.getTotalTrafficByYear(now.getFullYear())
-            }
-            if (range.halfYear) {
-                return traffic.getMetricsForLastSixMonths
-            }
+            let data;
 
-            if (range.quaterYear) {
-                return traffic.getMetricsLastThreeMonths
+            if (range) {
+                if (range.lastSevenDaily) {
+                    data = await traffic.getDailyTrafficForWeek();
+                } else if (range.months) {
+                    data = await traffic.getTrafficForLastNMonths(range.months);
+                } else if (range.year && !range.month) {
+                    data = await traffic.getTotalTrafficByYear(range.year);
+                } else if (range.halfYear) {
+                    data = await traffic.getTrafficForLastNMonths(6);
+                } else if (range.quaterYear) {
+                    data = await traffic.getMetricsLastThreeMonths();
+                } else if (range.days) {
+                    data = await traffic.getMetricsLastDays(range.days);
+                } else if (range.month && range.year) {
+                    data = await traffic.getDailyTrafficForMonth(range.month, range.year);
+                } else if (range.week) {
+                    data = await traffic.getMetricsLastSevenDays();
+                } else if (range.daily) {
+                    data = await traffic.getDailyTraffic();
+                } else if (range.lastThreeMonths) {
+                    data = await traffic.getMetricsLastThreeMonths();
+                } else {
+                    data = await traffic.getOverallTotalTraffic();
+                }
+            } else {
+                data = await traffic.getOverallTotalTraffic();
             }
-
-            if (range.month) {
-                return traffic.getMetricsLastThirtyDays
-            }
-
-            if (range.week) {
-                return traffic.getMetricsLastSevenDays
-            }
-
-            return null
+    
+            return data;
         } catch (err) {
-            throw err
+            throw err;
         }
-       
     },
+        
 
     async saveMailTemplate(data) {
         
@@ -74,7 +85,10 @@ module.exports = {
             const user = await User.findOneAndUpdate({ email }, { role: 'admin' }, { new: true });
 
             if (!user) {
-                throw new Error('User not found')
+                throw new ErrorResponse(
+                    404,
+                    "No user found"
+                )
             }
 
             let admin = await Admin.find({
@@ -126,11 +140,10 @@ module.exports = {
             const isActive = await Admin.checkStatus(user._id)
 
             if (!isActive) {
-                return {
-                    user: user,
-                    admin_profile: 'User is not an admin',
-
-                }
+                throw new ErrorResponse(
+                    400,
+                    "User is not an admin"
+                )
             }
             const options = { new: true }
             const admin = await Admin.findOneAndUpdate({ user_id: user._id }, { isActive: false }, options)
@@ -200,7 +213,6 @@ module.exports = {
             };
         }
         catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -208,11 +220,13 @@ module.exports = {
         try {
             const template = await Templates.findById(id);
             if (!template) {
-                throw new Error('Template not found')
+                throw new ErrorResponse(
+                    404,
+                    "Template not found"
+                );
             }
             return template
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -221,7 +235,6 @@ module.exports = {
             const admins = await Admin.find().populate('user_id').populate('permissions');
             return admins
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -230,7 +243,10 @@ module.exports = {
         try {
             const admin = await Admin.findById(id).populate('user_id').populate('permissions');
             if (!admin) {
-                throw new Error('Admin not found')
+                throw new ErrorResponse(
+                    404,
+                    "Admin not found"
+                )
             }
             return admin
 
@@ -243,7 +259,10 @@ module.exports = {
         try {
             const permission = await Permissions.findByIdAndRemove(id);
             if (!permission) {
-                throw new Error('Permission not found')
+                throw new ErrorResponse(
+                    404,
+                    "Permission not found"
+                )
             }
             const response = {
                 message: 'Permission deleted successfully',
@@ -252,7 +271,6 @@ module.exports = {
             return response
         }
         catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -260,7 +278,10 @@ module.exports = {
         try {
             const permission = await Permissions.findByIdAndUpdate(id, { isActive: false }, { new: true });
             if (!permission) {
-                throw new Error('Permission not found')
+                throw new ErrorResponse(
+                    404,
+                    "Permission not found"
+                )
             }
             return permission
         } catch (err) {
@@ -274,7 +295,6 @@ module.exports = {
             const permissions = await Permissions.find();
             return permissions
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -283,11 +303,13 @@ module.exports = {
         try {
             const permission = await Permissions.findById(id);
             if (!permission) {
-                return new Error('Permission not found')
+                throw new ErrorResponse(
+                    404,
+                    "Permission not found"
+                )
             }
             return permission
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -305,11 +327,17 @@ module.exports = {
             }
             const check_permission = await Permissions.findOne({ permission });
             if (!check_permission) {
-                throw new Error('Permission not found')
+                throw new ErrorResponse(
+                    404,
+                    "Permission not found"
+                )
             }
 
             if (check_user_permission?.permissions?.includes(check_permission._id)) {
-                throw new Error('User already has this permission / permission not found')
+                throw new ErrorResponse(
+                    400,
+                    'User already has this permission / permission not found'
+                )
             }
 
             const admin = await Admin.findOne({ user_id: user._id });
@@ -326,19 +354,32 @@ module.exports = {
         try {
             const user = await User.findOne({ email });
             if (!user) {
-                throw new Error('User not found')
+                throw new ErrorResponse(
+                    404,
+                    "Permission not found"
+                )
             }
             const check_user_permission = await Admin.findOne({ user_id: user._id });
             if (!check_user_permission) {
-                throw new Error("This User is not an admin")
+                throw new ErrorResponse(
+                    400,
+                    "This User is not an admin"
+                )
             }
             const check_permission = await Permissions.findOne({ permission });
             if (!check_permission) {
-                throw new Error('Permission not found')
+                throw new ErrorResponse(
+                    404,
+                    "Permission not found"
+                )
             }
 
             if (!check_user_permission?.permissions?.includes(check_permission._id)) {
-                throw new Error('User does not have this permission / permission not found')
+                throw new ErrorResponse(
+                    400,
+                    'User does not have this permission / permission not found'
+                )
+
             }
 
             const new_perms = check_user_permission.permissions.filter(perm => perm.toString() !== check_permission._id.toString())
@@ -360,7 +401,7 @@ module.exports = {
                 } else {
                     return null;
                 }
-            })).then(objects => objects.filter(obj => obj !== null));
+            })).then(objects => objects.filter(obj => obj !== null)).catch(err => { throw new ErrorResponse(err) });
 
             const constants = {
                 message: content.message,
@@ -386,7 +427,6 @@ module.exports = {
                 message: "Email Queued Successfully"
             }
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -400,7 +440,7 @@ module.exports = {
                 } else {
                     return null;
                 }
-            })).then(objects => objects.filter(obj => obj !== null));
+            })).then(objects => objects.filter(obj => obj !== null)).catch(err => { throw new ErrorResponse(err) });;
 
             const constants = {
                 message: content.message,
@@ -427,7 +467,6 @@ module.exports = {
                 message: "Email Queued Successfully"
             }
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -452,7 +491,6 @@ module.exports = {
                 count
             };
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -540,6 +578,15 @@ module.exports = {
 
     },
 
+    async getFrontendResources() {
+        try {
+            return frontend_resources.find()
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
     async getContributors() {
         try {
             return contributors.find()
@@ -552,9 +599,8 @@ module.exports = {
 
     async addContributors(data) {
         try {
-            return await contributors.create(data)
+            return contributors.create(data)
         } catch (err) {
-            console.log(err)
             throw err
         }
     }

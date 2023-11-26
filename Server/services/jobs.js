@@ -1,7 +1,7 @@
 const Jobs = require('../models/jobs.js');
 const Activity = require('../models/activity.js')
 const scraper = require('../utils/scraper');
-const jobs = require('../models/jobs.js');
+const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
 
@@ -72,14 +72,17 @@ module.exports = {
 
     get: async (id,user) => {
         try {
-            const jobs = await Jobs.findById(id);
+            const job = await Jobs.findById(id);
 
-            if (!jobs) {
-                throw new Error("Job not found")
+            if (!job) {
+                throw new ErrorResponse(
+                    404,
+                    "Job not found"
+                )
             }
-            jobs.views += 1
-            await jobs.save()
-            return jobs;
+            job.views += 1
+            await job.save()
+            return job;
         } catch (error) {
             throw error;
         }
@@ -87,27 +90,27 @@ module.exports = {
 
     create: async (body) => {
         try {
-            const jobs = await Jobs.create(body);
-            if (jobs) {
+            const job = await Jobs.create(body);
+            if (job) {
                 const activity = {
-                    user_id: jobs.uploader_id,
+                    user_id: job.uploader_id,
                     module: "job",
                     activity: {
                         activity: "Job Upload",
-                        title: jobs.title,
-                        location: jobs.location,
-                        company: jobs.company,
-                        datePosted: jobs.datePosted,
-                        expiryDate: jobs.expiryDate,
-                        workplaceType: jobs.workplaceType,
-                        contractType: jobs.contractType,
+                        title: job.title,
+                        location: job.location,
+                        company: job.company,
+                        datePosted: job.datePosted,
+                        expiryDate: job.expiryDate,
+                        workplaceType: job.workplaceType,
+                        contractType: job.contractType,
                         status: "Successful"
                     }
                 }
 
                 await Activity.create(activity)
             }
-            return jobs;
+            return job;
         } catch (error) {
             const activity = {
                 user_id: body.uploader_id,
@@ -192,7 +195,10 @@ module.exports = {
 
                 await Activity.create(activity)
             } else {
-                throw new Error("job does not exist")
+                throw new ErrorResponse(
+                    400,
+                    "Job not found"
+                )
             }
             return null
         } catch (error) {
@@ -258,7 +264,10 @@ module.exports = {
             try {
                 await Promise.all(activityPromises);
             } catch (err) {
-                console.log(err)
+                throw new ErrorResponse(
+                    400,
+                    "Failed to delete Job"
+                )
             }
 
             }
@@ -273,7 +282,7 @@ module.exports = {
         try {
             const dataUpload = data.uniqueJobsArray || [];
             if (dataUpload && dataUpload.length) {
-                    await jobs.insertMany(dataUpload)
+                    await Jobs.insertMany(dataUpload)
 
                     const activityPromises = dataUpload.map((jobs) => {
                         return Activity.create({
@@ -296,26 +305,23 @@ module.exports = {
                 try {
                     await Promise.all(activityPromises);
                 } catch (err) {
-                    console.log(err)
                 }
             } else {
-                throw new Error({
-                    message: "No jobs found",
-                    id: '00'
-                })
+                throw new ErrorResponse(
+                    400,
+                    "No jobs found"
+                )
             }
             dataUpload = []
             return
 
         } catch (err) {
-            console.log(err)
             if (err.message?.includes("TimeoutError")) {
-                throw new Error({
-                    message: "timeout",
-                    code: "01"
-                })
+                throw new ErrorResponse(
+                    400,
+                    "timeout"
+                )
             }
-            console.log(err)
         }
     }
 
