@@ -16,7 +16,7 @@ module.exports = {
         "Quiz not found"
       )
     }
-    const invalidKeys = ['password', 'passwordConfirm', 'passwordChangedAt', 'passwordResetToken', 'passwordResetExpires', 'active', 'role']
+    const invalidKeys = ['password', 'passwordConfirm', 'passwordChangedAt', 'passwordResetToken', 'passwordResetExpires', 'active', 'role', "passwordResetAttempt", "lockoutUntil" ,"passwordResetAttempt"]
     const invalidUpdate = Object.keys(params).some(key => invalidKeys.includes(key))
     if (invalidUpdate) {
           throw new ErrorResponse(
@@ -96,7 +96,7 @@ module.exports = {
     async getOne(id) {
         try {
             if (!id) throw new Error('Id is required')
-            const user = await User.findById({ _id: id }).select('+active').populate('quiz_record')
+            const user = await User.findById({ _id: id }).select('+active -password -createdAt -updatedAt -passwordResetAttempt -lockoutUntil -passwordResetAttempt').populate('quiz_record')
             return user
         } catch (err) {
             throw err
@@ -109,7 +109,7 @@ module.exports = {
             let limit = query.limit || 5;
             let skip = (page - 1) * limit;
             let count = 0;
-            const users = await User.find().select('+active')
+            const users = await User.find().select('+active -password -createdAt -updatedAt -passwordResetAttempt -lockoutUntil -passwordResetAttempt')
                 .skip(skip)
                 .limit(limit);
             if (users) {
