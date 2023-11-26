@@ -9,6 +9,13 @@ const GithubStrategy = require('passport-github2').Strategy;
 const mailer = require('../utils/azure_mailer');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
+const ErrorResponse = require('../utils/errorResponse');
+
+function getLockoutUntil(failedAttempts) {
+    const lockoutDurationInMinutes = Math.pow(2, failedAttempts);
+    const lockoutUntil = new Date(Date.now() + lockoutDurationInMinutes * 60 * 1000);
+    return lockoutUntil;
+  }
 
 passport.use(
     new LocalStrategy(
@@ -17,11 +24,27 @@ passport.use(
             passwordField: 'password',
         },
         async (username, password, done) => {
+           
             try {
                 let user = await User.findOne({ username }).select('+password').select('+active');
+                if (user.lockoutUntil && user.lockoutUntil > new Date()) {
+                    const remainingTime = Math.ceil((user.lockoutUntil - new Date()) / (60 * 1000)); 
+                    return done(null, false, {
+                        message: `Account locked. Try again in ${remainingTime} minutes.`,
+                        statusCode: 403
+                    });
+                };
                 if (!user) return done(null, false, { message: 'Incorrect email or password.' });
                 const isMatch = await user.comparePassword(password);
-                if (!isMatch) return done(null, false, { message: 'Incorrect email or password.' });
+                if (!isMatch) {
+                    user.failedLoginAttempts += 1;
+                    user.lockoutUntil = user.failedLoginAttempts > config.MAX_LOGIN_ATTEMPT ? getLockoutUntil(user.failedLoginAttempts) : null;
+                    await user.save();
+                    return done(null, false, { message: 'Incorrect email or password.' })
+                };
+                user.failedLoginAttempts = 0;
+                user.lockoutUntil = null;
+                await user.save();
 
                 user = {
                     _id: user._id,

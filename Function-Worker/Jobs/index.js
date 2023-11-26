@@ -4,7 +4,7 @@ module.exports = {
 
     async deleteExpiredJobs(context) {
         try {
-            const queue = require('../../Server/azure_Queue/init');
+            const queue = require('../../Server/azureQueue/init');
             const honeybadger = require('../../Server/utils/honeybadger');
             await queue.sendMessage({
                 name: "deleteExpiredJobs",
@@ -24,7 +24,7 @@ module.exports = {
 
     async scrapeJobs(q, posted, expires) {
         try {
-            const queue = require('../../Server/azure_Queue/init');
+            const queue = require('../../Server/azureQueue/init');
             const honeybadger = require('../../Server/utils/honeybadger');
             const config = require('../../Server/config/config')['production'];
             const automations = require('../automations/scraper')

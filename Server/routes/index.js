@@ -13,26 +13,39 @@ const utils = require('./utils')
 const experimental = require('./experimental.js')
 const base = `/api/v1`
 const pool = require('../experimental/index')
-
+const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
+const utility = require("../utils/utils");
+
 
 router.get('/', (req, res) => {
   res.render('index', {
     title: 'TechNoob API',
     environment: config.NODE_ENV,
     repo_link: "https://github.com/TechNoobNG/Technoob-Homebase",
-    activeTasks: pool.stats().activeTasks,
-    totalWorkers: pool.stats().totalWorkers,
-    busyWorkers: pool.stats().busyWorkers,
-    idleWorkers: pool.stats().idleWorkers,
-    pendingTasks: pool.stats().pendingTasks,
+    // activeTasks: pool.stats().activeTasks,
+    // totalWorkers: pool.stats().totalWorkers,
+    // busyWorkers: pool.stats().busyWorkers,
+    // idleWorkers: pool.stats().idleWorkers,
+    // pendingTasks: pool.stats().pendingTasks,
 
   });
 
 });
 
+const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
 
+const clearCacheMiddleware = (req, res, next) => {
+  if (req.method === 'POST' && !excludeClearCacheRoutes.includes(utility.removePathSegments(req.path))) {
+        middleware.redisCache.addClearCache(req, res, next);
+    } else {
+        next();
+    }
+};
+
+
+router.use(clearCacheMiddleware);
 
 router.use(`${base}/user`, user);
 router.use(`${base}/authenticate`, auth);
@@ -50,7 +63,7 @@ router.get('/metrics', async (req, res) => {
     res.set('Content-Type', register.contentType);
     res.send(await register.metrics());
   } catch (error) {
-    res.status(500).send(error);
+    res.fail(error)
   }
 });
 

@@ -4,7 +4,7 @@ const controller = require('../controllers/index');
 const resources = controller.resources;
 const middleware = require('../middleware/index');
 
-router.get('/all', resources.get_all)
+router.get('/all',middleware.redisCache.getCache, resources.get_all)
 router.get('/availablestacks', resources.getStacks)
 router.get('/get/:id', resources.get)
 router.get('/download/:id',middleware.auth.isAuthenticated, resources.download)

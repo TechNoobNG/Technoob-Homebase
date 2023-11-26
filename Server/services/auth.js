@@ -5,7 +5,7 @@ const middleware = require('../middleware/index');
 const crypto = require('crypto');
 const mailer = require('../utils/azure_mailer')
 const jwt = require('jsonwebtoken');
-const queue = require('../azure_Queue/init');
+const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
@@ -82,6 +82,7 @@ module.exports = {
             user.password = password;
             user.passwordConfirm = passwordConfirm;
             user.passwordResetToken = null;
+            user.passwordResetAttempt = 0;
             await user.save();
 
             const constants = {

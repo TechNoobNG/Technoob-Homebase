@@ -1,5 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse');
 const  errorFormater = require("../utils/errorFormater");
+const Honeybadger = require("../utils/honeybadger");
 
 const errorHandler = (err, req, res, next) => {
 
@@ -18,7 +19,10 @@ const errorHandler = (err, req, res, next) => {
             success: false,
             error: "Internal Server Error"
         });
+        Honeybadger.errorHandler(err,req,res,next)
     }
+
+
 };
 
 module.exports = errorHandler;

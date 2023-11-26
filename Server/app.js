@@ -21,10 +21,10 @@ const trafficMiddleware = require("./middleware/traffic");
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
-const errorHandler = require("./middleware/errorHandler")
-const response = require("./middleware/customResponse")
-//const swaggerDocument = yamljs.load('./swagger.yaml');
+const errorHandler = require("./middleware/errorHandler");
+const response = require("./middleware/customResponse");
 
+//const swaggerDocument = yamljs.load('./swagger.yaml');
 const swaggerDocument = yamljs.load(path.join(__dirname, 'swagger.yaml'));
 
 
@@ -165,11 +165,10 @@ app.use("/", limiter); // implementing rate limiter middleware
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
 app.use("/", trafficMiddleware, indexRouter);
 
-app.use(Honeybadger.errorHandler);
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// // catch 404 and forward to error handler
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
 app.use(errorHandler);
