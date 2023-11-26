@@ -24,9 +24,10 @@ module.exports = {
 
     async edit(req, res) {
         const { update_params } = req.body
+        let updateObject = update_params;
         const user_id = req.user._id
         try {
-            const updated_user = await users.edit(user_id, update_params)
+            const updated_user = await users.edit(user_id, updateObject)
             return res.ok({
                 status: "success",
                 message: `User information updated`,
