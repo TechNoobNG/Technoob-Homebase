@@ -159,11 +159,14 @@ function onListening() {
 
 
 (async () => {
-
-  await Promise.all([
+  const promiseArray = [
     initialise_db(),
-    connectToRedis()
-  ])
+  ]
+    
+  if (HOST !== 'heroku') {
+    promiseArray.push(connectToRedis()) 
+  }
+  await Promise.all(promiseArray)
 
   const port = config.PORT;
 
