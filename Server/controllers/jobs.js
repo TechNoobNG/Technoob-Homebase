@@ -116,12 +116,12 @@ module.exports = {
 
         try {
             const activity = await jobs.activity(page,limit)
-            res.ok({
+           return res.ok({
                 status: "success",
                 data: activity
             })
         } catch (err) {
-           res.fail({
+           return res.fail({
                 status: "fail",
                 message: err.message
             })
