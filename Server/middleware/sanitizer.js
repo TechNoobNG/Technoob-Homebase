@@ -22,25 +22,27 @@ const xssOptions = {
   }
 };
 
-module.exports = {
-    sanitize(req, res, next) {
-       
-        for (const key in req.body) {
-           
-            if (typeof req.body[key] === 'object') {
-                for (const innerKey in req.body[key]) {
-                    if (Array.isArray(req.body[key][innerKey])) {
-                        req.body[key][innerKey].forEach((element, index) => {
-                            req.body[key][innerKey][index] = xss(element, xssOptions);
-                        });
-                    } else {
-                        req.body[key][innerKey] = xss(req.body[key][innerKey], xssOptions);
-                    }
-                }
+function sanitize(req, res, next) {
+    sanitizeObject(req.body);
+    sanitizeObject(req.params);
+    sanitizeObject(req.query);
+    next();
+}
+
+function sanitizeObject(obj) {
+    for (const key in obj) {
+        if (typeof obj[key] === 'object') {
+            if (Array.isArray(obj[key])) {
+                obj[key].forEach((element, index) => {
+                    obj[key][index] = xss(element, xssOptions);
+                });
             } else {
-                req.body[key] = xss(req.body[key], xssOptions);
+                sanitizeObject(obj[key]);
             }
+        } else {
+            obj[key] = xss(obj[key], xssOptions);
         }
-        next();
     }
-} 
+}
+
+module.exports = sanitize;
