@@ -1,5 +1,5 @@
 class ErrorResponse extends Error {
-	constructor({ statusCode = 500, message = 'Internal Server Error', data = undefined, stack = undefined } = {}) {
+	constructor(statusCode = 500, message = 'Internal Server Error', data = undefined, stack = undefined ) {
 		super(message);
 		this.statusCode = statusCode;
 

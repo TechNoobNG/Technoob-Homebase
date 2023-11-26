@@ -79,6 +79,7 @@ module.exports = {
                 '/api/v1/admin/contact-us',
                 '/api/v1/admin/mailing-list'
             ],
+        MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
     },
     test: {
         NODE_ENV: "test"
@@ -158,6 +159,7 @@ module.exports = {
                 '/api/v1/admin/contact-us',
                 '/api/v1/admin/mailing-list'
             ],
+            MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
     },
 
     production_worker: {

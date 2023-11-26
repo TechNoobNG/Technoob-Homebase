@@ -165,11 +165,10 @@ app.use("/", limiter); // implementing rate limiter middleware
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
 app.use("/", trafficMiddleware, indexRouter);
 
-app.use(Honeybadger.errorHandler);
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// // catch 404 and forward to error handler
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
 app.use(errorHandler);

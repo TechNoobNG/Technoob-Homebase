@@ -287,7 +287,8 @@ module.exports = {
 
     async getMailingList(req, res) { 
         try {
-            const mailingList = await admin.getMailingList();
+            const query = req.query
+            const mailingList = await admin.getMailingList(query);
             return res.ok({
                 status: "success",
                 message: `Retrieved mailing list`,

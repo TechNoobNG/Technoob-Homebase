@@ -82,6 +82,7 @@ module.exports = {
             user.password = password;
             user.passwordConfirm = passwordConfirm;
             user.passwordResetToken = null;
+            user.passwordResetAttempt = 0;
             await user.save();
 
             const constants = {

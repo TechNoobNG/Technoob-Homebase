@@ -39,7 +39,6 @@ function extendResponseObject(req, res, next) {
             const filterError = errorFormater.filter(error);
             error = new ErrorResponse(filterError.statusCode, filterError.message, filterError?.data, filterError?.stack);
         }
-
         next(error);
     };
 

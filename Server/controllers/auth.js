@@ -18,6 +18,14 @@ module.exports = {
                 if (err) {
                     return next(err);
                 }
+
+                if (info) {
+                    return res.fail({
+                        status: 'fail',
+                        message: info.message || err?.message,
+                        statusCode: info.statusCode || 401
+                    })
+                }
                 if (!user) {
                     return res.fail({
                         status: 'fail',
@@ -25,6 +33,7 @@ module.exports = {
                         statusCode: 401
                     })
                 }
+                
                 req.login(user,{ session: true }, async (err) => {
                     if (err) {
                         return next(err);
@@ -98,8 +107,19 @@ module.exports = {
         try {
             const user = await auth.verifyUserEmail(token)
             if (!user) {
+                const err = {
+                    status: 401,
+                    message: "Invalid token"
+                }
                 return res.render('error.jade', {err, title: "Error Page"});
             }
+            // if (user.passwordResetAttempt > 3) {
+            //     const err = {
+            //         status: 401,
+            //         message: "Max reset attempts reached, kindly attempt a new reset"
+            //     }
+            //     return res.render('error.jade', {err, title: "Error Page"});
+            // }
             const render_payload = {
                 title: "Email Verifcation" ,
                 status: 'success',
