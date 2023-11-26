@@ -62,8 +62,24 @@ module.exports = {
             "Software Testing",
             "DevOps",
             "SEO"
-        ]
-
+        ],
+        WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
+        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+        AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+        AWS_REGION: process.env.AWS_REGION,
+        AWS_QUEUE_URL: process.env.AWS_QUEUE_URL,
+        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'azure',
+        REDIS_URL: process.env.REDIS_URL,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
+            [
+                '/api/v1/authenticate',
+                '/api/v1/admin/invite',
+                '/api/v1/admin/remove',
+                '/api/v1/admin/contact-us',
+                '/api/v1/admin/mailing-list'
+            ],
+        MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
     },
     test: {
         NODE_ENV: "test"
@@ -127,8 +143,23 @@ module.exports = {
             "Software Testing",
             "DevOps",
             "SEO"
-        ]
-
+        ],
+        WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
+        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+        AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+        AWS_REGION: process.env.AWS_REGION,
+        AWS_QUEUE_URL: process.env.AWS_QUEUE_URL,
+        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'azure',
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
+            [
+                '/api/v1/authenticate',
+                '/api/v1/admin/invite',
+                '/api/v1/admin/remove',
+                '/api/v1/admin/contact-us',
+                '/api/v1/admin/mailing-list'
+            ],
+            MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
     },
 
     production_worker: {
@@ -186,6 +217,17 @@ module.exports = {
             "Software Testing",
             "DevOps",
             "SEO"
-        ]
+        ],
+        WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
+        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+        AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+        AWS_REGION: process.env.AWS_REGION,
+        AWS_QUEUE_URL: process.env.AWS_QUEUE_URL,
+        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'azure',
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
+            [
+                '/api/v1/authenticate'
+            ],
     }
 }

@@ -14,22 +14,22 @@ const sanitizeIfNeeded = (req, res, next) => {
 };
 
 router.use(sanitizeIfNeeded);
-router.get('/contributors', admin.getContributors);
+router.get('/contributors', middleware.redisCache.getCache, admin.getContributors);
 router.post('/contributors/add', middleware.auth.isAuthenticated,middleware.auth.hasPermission('admin:AddContributors'),admin.addContributors);
 router.get('/dashboard', middleware.auth.isAuthenticated, admin.dashboard);
 router.get('/dashboard/traffic', middleware.auth.isAuthenticated, admin.traffic);
 router.post('/email/template', middleware.auth.hasPermission('admin:ManageEmailTemplates'), admin.saveMailTemplate);
-router.get('/email/template', middleware.auth.hasPermission('admin:ManageEmailTemplates'), admin.getMailTemplates);
-router.get('/email/template/:id', middleware.auth.hasPermission('admin:ManageEmailTemplates'), admin.getMailTemplate);
+router.get('/email/template', middleware.auth.hasPermission('admin:ManageEmailTemplates'),middleware.redisCache.getCache, admin.getMailTemplates);
+router.get('/email/template/:id', middleware.auth.hasPermission('admin:ManageEmailTemplates'),middleware.redisCache.getCache, admin.getMailTemplate);
 router.post('/email/many/dynamic', middleware.auth.hasPermission('admin:SendMailNotifications'), admin.sendNotificationEmail);
 router.post('/email/many/static', middleware.auth.hasPermission('admin:SendMailNotifications'), admin.sendNotificationEmailStatic);
-router.post('/invite', middleware.auth.hasPermission('admin:ManageAdmins'), admin.inviteAdmin);
-router.post('/remove', middleware.auth.hasPermission('admin:ManageAdmins'), admin.removeAdmin);
-router.get('/all', middleware.auth.hasPermission('admin:ManageAdmins'), admin.getAdmins);
-router.get('/:id', middleware.auth.hasPermission('admin:ManageAdmins'), admin.getAdmin);
+router.post('/manage/invite', middleware.auth.hasPermission('admin:ManageAdmins'), admin.inviteAdmin);
+router.post('/manage/remove', middleware.auth.hasPermission('admin:ManageAdmins'), admin.removeAdmin);
+router.get('/manage/view/all', middleware.auth.hasPermission('admin:ManageAdmins'), middleware.redisCache.getCache, admin.getAdmins);
+router.get('/manage/view/:id', middleware.auth.hasPermission('admin:ManageAdmins'), middleware.redisCache.getCache, admin.getAdmin);
 router.post('/permission/create', middleware.auth.hasPermission('admin:ManagePermissions'), admin.create_permission);
-router.get('/permission/all', middleware.auth.hasPermission('admin:ManagePermissions'), admin.get_permissions);
-router.get('/permission/:id', middleware.auth.hasPermission('admin:ManagePermissions'), admin.get_permission);
+router.get('/permission/all', middleware.auth.hasPermission('admin:ManagePermissions'),middleware.redisCache.getCache, admin.get_permissions);
+router.get('/permission/:id', middleware.auth.hasPermission('admin:ManagePermissions'),middleware.redisCache.getCache, admin.get_permission);
 router.post('/permission/:id/delete', middleware.auth.hasPermission('admin:ManagePermissions'), admin.delete_permission);
 router.post('/permission/:id/deactivate', middleware.auth.hasPermission('admin:ManagePermissions'), admin.deactivatePermission);
 router.post('/permission/add', middleware.auth.hasPermission('admin:ManagePermissions'), admin.add_permission);
@@ -39,6 +39,7 @@ router.get('/contact-us', middleware.auth.hasPermission('admin:ManageContactUs')
 router.post('/contact-us/:id/delete', middleware.auth.hasPermission('admin:ManageContactUs'), admin.deleteContactUs);
 router.post('/mailing-list/:id/delete', middleware.auth.hasPermission('admin:ManageMailingList'), admin.deleteMailingList);
 router.post('/frontend/resources/create', middleware.auth.hasPermission('admin:ManageFrontendResources'), admin.createFrontendResource);
+router.get('/frontend/resources', admin.getFrontendResources);
 router.post('/worker/jobs/trigger', middleware.auth.hasPermission('admin:TriggerWorkerJobs'), admin.triggerWorkerJobs);
 
 module.exports = router;

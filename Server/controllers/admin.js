@@ -1,24 +1,19 @@
 const { admin } = require("../services/index")
-const errorHandler = require("../utils/errorHandler");
-const queue = require('../azure_Queue/init');
+const errorHandler = require("../utils/errorFormater");
+const queue = require('../azureQueue/init');
 
 module.exports = {
     async dashboard(req, res) {
         try {
             const adminDashboard = await admin.adminDashboard();
             
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Dashboard details retrived successfully`,
                 data: adminDashboard
-
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            return res.fail(error)
         }
     },
     async traffic(req, res) {
@@ -26,35 +21,30 @@ module.exports = {
         try {
             const trafficData = await admin.traffic(range);
             
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Traffic details retrieved successfully`,
                 data: trafficData
 
             })
-        } catch (err) {
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            return res.fail(error)
         }
     },
     async saveMailTemplate(req, res) {
         try {
             const email_response = await admin.saveMailTemplate(req.body);
             
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Added email template to database`,
-                data: email_response
+                data: email_response,
+                statusCode: 201
 
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            console.log(error)
+             return res.fail(error)
         }
     },
 
@@ -63,34 +53,28 @@ module.exports = {
         const invitee = req.body.email
         try {
             const admin_response = await admin.inviteAdmin(invitee,inviter);
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Invited ${admin_response.user.username} to the platform`,
                 data: admin_response
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            console.log(error)
+             return res.fail(error)
         }
     },
 
     async removeAdmin(req, res) {
         try {
             const admin_response = await admin.removeAdmin(req.body.email);
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Removed ${admin_response.user.username} as an admin`,
-                data: admin_response
+                data: admin_response,
+                statusCode: 204
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+             return res.fail(error)
         }
     },
 
@@ -98,68 +82,56 @@ module.exports = {
         const query = req.query
         try {
             const templates = await admin.getMailTemplates(query);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved all email templates`,
                 data: templates
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            console.log(error)
+             return res.fail(error)
         }
     },
 
     async getMailTemplate(req, res) {
         try {
             const template = await admin.getMailTemplate(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved email template`,
                 data: template
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            console.log(error)
+             return res.fail(error)
         }
     },
 
     async getAdmins(req, res) {
         try {
             const admins_list = await admin.getAdmins();
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved all admins`,
                 data: admins_list
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            console.log(error)
+             return res.fail(error)
         }
     },
 
     async getAdmin(req, res) {
         try {
             const admin_info = await admin.getAdmin(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved ${admin_info.user_id.username}`,
                 data: admin_info
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            console.log(error)
+             return res.fail(error)
         }
     },
 
@@ -171,83 +143,68 @@ module.exports = {
         const { team } = req.body;
         try {
             const permission = await admin.create_permission(team, data);
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Created permission`,
-                data: permission
+                data: permission,
+                statusCode: 201
             })
-        } catch (err) {
-           const filterError = errorHandler.filter(err);
-            return res.status( filterError.status|| 500 ).json({
-                status: "error",
-                message: filterError.message
-            })
+        } catch (error) {
+            return res.fail(error)
         }
     },
 
     async get_permissions(req, res) {
         try {
             const permissions = await admin.get_permissions();
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved all permissions`,
                 data: permissions
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json(err)
+        } catch (error) {
+            return res.fail(error)
         }
     },
 
     async get_permission(req, res) {
         try {
             const permission = await admin.get_permission(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved permission`,
                 data: permission
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+             return res.fail(error)
         }
     },
 
     async delete_permission(req, res) {
         try {
             const permission = await admin.delete_permission(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Deleted permission`,
-                data: permission
+                data: permission,
+                statusCode: 204
             })
-        } catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+            return res.fail(error)
         }
     },
 
     async deactivatePermission(req, res) {
         try {
             const permission = await admin.deactivatePermission(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Deactivated permission`,
                 data: permission
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+           return res.fail(error)
         }
     },
 
@@ -256,19 +213,15 @@ module.exports = {
 
         try {
             const result = await admin.add_permission(email, permission);
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Added permission`,
-                data: result
+                data: result,
+                statusCode: 201
             })
         }
-        catch (err) {
-            console.log(err)
-
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            return res.fail(error)
         }
     },
 
@@ -276,16 +229,14 @@ module.exports = {
         const { email, permission } = req.body;
         try {
             const result = await admin.remove_permission(email, permission)
-            return res.status(200).json({
+            return res.ok({
                 status: "Success",
                 message: "Permission removed successfully",
-                data: result
+                data: result,
+                statusCode: 204
             })
-        } catch (err) {
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        } catch (error) {
+             return res.fail(error)
         }
 
     },
@@ -301,18 +252,14 @@ module.exports = {
 
         try {
             const sender = await admin.sendNotificationEmail(content);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Sent email`,
                 data: sender
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            return res.fail(error)
         }
     },
 
@@ -327,36 +274,29 @@ module.exports = {
 
         try {
             const sender = await admin.sendNotificationEmailStatic(content);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Sent email`,
                 data: sender
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            return res.fail(error)
         }
     },
 
     async getMailingList(req, res) { 
         try {
-            const mailingList = await admin.getMailingList();
-            return res.status(200).json({
+            const query = req.query
+            const mailingList = await admin.getMailingList(query);
+            return res.ok({
                 status: "success",
                 message: `Retrieved mailing list`,
                 data: mailingList
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            return res.fail(error)
 
         }
     },
@@ -364,18 +304,15 @@ module.exports = {
     async deleteMailingList(req, res) {
         try {
             const mailingList = await admin.deleteMailingList(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Deleted mailing list`,
-                data: mailingList
+                data: mailingList,
+                statusCode: 204
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            return res.fail(error)
 
         }
     },
@@ -383,18 +320,15 @@ module.exports = {
     async getContactUs(req, res) {
         try {
             const contactUs = await admin.getContactUs();
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved contact us`,
                 data: contactUs
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
 
         }
     },
@@ -402,18 +336,15 @@ module.exports = {
     async deleteContactUs(req, res) {
         try {
             const contactUs = await admin.deleteContactUs(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Deleted contact us`,
-                data: contactUs
+                data: contactUs,
+                statusCode: 204
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            return res.fail(error)
 
         }
     },
@@ -421,18 +352,15 @@ module.exports = {
     async getContactUsMessage(req, res) {
         try {
             const contactUs = await admin.getContactUsMessage(req.params.id);
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved contact us`,
                 data: contactUs
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
 
         }
     },
@@ -441,18 +369,33 @@ module.exports = {
         const { name, description, url } = req.body;
         try {
             const resource = await admin.createFrontendResource({ name, description, url });
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Created frontend resource`,
-                data: resource
+                data: resource,
+                statusCode: 201
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
+
+        }
+    },
+
+    async getFrontendResources(req, res) {
+        const { name, description, url } = req.body;
+        try {
+            const resources = await admin.getFrontendResources({ name, description, url });
+            return res.ok({
+                status: "success",
+                data: resources,
+                statusCode: 200
             })
+        }
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
 
         }
     },
@@ -460,18 +403,15 @@ module.exports = {
     async getContributors(req, res) {
         try {
             const contributors = await admin.getContributors();
-            return res.status(200).json({
+            return res.ok({
                 status: "success",
                 message: `Retrieved Contributors`,
                 data: contributors
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
 
         }
     },
@@ -480,18 +420,16 @@ module.exports = {
         const { first_name, last_name, designation, image } = req.body;
         try {
             const contributor = await admin.addContributors({ first_name, last_name, designation,image});
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Added Contributor`,
-                data: contributor
+                data: contributor,
+                statusCode: 201
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
 
         }
     },
@@ -508,18 +446,15 @@ module.exports = {
                 delay: 3000
             })
 
-            return res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `Created Task for worker`,
                 data: sendMessage
             })
         }
-        catch (err) {
-            console.log(err)
-            return res.status(500).json({
-                status: "error",
-                message: err.message
-            })
+        catch (error) {
+            console.log(error)
+             return res.fail(error)
 
         }
     },

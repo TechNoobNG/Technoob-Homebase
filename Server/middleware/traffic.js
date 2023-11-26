@@ -2,16 +2,16 @@ const TrafficMetric = require('../models/trafficMetrics');
 const honeyBadger = require('../utils/honeybadger');
 
 const trafficMetrics = (req, res, next) => {
-  const { method, originalUrl } = req;
+  const { method, originalUrl,ip } = req;
   
-  // Create a new traffic metric instance
   try {
     const trafficMetric = new TrafficMetric({
       endpoint: originalUrl,
       method: method,
+      ip,
+      
     });
-    
-    // Save the traffic metric to the database
+
     trafficMetric.save();
     
   } catch (error) {

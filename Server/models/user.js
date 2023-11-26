@@ -74,14 +74,12 @@ const user = new Schema({
 
     passwordConfirm: {
         type: String,
-        required: [true, 'Please confirm your password'],
-        validate: {
-            // This only works on CREATE and SAVE!!!
-            validator: function (el) {
-                return el === this.password;
-            }
-        },
-        message: 'Passwords are not the same!'
+        // validate: {
+        //     validator: function (el) {
+        //         return el === this.password;
+        //     }
+        // },
+        // message: 'Passwords are not the same!'
 
     },
     passwordChangedAt: {
@@ -109,6 +107,19 @@ const user = new Schema({
         default: true,
         select: false
     },
+    failedLoginAttempts: {
+        type: Number,
+        default: 0
+    },
+    lockoutUntil: {
+        type: Date,
+        default: null
+    },
+
+    passwordResetAttempt: {
+        type: Number,
+        default: 0
+    },
 
     quiz_record: [{
         type: Schema.Types.ObjectId,
@@ -131,6 +142,9 @@ user.pre('save', async function (next) {
   try {
       // Only run this function if password was actually modified
       if (!this.isModified('password')) return next();
+      if (this.passwordConfirm !== this.password) {
+          throw new Error("Please confirm your password")
+      }
       if (child_worker.checkChild() > 0) { 
         try {
             const [hash] = await Promise.all([
@@ -153,17 +167,10 @@ user.pre('save', async function (next) {
     this.passwordChangedAt = Date.now() - 1000;
     next();
   } catch (error) {
-    next(error);
+    throw error
   }
 });
 
-
-user.pre('save', function (next) {
-    if (!this.isModified('password') || this.isNew) return next();
-    this.passwordChangedAt = Date.now() - 1000;
-    next();
-}
-);
 
 user.pre(/^find/, function (next) {
     this.find({ active: { $ne: false } });

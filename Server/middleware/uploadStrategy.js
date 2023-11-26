@@ -37,43 +37,18 @@ const uploadParams = {
     module.exports = {
         image: (req, res, next) => {
         multer({ storage: inMemoryStorage, fileFilter: multerFilter }).single('image')(req, res, (err) => {
-            if (err instanceof multer.MulterError) {
-                // handle multer errors
-                res.status(400).json({
-                    Status: "Failed",
-                    Name: "Invalid File Type",
-                    Message: err.message
-                });
-            } else if (err) {
-                // handle custom errors
-                res.status(400).json({
-                    Status: "Failed",
-                    Name: "Invalid File Type",
-                    Message: err.message
-                });
-            } else {
+            if (err) {
+                return res.fail(err)
+            }else {
                 next();
             }
         });
             },
         file: (req, res, next) => { 
             multer(uploadParams).single('file')(req, res, (err) => {
-                if (err instanceof multer.MulterError) {
-                    console.log(err)
-                    res.status(400).json({
-                        Status: "Failed",
-                        Name: "Invalid File Type",
-                        Message: err.message
-                    });
-                } else if (err) {
-                    // handle custom errors
-                    console.log(err)
-                    res.status(500).json({
-                        Status: "Failed",
-                        Name: "Invalid File Type",
-                        Message: err.message
-                    });
-                } else {
+                if (err) {
+                    return res.fail(err)
+                }else {
                     next();
                 }
             });

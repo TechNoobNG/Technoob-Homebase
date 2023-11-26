@@ -1,6 +1,7 @@
 const uploader = require('../utils/multer_upload')
 const pool = require('../experimental/index')
 const defaults = require('../models/defaults')
+const ErrorResponse = require('../utils/errorResponse');
 
 module.exports = {
     async upload_file(file) {   
@@ -17,11 +18,11 @@ module.exports = {
         try {
             let filter = {};
     
-            if (query) {
+            if (query && Object.keys(query).length) {
                 const names = Object.keys(query);
                 filter = { name: { $in: names } };
             }
-    
+
             const placeholders = await defaults.find(filter);
     
             return placeholders;
@@ -34,7 +35,10 @@ module.exports = {
     async setPlaceholders({ placeholders, name }) {
         try {
             if (!name) {
-                throw new Error('Name is required');
+                throw new ErrorResponse(
+                    404,
+                    'Name is required'
+                )
             }
     
             const newEntry = await defaults.create({

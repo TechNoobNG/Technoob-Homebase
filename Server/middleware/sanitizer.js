@@ -24,12 +24,11 @@ const xssOptions = {
 
 module.exports = {
     sanitize(req, res, next) {
-        //  loop through all the request body properties
+       
         for (const key in req.body) {
-            //  if the property is an object, loop through its properties
+           
             if (typeof req.body[key] === 'object') {
                 for (const innerKey in req.body[key]) {
-                    //  if the property is an array, loop through its elements
                     if (Array.isArray(req.body[key][innerKey])) {
                         req.body[key][innerKey].forEach((element, index) => {
                             req.body[key][innerKey][index] = xss(element, xssOptions);

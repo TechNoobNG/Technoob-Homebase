@@ -24,8 +24,6 @@ module.exports = {
                 await queueClient.sendMessage(data, options);
             }
             
-            
-            console.log("Added message to the queue: ", data);
             return { message: 'Action successfully added to job queue' };
         } catch (error) {
             throw error;
