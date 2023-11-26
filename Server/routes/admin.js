@@ -4,16 +4,7 @@ const controller = require('../controllers/index');
 const admin = controller.admin;
 const middleware = require('../middleware/index');
 
-// middleware function to remove sanitizer for mail template routes
-const sanitizeIfNeeded = (req, res, next) => {
-  if (req.path.startsWith('/email/template')) {
-    return next();
-  } else {
-    return middleware.sanitizer.sanitize(req, res, next);
-  }
-};
 
-router.use(sanitizeIfNeeded);
 router.get('/contributors', middleware.redisCache.getCache, admin.getContributors);
 router.post('/contributors/add', middleware.auth.isAuthenticated,middleware.auth.hasPermission('admin:AddContributors'),admin.addContributors);
 router.get('/dashboard', middleware.auth.isAuthenticated, admin.dashboard);

@@ -44,6 +44,15 @@ const clearCacheMiddleware = (req, res, next) => {
     }
 };
 
+const sanitizeIfNeeded = (req, res, next) => {
+  if (req.path.startsWith('/email/template')) {
+    return next();
+  } else {
+    return middleware.sanitizer(req, res, next);
+  }
+};
+
+router.use(sanitizeIfNeeded);
 
 router.use(clearCacheMiddleware);
 
