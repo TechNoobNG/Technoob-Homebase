@@ -98,13 +98,13 @@ const JobManagement = () => {
 
   const fetchJobMetrics = async () => {
 
-    try{
+    try {
+      serverApi.requiresAuth(true)
       const response = await serverApi.get("/jobs/metrics",{
         withCredentials: true
       });
       if(response.status === 200){
         setJobMetrics(response.data.data)
-        console.log(response);
       }
     }catch (error) {
       console.log('job error',error)
