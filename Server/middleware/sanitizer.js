@@ -29,7 +29,7 @@ function sanitize(req, res, next) {
   sanitizeObject(req.params);
 
   req.query = preventNoSQLInjection(req.query, "query");
-  sanitizeObject(req.query);zXkik
+  sanitizeObject(req.query);
 
   next();
 }
