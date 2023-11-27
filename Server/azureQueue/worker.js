@@ -35,7 +35,7 @@ module.exports = function () {
         queueUrl: queueUrl,
         queueName: queueName,
         connectionString: azureStorageConnectionString,
-        batchSize: 10,
+        batchSize: config.WORKER_BATCH_SIZE,
       async handleMessage(message, done) {
           try {
             if (!message.messageText || message.messageText === 'undefined' || message.messageText === 'null' || message.messageText === '' || message.messageText === ' ' ) {
@@ -74,9 +74,9 @@ module.exports = function () {
 
             done();
         },
-      blobConnectionString: azureStorageConnectionString,
-      useAcquireLease: true,
-      maximumRetries: 3
+        blobConnectionString: azureStorageConnectionString,
+        useAcquireLease: true,
+        maximumRetries: 3
       });
 
 

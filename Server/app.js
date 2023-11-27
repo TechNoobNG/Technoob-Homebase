@@ -60,6 +60,7 @@ app.use(
 
 
 app.use(response);
+app.use(helmet())
 
 const httpRequestDurationMicroseconds = new prometheus.Histogram({
   name: "http_request_duration_seconds",
