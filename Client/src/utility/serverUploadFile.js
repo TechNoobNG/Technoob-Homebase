@@ -5,6 +5,7 @@ const uploadFile = async (file, type) => {
 
         const formData = new FormData();
         formData.append(type, file);
+        serverApi.requiresAuth(true)
 
         const response = await serverApi.post(
             type === "image" ? "/utils/upload-image" : "/utils/upload-file",
