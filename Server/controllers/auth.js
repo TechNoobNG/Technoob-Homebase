@@ -13,56 +13,27 @@ const validator = require('../utils/joi_validator');
 module.exports = {
     async login(req, res, next) {
         try {
-            await validator.login.validateAsync(req.body);
-            passport.authenticate('local', (err, user, info) => {
-                if (err) {
-                    return next(err);
+
+            const user = req.user;
+
+            const token = jwt.sign({
+                user: {
+                    _id: user._id,
+                    username: user.username
                 }
+            }, config.JWT_SECRET, {
+                expiresIn: config.JWT_EXPIRES,
+                issuer: config.LIVE_BASE_URL,
+            });
 
-                if (info) {
-                    return res.fail({
-                        status: 'fail',
-                        message: info.message || err?.message,
-                        statusCode: info.statusCode || 401
-                    })
-                }
-                if (!user) {
-                    return res.fail({
-                        status: 'fail',
-                        message: info.message || err?.message,
-                        statusCode: 401
-                    })
-                }
-                
-                req.login(user,{ session: true }, async (err) => {
-                    if (err) {
-                        return next(err);
-                    }
-                    const token = jwt.sign({
-                        user: {
-                            _id: user._id,
-                            username: user.username
-                        }
-                    }, config.JWT_SECRET, {
-                        expiresIn: config.JWT_EXPIRES,
-                        issuer: config.LIVE_BASE_URL,
-
-                    });
-
-                    res.setHeader("sessionExpiresAt",req.session.cookie.expires)
-
-                    res.status(200).json({
-                        status: 'success',
-                        message: `Logged in ${user.username}`,
-                        data: {
-                            user
-                        },
-                        token
-                    })
-                });
-                
-                
-            })(req, res, next);
+            res.status(200).json({
+                status: 'success',
+                message: `Logged in ${user.username}`,
+                data: {
+                    user
+                },
+                token
+            });
         } catch (err) { 
             return res.fail({
                 status: 'Failed',

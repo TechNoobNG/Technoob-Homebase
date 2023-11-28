@@ -2,13 +2,15 @@ let express = require('express');
 let router = express.Router();
 let controller = require('../controllers/index');
 let auth = controller.auth;
+const passport = require('passport');
 
 
 
 
 /* GET users listing. */
-router.post('/login', auth.login);
-// router.post('/login', passport.authenticate('local', { successRedirect: '/dashboard', failureRedirect: '/failed', failureFlash: true }));
+router.post('/login',passport.authenticate('local', {
+    failureRedirect: '/login',
+}), auth.login);
 
 router.post('/register', auth.register);
 router.post('/logout', auth.logout);
