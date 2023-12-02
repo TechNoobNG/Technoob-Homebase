@@ -6,12 +6,16 @@ import {navLinks} from "../data/contact";
 import {close, menu, TechNoobLogo} from "../data/assets";
 import { AppContext } from "../AppContext/AppContext";
 import {Link} from "react-router-dom";
+import serverApi from "../utility/server";
+import { ToastContainer, toast } from "react-toastify";
+import { AiOutlineLogout } from "react-icons/ai";
 
 const NavBar = () => {
   const cookies = new Cookies();
-  const { setIsLoggedIn, setUserProfile } = useContext(AppContext);
+  const { setIsLoggedIn, setUserProfile, isLoggedIn, userData } = useContext(AppContext);
 
-  const isLoggedIn = false
+  const [loading, setLoading] = useState(false)
+  
 
   const [toggle, setToggle] = useState(false);
   const [active, setActive] = useState("");
@@ -22,39 +26,65 @@ const NavBar = () => {
     setActive(e.target.innerText);
   };
 
-  const logOut = async () => {
-    let myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+  
+  const handleLoggout = async() => {
+    try {
+      setLoading(true)
 
-    let requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      redirect: "follow",
-      credentials: "include",
-    };
-
-    let user = cookies.get("user");
-
-    if (user) {
-      fetch(
-        "https://technoob-staging.azurewebsites.net/api/v1/authenticate/logout",
-        requestOptions
+     
+     
+        // serverApi.requiresAuth(true)
+      const response = await serverApi.post("/authenticate/logout",
+      {
+        signal: AbortController.signal,
+        headers: {
+          'content-type': 'application/json',
+        }
+      }
       )
-        .then((response) => {
-          if (response.status === 200) {
-            setIsLoggedIn(false);
-            setUserProfile(null);
-            cookies.remove("user");
-          }
-          return response.json();
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
+      if (response?.status === 200) {
+        setIsLoggedIn(false);
+        setUserProfile(null);
+        cookies.remove("user");
+        sessionStorage.clear()
+        setLoading(false)
+        console.log(isLoggedIn, response?.status);
+
+        toast(response?.data?.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          } );
+              }
+   
+      
+    
+       
+    
+        // if (user) {
+        //   fetch(
+        //     "https://technoob-staging.azurewebsites.net/api/v1/authenticate/logout",
+        //     requestOptions
+        //   ).then((response) => {
+        //       if (response.status === 200) {
+        //         setIsLoggedIn(false);
+        //         setUserProfile(null);
+        //         cookies.remove("user");
+        //       }
+        //       return response.json();
+        //     })}
+        //   }
+    } catch (error) {
+      console.log("error", error);
+    }finally{
+      setLoading(false)
     }
-  };
-  const handleClick = async () => {
-    await logOut();
+       
     navigate("/Home");
   };
   
@@ -64,20 +94,28 @@ const NavBar = () => {
         displayToggle: true,
         toggleValue: "Admin Dashboard",
     });
-    navigate("/");
+    navigate("/admin/dashboard");
 }
+// const switchView = async () => {
+//   navigate("/");
+//   setDashboardToggle({
+//     displayToggle: true,
+//     toggleValue: "User Dashboard",
+//   });
+// };
 
 
   return (
     <nav className="w-full bg-white shadow-md ">
+      <ToastContainer />
         <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-between items-center lg:h-[80px] ">
           <Link to={'/'}>
-              <a class="navbar-brand" href="/">
-                  <img src={TechNoobLogo} alt="technooblogo" width="150" height="50"></img>
-              </a>
+             
+                  <img src={TechNoobLogo} alt="technooblogo" width="150" height="50"/>
+           
           </Link>
 
-          <div className="hidden lg:flex w-[800px] justify-center">
+          <div className="hidden xl:flex w-[800px] justify-center">
             <ul className="flex font-normal justify-between gap-8">
               {navLinks.map((nav, i) => (
                 <li key={i} className={`text-lg hover:text-[#27AE60]`}>
@@ -93,26 +131,30 @@ const NavBar = () => {
             </ul>
           </div>
 
-        <div className="flex lg:hidden h-full items-center justify-center">
+
+{/* toggle button */}
+        <div className="flex xl:hidden h-full items-center justify-center">
           <img
             src={toggle ? close : menu}
             alt="menu"
             onClick={() => setToggle((prev) => !prev)}
             className="h-4 w-4 cursor-pointer"
           />
+
+
           {/* togggle button on the nav bar for small screens */}
           <div
-            className={`${
-              toggle ? "flex" : "hidden"
-            }  rounded-md absolute items-end top-20 right-0  my-2 w-full z-10 h-screen ${toggle ? 'sidebar' : 'sidebarClose'} flex-col `}
+            className={`rounded-md absolute flex justify-start items-end top-[75px] right-0  my-2 w-full z-10 h-screen ${toggle ? 'sidebar' : 'sidebarClose'} flex-col `}
           >
             <div className="bg-slate-300 opacity-50 z-[-2] w-full h-full absolute "  onClick={() => setToggle((prev) => !prev)}/>
-            <ul className="flex bg-white rounded-l-xl p-4 w-[80%] h-[75%] font-normal gap-7 list-none flex-col text-white">
+
+            <div className="flex bg-white w-[50%] h-[75%] rounded-l-xl flex-col p-4">
+            <ul className="flex flex-col p-4 font-normal gap-7 list-none">
               {navLinks.map((nav, i) => (
                 <li key={i} className={`text-2xl hover:text-tblue w-full`}>
                   {}
                   <Link
-                    className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} sidebar ${"text-black border-b-2 hover:text-tblue"}`}
+                    className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} sidebar ${"text-black border-b-2 hover:text-tblue hover:border-blue-500 transition-all ease-in duration-200"}`}
                     to={`/${nav.link}`}
                     onClick={() => setToggle((prev) => !prev)}
                   >
@@ -122,47 +164,54 @@ const NavBar = () => {
               ))}
             </ul>
             
-            <div className="flex flex-col justify-center items-center mt-10 gap-5">
+            <div className="">
+             
+          { isLoggedIn ? <button
+              name={"Logout"}
+              onClick={handleLoggout}
+              className=" bg-red-400 hover:bg-red-500 text-white font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
+              >
+               Logout
+            </button> : 
              <Link
-              onClick={() => setToggle((prev) => !prev)}
-              to={"/login"}
-            >
+             onClick={() => setToggle((prev) => !prev)}
+             to={"/login"}
+           >
             <button
               name={"Login"}
-              className=" text-[#111111] bg-[#EFF0F5]   font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
+              className=" text-[#111111] bg-tblue font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
               >
                Login
             </button>
              </Link>
-
-            <p className="text-base font-semibold">Or</p>
-
-            <Link onClick={() => setToggle((prev) => !prev)} to={"/Sign-Up"}>
-            <Button name={"Get Started"} />
-            </Link>
+            }
             </div>
+            </div>
+
+            
           </div>
         </div> 
 
+
+{/* welcom button */}
           {isLoggedIn ? (
-          <div className="hidden lg:flex gap-2 items-center">
-            <div className="hidden lg:flex w-[20%] gap-2 text-center">
-              <div className="gap-2">
+          <div className="hidden xl:flex gap-2 items-center">
+            <div className="hidden lg:flex items-center gap-2 text-center cursor-pointer" onClick={handleLoggout}>
+              <div className="flex">
                 {" "}
-                <h2 className="lg:text-2xl font-semibold ">
-                  Welcome{" "}
-                  <span className="text-tblue">
-                    {UserProfile.user?.username}
-                  </span>
-                </h2>{" "}
+               {!loading ? <h2 className="lg:text-2xl w-[10rem] font-semibold truncate">
+                 Hi {userData?.username}{" "}
+                 
+                </h2> : <h2 className="lg:text-xl font-semibold ">Loading...</h2> }{" "}
               </div>
               <div>
-                <Button name={"Logout"} handleClick={handleClick} />
+                {/* <Button width={'w-20 h-10'} name={loading ? 'Loading...' : "Logout"} handleClick={handleLoggout} /> */}
+                <AiOutlineLogout className="text-xl text-red-500" onClick={handleLoggout}/>
               </div>
             </div>
           </div>
           ) : (
-          <div className="hidden gap-2 lg:flex">
+          <div className="hidden gap-2 xl:flex">
             <Link to={"/login"}>
             <button
             name={"Login"}
