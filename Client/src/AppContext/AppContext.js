@@ -18,6 +18,14 @@ const AppProvider = ({ children }) => {
     });
 
 
+    const userData =
+      typeof window !== "undefined"
+        ? JSON.parse(sessionStorage.getItem("userData"))
+        : null;
+
+        console.log('from state context',userData)
+
+
     
     return (
         <AppContext.Provider
@@ -31,7 +39,8 @@ const AppProvider = ({ children }) => {
             isAdmin,
             setIsAdmin,
             dashboardToggle,
-            setDashboardToggle
+            setDashboardToggle,
+            userData
         }}
         >
         {children}
