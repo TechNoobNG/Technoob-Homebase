@@ -152,6 +152,7 @@ module.exports = {
         AWS_QUEUE_URL: process.env.AWS_QUEUE_URL,
         WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'azure',
         REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        REDIS_URL: process.env.REDIS_URL,
         EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
             [
                 '/api/v1/authenticate',
