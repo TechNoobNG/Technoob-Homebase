@@ -7,8 +7,8 @@ const middleware = require('../middleware/index');
 
 router.get('/contributors', middleware.redisCache.getCache, admin.getContributors);
 router.post('/contributors/add', middleware.auth.isAuthenticated,middleware.auth.hasPermission('admin:AddContributors'),admin.addContributors);
-router.get('/dashboard', middleware.auth.isAuthenticated, admin.dashboard);
-router.get('/dashboard/traffic', middleware.auth.isAuthenticated, admin.traffic);
+router.get('/dashboard', middleware.auth.isAuthenticated,middleware.auth.isAdmin, admin.dashboard);
+router.get('/dashboard/traffic', middleware.auth.isAuthenticated, middleware.auth.isAdmin, admin.traffic);
 router.post('/email/template', middleware.auth.hasPermission('admin:ManageEmailTemplates'), admin.saveMailTemplate);
 router.get('/email/template', middleware.auth.hasPermission('admin:ManageEmailTemplates'),middleware.redisCache.getCache, admin.getMailTemplates);
 router.get('/email/template/:id', middleware.auth.hasPermission('admin:ManageEmailTemplates'),middleware.redisCache.getCache, admin.getMailTemplate);

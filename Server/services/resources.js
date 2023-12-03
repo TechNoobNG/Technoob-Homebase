@@ -195,6 +195,8 @@ module.exports = {
             if (resources) {
                 resources.downloads += 1
                 resources.save()
+            } else {
+                throw new ErrorResponse( 404, "Resource not found")
             }
 
             return resources.file;
