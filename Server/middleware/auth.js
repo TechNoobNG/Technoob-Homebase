@@ -41,7 +41,11 @@ module.exports = {
     githubCallbackAuthenticateMiddleware,
     isAuthenticated(req, res, next) {
         try { 
-            return passport.authenticate('session')(req, res, next);
+            if (req.isAuthenticated()) {
+                return next();
+            } else {
+                throw new Error("Unauthorized access")
+            }
         } catch (err) {
             res.isAuthenticated = false;
             res.status(401).json({

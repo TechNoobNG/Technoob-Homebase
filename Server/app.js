@@ -58,28 +58,6 @@ app.use(
   })
 );
 
-const cookieConfig = {
-  secure: true,
-  maxAge: 60 * 60 * 1000,
-};
-
-app.use(
-  session({
-    secret: config.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    store: MongoStore.create({
-      mongoUrl: config.DATABASE_URL,
-      ttl: 60 * 60, // 1 hour
-      autoRemove: "native",
-    }),
-    cookie: cookieConfig
-  })
-);
-
-
-
 app.use(response);
 //app.use(helmet())
 
@@ -126,7 +104,27 @@ const networkTrafficBytes = new prometheus.Counter({
 app.use(logger("combined"));
 // Honeybadger.notify('Starting/Restarting Technoob Server');
 
+const cookieConfig = {
+  secure: false,
+  maxAge: 60 * 60 * 1000,
+};
 
+app.use(
+  session({
+    secret: config.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    store: MongoStore.create({
+      mongoUrl: config.DATABASE_URL,
+      ttl: 60 * 60, // 1 hour
+      autoRemove: "native",
+    }),
+    cookie: cookieConfig
+  })
+);
+
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(Honeybadger.requestHandler);
@@ -149,7 +147,6 @@ app.set("view engine", "jade");
 app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // app.use(sanitizer.clean({
