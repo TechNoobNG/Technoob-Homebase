@@ -30,7 +30,7 @@ const Form = () => {
     setLoading(true)
     try {
       const response = await serverApi.post(
-          '/authenticate/login',
+          '/authenticate/login/',
           raw,
           {
             signal: abortController.signal,
@@ -72,8 +72,8 @@ const Form = () => {
       }
     
     } catch (error) {
-      setUser({ error: error.response?.data?.message || "Something went wrong,try again.", UserName: "", Password: "" });
-      toast(error.response?.data?.message, {
+      setUser({ error: error.response?.data?.message || "Something went wrong,please try again.", UserName: "", Password: "" });
+      toast(error.response?.data?.message || "Something went wrong,please try again.", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,

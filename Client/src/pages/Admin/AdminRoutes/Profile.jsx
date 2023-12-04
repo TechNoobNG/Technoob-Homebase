@@ -65,8 +65,6 @@ const Profile = () => {
       }
       
     
-      
-    
     } catch (error) {
       console.log(error);
       if(error.message === "Network Error"){
@@ -95,6 +93,22 @@ const Profile = () => {
     }finally{
       setLoading(false)
     }
+  }
+
+  const fetchProfile = async () => {
+
+    try {
+      serverApi.requiresAuth(true)
+      const response = await serverApi.get("/user/profile",{
+        withCredentials: true
+      });
+      if(response.status === 200){
+        setJobMetrics(response.data.data)
+      }
+    }catch (error) {
+      console.log('job error',error)
+    }
+
   }
   
   const { userData } = useContext(AppContext);
