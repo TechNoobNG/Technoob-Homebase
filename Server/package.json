@@ -76,6 +76,6 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.2"
   }
 }
