@@ -25,24 +25,26 @@ module.exports = {
                     })
                 }
                 if (user) {
-                    const token = jwt.sign({
-                        user: {
-                            _id: user._id,
-                            username: user.username
-                        }
-                    }, config.JWT_SECRET, {
-                        expiresIn: config.JWT_EXPIRES,
-                        issuer: config.LIVE_BASE_URL,
-                    });
-
-                    return res.status(200).json({
-                        status: 'success',
-                        message: `Welcome to base, ${user.username}!`,
-                        data: {
-                            user
-                        },
-                        token
-                    });
+                    req.login(user,{ session: true }, async (err) => {
+                        const token = jwt.sign({
+                            user: {
+                                _id: user._id,
+                                username: user.username
+                            }
+                        }, config.JWT_SECRET, {
+                            expiresIn: config.JWT_EXPIRES,
+                            issuer: config.LIVE_BASE_URL,
+                        });
+    
+                        return res.status(200).json({
+                            status: 'success',
+                            message: `Welcome to base, ${user.username}!`,
+                            data: {
+                                user
+                            },
+                            token
+                        });
+                    })                    
                 } else {
                     return res.fail({
                         status: 'Failed',
