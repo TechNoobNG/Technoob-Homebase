@@ -105,9 +105,8 @@ app.use(logger("combined"));
 // Honeybadger.notify('Starting/Restarting Technoob Server');
 
 const cookieConfig = {
-  secure: true,
+  secure: false,
   maxAge: 60 * 60 * 1000,
-  sameSite: 'None'
 };
 
 app.use(
