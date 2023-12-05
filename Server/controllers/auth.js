@@ -24,10 +24,7 @@ module.exports = {
                         message: info.message
                     })
                 }
-
-                if (req.user) {
-                    const user = req.user;
-
+                if (user) {
                     const token = jwt.sign({
                         user: {
                             _id: user._id,
@@ -38,14 +35,20 @@ module.exports = {
                         issuer: config.LIVE_BASE_URL,
                     });
 
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: 'success',
-                        message: `Logged in ${user.username}`,
+                        message: `Welcome to base, ${user.username}!`,
                         data: {
                             user
                         },
                         token
                     });
+                } else {
+                    return res.fail({
+                        status: 'Failed',
+                        message:  'Incorrect email or password.',
+                        statusCode: 401
+                    })
                 }
             })(req, res, next);
 
