@@ -25,12 +25,7 @@ const Toast = ({ message, type = 'info', position, autoClose, promise ,promiseMe
     return toast.promise(
       promisify(promise),
     {
-      pending: {
-        render(){
-          return pending
-        },
-        icon: false,
-      },
+      pending: pending,
       success: {
         render({data}){
           return data.message || success
