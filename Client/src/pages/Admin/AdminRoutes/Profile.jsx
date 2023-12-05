@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
-import { esther } from "../../../data/assets";
 import Button from "../../../utility/button";
 import {AppContext} from '../../../AppContext/AppContext';
 import serverApi from "../../../utility/server";
-import { ToastContainer, toast } from "react-toastify";
-
+import { ToastContainer } from "react-toastify";
+import showToast from "../../../utility/Toast";
+import {emptyProfile} from "../../../data/assets/asset/index"
 const Profile = () => {
   const [roles, setroles] = useState(false);
   const [permission, setpermission] = useState(true);
@@ -12,8 +12,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(false)
   const [userInfo, setUserInfo] = useState({
     update_params: {
-      lastname: "franklin",
-      bio: "i am a boy"
+      lastname: "N/A",
+      bio: "N/A"
     }
   });
 
@@ -38,7 +38,9 @@ const Profile = () => {
 
     try {
       serverApi.requiresAuth(true)
-      const response = await serverApi.post(
+      const {data:response} = await showToast({
+        type: "promise",
+        promise: serverApi.post(
           '/user/edit',
           data,
           {
@@ -48,48 +50,21 @@ const Profile = () => {
             }
           }
       )
+      })
+      const responseData = response?.data;
+      const userInfo = {
+        ...responseData,
+      };
+      sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
       setLoading(false)
-      console.log(response);
-      // sessionStorage.setItem("userData", response?.data?.data)
-      if(response.status === 201){
-        toast(response?.data?.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          } );
-      }
-
 
     } catch (error) {
       console.log(error);
-      if(error.message === "Network Error"){
-        toast(error.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          } );
-      }
+      showToast({
+        message: error.message || "An error ocurred, please contact support.",
+        type: "error",
+      })
       setLoading(false)
-      toast(error?.response?.data?.message, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        } );
     }finally{
       setLoading(false)
     }
@@ -103,17 +78,18 @@ const Profile = () => {
         withCredentials: true
       });
       if(response.status === 200){
-
+        console.log(response)
       }
     }catch (error) {
-      console.log('job error',error)
+      showToast({
+        message: error.message || "An error ocurred, please contact support.",
+        type: "error",
+      })
     }
 
   }
 
   const { userData } = useContext(AppContext);
-
-  // console.log('from the profile', userData);
 
   return (
     <div className="min-h-[100vh] w-full pb-16 rounded-md relative">
@@ -124,9 +100,9 @@ const Profile = () => {
           <div className=" pt-20 pb-10 md:px-20 h-full w-full flex max-sm:gap-4 max-sm:flex-col rounded-b-md bg-white relative">
             <div className=" absolute -top-[20%] max-sm:left-3 sm:-top-[30%] w-[96px] h-[96px] sm:w-32 sm:h-32 rounded-full bg-white flex items-center justify-center">
               <img
-                src={esther}
+                src={userData?.photo || emptyProfile}
                 alt="page5"
-                className="rounded-full w-[95%] h-[95%]"
+                className="rounded-full w-[95%] h-[95%] object-cover p-1"
               />
             </div>
             <div className="flex-[1.4] flex flex-col md:gap-3">
@@ -150,7 +126,7 @@ const Profile = () => {
               <Button name={"Share Profile"} />
             </div>
             <div className="h-full flex-1 flex md:justify-end">
-           { !edit && <button onClick={() =>setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center`}>
+          { !edit && <button onClick={() =>setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center`}>
                 {edit ? 'Cancel' : 'Edit Profile'}
               </button>}
               {edit &&

@@ -7,16 +7,15 @@ import {close, menu, TechNoobLogo} from "../data/assets";
 import { AppContext } from "../AppContext/AppContext";
 import {Link} from "react-router-dom";
 import serverApi from "../utility/server";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { AiOutlineLogout } from "react-icons/ai";
+import showToast  from "../utility/Toast";
+
 
 const NavBar = () => {
   const cookies = new Cookies();
   const { setIsLoggedIn, setUserProfile, isLoggedIn, userData } = useContext(AppContext);
-
   const [loading, setLoading] = useState(false)
-  
-
   const [toggle, setToggle] = useState(false);
   const [active, setActive] = useState("");
   const { UserProfile, setDashboardToggle } = useContext(AppContext);
@@ -26,93 +25,52 @@ const NavBar = () => {
     setActive(e.target.innerText);
   };
 
-  
   const handleLoggout = async() => {
     try {
       setLoading(true)
-
-     
-     
-        // serverApi.requiresAuth(true)
-      const response = await serverApi.post("/authenticate/logout",
-      {
-        signal: AbortController.signal,
-        headers: {
-          'content-type': 'application/json',
-        }
-      }
+      await showToast({
+        type: "promise",
+        promise: serverApi.post("/authenticate/logout",
+          {
+            signal: AbortController.signal,
+            headers: {'content-type': 'application/json'}
+          }
       )
-      if (response?.status === 200) {
-        setIsLoggedIn(false);
-        setUserProfile(null);
-        cookies.remove("user");
-        sessionStorage.clear()
-        setLoading(false)
-        console.log(isLoggedIn, response?.status);
+      })
 
-        toast(response?.data?.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          } );
-              }
-   
-      
-    
-       
-    
-        // if (user) {
-        //   fetch(
-        //     "https://technoob-staging.azurewebsites.net/api/v1/authenticate/logout",
-        //     requestOptions
-        //   ).then((response) => {
-        //       if (response.status === 200) {
-        //         setIsLoggedIn(false);
-        //         setUserProfile(null);
-        //         cookies.remove("user");
-        //       }
-        //       return response.json();
-        //     })}
-        //   }
+      setIsLoggedIn(false);
+      setUserProfile(null);
+      cookies.remove("user");
+      sessionStorage.clear()
+      setLoading(false)
     } catch (error) {
-      console.log("error", error);
+      showToast({
+        message: error.message || "An error ocurred, please contact support.",
+        type: "error"
+      })
     }finally{
       setLoading(false)
     }
-       
+
     navigate("/Home");
   };
-  
+
   const switchView = async () => {
-    
     setDashboardToggle({
         displayToggle: true,
         toggleValue: "Admin Dashboard",
     });
     navigate("/admin/dashboard");
 }
-// const switchView = async () => {
-//   navigate("/");
-//   setDashboardToggle({
-//     displayToggle: true,
-//     toggleValue: "User Dashboard",
-//   });
-// };
-
 
   return (
     <nav className="w-full bg-white shadow-md ">
       <ToastContainer />
         <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-between items-center lg:h-[80px] ">
           <Link to={'/'}>
-             
+
                   <img src={TechNoobLogo} alt="technooblogo" width="150" height="50"/>
-           
+
           </Link>
 
           <div className="hidden xl:flex w-[800px] justify-center">
@@ -163,16 +121,16 @@ const NavBar = () => {
                 </li>
               ))}
             </ul>
-            
+
             <div className="">
-             
+
           { isLoggedIn ? <button
               name={"Logout"}
               onClick={handleLoggout}
               className=" bg-red-400 hover:bg-red-500 text-white font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
               >
                Logout
-            </button> : 
+            </button> :
              <Link
              onClick={() => setToggle((prev) => !prev)}
              to={"/login"}
@@ -188,9 +146,9 @@ const NavBar = () => {
             </div>
             </div>
 
-            
+
           </div>
-        </div> 
+        </div>
 
 
 {/* welcom button */}
@@ -201,7 +159,7 @@ const NavBar = () => {
                 {" "}
                {!loading ? <h2 className="lg:text-2xl w-[10rem] font-semibold truncate">
                  Hi {userData?.username}{" "}
-                 
+
                 </h2> : <h2 className="lg:text-xl font-semibold ">Loading...</h2> }{" "}
               </div>
               <div>

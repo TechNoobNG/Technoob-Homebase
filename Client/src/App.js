@@ -14,7 +14,7 @@ import DashSelector from "./utility/DashSelector";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
 import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
@@ -110,7 +110,7 @@ function App() {
                   element={<ResourceManagement />}
                 />
                 <Route path="/admin/Event-Management" element={<EventManagement />} />
-                
+
               </Routes>
             </div>
           </div>

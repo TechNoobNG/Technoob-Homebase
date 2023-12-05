@@ -29,7 +29,7 @@ const Form = () => {
     const abortController = new AbortController();
     setLoading(true)
     try {
-      const response = await showToast({
+      const {data:response} = await showToast({
         type: "promise",
         promise: serverApi.post(
           '/authenticate/login/',
@@ -42,53 +42,25 @@ const Form = () => {
           }
         )
       })
-      console.log(response);
 
-      // if (response.status === 200) {
-      //   navigate("/Home");
-      //   toast("Logged in successfully", {
-      //     position: "top-center",
-      //     autoClose: 5000,
-      //     hideProgressBar: false,
-      //     closeOnClick: true,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "light",
-      //     } );
-      //   const responseData = response?.data;
-      //   const userInfo = {
-      //     ...responseData?.data,
-      //   };
-      //   setUserProfile(userInfo.user);
-      //   setLoading(false)
-      //   setIsLoggedIn(true);
-      //   sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
-      //   sessionStorage.setItem("user_token", response.data.token);
-      //   //localStorage.setItem("user", JSON.stringify(userInfo));
-      //   if (userInfo.user.role === "admin") {
-      //     setDashboardToggle({
-      //       displayToggle: true,
-      //       toggleValue: "User Dashboard",
-      //     });
-      //   }
-      // }
-
+      const responseData = response?.data;
+      const userInfo = {
+        ...responseData,
+      };
+      setUserProfile(userInfo.user);
+      setLoading(false)
+      setIsLoggedIn(true);
+      sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
+      sessionStorage.setItem("user_token", response.data.token);
+      if (userInfo.user.role === "admin") {
+        setDashboardToggle({
+          displayToggle: true,
+          toggleValue: "User Dashboard",
+        });
+      }
     } catch (error) {
-      console.log("In component",error)
-      // setUser({ error: error.response?.data?.message || "Something went wrong,please try again.", UserName: "", Password: "" });
-      // toast(error.response?.data?.message || "Something went wrong,please try again.", {
-      //   position: "top-center",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   } );
-      // console.log('the is the error',error);
-      // setLoading(false)
+      setUser({UserName: "", Password: "" });
+      setLoading(false)
     } finally{
       setLoading(false)
     }
@@ -105,7 +77,7 @@ const Form = () => {
 
     return (
         <section className=" md:flex flex-auto w-screen block md:px-20 md:py-5 nun mb-20 justify-center">
-           <ToastContainer />
+          <ToastContainer />
           <img src={img} alt="" className=" lg:block hidden w-[50%]"/>
           <form
               action="get"
