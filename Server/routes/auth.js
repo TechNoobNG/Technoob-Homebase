@@ -8,9 +8,7 @@ const passport = require('passport');
 
 
 /* GET users listing. */
-router.post('/login',passport.authenticate('local', {
-    failureRedirect: '/login',
-}), auth.login);
+router.post('/login', auth.login);
 
 router.post('/register', auth.register);
 router.post('/logout', auth.logout);

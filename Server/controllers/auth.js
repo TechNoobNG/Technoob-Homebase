@@ -13,42 +13,57 @@ const validator = require('../utils/joi_validator');
 module.exports = {
     async login(req, res, next) {
         try {
-
-            const user = req.user;
-
-            const token = jwt.sign({
-                user: {
-                    _id: user._id,
-                    username: user.username
+            await validator.login.validateAsync(req.body);
+            passport.authenticate('local', (err, user, info) => {
+                if (err) {
+                    return next(err);
                 }
-            }, config.JWT_SECRET, {
-                expiresIn: config.JWT_EXPIRES,
-                issuer: config.LIVE_BASE_URL,
-            });
+                if (!user) {
+                    return res.status(401).json({
+                        status: 'fail',
+                        message: info.message
+                    })
+                }
 
-            res.status(200).json({
-                status: 'success',
-                message: `Logged in ${user.username}`,
-                data: {
-                    user
-                },
-                token
-            });
-        } catch (err) { 
+                if (req.user) {
+                    const user = req.user;
+
+                    const token = jwt.sign({
+                        user: {
+                            _id: user._id,
+                            username: user.username
+                        }
+                    }, config.JWT_SECRET, {
+                        expiresIn: config.JWT_EXPIRES,
+                        issuer: config.LIVE_BASE_URL,
+                    });
+
+                    res.status(200).json({
+                        status: 'success',
+                        message: `Logged in ${user.username}`,
+                        data: {
+                            user
+                        },
+                        token
+                    });
+                }
+            })(req, res, next);
+
+        } catch (err) {
             return res.fail({
                 status: 'Failed',
-                message: "User password/email Invalid",
+                message:  'Incorrect email or password.',
                 statusCode: 401
             })
         }
 
-       
+
     },
 
     async register(req, res, next) {
         try {
             await validator.register.validateAsync(req.body);
-            
+
             await auth.register(req.body);
             req.body = {
                 username: req.body.username,
@@ -63,7 +78,7 @@ module.exports = {
 
     logout(req, res) {
         req.logout((err) => {
-            if (err) return next(err); 
+            if (err) return next(err);
             req.session.destroy();
             res.setHeader("isAuthenticated", false).status(200).json({
                 status: 'success',

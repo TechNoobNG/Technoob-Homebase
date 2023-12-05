@@ -168,8 +168,6 @@ app.use("/", trafficMiddleware, indexRouter);
 //   next(createError(404));
 // });
 
-// error handler
-app.use(errorHandler);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -244,7 +242,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// error handler
+app.use(errorHandler);
+
 const collectDefaultMetrics = prometheus.collectDefaultMetrics;
 collectDefaultMetrics();
+
 
 module.exports = app;
