@@ -23,10 +23,7 @@ const AppProvider = ({ children }) => {
         ? JSON.parse(sessionStorage.getItem("userData"))
         : null;
 
-        console.log('from state context',userData)
 
-
-    
     return (
         <AppContext.Provider
         value={{

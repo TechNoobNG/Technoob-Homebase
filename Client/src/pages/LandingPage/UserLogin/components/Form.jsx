@@ -5,7 +5,7 @@ import {AppContext} from "../../../../AppContext/AppContext";
 import serverApi from "../../../../utility/server";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import showToast from "../../../../utility/Toast";
 
 const Form = () => {
   const navigate = useNavigate();
@@ -29,8 +29,10 @@ const Form = () => {
     const abortController = new AbortController();
     setLoading(true)
     try {
-      const response = await serverApi.post(
-          '/authenticate/login',
+      const {data:response} = await showToast({
+        type: "promise",
+        promise: serverApi.post(
+          '/authenticate/login/',
           raw,
           {
             signal: abortController.signal,
@@ -38,57 +40,31 @@ const Form = () => {
               'content-type': 'application/json',
             }
           }
-      )
-      console.log(response);
-    
-      if (response.status === 200) {
-        navigate("/Home");
-        toast("Logged in successfully", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          } );
-        const responseData = response?.data;
-        const userInfo = {
-          ...responseData?.data,
-        };
-        setUserProfile(userInfo.user);
-        setLoading(false)
-        setIsLoggedIn(true);
-        sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
-        sessionStorage.setItem("user_token", response.data.token);
-        //localStorage.setItem("user", JSON.stringify(userInfo));
-        if (userInfo.user.role === "admin") {
-          setDashboardToggle({
-            displayToggle: true,
-            toggleValue: "User Dashboard",
-          });
-        }
+        )
+      })
+
+      const responseData = response?.data;
+      const userInfo = {
+        ...responseData,
+      };
+      setUserProfile(userInfo.user);
+      setLoading(false)
+      setIsLoggedIn(true);
+      sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
+      sessionStorage.setItem("user_token", response.data.token);
+      if (userInfo.user.role === "admin") {
+        setDashboardToggle({
+          displayToggle: true,
+          toggleValue: "User Dashboard",
+        });
       }
-    
     } catch (error) {
-      setUser({ error: error.response?.data?.message || "Something went wrong,try again.", UserName: "", Password: "" });
-      toast(error.response?.data?.message, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        } );
-      console.log('the is the error',error);
+      setUser({UserName: "", Password: "" });
       setLoading(false)
     } finally{
       setLoading(false)
     }
-    
+
   }
     const submit = async (e) => {
       e.preventDefault();
@@ -101,7 +77,7 @@ const Form = () => {
 
     return (
         <section className=" md:flex flex-auto w-screen block md:px-20 md:py-5 nun mb-20 justify-center">
-           <ToastContainer />
+          <ToastContainer />
           <img src={img} alt="" className=" lg:block hidden w-[50%]"/>
           <form
               action="get"
@@ -147,7 +123,7 @@ const Form = () => {
             <div className=" lg:flex">
               <button
                   className=" bg-tblue text-twhite py-[14px] lg:w-[50%] w-[100%] rounded"
-                  
+
               >
                {loading ? "Loading..." : "Login"}
               </button>

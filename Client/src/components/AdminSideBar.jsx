@@ -2,13 +2,12 @@ import React, { useContext, useState } from "react";
 import { AdminNavs } from "../data/contact";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { MdOutlineDashboard } from "react-icons/md";
-import { FiSettings } from "react-icons/fi";
+import { FiSettings, FiUser } from "react-icons/fi";
 import { BiLogOut } from "react-icons/bi";
 import {HiOutlineSwitchHorizontal} from "react-icons/hi"
 import serverApi from "../utility/server";
 import { AppContext } from "../AppContext/AppContext";
-import { toast } from "react-toastify";
-
+import showToast  from "../utility/Toast";
 const AdminSideBar = () => {
   const isActive = false;
   const [loading, setLoading] = useState(false);
@@ -23,32 +22,30 @@ const AdminSideBar = () => {
     });
   };
 
-const signOut = async () => {
+  const signOut = async () => {
+    try {
       setLoading(true);
-      const response = await serverApi.post("/authenticate/logout");
+      await showToast({
+        type: "promise",
+        promise: serverApi.post("/authenticate/logout")
+      })
       setLoading(false);
-      if (response.status === 200) {
-        toast("Logged out", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          } );
-
-        navigate("/Home");
-        setIsLoggedIn(false);
-        setUserProfile(null);
-        setDashboardToggle({
-          displayToggle: false,
-          toggleValue: "User Dashboard",
-        });
-        sessionStorage.clear();
-      }
-    };
+      navigate("/Home");
+      setIsLoggedIn(false);
+      setUserProfile(null);
+      setDashboardToggle({
+        displayToggle: false,
+        toggleValue: "User Dashboard",
+      });
+      sessionStorage.clear();
+    } catch (error) {
+      showToast({
+        message: error.message || "An error ocurred, please contact support.",
+        type: "error",
+      })
+      setLoading(false)
+    }
+  };
 
 const submit = async (e) => {
   e.preventDefault();
@@ -87,7 +84,7 @@ const submit = async (e) => {
             to={"/admin/profile"}
             className="flex justify-start items-center gap-4  hover:bg-tblue hover:text-white p-3 text-base cursor-pointer font-semibold"
           >
-            <FiSettings className=" font-normal" /> Profile
+            <FiUser className=" font-normal" /> Profile
           </Link>
           <span className="flex  justify-start items-center gap-4 hover:bg-tblue hover:text-white p-3 text-base cursor-pointer font-semibold">
             <FiSettings className="" /> Settings
@@ -136,7 +133,7 @@ const submit = async (e) => {
 // }
 
 // function SignOut() {
-  
+
 //   const navigate = useNavigate();
 //   const { setIsLoggedIn, setUserProfile, setDashboardToggle } =
 //     useContext(AppContext);

@@ -45,17 +45,13 @@ const Dashboard = () => {
     }
   ];
 
-
-  
-
-  // const user =  cookies.get("user").user
   const username = null;
 
   return (
     <section>
         <div className=' flex py-10 nun justify-start items-center'>
-            <h1 className=' font-semibold md:text-3xl text-xl'>Hey, {username ? username : 'Esther'} </h1>
-            <p className=' md:pt-2 pt-[3px] text-lg ml-3 '>-here's a look at your recent activities</p>
+            <h1 className=' font-semibold md:text-3xl text-xl'>Hey, {username ? username : "Noobie!"} </h1>
+            <p className=' md:pt-2 pt-[3px] text-lg ml-3 '>-Here's a look at your recent activities</p>
         </div>
         <div className=' lg:mx-5 px-10 py-5 rounded-xl bg-white w-full pb-20 '>
           <h1 className=' text-2xl lg:py-4 font-semibold'>Admin Overview</h1>
@@ -127,7 +123,7 @@ const Dashboard = () => {
                   <td> <span className=' bg-[#35BA834D] w-2 h-2 rounded-full'> </span><button className=' bg-green-300 rounded-full px-4 py-1 my-6'> Complete</button></td>
                 </tr>
                 </tbody>
-                
+
               </table>
             </div>
           </div>
