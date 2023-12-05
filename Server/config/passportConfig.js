@@ -24,17 +24,18 @@ passport.use(
             passwordField: 'password',
         },
         async (username, password, done) => {
-           
+
             try {
+                if (!username || !password) return done(null, false, { message: 'Incorrect email or password.' });
                 let user = await User.findOne({ username }).select('+password').select('+active');
-                if (user.lockoutUntil && user.lockoutUntil > new Date()) {
-                    const remainingTime = Math.ceil((user.lockoutUntil - new Date()) / (60 * 1000)); 
+                if (!user) return done(null, false, { message: 'Incorrect email or password.' });
+                if (user && user.lockoutUntil && user.lockoutUntil > new Date()) {
+                    const remainingTime = Math.ceil((user.lockoutUntil - new Date()) / (60 * 1000));
                     return done(null, false, {
                         message: `Account locked. Try again in ${remainingTime} minutes.`,
                         statusCode: 403
                     });
                 };
-                if (!user) return done(null, false, { message: 'Incorrect email or password.' });
                 const isMatch = await user.comparePassword(password);
                 if (!isMatch) {
                     user.failedLoginAttempts += 1;
@@ -73,7 +74,7 @@ passport.use('authenticate',
           secretOrKey: config.JWT_SECRET,
           jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
           issuer: config.LIVE_BASE_URL,
-          ignoreExpiration: false, 
+          ignoreExpiration: false,
           clockTolerance: 60
     },
     async (token, done) => {
@@ -83,7 +84,7 @@ passport.use('authenticate',
             if (user) {
                 return done(null,user)
             }
-        
+
         return done(null, false );
       } catch (error) {
         done(error,false);
@@ -121,7 +122,7 @@ passport.use(
                     });
 
                     if (user) {
-                        
+
                     try {
                         const constants = {
                             username: user.username,
