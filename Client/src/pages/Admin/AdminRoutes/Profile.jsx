@@ -21,7 +21,7 @@ const Profile = () => {
     setUserInfo({...userInfo.update_params, [e.target.name]: e.target.value})
     if(e.target.name === 'employmentHistory'){
       setUserInfo({
-        ...userInfo, 
+        ...userInfo,
         [e.target.name]: e.target.value
       })
     }
@@ -63,8 +63,8 @@ const Profile = () => {
           theme: "light",
           } );
       }
-      
-    
+
+
     } catch (error) {
       console.log(error);
       if(error.message === "Network Error"){
@@ -103,14 +103,14 @@ const Profile = () => {
         withCredentials: true
       });
       if(response.status === 200){
-        setJobMetrics(response.data.data)
+
       }
     }catch (error) {
       console.log('job error',error)
     }
 
   }
-  
+
   const { userData } = useContext(AppContext);
 
   // console.log('from the profile', userData);
@@ -153,14 +153,14 @@ const Profile = () => {
            { !edit && <button onClick={() =>setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center`}>
                 {edit ? 'Cancel' : 'Edit Profile'}
               </button>}
-              {edit && 
+              {edit &&
                 <div className="flex gap-5">
                  {/* <Button name={'Save'}/> */}
                   <button onClick={() =>setEdit(false)} type='submit' className={`flex justify-center items-center border border-tblue text-tblue w-[335px] sm:w-[201px] h-[54px] text-base font-[400] px-12 py-2 rounded`}>
                     Cancel
                   </button>
                 </div>
-                
+
               }
             </div>
           </div>
@@ -227,7 +227,7 @@ const Profile = () => {
                     </div>
                   </div>
                 </div>
-              ) : 
+              ) :
               (
                 <div>
                   <h1 className="md:text-2xl">Opps, you do not have clearance to be here.</h1>
@@ -281,7 +281,7 @@ const Profile = () => {
               <label
                 htmlFor="name"
                 id="name"
-                
+
                 className="flex-1 text-tblue max-sm:text-2xl text-base font-semibold"
               >
                 Name
