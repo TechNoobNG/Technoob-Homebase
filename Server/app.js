@@ -49,7 +49,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error("I don't know you bro."));
       }
     },
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
