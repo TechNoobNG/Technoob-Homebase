@@ -38,7 +38,8 @@ module.exports = {
                 "https://www.technoob.tech",
                 "http://technoobstaging.s3-website.eu-west-2.amazonaws.com",
                 "staging-api.technoob.tech",
-                "http://staging.technoob.tech"
+                "http://staging.technoob.tech",
+                "https://localhost:3000"
 
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
@@ -81,7 +82,8 @@ module.exports = {
                 '/api/v1/admin/mailing-list'
             ],
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
-        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5
+        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
+        USE_CORS: process.env.USE_CORS,
     },
     test: {
         NODE_ENV: "test"
@@ -163,7 +165,8 @@ module.exports = {
                 '/api/v1/admin/mailing-list'
             ],
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
-        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 10
+        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 10,
+        USE_CORS: process.env.USE_CORS,
     },
 
     production_worker: {
@@ -233,5 +236,6 @@ module.exports = {
             [
                 '/api/v1/authenticate'
             ],
+        USE_CORS: process.env.USE_CORS || true,
     }
 }
