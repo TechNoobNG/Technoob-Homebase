@@ -5,8 +5,6 @@ const Honeybadger = require("../utils/honeybadger");
 const errorHandler = (err, req, res, next) => {
 
     const filterError = errorFormater.filter(err);
-     console.log("------------",filterError)
-
 
     const { message, statusCode, data } = filterError;
 
