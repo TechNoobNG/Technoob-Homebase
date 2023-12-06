@@ -49,12 +49,15 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("I don't know you bro."));
+        callback({
+          message: "CORS: I don't know you bro!",
+          status: 403,
+        });
       }
     },
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true,
-    exposedHeaders: "Set-Cookie",
+    exposedHeaders: 'Set-Cookie',
   })
 );
 
@@ -104,11 +107,20 @@ const networkTrafficBytes = new prometheus.Counter({
 app.use(logger("combined"));
 // Honeybadger.notify('Starting/Restarting Technoob Server');
 
-const cookieConfig = {
-  secure: true,
-  maxAge: 60 * 60 * 1000,
-  sameSite: "None"
-};
+let cookieConfig;
+
+if (config.USE_CORS) {
+  cookieConfig = {
+    secure: true,
+    maxAge: 60 * 60 * 1000,
+    sameSite: "None"
+  };
+} else {
+  cookieConfig = {
+    secure: false,
+    maxAge: 60 * 60 * 1000,
+  };
+}
 
 app.use(
   session({
