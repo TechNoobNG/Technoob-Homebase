@@ -40,7 +40,6 @@ module.exports = {
                 "http://staging.technoob.tech",
                 "https://localhost:3000",
                 "https://staging.technoob.tech"
-
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
@@ -84,6 +83,7 @@ module.exports = {
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
         USE_CORS: process.env.USE_CORS,
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
     },
     test: {
         NODE_ENV: "test"
@@ -167,6 +167,7 @@ module.exports = {
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 10,
         USE_CORS: process.env.USE_CORS,
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1
     },
 
     production_worker: {
