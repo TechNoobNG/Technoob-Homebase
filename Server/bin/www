@@ -28,7 +28,7 @@ const redisHelper = require("../utils/redishelper")
 
 if (cluster.isMaster && HOST !== 'heroku') {
   console.log(`Master ${process.pid} is running`);
-    for (let i = 0; i < numCPUs; i++) {
+    for (let i = 0; i < 2; i++) {
       cluster.fork();
     }
     cluster.on('exit', (worker, code, signal) => {
@@ -162,9 +162,9 @@ function onListening() {
   const promiseArray = [
     initialise_db(),
   ]
-    
+
   if (HOST !== 'heroku') {
-    promiseArray.push(connectToRedis()) 
+    promiseArray.push(connectToRedis())
   }
   await Promise.all(promiseArray)
 

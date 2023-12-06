@@ -164,24 +164,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use(sanitizer.clean({
-//   xss: true,
-//   noSql: true,
-//   sql: true,
-//   sanitize: {
-//     image: false
-//   }
-// }));
-
+app.use(trafficMiddleware)
 /* GET home page. */
-app.use("/", limiter); // implementing rate limiter middleware
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
-app.use("/", trafficMiddleware, indexRouter);
-
-// // catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   next(createError(404));
-// });
+app.use("/api-docs",limiter,swaggerUI.serve,swaggerUI.setup(swaggerDocument));
+app.use("/",limiter, indexRouter);
 
 
 app.use((req, res, next) => {
@@ -217,19 +203,6 @@ app.use((req, res, next) => {
   };
   res.on("data", onData);
   res.on("end", onEnd);
-  next();
-});
-
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    const query =
-      req.query && Object.keys(req.query).length > 0
-        ? JSON.stringify(req.query)
-        : "-";
-    dbQueryDurationMilliseconds.observe({ query }, duration);
-  });
   next();
 });
 

@@ -7,19 +7,20 @@ function extendResponseObject(req, res, next) {
         }
     }
 
-    res.ok = async function ({ data = undefined, message = 'Successful', statusCode = 200 } = {}) {
-        
+    res.ok = async function ({ data = undefined, message = 'Successful', statusCode = 200, token = undefined  } = {}) {
+
         res.locals.data = data;
         const response = {
             success: true,
             message,
-            data
+            data,
+            token
         };
         res.status(statusCode).json(response);
         try {
-            processPostExecMiddlewares(req, res, next);
+            return processPostExecMiddlewares(req, res, next);
         } catch (err) {
-            console.log(err)
+            console.warn(err.message)
         }
 
     };
