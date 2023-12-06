@@ -42,7 +42,9 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 //   apis: ['./routes/*.js'],
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
-
+app.set('trust proxy', config.NUMBER_OF_PROXIES);
+app.get('/ip', (request, response) => response.send(request.ip));
+app.get('/x-forwarded-for', (request, response) => response.send(request.headers['x-forwarded-for']))
 app.use(
   cors({
     origin: function (origin, callback) {
