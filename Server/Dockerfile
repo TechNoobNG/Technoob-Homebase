@@ -16,7 +16,7 @@ RUN apt-get update \
 WORKDIR /usr/src/app
 COPY . .
 
-RUN npm install 
+RUN npm install
 
 ENV PORT=3000
 ENV JWT_EXPIRES=10m
@@ -28,6 +28,10 @@ ENV LIVE_BASE_URL=technoob-staging.azurewebsites.net
 ENV AZURE_QUEUE_NAME=noob-queue
 ENV AZURE_QUEUE_URL='https://stackliteblob.queue.core.windows.net/noob-queue'
 EXPOSE 3000
+
+# Delete downloaded Chrome package
+RUN rm -f /etc/apt/sources.list.d/google.list
+
 RUN chown -R node /usr/src/app
 USER node
 CMD ["npm", "start"]
