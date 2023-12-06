@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const serverBaseURL = process.env.SERVER_BASE_URL || "http://technoobstaging-env.eba-izgw9fe4.eu-west-2.elasticbeanstalk.com";
+const serverBaseURL = process.env.SERVER_BASE_URL || "https://staging-api.technoob.tech";
 
 const serverApi = axios.create({
     baseURL:   `${serverBaseURL}/api/v1/`
