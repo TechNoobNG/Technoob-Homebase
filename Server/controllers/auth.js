@@ -35,16 +35,16 @@ module.exports = {
                             expiresIn: config.JWT_EXPIRES,
                             issuer: config.LIVE_BASE_URL,
                         });
-    
-                        return res.status(200).json({
+
+                        return res.ok({
                             status: 'success',
                             message: `Welcome to base, ${user.username}!`,
                             data: {
                                 user
                             },
                             token
-                        });
-                    })                    
+                        })
+                    })
                 } else {
                     return res.fail({
                         status: 'Failed',
@@ -85,7 +85,7 @@ module.exports = {
         req.logout((err) => {
             if (err) return next(err);
             req.session.destroy();
-            res.setHeader("isAuthenticated", false).status(200).json({
+            return res.ok({
                 status: 'success',
                 message: 'Logged out'
             })
@@ -133,11 +133,12 @@ module.exports = {
         const { email } = req.body
         try {
             const reset = await auth.forgotPasswordEmail(email)
-            if(!reset) throw new Error("An error occured")
-            res.status(200).json({
+            if (!reset) throw new Error("An error occured")
+            return res.ok({
                 status: 'success',
-                message: `Email Sent`,
+                message: `Verification Email Sent`,
             })
+
         } catch (err) {
             res.fail({
                 status: 'Failed',
@@ -246,7 +247,7 @@ module.exports = {
 
     resetPasswordView(req, res, next) {
         try {
-           return res.render('reset-password.jade', { title: "Password Reset" });
+            return res.render('reset-password.jade', { title: "Password Reset" });
         } catch (error) {
             next(error);
         }

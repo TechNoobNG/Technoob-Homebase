@@ -19,7 +19,7 @@ const { register } = prometheus;
 const utility = require("../utils/utils");
 
 
-router.get('/', (req, res) => {
+router.all('/', (req, res) => {
   res.render('index', {
     title: 'TechNoob API',
     environment: config.NODE_ENV,
@@ -29,10 +29,9 @@ router.get('/', (req, res) => {
     // busyWorkers: pool.stats().busyWorkers,
     // idleWorkers: pool.stats().idleWorkers,
     // pendingTasks: pool.stats().pendingTasks,
-
   });
-
 });
+
 
 const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
 
