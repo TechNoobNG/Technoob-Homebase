@@ -23,7 +23,6 @@ const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
 const errorHandler = require("./middleware/errorHandler");
 const response = require("./middleware/customResponse");
-const {request} = require("express");
 
 //const swaggerDocument = yamljs.load('./swagger.yaml');
 const swaggerDocument = yamljs.load(path.join(__dirname, 'swagger.yaml'));
