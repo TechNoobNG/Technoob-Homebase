@@ -53,24 +53,6 @@ app.use(function(req, res, next) {
 );
 
 app.set('trust proxy', true);
-app.get('/ip', (request, response) => {
-  const ip = request.ip
-  const ipHeaders = request.headers['x-forwarded-for'].split(',');
-  const clientIp = ipHeaders[ipHeaders.length - 1].trim();
-  const remote = request.connection.remoteAddress;
-  const hostname = request.hostname;
-  const secure = request.secure;
-
-  response.json({
-    ip,
-    ipHeaders,
-    clientIp,
-    remote,
-    hostname,
-    secure
-  })
-});
-app.get('/x-forwarded-for', (request, response) => response.send(request.headers['x-forwarded-for']))
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -191,7 +173,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(trafficMiddleware)
+app.use(trafficMiddleware);
 /* GET home page. */
 app.use("/api-docs",limiter,swaggerUI.serve,swaggerUI.setup(swaggerDocument));
 app.use("/",limiter, indexRouter);
