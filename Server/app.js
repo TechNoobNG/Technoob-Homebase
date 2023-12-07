@@ -144,6 +144,7 @@ app.use(
       ttl: 60 * 60, // 1 hour
       autoRemove: "native",
     }),
+    proxy: true,
     cookie: cookieConfig
   })
 );
