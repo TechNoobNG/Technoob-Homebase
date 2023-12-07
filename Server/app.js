@@ -42,8 +42,34 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 //   apis: ['./routes/*.js'],
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
-app.set('trust proxy', config.NUMBER_OF_PROXIES);
-app.get('/ip', (request, response) => response.send(request.ip));
+app.use(function(req, res, next) {
+  if (req.header('X-Forwarded-Proto') == 'https' )
+  {
+    next();
+  }
+  else {
+    res.redirect('https://' + req.hostname + req.url);
+  }}
+);
+
+app.set('trust proxy', true);
+app.get('/ip', (request, response) => {
+  const ip = request.ip
+  const ipHeaders = request.headers['x-forwarded-for'].split(',');
+  const clientIp = ipHeaders[ipHeaders.length - 1].trim();
+  const remote = request.connection.remoteAddress;
+  const hostname = request.hostname;
+  const secure = request.secure;
+
+  response.json({
+    ip,
+    ipHeaders,
+    clientIp,
+    remote,
+    hostname,
+    secure
+  })
+});
 app.get('/x-forwarded-for', (request, response) => response.send(request.headers['x-forwarded-for']))
 app.use(
   cors({
@@ -113,9 +139,10 @@ let cookieConfig;
 
 if (config.USE_CORS) {
   cookieConfig = {
+    domain: ".technoob.tech",
     secure: true,
     maxAge: 60 * 60 * 1000,
-    sameSite: "None"
+    sameSite: "none"
   };
 } else {
   cookieConfig = {
