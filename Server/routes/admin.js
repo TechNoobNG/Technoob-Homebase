@@ -5,6 +5,24 @@ const admin = controller.admin;
 const middleware = require('../middleware/index');
 
 
+router.get('/ip', middleware.auth.isAuthenticated,middleware.auth.hasPermission('admin:viewIPConfig') , (request, response) => {
+    const ip = request.ip
+    const ipHeaders = request.headers['x-forwarded-for'].split(',');
+    const clientIp = ipHeaders[0];
+    const remote = request.connection.remoteAddress;
+    const hostname = request.hostname;
+    const secure = request.secure;
+
+    return response.json({
+        ip,
+        ipHeaders,
+        clientIp,
+        remote,
+        hostname,
+        secure
+    })
+});
+
 router.get('/contributors', middleware.redisCache.getCache, admin.getContributors);
 router.post('/contributors/add', middleware.auth.isAuthenticated,middleware.auth.hasPermission('admin:AddContributors'),admin.addContributors);
 router.get('/dashboard', middleware.auth.isAuthenticated,middleware.auth.isAdmin, admin.dashboard);
