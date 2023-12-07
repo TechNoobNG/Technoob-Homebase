@@ -10,6 +10,22 @@ const TOKEN_EXPIRATION_TIME = config.TOKEN_EXPIRATION_TIME;
 const child_worker = require('../utils/child');
 const Honeybadger = require('../utils/honeybadger');
 
+const employmentHistorySchema = new Schema({
+  role: {
+    type: String,
+    required: true,
+  },
+  company: {
+    type: String,
+    required: true,
+  },
+  jobType: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+});
 
 const user = new Schema({
     firstname: {
@@ -127,12 +143,10 @@ const user = new Schema({
     }],
     country: String,
     bio: String,
-    employmentHistory: [{
-        role: String,
-        company: String,
-        country: String,
-        jobType: String
-    }]
+    employmentHistory: {
+        type: [employmentHistorySchema],
+        default: [],
+    },
 
 },{
     timestamps: true
