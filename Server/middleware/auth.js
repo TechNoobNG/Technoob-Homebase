@@ -40,9 +40,19 @@ module.exports = {
     githubAuthenticateMiddleware,
     githubCallbackAuthenticateMiddleware,
     isAuthenticated(req, res, next) {
-        try { 
+        try {
+            const token = req.headers["authorization"]?.split(' ')[1];
             if (req.isAuthenticated()) {
                 return next();
+            } else if(token){
+                passport.authenticate('authenticate', { session: false }, (err, user) => {
+                    if (err || !user) {
+                        throw new Error("Unauthorized access");
+                    }
+
+                    req.user = user;
+                    return next();
+                })(req, res, next);
             } else {
                 throw new Error("Unauthorized access")
             }
@@ -56,10 +66,10 @@ module.exports = {
     },
     
     isAdmin(req, res, next) {
-        if ( req.user.role === 'admin') {
+        if ( req.user?.role === 'admin') {
             return next();
         }
-        res.status(401).json({
+        return res.status(401).json({
             status: 'fail',
             message: 'Unauthorized access'
         })
