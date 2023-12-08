@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 import showToast from "../../../utility/Toast";
 import { emptyProfile } from "../../../data/assets/asset/index";
 import ProfileUpdateNotification from "../../../utility/ProfileUpdateNotification";
-
+import CountryDropdown  from "../../../utility/CountryDropdown";
 const Profile = () => {
   // const [roles, setroles] = useState(false);
   // const [permission, setpermission] = useState(true);
@@ -15,6 +15,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false)
   const [updateParams, setupdateParams] = useState({});
   const [displayConfirmation, setDisplayConfirmation] = useState(false);
+  const [firstVisit, setFirstVisit] = useState(true);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -95,9 +96,6 @@ const Profile = () => {
         type: "error",
       })
       setLoading(false)
-    }finally{
-      setLoading(false)
-      setEdit(false)
     }
   }
 
@@ -124,20 +122,22 @@ const fetchProfile = async () => {
 
   const { userData } = useContext(AppContext);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchData = async () => {
       try {
         await fetchProfile();
+        setFirstVisit(false);
       } catch (error) {
         showToast({
-        message: error.message || "An error occurred, please contact support.",
-        type: "error",
-      });
+          message: error.message || "An error occurred, please contact support.",
+          type: "error",
+        });
       }
     };
 
     fetchData();
-  }, [userData]);
+  }, []);
+
 
   return (
     <div className="min-h-[100vh] w-full pb-16 rounded-md relative">
@@ -183,14 +183,14 @@ const fetchProfile = async () => {
               </div>
               <Button name={"Share Profile"} />
             </div>
-            <div className="flex justify-center items-center">
-              <div className="flex items-center">
+            <div className="flex justify-center items-center space-x-4">
+              <div className="flex items-center ">
                 {
-                  !edit && <button onClick={() => setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center mr-2`}>
+                  !edit && <button onClick={() => setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center mr-5`}>
                     {edit ? 'Cancel' : 'Edit Profile'} </button>
                 }
                 { edit &&
-                  <button type='submit' className={`flex justify-center items-center border border-tblue bg-tblue text-white  w-[335px] sm:w-[201px] h-[54px] text-base font-[400] px-12 py-2 rounded class="flex gap-5 pl-10"`}>Save
+                  <button type='submit' className={`flex justify-center items-center border border-tblue bg-tblue text-white w-[335px] sm:w-[201px] h-[54px] text-base font-[400] px-12 py-2 rounded`}>Save
                   </button>
                 }
               </div>
@@ -485,6 +485,18 @@ const handleAddEmploymentEntry = (e, index) => {
   });
 };
 
+  const handleAddEmploymentCountrySelect = (value, index,name) => {
+    setNewEmploymentArray((prevArray) => {
+    const newArray = [...prevArray];
+    newArray[index] = {
+      ...newArray[index],
+      [name.replace(`_${index}`, '')]: value,
+    };
+    setupdateParams({ ...updateParams, employmentHistory: newArray });
+    return newArray;
+  });
+  }
+
 
 
   const handleRemoveEmploymentEntry = (e, index) => {
@@ -605,16 +617,15 @@ const handleAddEmploymentEntry = (e, index) => {
                 Country
               </label>
               <div className="md:flex-[2] w-full flex gap-10 mb-10">
-                <select
-                  required
-                  onChange={handleChange}
-                  name="country"
-                  type="text"
-                  className="border-2 py-3 px-2 w-full rounded-md outline-tblue"
-                >
-                  <option value="Nigeria">Nigeria</option>
-                  <option value="Nigeria">South Africa</option>
-                </select>
+            <CountryDropdown
+              defaultCountry={userData?.country}
+              onSelect={(value) => {
+                setupdateParams({ ...updateParams, country: value });
+              }}
+              className="border-2 py-3 px-2  rounded-md outline-tblue"
+              name="country"
+              id="country"
+            />
               </div>
             </div>
             <div className="w-full bg-gray-300 h-[1px] my-10 " />
@@ -683,14 +694,13 @@ const handleAddEmploymentEntry = (e, index) => {
                     defaultValue={entry.jobType}
                     className="border-2 py-3 px-2 md:w-[20rem] rounded-md outline-tblue"
                   />
-                <input
-                    onChange={(e) => handleAddEmploymentEntry(e, index)}
-                    name={`country_${index}`}
-                    type="text"
-                    placeholder="Country"
-                    defaultValue={entry.country}
-                    className="border-2 py-3 px-2 md:w-[20rem] rounded-md outline-tblue"
-                  />
+                <CountryDropdown
+                      defaultCountry={entry.country}
+                      onSelect={handleAddEmploymentCountrySelect}
+                      className="border-2 py-3 px-2  rounded-md outline-tblue"
+                      name={`country_${index}`}
+                      propIndex={index}
+                    />
                 </div>
                 <div class="flex justify-center items-center">
                   <button
