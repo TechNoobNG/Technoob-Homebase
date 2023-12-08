@@ -15,7 +15,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false)
   const [updateParams, setupdateParams] = useState({});
   const [displayConfirmation, setDisplayConfirmation] = useState(false);
-  const [firstVisit, setFirstVisit] = useState(true);
+  // const [firstVisit, setFirstVisit] = useState(true);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -126,7 +126,6 @@ useEffect(() => {
     const fetchData = async () => {
       try {
         await fetchProfile();
-        setFirstVisit(false);
       } catch (error) {
         showToast({
           message: error.message || "An error occurred, please contact support.",
