@@ -8,8 +8,8 @@ import { emptyProfile } from "../../../data/assets/asset/index";
 import ProfileUpdateNotification from "../../../utility/ProfileUpdateNotification";
 
 const Profile = () => {
-  const [roles, setroles] = useState(false);
-  const [permission, setpermission] = useState(true);
+  // const [roles, setroles] = useState(false);
+  // const [permission, setpermission] = useState(true);
   const [edit, setEdit] = useState(false);
   const [loading, setLoading] = useState(false)
   const [updateParams, setupdateParams] = useState({});
@@ -676,8 +676,8 @@ const handleAddEmploymentEntry = (e, index) => {
                     onClick={(e) => handleRemoveEmploymentEntry(e)}
                   >Remove Entry</button>
                 </div>
-              </div>
-         ))) || null }
+                 </div>
+               ))) || null}
           </div>
 
           <div className="md:flex-[2] w-full flex gap-4 pl-10">
