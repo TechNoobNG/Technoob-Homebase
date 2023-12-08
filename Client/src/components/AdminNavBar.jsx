@@ -29,7 +29,7 @@ const AdminNavBar = () => {
             </div>
             <NavLink to={'/admin/profile'}>
                 <div className='rounded-full h-5 w-5 sm:w-8 sm:h-8 cursor-pointer'>
-                    <img src={userData.photo || emptyProfile } alt="profile" className='rounded-full w-full h-full object-cover' />
+                    <img src={userData?.photo || emptyProfile } alt="profile" className='rounded-full w-full h-full object-cover' />
                 </div>
             </NavLink>
         </div>

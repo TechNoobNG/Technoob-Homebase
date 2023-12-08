@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const promisify = (promise) => {
   return promise.then((response) => {
-    return { data: response.data?.data?.data?.data || response.data , status: 'success' };
+    return { data:  response.data , status: 'success' };
   }).catch((err) => {
     if (err.response) {
       throw { err: err.response, status: 'error' };
@@ -18,9 +18,9 @@ const promisify = (promise) => {
 const Toast = ({ message, type = 'info', position, autoClose, promise ,promiseMessage }) => {
   if (type === 'promise') {
     const {
-      pending =  'Loading',
-      success = 'Successful',
-      error = 'Failed' }
+      pending =  '⏳ Hang tight, getting things ready for you...',
+      success = '🎉 Awesome, it worked like a charm!',
+      error = '😓 Uh-oh, we hit a bump in the road!' }
       = promiseMessage || {}
     return toast.promise(promisify(promise),
     {
@@ -33,6 +33,7 @@ const Toast = ({ message, type = 'info', position, autoClose, promise ,promiseMe
       },
       error: {
         render({data: {err}}) {
+          console.log(err)
           return err?.data?.message || err?.data?.error || error;
         },
         icon: "🚨",

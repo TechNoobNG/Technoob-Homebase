@@ -9,10 +9,10 @@ import serverApi from '../../utility/server';
 const SignUp = () => {
 
   const {  setIsLoggedIn,setUserProfile  } = useContext(AppContext);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
 
- 
+
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     FirstName: '',
@@ -23,7 +23,7 @@ const SignUp = () => {
     Username: '',
     TechStack: [],
     PhoneNumber: ''
-    
+
   });
 
 
@@ -31,11 +31,9 @@ const SignUp = () => {
     setForm({...form, [e.target.name.split(" ").join().replace(",","")]: e.target.value})
   }
 
-  console.log(form)
-
   const handleSubmit = async (e)=>{
     e.preventDefault();
-  
+
 
     var myHeaders = new Headers();
     var raw =
@@ -75,7 +73,7 @@ else{
         setLoading(false);
         setIsLoggedIn(true)
       }}
-      
+
 
 
 

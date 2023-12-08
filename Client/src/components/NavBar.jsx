@@ -25,24 +25,22 @@ const NavBar = () => {
     setActive(e.target.innerText);
   };
 
-  const handleLoggout = async() => {
+  const logout = async() => {
     try {
+      const abortController = new AbortController();
+      serverApi.requiresAuth(true);
       setLoading(true)
-      await showToast({
-        type: "promise",
-        promise: serverApi.post("/authenticate/logout",
+      await serverApi.post("/authenticate/logout/",{},
           {
-            signal: AbortController.signal,
+            signal: abortController.signal,
             headers: {'content-type': 'application/json'}
-          }
-      )
-      })
-
+          });
       setIsLoggedIn(false);
       setUserProfile(null);
       cookies.remove("user");
       sessionStorage.clear()
       setLoading(false)
+      return
     } catch (error) {
       showToast({
         message: error.message || "An error ocurred, please contact support.",
@@ -50,11 +48,18 @@ const NavBar = () => {
       })
     }finally{
       setLoading(false)
+      showToast({
+        message:  "See you soon! 🙂",
+        type: "info"
+      })
+      navigate("/Home");
     }
-
-    navigate("/Home");
   };
 
+  const handleLoggout  = async (e) => {
+    e.preventDefault();
+    await logout();
+  };
   const switchView = async () => {
     setDashboardToggle({
         displayToggle: true,
@@ -65,14 +70,10 @@ const NavBar = () => {
 
   return (
     <nav className="w-full bg-white shadow-md ">
-      <ToastContainer />
         <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-between items-center lg:h-[80px] ">
           <Link to={'/'}>
-
                   <img src={TechNoobLogo} alt="technooblogo" width="150" height="50"/>
-
           </Link>
-
           <div className="hidden xl:flex w-[800px] justify-center">
             <ul className="flex font-normal justify-between gap-8">
               {navLinks.map((nav, i) => (
