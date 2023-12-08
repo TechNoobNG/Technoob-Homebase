@@ -162,10 +162,10 @@ const fetchProfile = async () => {
               <p className="text-slate-400 text-xl"></p>
               <div className="flex items-center gap-2">
                 <p>@{userData?.username}</p>
-                {userData?.employmentHistory[0]?.role && (
+                {userData?.employmentHistory && userData?.employmentHistory[0]?.role && (
                     <span className="w-[5px] h-[5px] bg-slate-300 rounded-full"></span>)}
                 <p className="font-semibold text-lg">{userData?.employmentHistory[0]?.role }</p>
-                {userData?.employmentHistory[0]?.contractType && (
+                {userData?.employmentHistory && userData?.employmentHistory[0]?.contractType && (
                     <span className="w-[5px] h-[5px] bg-slate-300 rounded-full"></span>)}
                 <p className="text-slate-400">{userData?.employmentHistory[0]?.contractType}</p>
               </div>
