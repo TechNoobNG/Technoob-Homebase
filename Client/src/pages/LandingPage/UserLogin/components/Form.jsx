@@ -3,7 +3,7 @@ import img from "../img/quino-al-xhGMQ_nYWqU-unsplash 1.png";
 import {useNavigate} from "react-router-dom";
 import {AppContext} from "../../../../AppContext/AppContext";
 import serverApi from "../../../../utility/server";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import showToast from "../../../../utility/Toast";
 
@@ -15,7 +15,7 @@ const Form = () => {
   });
   const {setIsLoggedIn, setUserProfile, setDashboardToggle} =
       useContext(AppContext);
-      const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     setUser({...user, [e.target.name]: e.target.value});
@@ -29,6 +29,7 @@ const Form = () => {
     const abortController = new AbortController();
     setLoading(true)
     try {
+      serverApi.requiresAuth(true);
       const {data:response} = await showToast({
         type: "promise",
         promise: serverApi.post(
@@ -43,7 +44,9 @@ const Form = () => {
         )
       })
 
+
       const responseData = response?.data;
+      const token = response?.token;
       const userInfo = {
         ...responseData,
       };
@@ -51,7 +54,7 @@ const Form = () => {
       setLoading(false)
       setIsLoggedIn(true);
       sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
-      sessionStorage.setItem("user_token", response.data.token);
+      sessionStorage.setItem("user_token", token);
       if (userInfo.user.role === "admin") {
         setDashboardToggle({
           displayToggle: true,

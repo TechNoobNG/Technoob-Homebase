@@ -25,10 +25,13 @@ const AdminSideBar = () => {
   const signOut = async () => {
     try {
       setLoading(true);
-      await showToast({
-        type: "promise",
-        promise: serverApi.post("/authenticate/logout")
-      })
+      const abortController = new AbortController();
+      serverApi.requiresAuth(true);
+      await serverApi.post("/authenticate/logout/",{},
+          {
+            signal: abortController.signal,
+            headers: {'content-type': 'application/json'}
+          });
       setLoading(false);
       navigate("/Home");
       setIsLoggedIn(false);
@@ -40,10 +43,17 @@ const AdminSideBar = () => {
       sessionStorage.clear();
     } catch (error) {
       showToast({
-        message: error.message || "An error ocurred, please contact support.",
+        message: error.message || "An error occurred, please contact support.",
         type: "error",
       })
       setLoading(false)
+    }finally{
+      setLoading(false)
+      showToast({
+        message:  "See you soon! 🙂",
+        type: "info"
+      })
+      navigate("/Home");
     }
   };
 
