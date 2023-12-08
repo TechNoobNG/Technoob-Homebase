@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
+import _ from 'lodash';
 import Button from "../../../utility/button";
 import {AppContext} from '../../../AppContext/AppContext';
 import serverApi from "../../../utility/server";
@@ -6,14 +7,15 @@ import { ToastContainer } from "react-toastify";
 import showToast from "../../../utility/Toast";
 import { emptyProfile } from "../../../data/assets/asset/index";
 import ProfileUpdateNotification from "../../../utility/ProfileUpdateNotification";
-
+import CountryDropdown  from "../../../utility/CountryDropdown";
 const Profile = () => {
-  const [roles, setroles] = useState(false);
-  const [permission, setpermission] = useState(true);
+  // const [roles, setroles] = useState(false);
+  // const [permission, setpermission] = useState(true);
   const [edit, setEdit] = useState(false);
   const [loading, setLoading] = useState(false)
   const [updateParams, setupdateParams] = useState({});
-  const [displayConfirmation, setDisplayConfirmation] = useState(false)
+  const [displayConfirmation, setDisplayConfirmation] = useState(false);
+  // const [firstVisit, setFirstVisit] = useState(true);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -85,8 +87,7 @@ const Profile = () => {
       const userInfo = {
         ...responseData,
       };
-      console.log("resp",userInfo)
-      sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
+      sessionStorage.setItem("userData", JSON.stringify(userInfo));
       setLoading(false);
       setEdit(false);
     } catch (error) {
@@ -95,9 +96,6 @@ const Profile = () => {
         type: "error",
       })
       setLoading(false)
-    }finally{
-      setLoading(false)
-      setEdit(false)
     }
   }
 
@@ -112,6 +110,7 @@ const fetchProfile = async () => {
       const userInfo = {
         ...responseData,
       };
+
       sessionStorage.setItem("userData", JSON.stringify(userInfo));
     } catch (error) {
       showToast({
@@ -123,9 +122,21 @@ const fetchProfile = async () => {
 
   const { userData } = useContext(AppContext);
 
-  useEffect(() => {
-    fetchProfile()
-  }, []);
+  const fetchData = async () => {
+      try {
+        await fetchProfile();
+      } catch (error) {
+        showToast({
+          message: error.message || "An error occurred, please contact support.",
+          type: "error",
+        });
+      }
+    };
+
+useEffect(() => {
+    fetchData();
+  }, [edit]);
+
 
   return (
     <div className="min-h-[100vh] w-full pb-16 rounded-md relative">
@@ -156,7 +167,7 @@ const fetchProfile = async () => {
                 </h1>
                 <p className="flex justify-center items-center gap-2 text-sm font-semibold">
                   <span className="w-[5px] h-[5px] bg-green-500 rounded-full"></span>{" "}
-                  {userData?.role}
+                  {_.capitalize(userData?.role)}
                 </p>
               </div>
               <p className="text-slate-400 text-xl"></p>
@@ -164,21 +175,21 @@ const fetchProfile = async () => {
                 <p>@{userData?.username}</p>
                 {userData?.employmentHistory && userData?.employmentHistory[0]?.role && (
                     <span className="w-[5px] h-[5px] bg-slate-300 rounded-full"></span>)}
-                <p className="font-semibold text-lg">{userData?.employmentHistory[0]?.role }</p>
-                {userData?.employmentHistory && userData?.employmentHistory[0]?.contractType && (
+                <p className="font-semibold text-lg">{userData?.employmentHistory && userData?.employmentHistory[0]?.role }</p>
+                {userData?.employmentHistory && userData?.employmentHistory[0]?.jobType && (
                     <span className="w-[5px] h-[5px] bg-slate-300 rounded-full"></span>)}
-                <p className="text-slate-400">{userData?.employmentHistory[0]?.contractType}</p>
+                <p className="text-slate-400">{userData?.employmentHistory && userData?.employmentHistory[0]?.jobType}</p>
               </div>
               <Button name={"Share Profile"} />
             </div>
-            <div className="flex justify-center items-center">
-              <div className="flex items-center">
+            <div className="flex justify-center items-center space-x-4">
+              <div className="flex items-center ">
                 {
-                  !edit && <button onClick={() => setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center mr-2`}>
+                  !edit && <button onClick={() => setEdit(true)} type='submit' className={`flex justify-start border border-tblue text-tblue w-fit h-fit px-12 py-2 rounded max-sm:w-[335px] max-sm:py-5 max-sm:justify-center mr-5`}>
                     {edit ? 'Cancel' : 'Edit Profile'} </button>
                 }
                 { edit &&
-                  <button type='submit' className={`flex justify-center items-center border border-tblue bg-tblue text-white  w-[335px] sm:w-[201px] h-[54px] text-base font-[400] px-12 py-2 rounded class="flex gap-5 pl-10"`}>Save
+                  <button type='submit' className={`flex justify-center items-center border border-tblue bg-tblue text-white w-[335px] sm:w-[201px] h-[54px] text-base font-[400] px-12 py-2 rounded`}>Save
                   </button>
                 }
               </div>
@@ -402,34 +413,44 @@ const UserProfile = ({ userData }) => {
         </div>
         <div className="w-full bg-gray-300 h-[1px] my-10 " />
         <div className="md:pl-20 flex max-sm:flex-col max-sm:gap-3 justify-between items-start w-full">
-          <label
-            htmlFor="name"
-            id="name"
-            className="flex-1 text-tblue text-base font-semibold"
-          >
-            Employment History
-          </label>
-          <div className="md:flex-[2] w-full flex flex-col justify-between mb-8 gap-5">
-            {userData?.employmentHistory && userData.employmentHistory.map((entry, index) => (
-              <div key={index} className="flex max-sm:flex-col gap-5">
-                <p className="text-base">{entry.role}</p>
-                <p className="text-base">{entry.company}</p>
-                <p className="text-base">{entry.jobType}</p>
-                <p className="text-base">{entry.country}</p>
+                      <label
+                        htmlFor="name"
+                        id="name"
+                        className="flex-1 text-tblue text-base font-semibold"
+                      >
+                        Employment History
+                      </label>
+                      <div className="md:flex-[2] w-full flex flex-col gap-5">
+                        {userData?.employmentHistory &&
+                          userData.employmentHistory.map((entry, index) => (
+                            <div key={index} className="bg-white p-4 rounded-md shadow-md mb-4">
+                              <div className="mb-2">
+                                <strong>Role: </strong> {entry.role}
+                              </div>
+                              <div className="mb-2">
+                                <strong>Company: </strong> {entry.company}
+                              </div>
+                              <div className="mb-2">
+                                <strong>Job Type: </strong> {entry.jobType}
+                              </div>
+                              <div>
+                                <strong>Country: </strong> {entry.country}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
     </div>
   );
 };
 
 const UserProfileForm = ({ userData, handleChange, handleSubmit, loading, setupdateParams, updateParams }) => {
 const [newTechStack, setNewTechStack] = useState(userData?.stack || []);
+const [newEmploymentArray, setNewEmploymentArray] = useState(
+  (userData?.employmentHistory || []).map(({ _id, ...rest }) => rest)
+);
 
-const [newEmploymentArray, setNewEmploymentArray] = useState(userData?.employmentHistory || []);
 
 const handleAddTechStackSelection = (e) => {
   e.preventDefault();
@@ -456,12 +477,25 @@ const handleAddEmploymentEntry = (e, index) => {
     const newArray = [...prevArray];
     newArray[index] = {
       ...newArray[index],
-      [e.target.name.replace(`_${index}`,'')]: e.target.value,
+      [e.target.name.replace(`_${index}`, '')]: e.target.value,
     };
+    setupdateParams({ ...updateParams, employmentHistory: newArray });
     return newArray;
   });
-  setupdateParams({ ...updateParams, employmentHistory: newEmploymentArray })
 };
+
+  const handleAddEmploymentCountrySelect = (value, index,name) => {
+    setNewEmploymentArray((prevArray) => {
+    const newArray = [...prevArray];
+    newArray[index] = {
+      ...newArray[index],
+      [name.replace(`_${index}`, '')]: value,
+    };
+    setupdateParams({ ...updateParams, employmentHistory: newArray });
+    return newArray;
+  });
+  }
+
 
 
   const handleRemoveEmploymentEntry = (e, index) => {
@@ -582,16 +616,15 @@ const handleAddEmploymentEntry = (e, index) => {
                 Country
               </label>
               <div className="md:flex-[2] w-full flex gap-10 mb-10">
-                <select
-                  required
-                  onChange={handleChange}
-                  name="country"
-                  type="text"
-                  className="border-2 py-3 px-2 w-full rounded-md outline-tblue"
-                >
-                  <option value="Nigeria">Nigeria</option>
-                  <option value="Nigeria">South Africa</option>
-                </select>
+            <CountryDropdown
+              defaultCountry={userData?.country}
+              onSelect={(value) => {
+                setupdateParams({ ...updateParams, country: value });
+              }}
+              className="border-2 py-3 px-2  rounded-md outline-tblue"
+              name="country"
+              id="country"
+            />
               </div>
             </div>
             <div className="w-full bg-gray-300 h-[1px] my-10 " />
@@ -660,14 +693,13 @@ const handleAddEmploymentEntry = (e, index) => {
                     defaultValue={entry.jobType}
                     className="border-2 py-3 px-2 md:w-[20rem] rounded-md outline-tblue"
                   />
-                <input
-                    onChange={(e) => handleAddEmploymentEntry(e, index)}
-                    name={`country_${index}`}
-                    type="text"
-                    placeholder="Country"
-                    defaultValue={entry.country}
-                    className="border-2 py-3 px-2 md:w-[20rem] rounded-md outline-tblue"
-                  />
+                <CountryDropdown
+                      defaultCountry={entry.country}
+                      onSelect={handleAddEmploymentCountrySelect}
+                      className="border-2 py-3 px-2  rounded-md outline-tblue"
+                      name={`country_${index}`}
+                      propIndex={index}
+                    />
                 </div>
                 <div class="flex justify-center items-center">
                   <button
@@ -676,8 +708,8 @@ const handleAddEmploymentEntry = (e, index) => {
                     onClick={(e) => handleRemoveEmploymentEntry(e)}
                   >Remove Entry</button>
                 </div>
-              </div>
-         ))) || null }
+                 </div>
+               ))) || null}
           </div>
 
           <div className="md:flex-[2] w-full flex gap-4 pl-10">

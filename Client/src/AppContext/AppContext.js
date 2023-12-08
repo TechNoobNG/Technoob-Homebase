@@ -21,7 +21,7 @@ const AppProvider = ({ children }) => {
     const userData =
       typeof window !== "undefined"
         ? JSON.parse(sessionStorage.getItem("userData"))
-        : null;
+            : null;
 
 
     return (
