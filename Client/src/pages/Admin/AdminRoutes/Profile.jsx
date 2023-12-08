@@ -122,8 +122,7 @@ const fetchProfile = async () => {
 
   const { userData } = useContext(AppContext);
 
-useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
       try {
         await fetchProfile();
       } catch (error) {
@@ -134,8 +133,9 @@ useEffect(() => {
       }
     };
 
+useEffect(() => {
     fetchData();
-  }, []);
+  }, [edit]);
 
 
   return (
