@@ -12,6 +12,9 @@ const users = require('../services/user');
 const traffic = require('../services/traffic');
 const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
+const queue = require('../azure_Queue/init');
+const MailService = require('../utils/mailService');
+const mailService = new MailService();
 
 module.exports = {
 
@@ -115,12 +118,18 @@ module.exports = {
                     template_id: "65073144b75ffcbbdac0cb82",
                     username: user.username
                 }
-                await queue.sendMessage({
-                    name: "SingleEmail",
-                    import: "../utils/azure_mailer",
-                    method: "sendEmail",
+
+                
+                // await queue.sendMessage({
+                //     name: "SingleEmail",
+                //     import: "../utils/azure_mailer",
+                //     method: "sendEmail",
+                //     data: mailOptions
+                // })
+
+                await mailService.sendEmail({
                     data: mailOptions
-                })
+                });
 
             }
             const response = {
@@ -168,12 +177,17 @@ module.exports = {
                 template_id: "65089456f670e1f4a9ef29f8",
                 username: user.username
             }
-            await queue.sendMessage({
+            // await queue.sendMessage({
+            //     name: "SingleEmail",
+            //     import: "../utils/azure_mailer",
+            //     method: "sendEmail",
+            //     data: mailOptions
+            // })
+
+            await mailService.sendEmail({
                 name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
                 data: mailOptions
-            })
+            });
   
             return response
         } catch (err) {
@@ -416,12 +430,18 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            await queue.sendMessage({
+            // await queue.sendMessage({
+            //     name: "BulkStaticEmail",
+            //     import: "../utils/azure_mailer",
+            //     method: "sendToMany",
+            //     data: mailOptions
+            // })
+
+            await mailService.sendEmail({
                 name: "BulkStaticEmail",
-                import: "../utils/azure_mailer",
                 method: "sendToMany",
                 data: mailOptions
-            })
+            });
 
             return {
                 message: "Email Queued Successfully"
@@ -456,12 +476,18 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            await queue.sendMessage({
+            // await queue.sendMessage({
+            //     name: "BulkStaticEmail",
+            //     import: "../utils/azure_mailer",
+            //     method: "sendToManyStatic",
+            //     data: mailOptions
+            // })
+
+            await mailService.sendEmail({
                 name: "BulkStaticEmail",
-                import: "../utils/azure_mailer",
                 method: "sendToManyStatic",
                 data: mailOptions
-            })
+            });
 
             return {
                 message: "Email Queued Successfully"

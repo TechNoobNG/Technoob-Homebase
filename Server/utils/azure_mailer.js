@@ -2,6 +2,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
 const { EmailClient } = require("@azure/communication-email");
 const templates = require('../models/email_templates');
+const queue = require('../azure_Queue/init');
 
 
 const connectionString = config.COMMUNICATION_SERVICES_CONNECTION_STRING;
@@ -28,8 +29,28 @@ const connectionString = config.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
 const emailClient = new EmailClient(connectionString);
 
+class AzureMailer {
+
+    async sendEmail(data) {
+        if (!data.method) data.method = "sendEmail";
+        data.import = "../utils/azure_mailer";
+        console.log(data)
+        await queue.sendMessage(data); 
+
+    }
+}
+
 
 module.exports = {
+    /**
+     * @param {object} options
+     * @property {string} options.template_id
+     * @property {object} options.constants
+     * @property {string} options.email
+     * @property {string} options.username
+     * @property {string} options.subject
+     * @return {number}
+     */
     async sendEmail(options) {
         try {
             // 1) retrieve email template from database
@@ -75,6 +96,15 @@ module.exports = {
         return null
     },
 
+   /**
+     * @param {object} options
+     * @property {string} options.template_id
+     * @property {object} options.constants
+     * @property {object[]} options.emails
+     * @property {string} options.username
+     * @property {string} options.subject
+     * @return {number}
+     */
     async sendToMany(options) {
         try {
 
@@ -202,8 +232,12 @@ module.exports = {
             console.log(e);
         }
 
-    }
+    },
+
+    AzureMailer
 
 }
+
+
 
 
