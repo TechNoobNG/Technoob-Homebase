@@ -68,16 +68,10 @@ module.exports = {
     async register(req, res, next) {
         try {
             await validator.register.validateAsync(req.body);
-
-            await auth.register(req.body);
-            req.body = {
-                username: req.body.username,
-                password: req.body.password
-            }
-            this.login(req, res, next);
+            const newUser = await auth.register(req.body);
+            return newUser
         } catch (err) {
-            console.log(err);
-            next(err);
+            return res.fail(err)
         }
     },
 

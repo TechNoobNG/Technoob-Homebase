@@ -34,8 +34,7 @@ class AzureMailer {
     async sendEmail(data) {
         if (!data.method) data.method = "sendEmail";
         data.import = "../utils/azure_mailer";
-        console.log(data)
-        await queue.sendMessage(data); 
+        await queue.sendMessage(data);
 
     }
 }
