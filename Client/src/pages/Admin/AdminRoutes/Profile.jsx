@@ -101,41 +101,40 @@ const Profile = () => {
 
 
 const fetchProfile = async () => {
-    try {
-      serverApi.requiresAuth(true);
-      const response = await serverApi.get("/user/profile", {
-        withCredentials: true,
-      });
-      const responseData = response?.data?.data;
-      const userInfo = {
-        ...responseData,
-      };
+  try {
+    serverApi.requiresAuth(true);
+    const response = await serverApi.get("/user/profile", {
+      withCredentials: true,
+    });
+    const responseData = response?.data?.data;
+    const userInfo = { ...responseData };
+    setUserData(userInfo);
+    sessionStorage.setItem("userData", JSON.stringify(userInfo));
+  } catch (error) {
+    handleFetchError(error);
+  }
+};
 
-      sessionStorage.setItem("userData", JSON.stringify(userInfo));
-    } catch (error) {
-      showToast({
-        message: error.message || "An error occurred, please contact support.",
-        type: "error",
-      });
-    }
-  };
+const handleFetchError = (error) => {
+  showToast({
+    message: error.message || "An error occurred, please contact support.",
+    type: "error",
+  });
+};
 
-  const { userData } = useContext(AppContext);
+const { userData, setUserData } = useContext(AppContext);
 
-  const fetchData = async () => {
-      try {
-        await fetchProfile();
-      } catch (error) {
-        showToast({
-          message: error.message || "An error occurred, please contact support.",
-          type: "error",
-        });
-      }
-    };
+const fetchData = async () => {
+  try {
+    await fetchProfile();
+  } catch (error) {
+    handleFetchError(error);
+  }
+};
 
 useEffect(() => {
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
 
   return (
