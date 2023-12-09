@@ -1,6 +1,6 @@
-const AzureMailer = require("./azure_mailer").AzureMailer;
+const SESMailer = require("./ses_mailer").SESMailer;
 
-const mailer = new AzureMailer();
+const mailer = new SESMailer();
 
 class MailService {
 

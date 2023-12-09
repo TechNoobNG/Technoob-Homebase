@@ -12,7 +12,6 @@ const users = require('../services/user');
 const traffic = require('../services/traffic');
 const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
-const queue = require('../azure_Queue/init');
 const MailService = require('../utils/mailService');
 const mailService = new MailService();
 

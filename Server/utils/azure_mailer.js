@@ -2,7 +2,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
 const { EmailClient } = require("@azure/communication-email");
 const templates = require('../models/email_templates');
-const queue = require('../azure_Queue/init');
+const queue = require('../azureQueue/init');
 
 
 const connectionString = config.COMMUNICATION_SERVICES_CONNECTION_STRING;
