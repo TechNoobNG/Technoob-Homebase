@@ -34,6 +34,7 @@ module.exports = {
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "http://localhost:3000",
+                "https://localhost:3000",
                 "http://127.0.0.1:3000",
                 "https://technoobstaging.s3-website.eu-west-2.amazonaws.com",
                 "staging-api.technoob.tech",
