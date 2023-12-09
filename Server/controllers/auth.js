@@ -54,15 +54,6 @@ module.exports = {
                 }
             })(req, res, next);
 
-            return res.status(200).json({
-                status: 'success',
-                message: `Logged in ${user.username}`,
-                data: {
-                    user
-                },
-                token
-            });
-
         } catch (err) {
             return res.fail({
                 status: 'Failed',
