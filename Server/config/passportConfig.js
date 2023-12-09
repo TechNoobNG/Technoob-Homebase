@@ -6,7 +6,7 @@ const User = require('../models/user');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const crypto = require('crypto');
 const GithubStrategy = require('passport-github2').Strategy;
-const mailer = require('../utils/azure_mailer');
+const mailer = require('../utils/mailer/azure_mailer');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const ErrorResponse = require('../utils/errorResponse');
@@ -135,7 +135,7 @@ passport.use(
                             email: user.email,
                             subject: 'Welcome to TechNoob!',
                             constants,
-                            template_id: "6435a97404c5b38f7ba81a35",
+                            template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                             username: user.username
 
                         }

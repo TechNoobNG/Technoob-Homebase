@@ -85,6 +85,11 @@ module.exports = {
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
         USE_CORS: process.env.USE_CORS,
         NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
+        MAIL_PROVIDER: {
+            provider: process.env.MAIL_PROVIDER || 'ses',
+            useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE,
+        }
+
     },
     test: {
         NODE_ENV: "test"
@@ -168,7 +173,11 @@ module.exports = {
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
         USE_CORS: process.env.USE_CORS,
-        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
+                MAIL_PROVIDER: {
+            provider: process.env.MAIL_PROVIDER || 'ses',
+            useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
+        }
     },
 
     production_worker: {
@@ -212,7 +221,7 @@ module.exports = {
                 "junior QA",
                 "Junior customer Service support"
             ],
-        LISTENER: process.env.LISTENER || true,
+        LISTENER: process.env.LISTENER,
         AVAILABLE_STACKS:  [
             "Frontend Development",
             "UI/UX",
@@ -238,6 +247,10 @@ module.exports = {
             [
                 '/api/v1/authenticate'
             ],
-        USE_CORS: process.env.USE_CORS || true,
+        USE_CORS: process.env.USE_CORS ,
+        MAIL_PROVIDER: {
+            provider: process.env.MAIL_PROVIDER || 'ses',
+            useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
+        }
     }
 }
