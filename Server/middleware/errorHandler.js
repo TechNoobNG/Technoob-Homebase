@@ -4,8 +4,6 @@ const Honeybadger = require("../utils/honeybadger");
 
 const errorHandler = (err, req, res, next) => {
 
-    console.log(err)
-
     const filterError = errorFormater.filter(err);
 
     const { message, statusCode, data } = filterError;
@@ -15,6 +13,12 @@ const errorHandler = (err, req, res, next) => {
             success: false,
             error: message,
             data: data || undefined
+        });
+    } else if (err.message.includes("CORS")) {
+
+        res.status(403).json({
+            success: false,
+            error: err.message
         });
     } else {
         res.status(500).json({

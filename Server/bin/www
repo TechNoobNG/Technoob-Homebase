@@ -162,9 +162,9 @@ function onListening() {
   const promiseArray = [
     initialise_db(),
   ]
-    
+
   if (HOST !== 'heroku') {
-    promiseArray.push(connectToRedis()) 
+    promiseArray.push(connectToRedis())
   }
   await Promise.all(promiseArray)
 

@@ -107,7 +107,6 @@ module.exports = {
     async sendToMany(options) {
         try {
 
-            // 1) retrieve email template from database
             const template = await templates.findById(options.template_id);
             if(!template) throw new Error ("Invalid template ID")
             let content = template.template.toString();
@@ -119,7 +118,6 @@ module.exports = {
 
             await Promise.all(options.emails.map(async (email) => {
                 Object.keys(options.constants).forEach((key) => {
-                    console.log(key)
                     let value = options.constants[key]
                     switch (key) {
                         case "username":
@@ -128,9 +126,8 @@ module.exports = {
                         case "others":
                             value = options.constants.others;
                             break;
-                        // add more cases as needed
                         default:
-                            value = options.constants[key]; // default value if key doesn't match any case
+                            value = options.constants[key];
                     }
                     content = content.split(`\#{${key}}`).join(value);
                 });
@@ -189,7 +186,6 @@ module.exports = {
 
     async sendToManyStatic(options) {
         try {
-            // 1) retrieve email template from database
             const template = await templates.findById(options.template_id);
             if(!template) throw new Error ("Invalid template ID")
             let content = template.template.toString();

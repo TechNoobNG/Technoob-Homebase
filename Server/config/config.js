@@ -21,7 +21,7 @@ module.exports = {
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
         COMMUNICATION_SERVICES_CONNECTION_STRING: process.env.COMMUNICATION_SERVICES_CONNECTION_STRING,
-        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'http://technoobstaging-env.eba-izgw9fe4.eu-west-2.elasticbeanstalk.com',
+        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'staging-api.technoob.tech',
         HONEYBADGER_KEY: process.env.HONEYBADGER_KEY,
         AZURE_STORAGE_CONNECTION_STRING: process.env.AZURE_STORAGE_CONNECTION_STRING,
         AZURE_QUEUE_NAME: process.env.AZURE_QUEUE_NAME,
@@ -36,10 +36,11 @@ module.exports = {
                 "http://localhost:3000",
                 "https://localhost:3000",
                 "http://127.0.0.1:3000",
-                "https://www.technoob.tech",
-                "http://technoobstaging.s3-website.eu-west-2.amazonaws.com",
-                "http://staging.technoob.tech"
-
+                "https://technoobstaging.s3-website.eu-west-2.amazonaws.com",
+                "staging-api.technoob.tech",
+                "http://staging.technoob.tech",
+                "https://localhost:3000",
+                "https://staging.technoob.tech"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
@@ -81,7 +82,9 @@ module.exports = {
                 '/api/v1/admin/mailing-list'
             ],
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
-        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5
+        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
+        USE_CORS: process.env.USE_CORS,
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
     },
     test: {
         NODE_ENV: "test"
@@ -163,7 +166,9 @@ module.exports = {
                 '/api/v1/admin/mailing-list'
             ],
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
-        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 10
+        WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
+        USE_CORS: process.env.USE_CORS,
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1
     },
 
     production_worker: {
@@ -233,5 +238,6 @@ module.exports = {
             [
                 '/api/v1/authenticate'
             ],
+        USE_CORS: process.env.USE_CORS || true,
     }
 }
