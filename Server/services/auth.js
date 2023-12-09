@@ -172,10 +172,7 @@ module.exports = {
                 const constants = {
                     username: user.username,
                     verification_link: `https://${config.LIVE_BASE_URL}/api/v1/authenticate/verify-email?token=${token}`,
-                    message: `
-                    Welcome to Technoob! We're thrilled to have you as a part of our community. 😊
-                    Kindly hit the button below to verify your account
-                    `
+                    message: ` Welcome to Technoob! We're thrilled to have you as a part of our community. 😊 Kindly hit the button below to verify your account`
                 }
 
                 const mailOptions = {
@@ -191,25 +188,24 @@ module.exports = {
                     data: mailOptions
                 });
 
-                return {
-                    _id: user._id,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
-                    username: user.username,
-                    email: user.email,
-                    stack: user.stack,
-                    photo: user.photo,
-                    active: user.active,
-                    role: user.role,
-                    verified: user.verified
-                }
                 //await mailer.sendEmail(mailOptions)
             } catch (err) {
                 console.warn(err)
             }
 
 
-            return user
+            return {
+                _id: user._id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                username: user.username,
+                email: user.email,
+                stack: user.stack,
+                photo: user.photo,
+                active: user.active,
+                role: user.role,
+                verified: user.verified
+            }
         } catch (err) {
             throw err
         }

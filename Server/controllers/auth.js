@@ -68,8 +68,14 @@ module.exports = {
     async register(req, res, next) {
         try {
             await validator.register.validateAsync(req.body);
-            const newUser = await auth.register(req.body);
-            return newUser
+            const user = await auth.register(req.body);
+            return res.ok({
+                status: 'success',
+                message: `Welcome to Technoob, ${user.username}!`,
+                data: {
+                    user
+                },
+            })
         } catch (err) {
             return res.fail(err)
         }
