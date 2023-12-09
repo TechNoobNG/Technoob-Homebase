@@ -135,7 +135,7 @@ const fetchProfile = async () => {
 
 useEffect(() => {
     fetchData();
-  }, [edit]);
+  }, []);
 
 
   return (
