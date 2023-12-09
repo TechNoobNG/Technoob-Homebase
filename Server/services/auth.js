@@ -7,6 +7,8 @@ const mailer = require('../utils/azure_mailer')
 const jwt = require('jsonwebtoken');
 const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
+const MailService = require('../utils/mailService');
+const mailService = new MailService();
 
 module.exports = {
     signToken(id,token=null) {
@@ -36,7 +38,7 @@ module.exports = {
             }
             const token = this.generateToken(32)
             const resetToken = this.signToken(user._id, token);
-            
+
             user.passwordResetToken = token;
             await User.updateOne({ _id: user._id }, { passwordResetToken: token });
             const constants = {
@@ -51,18 +53,13 @@ module.exports = {
                 username: user.username
             }
 
-            await queue.sendMessage({
-                name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
-                data: mailOptions,
-                visibilityTimeout: 40,
-            })
+            await mailService.sendEmail({
+                data: mailOptions
+            });
 
             //await mailer.sendEmail(mailOptions)
             return true
         } catch (error) {
-            console.log(error)
             throw error
         }
 
@@ -78,7 +75,7 @@ module.exports = {
             if (!user) {
                 return false
             }
-            
+
             user.password = password;
             user.passwordConfirm = passwordConfirm;
             user.passwordResetToken = null;
@@ -96,13 +93,10 @@ module.exports = {
                 username: user.username
             }
 
-            await queue.sendMessage({
-                name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
-                data: mailOptions,
-                visibilityTimeout: 40,
-            })
+            await mailService.sendEmail({
+                data: mailOptions
+            });
+
             return true
         } catch (err) {
             console.log(err)
@@ -156,17 +150,12 @@ module.exports = {
                 template_id: "6504d0fd5a4e333d161d1106",
                 username: user.username
             }
-            await queue.sendMessage({
-                name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
+            await mailService.sendEmail({
                 data: mailOptions
-            })
+            });
 
-            //await mailer.sendEmail(mailOptions)
             return true
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -198,15 +187,25 @@ module.exports = {
 
                 }
 
-                await queue.sendMessage({
-                    name: "SingleEmail",
-                    import: "../utils/azure_mailer",
-                    method: "sendEmail",
+                await mailService.sendEmail({
                     data: mailOptions
-                })
+                });
+
+                return {
+                    _id: user._id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    username: user.username,
+                    email: user.email,
+                    stack: user.stack,
+                    photo: user.photo,
+                    active: user.active,
+                    role: user.role,
+                    verified: user.verified
+                }
                 //await mailer.sendEmail(mailOptions)
             } catch (err) {
-                console.log(err)
+                console.warn(err)
             }
 
 
@@ -261,17 +260,11 @@ module.exports = {
                     username: user.username
 
                 }
-                await queue.sendMessage({
-                    name: "SingleEmail",
-                    import: "../utils/azure_mailer",
-                    service: "mailer",
-                    method: "sendEmail",
+                await mailService.sendEmail({
                     data: mailOptions
-                })
-    
-                //await mailer.sendEmail(mailOptions)
+                });
+
             } catch (err) {
-                console.log(err)
             }
 
             return user;

@@ -34,7 +34,7 @@ module.exports = {
                 },
                 token
             });
-        } catch (err) { 
+        } catch (err) {
             return res.fail({
                 status: 'Failed',
                 message: "User password/email Invalid",
@@ -42,28 +42,23 @@ module.exports = {
             })
         }
 
-       
+
     },
 
     async register(req, res, next) {
         try {
             await validator.register.validateAsync(req.body);
-            
-            await auth.register(req.body);
-            req.body = {
-                username: req.body.username,
-                password: req.body.password
-            }
-            this.login(req, res, next);
+
+            const newUser = await auth.register(req.body);
+            return newUser
         } catch (err) {
-            console.log(err);
-            next(err);
+            return res.fail(err)
         }
     },
 
     logout(req, res) {
         req.logout((err) => {
-            if (err) return next(err); 
+            if (err) return next(err);
             req.session.destroy();
             res.setHeader("isAuthenticated", false).status(200).json({
                 status: 'success',
