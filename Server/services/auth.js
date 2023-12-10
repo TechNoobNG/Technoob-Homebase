@@ -5,7 +5,6 @@ const middleware = require('../middleware/index');
 const crypto = require('crypto');
 const mailer = require('../utils/mailer/azure_mailer')
 const jwt = require('jsonwebtoken');
-const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();

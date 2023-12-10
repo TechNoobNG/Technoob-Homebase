@@ -30,7 +30,7 @@ module.exports = {
         SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
         SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
         SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
-        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
+        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "http://localhost:3000",
@@ -88,6 +88,28 @@ module.exports = {
         MAIL_PROVIDER: {
             provider: process.env.MAIL_PROVIDER || 'ses',
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE,
+        },
+        STORAGE_PROVIDER: {
+            provider: process.env.STORAGE_PROVIDER || 'aws',
+            useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
+        },
+        AWS_SERVICES: {
+            SQS: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-north-1",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+            S3: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            }
         }
 
     },
@@ -122,7 +144,7 @@ module.exports = {
         SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
         SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
         SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
-        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
+        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "https://technoob.tech",
@@ -174,9 +196,26 @@ module.exports = {
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
         USE_CORS: process.env.USE_CORS,
         NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
-                MAIL_PROVIDER: {
+        MAIL_PROVIDER: {
             provider: process.env.MAIL_PROVIDER || 'ses',
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
+        },
+        STORAGE_PROVIDER: {
+            provider: process.env.STORAGE_PROVIDER || 'aws',
+            useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
+        },
+        AWS_SERVICES: {
+            SQS: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-north-1",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
         }
     },
 
@@ -207,7 +246,7 @@ module.exports = {
             SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
             SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
             SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
-            SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
+            SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
             ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
                 [
                     "http://localhost:3000"
@@ -251,6 +290,23 @@ module.exports = {
         MAIL_PROVIDER: {
             provider: process.env.MAIL_PROVIDER || 'ses',
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
+        },
+        STORAGE_PROVIDER: {
+            provider: process.env.STORAGE_PROVIDER || 'aws',
+            useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
+        },
+        AWS_SERVICES: {
+            SQS: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-north-1",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
         }
     }
 }

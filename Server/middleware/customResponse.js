@@ -24,6 +24,14 @@ function extendResponseObject(req, res, next) {
         }
 
     };
+    res.customRedirect = function (url) {
+        res.status(302).redirect(url);
+         try {
+            return processPostExecMiddlewares(req, res, next);
+        } catch (err) {
+            console.warn(err.message)
+        }
+    };
 
     const defaultErrorMessages = {
         400: 'Bad Request',

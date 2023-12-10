@@ -5,6 +5,7 @@ const resource = services.utils;
 module.exports = {
     async upload_file(req, res, next) {
         const file = req.file
+        file.uploaderId = req.user?._id.toString()
         try {
             const file_uloaded = await resource.upload_file(file)
             res.ok({
@@ -18,6 +19,21 @@ module.exports = {
                 message: error.message
             })
         }
+    },
+
+    async downloadFile(req, res) {
+        const { storeName, generatedId } = req.params;
+        const { _id: userId } = req.user._id;
+        try {
+            const file = await resource.download(storeName, generatedId, userId)
+            return res.customRedirect(file);
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+
     },
 
     async getPlaceholders(req, res) {

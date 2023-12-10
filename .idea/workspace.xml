@@ -6,8 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="00e7749f-a6c8-47fc-9b50-e9b4de138a83" name="Changes" comment="bug fixes and pagination">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/bin/www" beforeDir="false" afterPath="$PROJECT_DIR$/Server/bin/www" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/awsQueue/init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/azureQueue/init.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/config/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/config/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/controllers/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/controllers/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/mailer/azure_mailer.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/mailer/azure_mailer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/mailer/mailService.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/mailer/mailService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/mailer/ses_mailer.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/mailer/ses_mailer.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,12 +44,12 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "oluwatobiiloba"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;oluwatobiiloba&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -68,7 +77,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "dev__server",
+    "git-widget-placeholder": "fx/mailer__depedency",
     "last_opened_file_path": "/Users/oluwatobilobaaremu/Projects II/Technoob-Homebase",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -82,6 +91,8 @@
       <map>
         <entry key="com.haulmont.rcb.reactComponents" value="false" />
         <entry key="com.haulmont.rcb.reactInspector" value="false" />
+        <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
+        <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
       </map>
     </option>
   </component>
@@ -135,6 +146,7 @@
       <workItem from="1692370181089" duration="7910000" />
       <workItem from="1692470184753" duration="2371000" />
       <workItem from="1701907569548" duration="4774000" />
+      <workItem from="1702186718108" duration="251000" />
     </task>
     <servers />
   </component>

@@ -1,15 +1,22 @@
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config')[env];
+const config = require('../../config/config')[env];
 
 const { BlobServiceClient } = require("@azure/storage-blob");
 const connectionString = config.AZURE_STORAGE_CONNECTION_STRING;
 
-if (!connectionString) throw Error('Azure Storage accountKey not found');
+if (!connectionString) throw Error('Azure Storage Service: No keys found');
 
-// Create the BlobServiceClient object with connection string
 const blobServiceClient = BlobServiceClient.fromConnectionString(
     connectionString
 );
+
+const envMap = {
+    "development": "dev",
+    "test": "test",
+    "production": "prod",
+    "production_worker": "prod",
+    "development_worker": "dev"
+}
 
 module.exports = {
     async createContainer(name) {
@@ -53,31 +60,20 @@ module.exports = {
         }
         return containers;
     },
-    async upload(container, data, name, isFile = false) {
+    async upload({type, data, name, isFile = false}) {
         let availableContainers = await this.listContainers();
+        let containername = `technoob-${envMap[env]}`;
 
-        if (!availableContainers.find(c => c.name === container)) {
-           await this.createContainer(container);
+        if (!availableContainers.find(c => c.name === containername)) {
+            await this.createContainer(containername);
         }
-        let containerClient = blobServiceClient.getContainerClient(container);
+        let containerClient = blobServiceClient.getContainerClient(containername);
 
-        const blockBlobClient = containerClient.getBlockBlobClient(name);
+        const key = `${type}${name}`
+        const blockBlobClient = containerClient.getBlockBlobClient(key);
         const uploadBlobResponse = isFile? await blockBlobClient.uploadStream(data) : await blockBlobClient.upload(data, data.length);
         let blob = {
             name: name,
-            url: blockBlobClient.url,
-            requestId: uploadBlobResponse.requestId,
-            message: `Blob was uploaded successfully.`
-        }
-        return blob;
-
-    },
-    async uploadFile(container, file) {
-        const containerClient = blobServiceClient.getContainerClient(container);
-        const blockBlobClient = containerClient.getBlockBlobClient(file.name);
-        const uploadBlobResponse = await blockBlobClient.uploadFile(file.path);
-        let blob = {
-            name: file.name,
             url: blockBlobClient.url,
             requestId: uploadBlobResponse.requestId,
             message: `Blob was uploaded successfully.`
@@ -98,12 +94,15 @@ module.exports = {
         }
         return blob;
     },
-    async delete(container, name) {
-        const containerClient = blobServiceClient.getContainerClient(container);
-        const blockBlobClient = containerClient.getBlockBlobClient(name);
+    async delete(url) {
+        const parts = url.replace(/^(https?:\/\/)?/, '').split('/');
+        const containerName = parts[1];
+        const blobName = parts.slice(2).join('/');
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         const deleteBlobResponse = await blockBlobClient.delete();
         let response = {
-            name: name,
+            name: url,
             requestId: deleteBlobResponse.requestId,
             message: `Blob was deleted successfully.`
         }

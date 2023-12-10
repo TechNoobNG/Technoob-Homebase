@@ -21,6 +21,7 @@ const errorHandler = (err, req, res, next) => {
             error: err.message
         });
     } else {
+        console.log(err)
         res.status(500).json({
             success: false,
             error: "Internal Server Error"

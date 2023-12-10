@@ -17,6 +17,7 @@ const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
 const utility = require("../utils/utils");
+const download = require("./download");
 
 
 router.all('/', (req, res) => {
@@ -64,6 +65,7 @@ router.use(`${base}/events`, events);
 router.use(`${base}/jobs`, jobs);
 router.use(`${base}/quizzes`, quizzes)
 router.use(`${base}/experimental`, experimental)
+router.use(`${base}/download`, download)
 
 // Prometheus middleware
 router.get('/metrics', async (req, res) => {

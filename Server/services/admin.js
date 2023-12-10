@@ -10,7 +10,6 @@ const contributors = require('../models/contributors');
 const resources = require('../services/resources')
 const users = require('../services/user');
 const traffic = require('../services/traffic');
-const queue = require('../azureQueue/init');
 const ErrorResponse = require('../utils/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
@@ -416,12 +415,6 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            // await queue.sendMessage({
-            //     name: "BulkStaticEmail",
-            //     import: "../utils/azure_mailer",
-            //     method: "sendToMany",
-            //     data: mailOptions
-            // })
 
             await mailService.sendEmail({
                 name: "BulkStaticEmail",
@@ -461,13 +454,6 @@ module.exports = {
                 constants: constants,
                 template_id: content.template_id
             }
-
-            // await queue.sendMessage({
-            //     name: "BulkStaticEmail",
-            //     import: "../utils/azure_mailer",
-            //     method: "sendToManyStatic",
-            //     data: mailOptions
-            // })
 
             await mailService.sendEmail({
                 name: "BulkStaticEmail",

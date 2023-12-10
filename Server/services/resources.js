@@ -61,7 +61,7 @@ module.exports = {
 
             if (resources) {
                 resources.forEach((resource) => {
-                    traffic += resource.traffic 
+                    traffic += resource.traffic
                     downloads += resource.downloads
                 })
             }
@@ -76,7 +76,7 @@ module.exports = {
         }
     },
 
-    get: async (id,user) => { 
+    get: async (id,user) => {
         try {
             const resources = await Resources.findById(id);
             if (resources) {
@@ -90,7 +90,7 @@ module.exports = {
         }
     },
 
-    create: async (body) => { 
+    create: async (body) => {
         try {
             const resources = await Resources.create(body);
             if (resources) {
@@ -201,14 +201,14 @@ module.exports = {
 
             return resources.file;
         } catch (error) {
-            console.log(error)
+
             throw error;
         }
     },
 
     rate: async (id, rating) => {
         try {
-            const body = { 
+            const body = {
                 user_id: rating.user_id,
                 rating: rating.rating
              };
@@ -227,12 +227,12 @@ module.exports = {
                 }
             },
             {
-                _id: 1, 
-                name: 1, 
+                _id: 1,
+                name: 1,
                 type: 1,
                 image_placeholder: 1,
                 stack: 1
-               
+
               })
             return searchRecommendations
         } catch (err) {

@@ -3,26 +3,6 @@ const config = require('../../config/config')[env];
 const { EmailClient } = require("@azure/communication-email");
 const connectionString = config.COMMUNICATION_SERVICES_CONNECTION_STRING;
 const emailClient = new EmailClient(connectionString);
-// const catch429Policy = {
-//     name: "catch429Policy",
-//     async sendRequest(request, next) {
-//         const response = await next(request);
-//         if (response.status === 429) {
-//             throw new Error(response);
-//         }
-//         return response;
-//     }
-// };
-
-// const clientOptions = {
-//     additionalPolicies: [
-//         {
-//             policy: catch429Policy,
-//             position: "perRetry"
-//         }
-//     ]
-// }
-
 
 module.exports = {
     async mailer(options) {

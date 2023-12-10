@@ -6,7 +6,7 @@ const leaderboard = require("./leaderboard");
 const mongoose = require("mongoose");
 const quizzes = require('./quizzes');
 const ErrorResponse = require('../utils/errorResponse');
-
+const FileUploadHistory = require('../models/fileUploadHistory');
 
 module.exports = {
     async edit(id, params) {
@@ -35,7 +35,7 @@ module.exports = {
 
     async editPassword(id, password, previous_password) {
         try {
-               if(!id || !password || !previous_password) throw new Error('Id, Password and Previous Password are required')
+            if(!id || !password || !previous_password) throw new Error('Id, Password and Previous Password are required')
             const user = await User.findOne({ _id: id }).select('+password');
             const check = await user.comparePassword(previous_password,this.password)
             if (!check) {
@@ -154,9 +154,33 @@ module.exports = {
       const response = await mailing_list.create({ email })
       return response
 
-    },
+  },
+    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider }) {
+      try {
+        console.log({ generatedId, fileName, size, mimetype, uploaderId, url,provider })
+        const userExists = await User.findById(uploaderId);
+        const resolvedUploaderId = userExists ? uploaderId : "64feb85db96fbbd731c42d5f";
+        console.log({ resolvedUploaderId })
 
-    async getMetrics() {
+        const upload = await FileUploadHistory.create({
+          generatedId,
+          fileName,
+          size,
+          mimetype,
+          user_id: resolvedUploaderId,
+          url,
+          provider
+        });
+
+      return upload;
+      } catch (err) {
+        console.log(err)
+      console.error(`Cannot add file history: ${err.message}`);
+      throw err;
+    }
+  },
+
+  async getMetrics() {
         try {
             const users = await User.find().select('+active')
             const total = users.length

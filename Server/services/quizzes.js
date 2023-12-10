@@ -49,7 +49,7 @@ module.exports = {
         }
     },
 
-    get: async (id) => { 
+    get: async (id) => {
         try {
             const quizzes = await Quizzes.findById(id).select('theme type stack duration deadline');
             if (!quizzes) {
@@ -64,7 +64,7 @@ module.exports = {
         }
     },
 
-    create: async (body) => { 
+    create: async (body) => {
         try {
             const quizzes = await Quizzes.create(body);
             if (quizzes) {
@@ -202,9 +202,9 @@ module.exports = {
             const options = { upsert: true, new: true };
             await QuizTracker.findOneAndUpdate({quiz_id: id,user_id: user._id}, attempt, options)
             return quiz
-            
+
         } catch (error) {
-            console.log(error);
+            ;
             throw error;
         }
     },
@@ -221,10 +221,10 @@ module.exports = {
                 )
             };
             const totalQuestions = quiz.questions_answers.length;
-      
+
             const currentQuizTracker = await QuizTracker.findOne({ quiz_id: id, user_id: user._id });
             if (!currentQuizTracker) throw new Error("Quiz not Started")
-            if (currentQuizTracker && currentQuizTracker.completed) throw new Error("Quiz already completed");   
+            if (currentQuizTracker && currentQuizTracker.completed) throw new Error("Quiz already completed");
             if (!(currentQuizTracker && Date.now() < currentQuizTracker.createdAt.getTime() + (currentQuizTracker.duration_in_secs * 1000))) throw new Error("Quiz time has elapsed");
             if (currentQuizTracker.attempted >= currentQuizTracker.maxAttempts) throw new Error("Maximum number of attempts reached");
             if (currentQuizTracker.attempted === undefined || Number.isNaN(currentQuizTracker.attempted)) currentQuizTracker.attempted  = 0
@@ -240,12 +240,12 @@ module.exports = {
             tracker.attempted = currentQuizTracker.attempted + 1;
 
             await QuizTracker.findOneAndUpdate({ quiz_id: id, user_id: user._id }, tracker);
-           
+
             return {
                 score,
                 totalQuestions,
             };
-         
+
         } catch (error) {
             console.log
             throw error;
@@ -260,12 +260,12 @@ module.exports = {
                 }
             },
             {
-                _id: 1, 
-                theme: 1, 
+                _id: 1,
+                theme: 1,
                 type: 1,
                 duration: 1,
                 stack: 1
-               
+
               })
             return searchRecommendations
         } catch (err) {

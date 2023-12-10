@@ -10,7 +10,7 @@ try {
     pool.push(child);
   }
 } catch (error) {
-  console.log(error)
+
 }
 
 module.exports = {
