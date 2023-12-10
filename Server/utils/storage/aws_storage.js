@@ -12,15 +12,11 @@ const s3Client = new S3Client({
     credentials
 });
 const uuid = require('uuid');
-// const { fromIni } = require("@aws-sdk/credential-providers");
-// const { HttpRequest } = require("@smithy/protocol-http");
 const {
   getSignedUrl,
   S3RequestPresigner,
 } = require("@aws-sdk/s3-request-presigner");
-// const { parseUrl } = require("@smithy/url-parser");
-// const { formatUrl } = require("@aws-sdk/util-format-url");
-// const { Hash } = require("@smithy/hash-node");
+
 const { Upload } = require('@aws-sdk/lib-storage');
 const { Readable,PassThrough } = require('stream');
 
@@ -161,7 +157,7 @@ module.exports = {
         return response;
     },
 
-    async download({ storeName, generatedId, key }) {
+    async download({ storeName, key }) {
 
         const createPresignedUrlWithClient = ({ region, bucket, key }) => {
             const client = new S3Client({ region });

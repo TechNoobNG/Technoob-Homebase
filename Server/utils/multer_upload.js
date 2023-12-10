@@ -63,7 +63,8 @@ module.exports = {
                         mimetype: file.mimetype,
                         uploaderId: file.uploaderId,
                         url: uploadResponse.url,
-                        provider: uploadResponse.provider
+                        provider: uploadResponse.provider,
+                        key: uploadResponse.key,
                     })
                 }
 
@@ -107,7 +108,8 @@ module.exports = {
                         mimetype: file.mimetype,
                         uploaderId: uploaderId,
                         url: uploadResponse.url,
-                        provider: uploadResponse.provider
+                        provider: uploadResponse.provider,
+                            key: uploadResponse.key,
                     })
                 }
 
@@ -154,7 +156,8 @@ module.exports = {
                         mimetype: file.mimetype,
                         uploaderId,
                         url: uploadResponse.url,
-                        provider: uploadResponse.provider
+                        provider: uploadResponse.provider,
+                        key: uploadResponse.key,
                     })
                 }
 
@@ -175,4 +178,3 @@ module.exports = {
         });
     }
 }
-

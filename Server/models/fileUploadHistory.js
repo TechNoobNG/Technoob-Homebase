@@ -31,6 +31,9 @@ const fileUploadHistorySchema = new mongoose.Schema({
     provider: {
         type: String,
         required: true,
+    },
+    key: {
+        type: String,
     }
 }, {
 timestamps: true,

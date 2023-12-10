@@ -155,12 +155,11 @@ module.exports = {
       return response
 
   },
-    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider }) {
+    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider,key }) {
       try {
-        console.log({ generatedId, fileName, size, mimetype, uploaderId, url,provider })
-        const userExists = await User.findById(uploaderId);
+        let userId = uploaderId
+        const userExists = await User.userExist(userId);
         const resolvedUploaderId = userExists ? uploaderId : "64feb85db96fbbd731c42d5f";
-        console.log({ resolvedUploaderId })
 
         const upload = await FileUploadHistory.create({
           generatedId,
@@ -169,7 +168,8 @@ module.exports = {
           mimetype,
           user_id: resolvedUploaderId,
           url,
-          provider
+          provider,
+          key
         });
 
       return upload;

@@ -20,6 +20,7 @@ module.exports = {
         GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
+        AZURE_STORAGE_ACCOUNT_KEY: process.env.AZURE_STORAGE_ACCOUNT_KEY,
         COMMUNICATION_SERVICES_CONNECTION_STRING: process.env.COMMUNICATION_SERVICES_CONNECTION_STRING,
         LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'staging-api.technoob.tech',
         HONEYBADGER_KEY: process.env.HONEYBADGER_KEY,
@@ -90,7 +91,7 @@ module.exports = {
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE,
         },
         STORAGE_PROVIDER: {
-            provider: process.env.STORAGE_PROVIDER || 'aws',
+            provider: process.env.STORAGE_PROVIDER || 'azure',
             useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
         },
         AWS_SERVICES: {

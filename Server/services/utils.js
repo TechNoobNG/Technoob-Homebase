@@ -39,6 +39,7 @@ module.exports = {
            // const download = await
             return download
         } catch (error) {
+            console.log(error)
             throw error
         }
 

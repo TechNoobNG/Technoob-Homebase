@@ -79,7 +79,6 @@ passport.use('authenticate',
     },
     async (token, done) => {
         try {
-            console.log(token)
             const username = token.user.username
             let user = await User.findOne({ username });
             if (user) {
