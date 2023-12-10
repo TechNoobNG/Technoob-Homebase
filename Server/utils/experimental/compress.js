@@ -1,7 +1,7 @@
 
 const { createGzip } = require('node:zlib');
 const { Readable } = require('stream');
-const uploadToBlob = require('../utils/multer_upload')
+const uploadToBlob = require('../multer/multer_upload')
 
 module.exports = function ({
     uploadedFile,uploaderId

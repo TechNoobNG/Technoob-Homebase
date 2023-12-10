@@ -6,6 +6,8 @@ module.exports = {
     async upload_file(req, res, next) {
         const file = req.file
         file.uploaderId = req.user?._id.toString()
+        const acl = req.query.acl || "private";
+        file.acl = acl;
         try {
             const file_uloaded = await resource.upload_file(file)
             res.ok({

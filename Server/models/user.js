@@ -7,8 +7,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const SALT_ROUNDS = config.SALT_ROUNDS
 const TOKEN_EXPIRATION_TIME = config.TOKEN_EXPIRATION_TIME;
-const child_worker = require('../utils/child');
-const Honeybadger = require('../utils/honeybadger');
+const child_worker = require('../utils/experimental/child');
+const Honeybadger = require('../utils/honeybadger/honeybadger');
 
 const employmentHistorySchema = new Schema({
   role: {

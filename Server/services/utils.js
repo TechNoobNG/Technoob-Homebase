@@ -1,7 +1,7 @@
-const uploader = require('../utils/multer_upload')
+const uploader = require('../utils/multer/multer_upload')
 const pool = require('../experimental/index')
 const defaults = require('../models/defaults')
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 const storageService = require('../utils/storage/storageService')
 const fileUploadHistory = require('../models/fileUploadHistory')
 module.exports = {

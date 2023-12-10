@@ -1,7 +1,7 @@
 const Quizzes = require('../models/quizzes');
 const Activity = require('../models/activity');
 const QuizTracker = require('../models/quizTracker')
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 
 module.exports = {
     get_all: async (query) => {

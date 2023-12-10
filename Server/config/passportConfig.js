@@ -9,7 +9,7 @@ const GithubStrategy = require('passport-github2').Strategy;
 const mailer = require('../utils/mailer/azure_mailer');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 
 function getLockoutUntil(failedAttempts) {
     const lockoutDurationInMinutes = Math.pow(2, failedAttempts);

@@ -5,7 +5,7 @@ const User = require('../models/user');
 const leaderboard = require("./leaderboard");
 const mongoose = require("mongoose");
 const quizzes = require('./quizzes');
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 const FileUploadHistory = require('../models/fileUploadHistory');
 
 module.exports = {

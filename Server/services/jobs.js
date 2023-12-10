@@ -1,7 +1,7 @@
 const Jobs = require('../models/jobs.js');
 const Activity = require('../models/activity.js')
-const scraper = require('../utils/scraper');
-const ErrorResponse = require('../utils/errorResponse');
+const scraper = require('../utils/automations/scraper');
+const ErrorResponse = require('../utils/error/errorResponse');
 
 module.exports = {
 

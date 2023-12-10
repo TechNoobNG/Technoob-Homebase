@@ -1,5 +1,5 @@
 const { admin } = require("../services/index")
-const errorHandler = require("../utils/errorFormater");
+const errorHandler = require("../utils/error/errorFormater");
 const { sendMessage } = require('../utils/queues/queueService');
 
 module.exports = {

@@ -1,6 +1,6 @@
 const Resources = require('../models/resources.js');
 const Activity = require('../models/activity.js')
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 module.exports = {
     get_all: async (query) => {
         try {

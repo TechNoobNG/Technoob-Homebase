@@ -1,11 +1,10 @@
 
 const multer = require('multer');
 const sharp = require('sharp');
-const storageService = require('../utils/storage/storageService');
+const storageService = require('../storage/storageService');
 const stream = require('stream');
-const userService = require('../services/user');
-const user = require('../services/user');
-const { type } = require('os');
+const userService = require('../../services/user');
+const user = require('../../services/user');
 
 
 const uploadParams = {
@@ -37,7 +36,7 @@ module.exports = {
                         type:'images',
                         data: resizedImage,
                         name: fileName,
-                        acl: "private"
+                        acl: file.acl || "private"
                     });
                 } else {
                     const sizeLimit = file.mimetype === 'application/zip' ? 15 * 1024 * 1024 : 30 * 1024 * 1024;
@@ -51,7 +50,8 @@ module.exports = {
                         type,
                         data: uploadedFile,
                         name: fileName,
-                        isFile: true
+                        isFile: true,
+                        acl: file.acl || "private"
                     });
                 }
 
@@ -96,7 +96,8 @@ module.exports = {
                     const uploadResponse = await storageService.upload({
                         type: 'images',
                         data: resizedImageStream,
-                        name: fileName
+                        name: fileName,
+                        acl: file.acl || "private"
                     });
 
 
@@ -109,7 +110,7 @@ module.exports = {
                         uploaderId: uploaderId,
                         url: uploadResponse.url,
                         provider: uploadResponse.provider,
-                            key: uploadResponse.key,
+                        key: uploadResponse.key,
                     })
                 }
 
@@ -144,7 +145,8 @@ module.exports = {
                         type: mimetype.split('/')[0],
                         data: sizeCounterStream,
                         name: fileName,
-                        isFile: true
+                        isFile: true,
+                        acl: file.acl || "private"
                     });
 
 

@@ -10,7 +10,7 @@ const contributors = require('../models/contributors');
 const resources = require('../services/resources')
 const users = require('../services/user');
 const traffic = require('../services/traffic');
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
 
