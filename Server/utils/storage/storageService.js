@@ -43,7 +43,6 @@ module.exports = {
             res.provider = provider
             return res;
         } catch (error) {
-
             throw error
         }
 

@@ -24,10 +24,10 @@ module.exports = {
     },
 
     async downloadFile(req, res) {
-        const { storeName, generatedId } = req.params;
+        const { generatedId } = req.params;
         const { _id: userId } = req.user._id;
         try {
-            const file = await resource.download(storeName, generatedId, userId)
+            const file = await resource.download( generatedId, userId)
             return res.customRedirect(file);
         } catch (err) {
             res.fail({

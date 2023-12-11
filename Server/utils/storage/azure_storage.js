@@ -100,8 +100,10 @@ module.exports = {
             if(!generatedId){
                 generatedId = uuid.v4()
             }
-            blob.url = `https://${config.LIVE_BASE_URL}/api/v1/download/${containername}/${generatedId}`
+            blob.url = `https://${config.LIVE_BASE_URL}/api/v1/download/${generatedId}`
             blob.generatedId = generatedId;
+            blob.objectStore = containername;
+            blob.key = key;
         }
         blob.key = key
         return blob;

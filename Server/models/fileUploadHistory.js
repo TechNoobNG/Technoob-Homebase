@@ -34,6 +34,10 @@ const fileUploadHistorySchema = new mongoose.Schema({
     },
     key: {
         type: String,
+    },
+    objectStore: {
+        type: String,
+        required: true,
     }
 }, {
 timestamps: true,

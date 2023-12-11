@@ -15,7 +15,7 @@ module.exports = {
         }
     },
 
-    async download(storeName, generatedId, userId) {
+    async download( generatedId, userId) {
         try {
             const checkFile = await fileUploadHistory.findOne({
                 generatedId: generatedId,
@@ -28,6 +28,7 @@ module.exports = {
                     "Resource not found"
                 )
             }
+            const storeName = checkFile.objectStore;
             const type = checkFile.mimetype.split('/')[0];
             let key = checkFile.key || `${type}/${checkFile.fileName}`
             const download = await storageService.download({

@@ -132,9 +132,10 @@ module.exports = {
             if (!generatedId) {
                 generatedId = uuid.v4()
             }
-            response.url = `https://${config.LIVE_BASE_URL}/api/v1/download/${bucketName}/${generatedId}`
+            response.url = `https://${config.LIVE_BASE_URL}/api/v1/download/${generatedId}`
             response.generatedId = generatedId;
             response.key = key;
+            response.objectStore = bucketName;
         } else {
             await s3Client.send(new PutObjectAclCommand({
                 Bucket: bucketName,

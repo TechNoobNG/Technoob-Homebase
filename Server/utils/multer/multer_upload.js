@@ -65,6 +65,7 @@ module.exports = {
                         url: uploadResponse.url,
                         provider: uploadResponse.provider,
                         key: uploadResponse.key,
+                        objectStore: uploadResponse.objectStore
                     })
                 }
 
@@ -111,6 +112,7 @@ module.exports = {
                         url: uploadResponse.url,
                         provider: uploadResponse.provider,
                         key: uploadResponse.key,
+                        objectStore: uploadResponse.objectStore
                     })
                 }
 
@@ -160,6 +162,7 @@ module.exports = {
                         url: uploadResponse.url,
                         provider: uploadResponse.provider,
                         key: uploadResponse.key,
+                        objectStore: uploadResponse.objectStore
                     })
                 }
 

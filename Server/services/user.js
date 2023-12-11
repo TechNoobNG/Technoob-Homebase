@@ -155,7 +155,7 @@ module.exports = {
       return response
 
   },
-    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider,key }) {
+    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider, key, objectStore}) {
       try {
         let userId = uploaderId
         const userExists = await User.userExist(userId);
@@ -169,12 +169,12 @@ module.exports = {
           user_id: resolvedUploaderId,
           url,
           provider,
-          key
+          key,
+          objectStore
         });
 
       return upload;
       } catch (err) {
-        console.log(err)
       console.error(`Cannot add file history: ${err.message}`);
       throw err;
     }
