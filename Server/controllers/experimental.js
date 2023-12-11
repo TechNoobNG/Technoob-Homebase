@@ -6,15 +6,16 @@ module.exports = {
             if (!req.file) {
               return res.status(400).send('No file uploaded.');
             }
-        
-            const uploadedFile = req.file;
-            const compressedFile = await experimental.compressFile(uploadedFile);
 
-            res.ok({
-                status: "success",
-                message: `File Compressed`,
-                data: compressedFile
-            })
+          const uploadedFile = req.file;
+          uploadedFile.uploaderId = req.user._id
+          const compressedFile = await experimental.compressFile(uploadedFile);
+
+          res.ok({
+              status: "success",
+              message: `File Compressed`,
+              data: compressedFile
+          })
 
           } catch (error) {
             res.fail('Error compressing file.');

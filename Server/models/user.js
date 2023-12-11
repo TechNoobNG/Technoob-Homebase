@@ -7,8 +7,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const SALT_ROUNDS = config.SALT_ROUNDS
 const TOKEN_EXPIRATION_TIME = config.TOKEN_EXPIRATION_TIME;
-const child_worker = require('../utils/child');
-const Honeybadger = require('../utils/honeybadger');
+const child_worker = require('../utils/experimental/child');
+const Honeybadger = require('../utils/honeybadger/honeybadger');
 
 const employmentHistorySchema = new Schema({
   role: {
@@ -139,7 +139,7 @@ const user = new Schema({
 
     quiz_record: [{
         type: Schema.Types.ObjectId,
-        ref: 'QuizTracker' 
+        ref: 'QuizTracker'
     }],
     country: String,
     bio: String,
@@ -159,12 +159,12 @@ user.pre('save', async function (next) {
       if (this.passwordConfirm !== this.password) {
           throw new Error("Please confirm your password")
       }
-      if (child_worker.checkChild() > 0) { 
+      if (child_worker.checkChild() > 0) {
         try {
             const [hash] = await Promise.all([
               child_worker.work({ activity: 'Hashing', payload: { password: this.password } })
             ]);
-          
+
             this.password = hash;
         } catch (err) {
             console.log(err)
@@ -222,12 +222,16 @@ user.virtual('lastCompletedAttempt').get(function () {
     }
     return null;
   });
-  
+
   user.virtual('pendingQuizzes').get(function () {
     return this.quiz_record.filter((quiz) => !quiz.completed);
   });
-  
 
+
+user.statics.userExist = async function (userId) {
+  const user = await this.findById(userId);
+  return !!user;
+};
 
 const UserModel = mongoose.model('User', user);
 module.exports = UserModel;

@@ -1,12 +1,12 @@
 const { admin } = require("../services/index")
-const errorHandler = require("../utils/errorFormater");
-const queue = require('../azureQueue/init');
+const errorHandler = require("../utils/error/errorFormater");
+const { sendMessage } = require('../utils/queues/queueService');
 
 module.exports = {
     async dashboard(req, res) {
         try {
             const adminDashboard = await admin.adminDashboard();
-            
+
             return res.ok({
                 status: "success",
                 message: `Dashboard details retrived successfully`,
@@ -20,7 +20,7 @@ module.exports = {
         const range = req.query
         try {
             const trafficData = await admin.traffic(range);
-            
+
             return res.ok({
                 status: "success",
                 message: `Traffic details retrieved successfully`,
@@ -34,7 +34,7 @@ module.exports = {
     async saveMailTemplate(req, res) {
         try {
             const email_response = await admin.saveMailTemplate(req.body);
-            
+
             return res.ok({
                 status: "success",
                 message: `Added email template to database`,
@@ -43,7 +43,7 @@ module.exports = {
 
             })
         } catch (error) {
-            console.log(error)
+
              return res.fail(error)
         }
     },
@@ -59,7 +59,7 @@ module.exports = {
                 data: admin_response
             })
         } catch (error) {
-            console.log(error)
+
              return res.fail(error)
         }
     },
@@ -88,7 +88,7 @@ module.exports = {
                 data: templates
             })
         } catch (error) {
-            console.log(error)
+
              return res.fail(error)
         }
     },
@@ -102,7 +102,7 @@ module.exports = {
                 data: template
             })
         } catch (error) {
-            console.log(error)
+
              return res.fail(error)
         }
     },
@@ -116,7 +116,7 @@ module.exports = {
                 data: admins_list
             })
         } catch (error) {
-            console.log(error)
+
              return res.fail(error)
         }
     },
@@ -130,7 +130,7 @@ module.exports = {
                 data: admin_info
             })
         } catch (error) {
-            console.log(error)
+
              return res.fail(error)
         }
     },
@@ -285,7 +285,7 @@ module.exports = {
         }
     },
 
-    async getMailingList(req, res) { 
+    async getMailingList(req, res) {
         try {
             const query = req.query
             const mailingList = await admin.getMailingList(query);
@@ -316,7 +316,7 @@ module.exports = {
 
         }
     },
-    
+
     async getContactUs(req, res) {
         try {
             const contactUs = await admin.getContactUs();
@@ -327,7 +327,7 @@ module.exports = {
             })
         }
         catch (error) {
-            console.log(error)
+
              return res.fail(error)
 
         }
@@ -359,7 +359,7 @@ module.exports = {
             })
         }
         catch (error) {
-            console.log(error)
+
              return res.fail(error)
 
         }
@@ -377,7 +377,7 @@ module.exports = {
             })
         }
         catch (error) {
-            console.log(error)
+
              return res.fail(error)
 
         }
@@ -394,7 +394,7 @@ module.exports = {
             })
         }
         catch (error) {
-            console.log(error)
+
              return res.fail(error)
 
         }
@@ -410,7 +410,7 @@ module.exports = {
             })
         }
         catch (error) {
-            console.log(error)
+
              return res.fail(error)
 
         }
@@ -428,7 +428,7 @@ module.exports = {
             })
         }
         catch (error) {
-            console.log(error)
+
              return res.fail(error)
 
         }
@@ -436,7 +436,7 @@ module.exports = {
     async triggerWorkerJobs(req, res) {
         const { name, importString , service, method,data } = req.body;
         try {
-            const sendMessage = await queue.sendMessage({
+            const addToQueue = await sendMessage({
                 name: name,
                 import: importString,
                 service: service,
@@ -449,11 +449,10 @@ module.exports = {
             return res.ok({
                 status: "success",
                 message: `Created Task for worker`,
-                data: sendMessage
+                data: addToQueue
             })
         }
         catch (error) {
-            console.log(error)
              return res.fail(error)
 
         }

@@ -1,7 +1,7 @@
 const services = require("../services/index");
 const { mailing_list } = require("../services/user");
 const users = services.user
-const worker = require('../utils/child')
+const worker = require('../utils/experimental/child')
 
 module.exports = {
     async dashboard(req, res) {

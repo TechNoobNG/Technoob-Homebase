@@ -20,6 +20,7 @@ module.exports = {
         GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
+        AZURE_STORAGE_ACCOUNT_KEY: process.env.AZURE_STORAGE_ACCOUNT_KEY,
         COMMUNICATION_SERVICES_CONNECTION_STRING: process.env.COMMUNICATION_SERVICES_CONNECTION_STRING,
         LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'staging-api.technoob.tech',
         HONEYBADGER_KEY: process.env.HONEYBADGER_KEY,
@@ -30,7 +31,7 @@ module.exports = {
         SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
         SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
         SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
-        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
+        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "http://localhost:3000",
@@ -85,6 +86,33 @@ module.exports = {
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
         USE_CORS: process.env.USE_CORS,
         NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
+        MAIL_PROVIDER: {
+            provider: process.env.MAIL_PROVIDER || 'ses',
+            useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE,
+        },
+        STORAGE_PROVIDER: {
+            provider: process.env.STORAGE_PROVIDER || 'azure',
+            useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
+        },
+        AWS_SERVICES: {
+            SQS: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-north-1",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+            S3: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            }
+        }
+
     },
     test: {
         NODE_ENV: "test"
@@ -117,7 +145,7 @@ module.exports = {
         SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
         SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
         SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
-        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
+        SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
                 "https://technoob.tech",
@@ -168,7 +196,28 @@ module.exports = {
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
         USE_CORS: process.env.USE_CORS,
-        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
+        MAIL_PROVIDER: {
+            provider: process.env.MAIL_PROVIDER || 'ses',
+            useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
+        },
+        STORAGE_PROVIDER: {
+            provider: process.env.STORAGE_PROVIDER || 'aws',
+            useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
+        },
+        AWS_SERVICES: {
+            SQS: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-north-1",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
+        }
     },
 
     production_worker: {
@@ -198,7 +247,7 @@ module.exports = {
             SCRAPER_QUANTITY: process.env.SCRAPER_QUANTITY || 10,
             SCRAPED_JOBS_EXPIRES: process.env.SCRAPED_JOBS_EXPIRES || 7,
             SCRAPER_OLDEST_JOB_FETCH: process.env.SCRAPER_OLDEST_JOB_FETCH || 3,
-            SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "DoNotReply@technoob.tech",
+            SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
             ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
                 [
                     "http://localhost:3000"
@@ -212,7 +261,7 @@ module.exports = {
                 "junior QA",
                 "Junior customer Service support"
             ],
-        LISTENER: process.env.LISTENER || true,
+        LISTENER: process.env.LISTENER,
         AVAILABLE_STACKS:  [
             "Frontend Development",
             "UI/UX",
@@ -238,6 +287,27 @@ module.exports = {
             [
                 '/api/v1/authenticate'
             ],
-        USE_CORS: process.env.USE_CORS || true,
+        USE_CORS: process.env.USE_CORS ,
+        MAIL_PROVIDER: {
+            provider: process.env.MAIL_PROVIDER || 'ses',
+            useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
+        },
+        STORAGE_PROVIDER: {
+            provider: process.env.STORAGE_PROVIDER || 'aws',
+            useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
+        },
+        AWS_SERVICES: {
+            SQS: {
+                region: process.env.AWS_REGION,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-north-1",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
+        }
     }
 }

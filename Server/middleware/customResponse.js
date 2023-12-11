@@ -1,5 +1,5 @@
-const ErrorResponse = require('../utils/errorResponse');
-const errorFormater = require('../utils/errorFormater');
+const ErrorResponse = require('../utils/error/errorResponse');
+const errorFormater = require('../utils/error/errorFormater');
 function extendResponseObject(req, res, next) {
     async function processPostExecMiddlewares(req, res, next) {
         for (const middleware of req.postExecMiddlewares ?? []) {
@@ -23,6 +23,14 @@ function extendResponseObject(req, res, next) {
             console.warn(err.message)
         }
 
+    };
+    res.customRedirect = function (url) {
+        res.status(302).redirect(url);
+         try {
+            return processPostExecMiddlewares(req, res, next);
+        } catch (err) {
+            console.warn(err.message)
+        }
     };
 
     const defaultErrorMessages = {

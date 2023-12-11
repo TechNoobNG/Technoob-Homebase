@@ -1,6 +1,4 @@
-
-const env = process.env.NODE_ENV || 'development';
-const utils = require('../utils/utils')
+const utils = require('../utils')
 
 process.on('message', async (message) => {
   try {
@@ -14,7 +12,7 @@ process.on('message', async (message) => {
       default:
         throw new Error('Activity not found');
     }
-  
+
   } catch (error) {
     process.send({ type: 'error', data: `${error}` });
   }

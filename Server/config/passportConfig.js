@@ -6,10 +6,10 @@ const User = require('../models/user');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const crypto = require('crypto');
 const GithubStrategy = require('passport-github2').Strategy;
-const mailer = require('../utils/azure_mailer');
+const {sendEmail} = require('../utils/mailer/mailService');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 
 function getLockoutUntil(failedAttempts) {
     const lockoutDurationInMinutes = Math.pow(2, failedAttempts);
@@ -79,7 +79,6 @@ passport.use('authenticate',
     },
     async (token, done) => {
         try {
-            console.log(token)
             const username = token.user.username
             let user = await User.findOne({ username });
             if (user) {
@@ -135,11 +134,11 @@ passport.use(
                             email: user.email,
                             subject: 'Welcome to TechNoob!',
                             constants,
-                            template_id: "6435a97404c5b38f7ba81a35",
+                            template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                             username: user.username
 
                         }
-                        await mailer.sendEmail(mailOptions)
+                        await sendEmail(mailOptions)
                     } catch (err) {
                         console.log(err)
                     }

@@ -62,9 +62,9 @@ module.exports = {
                 status: 'fail',
                 message: 'Unauthorized access'
             })
-        }       
+        }
     },
-    
+
     isAdmin(req, res, next) {
         if ( req.user?.role === 'admin') {
             return next();
@@ -79,7 +79,7 @@ module.exports = {
             try {
                 const permission = await Permissions.findOne({ permission: perm });
                 const permissionId = permission ? new mongoose.Types.ObjectId(permission._id) : null;
-                if (!permissionId) { 
+                if (!permissionId) {
                     throw new Error('Permission not found')
                 }
                 const admin = await Admin.findOne({ user_id: req.user?._id, permissions: { $in: [permissionId] } });
@@ -90,7 +90,7 @@ module.exports = {
                         message: 'You do not have permission to access this resource'
                     })
                 }
-                
+
                 next();
             } catch (err) {
                 console.log(err)

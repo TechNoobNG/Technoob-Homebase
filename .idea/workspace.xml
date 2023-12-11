@@ -8,6 +8,40 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/bin/www" beforeDir="false" afterPath="$PROJECT_DIR$/Server/bin/www" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/config/passportConfig.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/config/passportConfig.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/controllers/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/controllers/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/controllers/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/controllers/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/controllers/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/controllers/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/experimental/node_worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/experimental/node_worker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/middleware/customResponse.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/middleware/customResponse.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/middleware/errorHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/middleware/errorHandler.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/middleware/redisCache.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/middleware/redisCache.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/middleware/traffic.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/middleware/traffic.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/models/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/models/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/events.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/events.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/jobs.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/jobs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/quizzes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/quizzes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/resources.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/resources.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/services/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/services/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/azure_blob_helper.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/azure_sms.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/child.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/experimental/child.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/child_worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/experimental/child_worker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/compress.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/experimental/compress.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/cosmo_db.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/db_connector.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/connectors/db_connector.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/errorFormater.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/error/errorFormater.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/errorResponse.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/error/errorResponse.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/honeybadger.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/honeybadger/honeybadger.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/joi_validator.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/validators/joi_validator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/multer_upload.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/multer/multer_upload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/redishelper.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/connectors/redishelper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/scraper.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/automations/scraper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/utils/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Server/utils/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,12 +69,12 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "oluwatobiiloba"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;oluwatobiiloba&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -63,27 +97,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "dev__server",
-    "last_opened_file_path": "/Users/oluwatobilobaaremu/Projects II/Technoob-Homebase",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fx/mailer__depedency&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/oluwatobilobaaremu/Projects II/Technoob-Homebase&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
         <entry key="com.haulmont.rcb.reactComponents" value="false" />
         <entry key="com.haulmont.rcb.reactInspector" value="false" />
+        <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
+        <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
       </map>
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Server/utils/automations" />
+      <recent name="$PROJECT_DIR$/Server/utils/multer" />
+      <recent name="$PROJECT_DIR$/Server/utils/validators" />
+      <recent name="$PROJECT_DIR$/Server/utils/error" />
+      <recent name="$PROJECT_DIR$/Server/utils/experimental" />
+    </key>
   </component>
   <component name="RunManager" selected="npm.start">
     <configuration name="default" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -135,6 +180,8 @@
       <workItem from="1692370181089" duration="7910000" />
       <workItem from="1692470184753" duration="2371000" />
       <workItem from="1701907569548" duration="4774000" />
+      <workItem from="1702186718108" duration="251000" />
+      <workItem from="1702246317561" duration="376000" />
     </task>
     <servers />
   </component>

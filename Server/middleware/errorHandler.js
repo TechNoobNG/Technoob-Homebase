@@ -1,6 +1,6 @@
-const ErrorResponse = require('../utils/errorResponse');
-const  errorFormater = require("../utils/errorFormater");
-const Honeybadger = require("../utils/honeybadger");
+const ErrorResponse = require('../utils/error/errorResponse');
+const  errorFormater = require("../utils/error/errorFormater");
+const Honeybadger = require("../utils/honeybadger/honeybadger");
 
 const errorHandler = (err, req, res, next) => {
 
@@ -21,6 +21,7 @@ const errorHandler = (err, req, res, next) => {
             error: err.message
         });
     } else {
+        console.log(err)
         res.status(500).json({
             success: false,
             error: "Internal Server Error"

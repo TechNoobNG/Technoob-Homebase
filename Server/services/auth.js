@@ -3,11 +3,10 @@ const config = require('../config/config')[env];
 const User = require('../models/user');
 const middleware = require('../middleware/index');
 const crypto = require('crypto');
-const mailer = require('../utils/azure_mailer')
+const mailer = require('../utils/mailer/azure_mailer')
 const jwt = require('jsonwebtoken');
-const queue = require('../azureQueue/init');
-const ErrorResponse = require('../utils/errorResponse');
-const MailService = require('../utils/mailService');
+const ErrorResponse = require('../utils/error/errorResponse');
+const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
 
 module.exports = {
@@ -49,7 +48,7 @@ module.exports = {
                 email: user.email,
                 subject: 'You requested a password reset',
                 constants,
-                template_id: "6504d0aa5a4e333d161d10ff",
+                template_id: "7c2c73bd-6ab1-436e-b839-2a217eb16327",
                 username: user.username
             }
 
@@ -89,7 +88,7 @@ module.exports = {
                 email: user.email,
                 subject: 'Successful Password Reset',
                 constants,
-                template_id: "6504d0fd5a4e333d161d1106",
+                template_id: "b47a53f1-a0ec-4c2e-a7eb-7b4bd1cc5793",
                 username: user.username
             }
 
@@ -147,7 +146,7 @@ module.exports = {
                 email: user.email,
                 subject: 'Your password has been changed',
                 constants,
-                template_id: "6504d0fd5a4e333d161d1106",
+                template_id: "b47a53f1-a0ec-4c2e-a7eb-7b4bd1cc5793",
                 username: user.username
             }
             await mailService.sendEmail({
@@ -179,7 +178,7 @@ module.exports = {
                     email: user.email,
                     subject: 'Welcome to TechNoob!',
                     constants,
-                    template_id: "643b20e047cb9cc5083f0dae",
+                    template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                     username: user.username
 
                 }
@@ -252,7 +251,7 @@ module.exports = {
                     email: user.email,
                     subject: 'Welcome to TechNoob!',
                     constants,
-                    template_id: "6435a97404c5b38f7ba81a35",
+                    template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                     username: user.username
 
                 }

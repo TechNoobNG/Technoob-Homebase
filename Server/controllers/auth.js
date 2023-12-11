@@ -8,7 +8,7 @@ const auth = services.auth;
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken')
 const baseurl = config.LIVE_BASE_URL;
-const validator = require('../utils/joi_validator');
+const validator = require('../utils/validators/joi_validator');
 
 module.exports = {
     async login(req, res, next) {

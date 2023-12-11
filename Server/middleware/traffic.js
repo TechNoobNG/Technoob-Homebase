@@ -1,5 +1,5 @@
 const TrafficMetric = require('../models/trafficMetrics');
-const honeyBadger = require('../utils/honeybadger');
+const honeyBadger = require('../utils/honeybadger/honeybadger');
 
 const saveTrafficMetric = (req, res, next) => {
 
