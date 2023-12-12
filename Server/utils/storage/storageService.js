@@ -13,10 +13,8 @@ function getRandomStorageProvider() {
 function getStorageProvider(provider) {
     if (!provider || !["aws", "azure"].includes(provider) || useMultipleProviders) {
         const randomProvider = getRandomStorageProvider();
-        console.log("Using random storage provider: " + randomProvider);
         return require(`./${randomProvider}_storage`);
     } else {
-        console.log("Using storage provider: " + provider);
         return require(`./${provider}_storage`);
     }
 }
@@ -48,20 +46,29 @@ module.exports = {
 
     },
     delete: async (url) => {
-        if (!url) {
-            throw new Error("Missing url");
+        try {
+            if (!url) {
+                throw new Error("Missing url");
+            }
+            return await getStorageProvider(storageProvider).delete(url);
+        } catch (error) {
+            throw error
         }
-        return await getStorageProvider(storageProvider).delete(url);
     },
-    download: async ({storeName,generatedId,key}) => {
-        if (!storeName) {
-            throw new Error("Missing storeName");
+    download: async ({ storeName, generatedId, key }) => {
+        try {
+            if (!storeName) {
+                throw new Error("Missing storeName");
+            }
+            if(!generatedId && !key){
+                throw new Error("Missing generatedId or key");
+            }
+            const file = await getStorageProvider(storageProvider).download({ storeName, generatedId, key });
+            return file;
+        } catch (error) {
+            throw error
         }
-        if(!generatedId && !key){
-            throw new Error("Missing generatedId or key");
-        }
-        const file = await getStorageProvider(storageProvider).download({ storeName, generatedId, key });
-        return file;
+
     },
 
 }
