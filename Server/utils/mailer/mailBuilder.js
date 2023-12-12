@@ -12,10 +12,8 @@ function getRandomMailProvider() {
 function getMailProvider(provider) {
     if (!provider || !["ses", "azure"].includes(provider) || useMultipleProviders) {
         const randomProvider = getRandomMailProvider();
-        console.log("Using random provider: " + randomProvider);
         return require(`./${randomProvider}_mailer`);
     } else {
-        console.log("Using provider: " + provider);
         return require(`./${provider}_mailer`);
     }
 }
@@ -63,7 +61,6 @@ module.exports = {
      * @return {number}
      */
     async sendToMany(options) {
-        // 1) retrieve email template from database
         const template = await templates.findById(options.template_id);
         if(!template) throw new Error ("Invalid template ID")
         let content = template.template.toString();
