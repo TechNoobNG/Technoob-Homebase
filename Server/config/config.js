@@ -64,7 +64,8 @@ module.exports = {
             "Cybersecurity",
             "Software Testing",
             "DevOps",
-            "SEO"
+            "SEO",
+            "Product Design"
         ],
         WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
         AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
@@ -175,7 +176,8 @@ module.exports = {
             "Cybersecurity",
             "Software Testing",
             "DevOps",
-            "SEO"
+            "SEO",
+            "Product Design"
         ],
         WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
         AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
@@ -274,7 +276,8 @@ module.exports = {
             "Cybersecurity",
             "Software Testing",
             "DevOps",
-            "SEO"
+            "SEO",
+            "Product Design"
         ],
         WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
         AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
