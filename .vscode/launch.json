@@ -18,6 +18,12 @@
                 "package": "${workspaceFolder}/Server/package.json",
                 "localRoot": "${workspaceFolder}/Server"
             }
+        },
+        {
+            "name": "Debug Server",
+            "type": "node",
+            "localRoot": "${workspaceFolder}/Server",
+            "request": "attach"
         }
     ]
 }

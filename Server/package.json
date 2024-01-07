@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "stop": "pm2-runtime stop ecosystem.config.js --env development",
-    "dev": "node ./bin/www",
+    "dev": "node --env-file=.env ./bin/www",
     "start-worker": "node ./azureQueue/worker.js",
     "start-with-worker": "npm run start & sleep 60 && npm run start-worker &"
   },
