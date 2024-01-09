@@ -12,11 +12,9 @@ const computedDownloadsSchema = new mongoose.Schema({
     },
     size: {
         type: Number,
-            required: true,
         },
     mimetype: {
         type: String,
-        required: true,
         },
     user_id: {
             type: Schema.Types.ObjectId,
@@ -26,23 +24,20 @@ const computedDownloadsSchema = new mongoose.Schema({
         },
     url: {
         type: String,
-        required: true
     },
     provider: {
         type: String,
-        required: true,
     },
     key: {
         type: String,
     },
     objectStore: {
         type: String,
-        required: true,
     },
     status: {
         type: String,
         default: "pending",
-        enum: ["pending", "completed", "failed"],
+        enum: ["pending","in-progress", "completed", "failed"],
     }
 }, {
 timestamps: true,

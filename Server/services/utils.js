@@ -4,6 +4,7 @@ const defaults = require('../models/defaults')
 const ErrorResponse = require('../utils/error/errorResponse');
 const storageService = require('../utils/storage/storageService')
 const fileUploadHistory = require('../models/fileUploadHistory')
+const computedDownloads = require('../models/computedDownloads')
 module.exports = {
     async upload_file(file) {
         try {
@@ -46,6 +47,34 @@ module.exports = {
                 key
             })
             return download
+        } catch (error) {
+            throw error
+        }
+
+    },
+
+        async downloadSse( generatedId, userId) {
+        try {
+            const checkFile = await computedDownloads.findOne({
+                generatedId: generatedId,
+                user_id: userId,
+                status: "completed"
+            })
+
+
+            if (!checkFile) {
+                return false
+            }
+
+            // const storeName = checkFile.objectStore;
+            // const type = checkFile.mimetype.split('/')[0];
+            // let key = checkFile.key || `${type}/${checkFile.fileName}`
+            // const download = await storageService.download({
+            //     storeName,
+            //     generatedId,
+            //     key
+            // })
+            return checkFile.url
         } catch (error) {
             throw error
         }
