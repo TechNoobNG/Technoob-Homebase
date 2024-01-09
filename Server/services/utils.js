@@ -17,10 +17,18 @@ module.exports = {
 
     async download( generatedId, userId) {
         try {
-            const checkFile = await fileUploadHistory.findOne({
+            let checkFile = await fileUploadHistory.findOne({
                 generatedId: generatedId,
                 user_id: userId,
             })
+
+            if (!checkFile) {
+                checkFile = await computedDownloads.findOne({
+                    generatedId: generatedId,
+                    user_id: userId,
+                    status: "completed"
+                })
+            }
 
             if (!checkFile) {
                 throw new ErrorResponse(
@@ -28,6 +36,7 @@ module.exports = {
                     "Resource not found"
                 )
             }
+
             const storeName = checkFile.objectStore;
             const type = checkFile.mimetype.split('/')[0];
             let key = checkFile.key || `${type}/${checkFile.fileName}`
@@ -36,11 +45,8 @@ module.exports = {
                 generatedId,
                 key
             })
-            //const download = await pool.exec('download', [storeName, generatedId]);
-           // const download = await
             return download
         } catch (error) {
-            console.log(error)
             throw error
         }
 
