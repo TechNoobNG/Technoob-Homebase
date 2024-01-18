@@ -64,8 +64,9 @@ module.exports = {
       //let page = (await browser.pages())[0];
       let page = await browser.newPage();
       await page.setViewport({ width: 1080, height: 1024 });
+      const url = `https://ng.indeed.com/jobs?q=${searchTag.replace(" ","+")}&l=&from=searchOnHP`
 
-      await page.goto('https://ng.indeed.com', { waitUntil: 'load' });
+      await page.goto(url, { waitUntil: 'load' });
 
       await page.waitForTimeout(5000)
 
@@ -90,11 +91,11 @@ module.exports = {
       })
 
  
-      await page.waitForSelector('#text-input-what');
+      // await page.waitForSelector('#text-input-what');
 
-      await page.type('#text-input-what', searchTag);
+      // await page.type('#text-input-what', searchTag);
 
-      await page.click('.yosegi-InlineWhatWhere-primaryButton');
+      // await page.click('.yosegi-InlineWhatWhere-primaryButton');
 
       await page.waitForSelector('.mosaic-provider-jobcards');
 
