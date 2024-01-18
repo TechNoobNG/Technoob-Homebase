@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer-extra')
+const {executablePath} = require('puppeteer')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
 puppeteer.use(StealthPlugin())
 const { uploadFile } = require('../multer/multer_upload');
@@ -53,14 +54,12 @@ module.exports = {
     let ss = {};
     try {
       const browser = await puppeteer.launch({
-        headless: "new",
-        args: [
-          '--no-sandbox',
-          '--disable-gpu',
-        ],
-        executablePath: "/usr/bin/chromium",
+        executablePath: executablePath(),
+        readTimeout: 5 * 60 * 1000,
+        headless: 'new',
+        targetFilter: (target) => !!target.url,
       });
-      const page = await browser.newPage();
+      let page = (await browser.pages())[0];
 
       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36');
 
@@ -68,7 +67,21 @@ module.exports = {
 
       await page.goto('https://ng.indeed.com', { waitUntil: 'load' });
 
-      const screenShot = await page.screenshot();
+      await page.waitForTimeout(5000)
+
+      // try to solve the cloudflare captcha 
+      await page.click('body')
+      await page.waitForTimeout(500)
+
+      await page.keyboard.press('Tab')
+      await page.waitForTimeout(500)
+
+      await page.keyboard.press('Space')
+      await page.waitForTimeout(10000)
+
+      const screenShot = await page.screenshot({
+        fullPage: true
+      });
       ss = await uploadFile({
         mimetype: 'image/jpeg',
         buffer: screenShot,
