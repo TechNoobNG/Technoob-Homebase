@@ -12,6 +12,7 @@ RUN wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O ch
 COPY . .
 
 RUN npm install
+RUN npm i puppeteer
 
 ENV PORT=3000
 EXPOSE 3000
