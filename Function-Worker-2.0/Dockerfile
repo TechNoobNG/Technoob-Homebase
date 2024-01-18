@@ -7,9 +7,10 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
 
 RUN apt-get update && \
     apt-get install -y wget libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2 unzip fastjar && \
-    apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra && \
-    wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chromium.zip && \
-    jar xvf chromium.zip && \
-    rm chromium.zip
+    apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
+
+WORKDIR /home/site/wwwroot
+
+RUN npm i
 
 COPY . /home/site/wwwroot
