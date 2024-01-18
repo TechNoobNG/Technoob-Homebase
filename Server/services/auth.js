@@ -3,10 +3,11 @@ const config = require('../config/config')[env];
 const User = require('../models/user');
 const middleware = require('../middleware/index');
 const crypto = require('crypto');
-const mailer = require('../utils/azure_mailer')
+const mailer = require('../utils/mailer/azure_mailer')
 const jwt = require('jsonwebtoken');
-const queue = require('../azureQueue/init');
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
+const MailService = require('../utils/mailer/mailService');
+const mailService = new MailService();
 
 module.exports = {
     signToken(id,token=null) {
@@ -36,7 +37,7 @@ module.exports = {
             }
             const token = this.generateToken(32)
             const resetToken = this.signToken(user._id, token);
-            
+
             user.passwordResetToken = token;
             await User.updateOne({ _id: user._id }, { passwordResetToken: token });
             const constants = {
@@ -47,22 +48,17 @@ module.exports = {
                 email: user.email,
                 subject: 'You requested a password reset',
                 constants,
-                template_id: "6504d0aa5a4e333d161d10ff",
+                template_id: "7c2c73bd-6ab1-436e-b839-2a217eb16327",
                 username: user.username
             }
 
-            await queue.sendMessage({
-                name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
-                data: mailOptions,
-                visibilityTimeout: 40,
-            })
+            await mailService.sendEmail({
+                data: mailOptions
+            });
 
             //await mailer.sendEmail(mailOptions)
             return true
         } catch (error) {
-            console.log(error)
             throw error
         }
 
@@ -78,7 +74,7 @@ module.exports = {
             if (!user) {
                 return false
             }
-            
+
             user.password = password;
             user.passwordConfirm = passwordConfirm;
             user.passwordResetToken = null;
@@ -92,17 +88,14 @@ module.exports = {
                 email: user.email,
                 subject: 'Successful Password Reset',
                 constants,
-                template_id: "6504d0fd5a4e333d161d1106",
+                template_id: "b47a53f1-a0ec-4c2e-a7eb-7b4bd1cc5793",
                 username: user.username
             }
 
-            await queue.sendMessage({
-                name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
-                data: mailOptions,
-                visibilityTimeout: 40,
-            })
+            await mailService.sendEmail({
+                data: mailOptions
+            });
+
             return true
         } catch (err) {
             console.log(err)
@@ -153,20 +146,15 @@ module.exports = {
                 email: user.email,
                 subject: 'Your password has been changed',
                 constants,
-                template_id: "6504d0fd5a4e333d161d1106",
+                template_id: "b47a53f1-a0ec-4c2e-a7eb-7b4bd1cc5793",
                 username: user.username
             }
-            await queue.sendMessage({
-                name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
+            await mailService.sendEmail({
                 data: mailOptions
-            })
+            });
 
-            //await mailer.sendEmail(mailOptions)
             return true
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
@@ -183,34 +171,40 @@ module.exports = {
                 const constants = {
                     username: user.username,
                     verification_link: `https://${config.LIVE_BASE_URL}/api/v1/authenticate/verify-email?token=${token}`,
-                    message: `
-                    Welcome to Technoob! We're thrilled to have you as a part of our community. 😊
-                    Kindly hit the button below to verify your account
-                    `
+                    message: ` Welcome to Technoob! We're thrilled to have you as a part of our community. 😊 Kindly hit the button below to verify your account`
                 }
 
                 const mailOptions = {
                     email: user.email,
                     subject: 'Welcome to TechNoob!',
                     constants,
-                    template_id: "643b20e047cb9cc5083f0dae",
+                    template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                     username: user.username
 
                 }
 
-                await queue.sendMessage({
-                    name: "SingleEmail",
-                    import: "../utils/azure_mailer",
-                    method: "sendEmail",
+                await mailService.sendEmail({
                     data: mailOptions
-                })
+                });
+
                 //await mailer.sendEmail(mailOptions)
             } catch (err) {
-                console.log(err)
+                console.warn(err)
             }
 
 
-            return user
+            return {
+                _id: user._id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                username: user.username,
+                email: user.email,
+                stack: user.stack,
+                photo: user.photo,
+                active: user.active,
+                role: user.role,
+                verified: user.verified
+            }
         } catch (err) {
             throw err
         }
@@ -257,21 +251,15 @@ module.exports = {
                     email: user.email,
                     subject: 'Welcome to TechNoob!',
                     constants,
-                    template_id: "6435a97404c5b38f7ba81a35",
+                    template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                     username: user.username
 
                 }
-                await queue.sendMessage({
-                    name: "SingleEmail",
-                    import: "../utils/azure_mailer",
-                    service: "mailer",
-                    method: "sendEmail",
+                await mailService.sendEmail({
                     data: mailOptions
-                })
-    
-                //await mailer.sendEmail(mailOptions)
+                });
+
             } catch (err) {
-                console.log(err)
             }
 
             return user;

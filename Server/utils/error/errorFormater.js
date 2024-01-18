@@ -7,11 +7,14 @@ module.exports = {
         let message = err.message;
         let data = err.data;
         let trace;
-    
         switch (err.code) {
             case 11000:
+                const affectedKey = Object.keys(err.keyPattern)[0];
+                const affectedValue = err.keyValue[affectedKey];
+                const errorMessage = `${affectedValue} as ${affectedKey} already exists`;
+
                 statusCode = 409;
-                message = `"${Object.values(err.keyValue).join(', ')}" already exists`;
+                message = errorMessage
                 break;
             case 121:
                 statusCode = 400;
@@ -28,9 +31,9 @@ module.exports = {
             default:
                 break;
         }
-    
+
         trace = err.message;
-    
+
         return {
             statusCode,
             message,
@@ -38,5 +41,5 @@ module.exports = {
             data
         };
     }
-    
+
 }

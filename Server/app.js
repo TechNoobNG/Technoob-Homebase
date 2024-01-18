@@ -11,7 +11,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const logger = require("morgan");
-const Honeybadger = require("./utils/honeybadger");
+const Honeybadger = require("./utils/honeybadger/honeybadger");
 const helmet = require("helmet");
 const sanitizer = require("perfect-express-sanitizer");
 const indexRouter = require("./routes/index");
@@ -42,19 +42,32 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 //   apis: ['./routes/*.js'],
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use(function(req, res, next) {
+  if (req.header('X-Forwarded-Proto') == 'https' )
+  {
+    next();
+  }
+  else {
+    res.redirect('https://' + req.hostname + req.url);
+  }}
+);
 
+app.set('trust proxy', true);
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback({
+          message: "CORS: I don't know you bro!",
+          status: 403,
+        });
       }
     },
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true,
-    exposedHeaders: "Set-Cookie",
+    exposedHeaders: 'Set-Cookie',
   })
 );
 
@@ -104,10 +117,21 @@ const networkTrafficBytes = new prometheus.Counter({
 app.use(logger("combined"));
 // Honeybadger.notify('Starting/Restarting Technoob Server');
 
-const cookieConfig = {
-  secure: false,
-  maxAge: 60 * 60 * 1000,
-};
+let cookieConfig;
+
+if (config.USE_CORS) {
+  cookieConfig = {
+    domain: ".technoob.tech",
+    secure: true,
+    maxAge: 60 * 60 * 1000,
+    sameSite: "none"
+  };
+} else {
+  cookieConfig = {
+    secure: false,
+    maxAge: 60 * 60 * 1000,
+  };
+}
 
 app.use(
   session({
@@ -120,6 +144,7 @@ app.use(
       ttl: 60 * 60, // 1 hour
       autoRemove: "native",
     }),
+    proxy: true,
     cookie: cookieConfig
   })
 );
@@ -149,27 +174,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use(sanitizer.clean({
-//   xss: true,
-//   noSql: true,
-//   sql: true,
-//   sanitize: {
-//     image: false
-//   }
-// }));
-
+app.use(trafficMiddleware);
 /* GET home page. */
-app.use("/", limiter); // implementing rate limiter middleware
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
-app.use("/", trafficMiddleware, indexRouter);
+app.use("/api-docs",limiter,swaggerUI.serve,swaggerUI.setup(swaggerDocument));
+app.use("/",limiter, indexRouter);
 
-// // catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   next(createError(404));
-// });
-
-// error handler
-app.use(errorHandler);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -208,19 +217,6 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  const start = Date.now();
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    const query =
-      req.query && Object.keys(req.query).length > 0
-        ? JSON.stringify(req.query)
-        : "-";
-    dbQueryDurationMilliseconds.observe({ query }, duration);
-  });
-  next();
-});
-
-app.use((req, res, next) => {
   concurrentConnections.inc();
   res.on("finish", () => {
     concurrentConnections.dec();
@@ -244,7 +240,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// error handler
+app.use(errorHandler);
+
 const collectDefaultMetrics = prometheus.collectDefaultMetrics;
 collectDefaultMetrics();
+
 
 module.exports = app;

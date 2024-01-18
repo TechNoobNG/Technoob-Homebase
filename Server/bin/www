@@ -8,13 +8,13 @@ const config = require('../config/config')[process.env.NODE_ENV || 'development'
 const app = require('../app');
 const debug = require('debug')('server:server');
 const http = require('http');
-const db = require('../utils/db_connector');
+const db = require('../utils/connectors/db_connector');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const queueWorker = require(`../${config.WORKER_QUEUE_PLATFORM}Queue/worker`)
 const WORKERS = process.env.WEB_CONCURRENCY || 1; //HEROKU CONFIG
 const HOST = process.env.HOST;
-const redisHelper = require("../utils/redishelper")
+const { client, redisSubscriber } = require("../utils/connectors/redishelper")
 
 //const breeRunner = require("../jobs/bree_jobs")
 
@@ -85,11 +85,10 @@ const initialise_db = async () => {
 
 
   const connectToRedis = async () => {
-    await redisHelper
+    await client
       .on('error', err => console.log('Redis Client Error', err))
-      // .on('connect', () => {
-      //   console.log("connected to redis server")
-      // } )
+      .connect();
+    await redisSubscriber.on('error', err => console.log('Redis Subscriber Error', err))
       .connect();
 }
 /**
@@ -162,9 +161,9 @@ function onListening() {
   const promiseArray = [
     initialise_db(),
   ]
-    
+
   if (HOST !== 'heroku') {
-    promiseArray.push(connectToRedis()) 
+    promiseArray.push(connectToRedis())
   }
   await Promise.all(promiseArray)
 

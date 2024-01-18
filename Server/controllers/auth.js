@@ -8,64 +8,84 @@ const auth = services.auth;
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken')
 const baseurl = config.LIVE_BASE_URL;
-const validator = require('../utils/joi_validator');
+const validator = require('../utils/validators/joi_validator');
 
 module.exports = {
     async login(req, res, next) {
         try {
-
-            const user = req.user;
-
-            const token = jwt.sign({
-                user: {
-                    _id: user._id,
-                    username: user.username
+            await validator.login.validateAsync(req.body);
+            passport.authenticate('local', (err, user, info) => {
+                if (err) {
+                    return next(err);
                 }
-            }, config.JWT_SECRET, {
-                expiresIn: config.JWT_EXPIRES,
-                issuer: config.LIVE_BASE_URL,
-            });
+                if (!user) {
+                    return res.status(401).json({
+                        status: 'fail',
+                        message: info.message
+                    })
+                }
+                if (user) {
+                    req.login(user,{ session: true }, async (err) => {
+                        const token = jwt.sign({
+                            user: {
+                                _id: user._id,
+                                username: user.username
+                            }
+                        }, config.JWT_SECRET, {
+                            expiresIn: config.JWT_EXPIRES,
+                            issuer: config.LIVE_BASE_URL,
+                        });
 
-            res.status(200).json({
-                status: 'success',
-                message: `Logged in ${user.username}`,
-                data: {
-                    user
-                },
-                token
-            });
-        } catch (err) { 
+                        return res.ok({
+                            status: 'success',
+                            message: `Welcome to base, ${user.username}!`,
+                            data: {
+                                user
+                            },
+                            token
+                        })
+                    })
+                } else {
+                    return res.fail({
+                        status: 'Failed',
+                        message:  'Incorrect email or password.',
+                        statusCode: 401
+                    })
+                }
+            })(req, res, next);
+
+        } catch (err) {
             return res.fail({
                 status: 'Failed',
-                message: "User password/email Invalid",
+                message:  'Incorrect email or password.',
                 statusCode: 401
             })
         }
 
-       
+
     },
 
     async register(req, res, next) {
         try {
             await validator.register.validateAsync(req.body);
-            
-            await auth.register(req.body);
-            req.body = {
-                username: req.body.username,
-                password: req.body.password
-            }
-            this.login(req, res, next);
+            const user = await auth.register(req.body);
+            return res.ok({
+                status: 'success',
+                message: `Welcome to Technoob, ${user.username}!`,
+                data: {
+                    user
+                },
+            })
         } catch (err) {
-            console.log(err);
-            next(err);
+            return res.fail(err)
         }
     },
 
     logout(req, res) {
         req.logout((err) => {
-            if (err) return next(err); 
+            if (err) return next(err);
             req.session.destroy();
-            res.setHeader("isAuthenticated", false).status(200).json({
+            return res.ok({
                 status: 'success',
                 message: 'Logged out'
             })
@@ -113,11 +133,12 @@ module.exports = {
         const { email } = req.body
         try {
             const reset = await auth.forgotPasswordEmail(email)
-            if(!reset) throw new Error("An error occured")
-            res.status(200).json({
+            if (!reset) throw new Error("An error occured")
+            return res.ok({
                 status: 'success',
-                message: `Email Sent`,
+                message: `Verification Email Sent`,
             })
+
         } catch (err) {
             res.fail({
                 status: 'Failed',
@@ -226,7 +247,7 @@ module.exports = {
 
     resetPasswordView(req, res, next) {
         try {
-           return res.render('reset-password.jade', { title: "Password Reset" });
+            return res.render('reset-password.jade', { title: "Password Reset" });
         } catch (error) {
             next(error);
         }

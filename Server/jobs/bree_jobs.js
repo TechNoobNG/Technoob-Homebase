@@ -11,7 +11,7 @@
 //         console.log(`There was an error while running a worker ${workerMetadata.name}`)
 //         }
 
-//         console.log(error);
+//         ;
 //     }
 
 //     });

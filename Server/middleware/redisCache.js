@@ -1,4 +1,4 @@
-const client = require("../utils/redishelper");
+const { client } = require("../utils/connectors/redishelper");
 const utils = require("../utils/utils")
 
 module.exports = {

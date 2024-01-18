@@ -23,32 +23,38 @@ const xssOptions = {
 function sanitize(req, res, next) {
 
   req.body = preventNoSQLInjection(req.body, "body");
-  sanitizeObject(req.body);
-
   req.params = preventNoSQLInjection(req.params, "params");
-  sanitizeObject(req.params);
-
   req.query = preventNoSQLInjection(req.query, "query");
-  sanitizeObject(req.query);
 
   next();
 }
 
-function sanitizeObject(obj) {
-  for (const key in obj) {
-    if (typeof obj[key] === 'object') {
-      if (Array.isArray(obj[key])) {
-        obj[key] = obj[key].map((element) => xss(element, xssOptions));
-      } else {
-        sanitizeObject(obj[key]);
-      }
-    } else {
-        if (typeof obj[key] !== 'number') {
-            obj[key] = xss(obj[key], xssOptions);
-        }
-    }
-  }
-}
+// function sanitizeObject(obj, xssOptions) {
+//   for (const key in obj) {
+//     if (typeof obj[key] === 'object') {
+//       if (Array.isArray(obj[key])) {
+//         obj[key] = obj[key].map((element) => element);
+//       } else {
+//         sanitizeObject(obj[key], xssOptions);
+//       }
+//     } else {
+//       switch (typeof obj[key]) {
+//         case 'string':
+//           obj[key] = obj[key];
+//           break;
+//         case 'boolean':
+//           obj[key] = Boolean(obj[key]);
+//           break;
+//         case 'number':
+//           break;
+//         default:
+//           obj[key] = undefined;
+//           break;
+//       }
+//     }
+//   }
+// }
+
 
 
 function preventNoSQLInjection(obj, type) {
@@ -91,29 +97,32 @@ function convertValues(obj) {
 //     }
 //   }
 
-function isMongoOperator(key) {
-    return key.startsWith('$') && key !== '$';
-  }
-  
 function sanitizeJson(input) {
-  if (typeof input === 'object') {
+  if (typeof input === "object") {
     if (Array.isArray(input)) {
       return input.map(sanitizeJson);
     } else {
       const sanitizedObject = {};
       for (const key in input) {
         if (Object.prototype.hasOwnProperty.call(input, key)) {
-          const sanitizedKey = isMongoOperator(key) ? key.replace(/\$/g, '') : key;
+          const sanitizedKey = isMongoOperator(key)
+            ? key.replace(/\$/g, "")
+            : key;
           sanitizedObject[sanitizedKey] = sanitizeJson(input[key]);
         }
       }
       return sanitizedObject;
     }
-  } else if (typeof input === 'string') {
-    return isMongoOperator(input) ? input.replace(/\$/g, '') : input;
+  } else if (typeof input === "string") {
+    return isMongoOperator(input) ? input.replace(/\$/g, "") : input;
   } else {
     return input;
   }
+}
+
+
+function isMongoOperator(key) {
+  return key.startsWith("$");
 }
 
 

@@ -40,9 +40,19 @@ module.exports = {
     githubAuthenticateMiddleware,
     githubCallbackAuthenticateMiddleware,
     isAuthenticated(req, res, next) {
-        try { 
+        try {
+            const token = req.headers["authorization"]?.split(' ')[1];
             if (req.isAuthenticated()) {
                 return next();
+            } else if(token){
+                passport.authenticate('authenticate', { session: false }, (err, user) => {
+                    if (err || !user) {
+                        throw new Error("Unauthorized access");
+                    }
+
+                    req.user = user;
+                    return next();
+                })(req, res, next);
             } else {
                 throw new Error("Unauthorized access")
             }
@@ -52,14 +62,14 @@ module.exports = {
                 status: 'fail',
                 message: 'Unauthorized access'
             })
-        }       
+        }
     },
-    
+
     isAdmin(req, res, next) {
-        if ( req.user.role === 'admin') {
+        if ( req.user?.role === 'admin') {
             return next();
         }
-        res.status(401).json({
+        return res.status(401).json({
             status: 'fail',
             message: 'Unauthorized access'
         })
@@ -69,7 +79,7 @@ module.exports = {
             try {
                 const permission = await Permissions.findOne({ permission: perm });
                 const permissionId = permission ? new mongoose.Types.ObjectId(permission._id) : null;
-                if (!permissionId) { 
+                if (!permissionId) {
                     throw new Error('Permission not found')
                 }
                 const admin = await Admin.findOne({ user_id: req.user?._id, permissions: { $in: [permissionId] } });
@@ -80,7 +90,7 @@ module.exports = {
                         message: 'You do not have permission to access this resource'
                     })
                 }
-                
+
                 next();
             } catch (err) {
                 console.log(err)

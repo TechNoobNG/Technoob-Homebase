@@ -17,9 +17,10 @@ const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
 const utility = require("../utils/utils");
+const download = require("./download");
 
 
-router.get('/', (req, res) => {
+router.all('/', (req, res) => {
   res.render('index', {
     title: 'TechNoob API',
     environment: config.NODE_ENV,
@@ -29,10 +30,9 @@ router.get('/', (req, res) => {
     // busyWorkers: pool.stats().busyWorkers,
     // idleWorkers: pool.stats().idleWorkers,
     // pendingTasks: pool.stats().pendingTasks,
-
   });
-
 });
+
 
 const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
 
@@ -65,6 +65,7 @@ router.use(`${base}/events`, events);
 router.use(`${base}/jobs`, jobs);
 router.use(`${base}/quizzes`, quizzes)
 router.use(`${base}/experimental`, experimental)
+router.use(`${base}/download`, download)
 
 // Prometheus middleware
 router.get('/metrics', async (req, res) => {

@@ -4,7 +4,14 @@ const Schema = mongoose.Schema;
 const trafficMetric = new Schema({
   endpoint: String,
   method: String,
-  ip: String
+  ip: String,
+  noProxyIp: String,
+  duration: String,
+  userAgent: String,
+  referer: String,
+  requestBodySize: String,
+  queryParameters: String,
+  statusCode: String,
 
 },{
   timestamps: true

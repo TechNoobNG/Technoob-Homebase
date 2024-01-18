@@ -10,8 +10,9 @@ const contributors = require('../models/contributors');
 const resources = require('../services/resources')
 const users = require('../services/user');
 const traffic = require('../services/traffic');
-const queue = require('../azureQueue/init');
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
+const MailService = require('../utils/mailer/mailService');
+const mailService = new MailService();
 
 module.exports = {
 
@@ -29,9 +30,9 @@ module.exports = {
         } catch (err) {
             throw err
         }
-       
+
     },
-    
+
     async traffic(range) {
         try {
             let data;
@@ -63,16 +64,16 @@ module.exports = {
             } else {
                 data = await traffic.getOverallTotalTraffic();
             }
-    
+
             return data;
         } catch (err) {
             throw err;
         }
     },
-        
+
 
     async saveMailTemplate(data) {
-        
+
         return await Templates.create({
             name: data.name,
             template: data.template,
@@ -112,15 +113,13 @@ module.exports = {
                     email: user.email,
                     subject: 'You have been invited to be an admin',
                     constants,
-                    template_id: "65073144b75ffcbbdac0cb82",
+                    template_id: "5e9a8177-3bc6-43e9-a804-ca6a41095fe0",
                     username: user.username
                 }
-                await queue.sendMessage({
-                    name: "SingleEmail",
-                    import: "../utils/azure_mailer",
-                    method: "sendEmail",
+
+                await mailService.sendEmail({
                     data: mailOptions
-                })
+                });
 
             }
             const response = {
@@ -165,16 +164,16 @@ module.exports = {
                 email: email,
                 subject: "Your admin access has been revoked",
                 constants,
-                template_id: "65089456f670e1f4a9ef29f8",
+                template_id: "8177-3bc6-43e9-a804-ca6a415fe0",
                 username: user.username
             }
-            await queue.sendMessage({
+
+
+            await mailService.sendEmail({
                 name: "SingleEmail",
-                import: "../utils/azure_mailer",
-                method: "sendEmail",
                 data: mailOptions
-            })
-  
+            });
+
             return response
         } catch (err) {
             console.log(err)
@@ -320,7 +319,7 @@ module.exports = {
             if (!user) {
                 throw new Error('User not found')
             }
-          
+
             const check_user_permission = await Admin.findOne({ user_id: user._id });
             if (!check_user_permission) {
                 await Admin.create({ user_id: user._id, role: 'user', permissions: [] })
@@ -416,12 +415,12 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            await queue.sendMessage({
+
+            await mailService.sendEmail({
                 name: "BulkStaticEmail",
-                import: "../utils/azure_mailer",
                 method: "sendToMany",
                 data: mailOptions
-            })
+            });
 
             return {
                 message: "Email Queued Successfully"
@@ -456,12 +455,11 @@ module.exports = {
                 template_id: content.template_id
             }
 
-            await queue.sendMessage({
+            await mailService.sendEmail({
                 name: "BulkStaticEmail",
-                import: "../utils/azure_mailer",
                 method: "sendToManyStatic",
                 data: mailOptions
-            })
+            });
 
             return {
                 message: "Email Queued Successfully"
@@ -494,7 +492,7 @@ module.exports = {
             throw err
         }
     },
-    
+
     async getContactUs(query) {
         try {
             const contactUs = await contact_us.find();

@@ -1,12 +1,12 @@
 branch-defaults:
   fx/update_index:
-    environment: Technoobstaging-env
+    environment: Technoob-env
 environment-defaults:
-  Technoobstaging-env:
-    branch: fx/update_index
+  Technoob-env:
+    branch: dev_server
     repository: origin
 global:
-  application_name: technoobstaging
+  application_name: Technoob
   default_ec2_keyname: project14
   default_platform: Docker running on 64bit Amazon Linux 2023
   default_region: eu-west-2

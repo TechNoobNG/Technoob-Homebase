@@ -1,7 +1,8 @@
 const workerpool = require("workerpool");
 const utils = require("../utils/utils");
-const compress = require("../utils/compress");
-const upload = require("../utils/multer_upload")
+const compress = require("../utils/experimental/compress");
+const upload = require("../utils/multer/multer_upload")
+
 
 workerpool.worker(
     {

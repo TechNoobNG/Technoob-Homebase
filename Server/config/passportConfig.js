@@ -6,10 +6,10 @@ const User = require('../models/user');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const crypto = require('crypto');
 const GithubStrategy = require('passport-github2').Strategy;
-const mailer = require('../utils/azure_mailer');
+const {sendEmail} = require('../utils/mailer/mailService');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../utils/error/errorResponse');
 
 function getLockoutUntil(failedAttempts) {
     const lockoutDurationInMinutes = Math.pow(2, failedAttempts);
@@ -24,17 +24,18 @@ passport.use(
             passwordField: 'password',
         },
         async (username, password, done) => {
-           
+
             try {
+                if (!username || !password) return done(null, false, { message: 'Incorrect email or password.' });
                 let user = await User.findOne({ username }).select('+password').select('+active');
-                if (user.lockoutUntil && user.lockoutUntil > new Date()) {
-                    const remainingTime = Math.ceil((user.lockoutUntil - new Date()) / (60 * 1000)); 
+                if (!user) return done(null, false, { message: 'Incorrect email or password.' });
+                if (user && user.lockoutUntil && user.lockoutUntil > new Date()) {
+                    const remainingTime = Math.ceil((user.lockoutUntil - new Date()) / (60 * 1000));
                     return done(null, false, {
                         message: `Account locked. Try again in ${remainingTime} minutes.`,
                         statusCode: 403
                     });
                 };
-                if (!user) return done(null, false, { message: 'Incorrect email or password.' });
                 const isMatch = await user.comparePassword(password);
                 if (!isMatch) {
                     user.failedLoginAttempts += 1;
@@ -73,7 +74,7 @@ passport.use('authenticate',
           secretOrKey: config.JWT_SECRET,
           jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
           issuer: config.LIVE_BASE_URL,
-          ignoreExpiration: false, 
+          ignoreExpiration: false,
           clockTolerance: 60
     },
     async (token, done) => {
@@ -83,7 +84,7 @@ passport.use('authenticate',
             if (user) {
                 return done(null,user)
             }
-        
+
         return done(null, false );
       } catch (error) {
         done(error,false);
@@ -121,7 +122,7 @@ passport.use(
                     });
 
                     if (user) {
-                        
+
                     try {
                         const constants = {
                             username: user.username,
@@ -133,11 +134,11 @@ passport.use(
                             email: user.email,
                             subject: 'Welcome to TechNoob!',
                             constants,
-                            template_id: "6435a97404c5b38f7ba81a35",
+                            template_id: "7ef0d446-c456-487c-93e2-572e67849f6f",
                             username: user.username
 
                         }
-                        await mailer.sendEmail(mailOptions)
+                        await sendEmail(mailOptions)
                     } catch (err) {
                         console.log(err)
                     }

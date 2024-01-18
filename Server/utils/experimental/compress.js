@@ -1,16 +1,18 @@
 
 const { createGzip } = require('node:zlib');
 const { Readable } = require('stream');
-const uploadToBlob = require('../utils/multer_upload')
+const uploadToBlob = require('../multer/multer_upload')
 
-module.exports = function (file) {
+module.exports = function ({
+    uploadedFile,uploaderId
+}) {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!file) {
-                throw new Error("Please provide a file");
+            if (!uploadedFile) {
+                throw new Error("Please provide a uploadedFile");
             }
 
-            const uploadedFileBuffer = file.buffer;
+            const uploadedFileBuffer = uploadedFile.buffer;
 
             const readable = new Readable();
             readable._read = () => { };
@@ -21,12 +23,12 @@ module.exports = function (file) {
 
             const compressedStream = readable.pipe(gzip);
 
-            const uploadResponse = await uploadToBlob.uploadFileAsStream(compressedStream, `${file.originalname}.gz`, file.mimetype);
+            const uploadResponse = await uploadToBlob.uploadFileAsStream(compressedStream, `${uploadedFile.originalname}.gz`, uploadedFile.mimetype, uploaderId);
 
             resolve(uploadResponse);
 
         } catch (error) {
-            console.error('Error compressing file:', error);
+            console.error('Error compressing uploadedFile:', error);
             reject(error);
         }
     });
