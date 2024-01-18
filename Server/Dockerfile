@@ -1,12 +1,14 @@
-FROM node:slim
+FROM node:18
+
 LABEL authors="oluwatobilobaaremu"
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+RUN apt-get update \
+    && apt-get install -y chromium \
+    fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    --no-install-recommends
 
-RUN apt-get update && \
-    apt-get install -y libc6 && \
-    apt-get install -y git && \
-    rm -rf /var/lib/apt/lists/*
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 WORKDIR /usr/src/app
 
