@@ -10,7 +10,8 @@ RUN apt-get update && \
     apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra && \
     wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chromium.zip && \
     jar xvf chromium.zip && \
-    rm chromium.zip && \
-    npm install
+    rm chromium.zip
+
+RUN npm install
 
 COPY . /home/site/wwwroot
