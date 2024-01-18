@@ -57,7 +57,10 @@ module.exports = {
         executablePath: executablePath(),
         args: [
           '--no-sandbox',
-          '--disable-gpu'
+          '--disable-gpu',
+          '--auto-open-devtools-for-tabs',
+          '--disable-notifications',
+          '--disable-dev-shm-usage',
         ],
         readTimeout: 5 * 60 * 1000,
         headless: 'new',
@@ -71,17 +74,17 @@ module.exports = {
 
       await page.goto('https://ng.indeed.com', { waitUntil: 'load' });
 
-      await page.waitForTimeout(5000)
+      // await page.waitForTimeout(5000)
 
-      // try to solve the cloudflare captcha 
-      await page.click('body')
-      await page.waitForTimeout(500)
+      // // try to solve the cloudflare captcha 
+      // await page.click('body')
+      // await page.waitForTimeout(500)
 
-      await page.keyboard.press('Tab')
-      await page.waitForTimeout(500)
+      // await page.keyboard.press('Tab')
+      // await page.waitForTimeout(500)
 
-      await page.keyboard.press('Space')
-      await page.waitForTimeout(10000)
+      // await page.keyboard.press('Space')
+      // await page.waitForTimeout(10000)
 
       const screenShot = await page.screenshot({
         fullPage: true

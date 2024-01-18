@@ -22,7 +22,6 @@ RUN apt-get update && apt-get install -y gnupg wget && \
 COPY . .
 
 RUN npm install
-RUN npm i puppeteer
 
 ENV PORT=3000
 EXPOSE 3000
