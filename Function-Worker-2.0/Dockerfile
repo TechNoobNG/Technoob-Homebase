@@ -10,6 +10,7 @@ RUN apt-get update && \
     apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
 
 WORKDIR /home/site/wwwroot
+RUN ls
 
 RUN npm i
 
