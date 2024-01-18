@@ -65,9 +65,9 @@ module.exports = {
       });
       let page = (await browser.pages())[0];
 
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36');
+      //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36');
 
-      await page.setViewport({ width: 1080, height: 1024 });
+      //await page.setViewport({ width: 1080, height: 1024 });
 
       await page.goto('https://ng.indeed.com', { waitUntil: 'load' });
 
