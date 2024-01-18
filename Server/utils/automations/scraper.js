@@ -66,15 +66,13 @@ module.exports = {
         headless: 'new',
         targetFilter: (target) => !!target.url,
       });
-      let page = (await browser.pages())[0];
-
-      //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36');
-
-      //await page.setViewport({ width: 1080, height: 1024 });
+      //let page = (await browser.pages())[0];
+      let page = await browser.newPage();
+      await page.setViewport({ width: 1080, height: 1024 });
 
       await page.goto('https://ng.indeed.com', { waitUntil: 'load' });
 
-      // await page.waitForTimeout(5000)
+      await page.waitForTimeout(5000)
 
       // // try to solve the cloudflare captcha 
       // await page.click('body')
