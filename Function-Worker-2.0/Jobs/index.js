@@ -70,7 +70,7 @@ module.exports = {
                     }
 
                     if (JSON.stringify(insertJobObj) !== '{}') dataUpload.push(insertJobObj);
-                }).filter((insertJobObj) => insertJobObj && JSON.stringify(insertJobObj) !== '{}');
+                });
                 let uniqueJobSet = new Set();
                 dataUpload.forEach((obj) => {
                     uniqueJobSet.add(JSON.stringify(obj));
