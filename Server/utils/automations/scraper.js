@@ -55,6 +55,10 @@ module.exports = {
     try {
       const browser = await puppeteer.launch({
         executablePath: executablePath(),
+        args: [
+          '--no-sandbox',
+          '--disable-gpu'
+        ],
         readTimeout: 5 * 60 * 1000,
         headless: 'new',
         targetFilter: (target) => !!target.url,
