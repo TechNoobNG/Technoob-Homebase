@@ -14,7 +14,7 @@ const numCPUs = require('os').cpus().length;
 const queueWorker = require(`../${config.WORKER_QUEUE_PLATFORM}Queue/worker`)
 const WORKERS = process.env.WEB_CONCURRENCY || 1; //HEROKU CONFIG
 const HOST = process.env.HOST;
-const redisHelper = require("../utils/connectors/redishelper")
+const { client, redisSubscriber } = require("../utils/connectors/redishelper")
 
 //const breeRunner = require("../jobs/bree_jobs")
 
@@ -85,11 +85,10 @@ const initialise_db = async () => {
 
 
   const connectToRedis = async () => {
-    await redisHelper
+    await client
       .on('error', err => console.log('Redis Client Error', err))
-      // .on('connect', () => {
-      //   console.log("connected to redis server")
-      // } )
+      .connect();
+    await redisSubscriber.on('error', err => console.log('Redis Subscriber Error', err))
       .connect();
 }
 /**

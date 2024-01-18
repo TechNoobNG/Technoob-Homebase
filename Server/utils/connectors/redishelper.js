@@ -7,4 +7,9 @@ const client = createClient({
     url: REDIS_URL
 })
 
-module.exports = client
+const redisSubscriber = client.duplicate();
+
+module.exports = {
+    client,
+    redisSubscriber
+}

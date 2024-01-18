@@ -4,6 +4,7 @@ const defaults = require('../models/defaults')
 const ErrorResponse = require('../utils/error/errorResponse');
 const storageService = require('../utils/storage/storageService')
 const fileUploadHistory = require('../models/fileUploadHistory')
+const computedDownloads = require('../models/computedDownloads')
 module.exports = {
     async upload_file(file) {
         try {
@@ -17,10 +18,18 @@ module.exports = {
 
     async download( generatedId, userId) {
         try {
-            const checkFile = await fileUploadHistory.findOne({
+            let checkFile = await fileUploadHistory.findOne({
                 generatedId: generatedId,
                 user_id: userId,
             })
+
+            if (!checkFile) {
+                checkFile = await computedDownloads.findOne({
+                    generatedId: generatedId,
+                    user_id: userId,
+                    status: "completed"
+                })
+            }
 
             if (!checkFile) {
                 throw new ErrorResponse(
@@ -28,6 +37,7 @@ module.exports = {
                     "Resource not found"
                 )
             }
+
             const storeName = checkFile.objectStore;
             const type = checkFile.mimetype.split('/')[0];
             let key = checkFile.key || `${type}/${checkFile.fileName}`
@@ -36,11 +46,36 @@ module.exports = {
                 generatedId,
                 key
             })
-            //const download = await pool.exec('download', [storeName, generatedId]);
-           // const download = await
             return download
         } catch (error) {
-            console.log(error)
+            throw error
+        }
+
+    },
+
+        async downloadSse( generatedId, userId) {
+        try {
+            const checkFile = await computedDownloads.findOne({
+                generatedId: generatedId,
+                user_id: userId,
+                status: "completed"
+            })
+
+
+            if (!checkFile) {
+                return false
+            }
+
+            // const storeName = checkFile.objectStore;
+            // const type = checkFile.mimetype.split('/')[0];
+            // let key = checkFile.key || `${type}/${checkFile.fileName}`
+            // const download = await storageService.download({
+            //     storeName,
+            //     generatedId,
+            //     key
+            // })
+            return checkFile.url
+        } catch (error) {
             throw error
         }
 

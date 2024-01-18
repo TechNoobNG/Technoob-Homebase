@@ -1,5 +1,6 @@
 const services = require('../services/index');
 const resource = services.utils;
+const { redisSubscriber } = require('../utils/connectors/redishelper');
 
 
 module.exports = {
@@ -36,6 +37,30 @@ module.exports = {
             })
         }
 
+    },
+
+    async downloadComputed(req, res) {
+        const { fileId } = req.params;
+        const headers = {
+            'Content-Type': 'text/event-stream',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache'
+        };
+
+        res.writeHead(200, headers);
+        const checkFile = await resource.downloadSse(fileId);
+        if (checkFile) {
+            res.write(`data: ${JSON.stringify(checkFile)}\n\n`)
+            res.end();
+            return;
+        } else {
+            const channelId = `download:${fileId}`
+            await redisSubscriber.subscribe(channelId, (message) => {
+            res.write(`data: ${message}\n\n`);
+            res.end();
+            });
+            return
+        }
     },
 
     async getPlaceholders(req, res) {
