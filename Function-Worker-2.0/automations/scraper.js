@@ -52,12 +52,9 @@ module.exports = {
       const browser = await puppeteer.launch({
         headless: "new",
         args: [
-          '--disable-gpu',
           '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--single-process'
+          '--disable-gpu'
         ],
-        //executablePath: "./chrome-linux/chrome"
       });
       const page = await browser.newPage();
 

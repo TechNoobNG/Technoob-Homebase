@@ -10,7 +10,7 @@
     "@azure/storage-queue": "^12.15.0",
     "@honeybadger-io/js": "^6.5.3",
     "dotenv": "^16.3.1",
-    "puppeteer": "^21.4.1"
+    "puppeteer": "^21.2.1"
   },
   "devDependencies": {
     "azure-functions-core-tools": "^4.x"
