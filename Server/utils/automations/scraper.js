@@ -48,7 +48,7 @@ const extractIndeedJobs = async function (page) {
 }
 module.exports = {
   async scrapeJobsIndeed({ searchTag, q }) {
-    let ss;
+    let ss = {};
     try {
       const browser = await puppeteer.launch({
         headless: "new",
@@ -56,7 +56,7 @@ module.exports = {
           '--no-sandbox',
           '--disable-gpu',
         ],
-        executablePath: `/usr/bin/google-chrome`,
+        executablePath: "/usr/bin/chromium",
       });
       const page = await browser.newPage();
 
@@ -64,7 +64,7 @@ module.exports = {
 
       await page.setViewport({ width: 1080, height: 1024 });
 
-      await page.goto('https://ng.indeed.com', { waitUntil: 'domcontentloaded' });
+      await page.goto('https://ng.indeed.com', { waitUntil: 'load' });
 
       const screenShot = await page.screenshot();
       ss = await uploadFile({
