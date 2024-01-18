@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install gnupg wget libglib2.0-0 libnss3 libatk1.0-
 WORKDIR /usr/src/app
 
 RUN wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chromium.zip && \
-    unzip chromium.zip -d chromium && \
+    unzip chromium.zip -d chrome-linux && \
     rm chromium.zip
 
 COPY . .
