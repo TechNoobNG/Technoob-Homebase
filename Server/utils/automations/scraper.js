@@ -54,6 +54,7 @@ module.exports = {
           '--no-sandbox',
           '--disable-gpu',
         ],
+        executablePath: `/usr/bin/google-chrome`,
       });
       const page = await browser.newPage();
 
