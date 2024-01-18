@@ -1,4 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
+puppeteer.use(StealthPlugin())
 const { uploadFile } = require('../multer/multer_upload');
 const stream = require('stream');
 const extractIndeedJobs = async function (page) {
