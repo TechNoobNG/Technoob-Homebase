@@ -131,19 +131,44 @@ module.exports = {
     async scrape(req, res) {
 
         const { searchTag, q, posted, expires } = req.body;
+        const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
+
 
         try {
-            const jobScraped = await jobs.createScrapedJobs({ searchTag, q, posted, expires })
-           res.ok({
-                status: "success",
-                data: jobScraped,
-                statusCode: 201
+            const scraper = require("../utils/automations/scraper")
+            let jobArray = await scraper.scrapeJobsIndeed({
+                searchTag,
+                q
             })
+            jobArray = jobArray.map((scrapedJob) => {
+                let insertJobObj = {}
+                if (scrapedJob.posted * 1 > 5) {
+                    insertJobObj.title = scrapedJob.title;
+                    insertJobObj.company = scrapedJob.company;
+                    insertJobObj.exp = "N/A";
+                    insertJobObj.location = `${scrapedJob.location}`;
+                    insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
+                    insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
+                    insertJobObj.datePosted = new Date();
+                    insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
+                    insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
+                    insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
+                    insertJobObj.poster = scrapedJob.poster;
+                    insertJobObj.uploader_id = "65174f32bf8a942899880d45"
+                }
+                if (insertJobObj && JSON.stringify(insertJobObj) !== '{}'  ) return insertJobObj;
+            }).filter((insertJobObj) => insertJobObj && JSON.stringify(insertJobObj) !== '{}');
+            const jobScraped = await jobs.createScrapedJobs({ uniqueJobsArray: jobArray})
+            res.ok({
+                    status: "success",
+                    data: jobScraped,
+                    statusCode: 201
+                })
         } catch (err) {
-           res.fail({
-                status: "fail",
-                message: err.message
-            })
+            res.fail({
+                    status: "fail",
+                    message: err.message
+                })
         }
     },
 

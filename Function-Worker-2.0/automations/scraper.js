@@ -18,7 +18,7 @@ const extractIndeedJobs = async function (page) {
           .map(li => li.textContent.trim())
           .join('\n');
         const poster = 'https://technoobsub9718.blob.core.windows.net/images/2023-09-15T11-07-47.477Z-indeed_logo_1200x630.png'
-        const postedAt = jobElement.querySelector('span.date')?.textContent
+        const posted = jobElement.querySelector('span.date')?.textContent
           .replace("PostedPosted", "")
           .replace("EmployerActive", "")
           .replace("days ago", "")
@@ -35,7 +35,7 @@ const extractIndeedJobs = async function (page) {
             description,
             link,
             poster,
-            postedAt
+            posted
           });
         }
       }
@@ -54,7 +54,8 @@ module.exports = {
         args: [
           '--no-sandbox',
           '--disable-gpu',
-        ]
+        ],
+        executablePath: "./chrome-linux/chrome"
       });
       const page = await browser.newPage();
 

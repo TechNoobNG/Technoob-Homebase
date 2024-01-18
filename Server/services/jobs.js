@@ -282,28 +282,28 @@ module.exports = {
         try {
             const dataUpload = data.uniqueJobsArray || [];
             if (dataUpload && dataUpload.length) {
-                    await Jobs.insertMany(dataUpload)
-
-                    const activityPromises = dataUpload.map((jobs) => {
-                        return Activity.create({
-                        user_id: "64feb85db96fbbd731c42d5f",
-                        module: "job",
-                        activity: {
-                            activity: "Job Upload(Worker)",
-                            title: jobs.title,
-                            location: jobs.location,
-                            company: jobs.company,
-                            datePosted: jobs.datePosted,
-                            expiryDate: jobs.expiryDate,
-                            workplaceType: jobs.workplaceType,
-                            contractType: jobs.contractType,
-                            status: "Successful"
-                        }
-                        });
+                await Jobs.insertMany(dataUpload)
+                const activityPromises = dataUpload.map((jobs) => {
+                    return Activity.create({
+                    user_id: "64feb85db96fbbd731c42d5f",
+                    module: "job",
+                    activity: {
+                        activity: "Job Upload(Worker)",
+                        title: jobs.title,
+                        location: jobs.location,
+                        company: jobs.company,
+                        datePosted: jobs.datePosted,
+                        expiryDate: jobs.expiryDate,
+                        workplaceType: jobs.workplaceType,
+                        contractType: jobs.contractType,
+                        status: "Successful"
+                    }
                     });
+                });
 
                 try {
                     await Promise.all(activityPromises);
+                    return data.uniqueJobsArray
                 } catch (err) {
                 }
             } else {
@@ -312,14 +312,18 @@ module.exports = {
                     "No jobs found"
                 )
             }
-            dataUpload = []
-            return
+            return dataUpload
 
         } catch (err) {
             if (err.message?.includes("TimeoutError")) {
                 throw new ErrorResponse(
                     400,
                     "timeout"
+                )
+            } else {
+                throw new ErrorResponse(
+                    400,
+                    err.message
                 )
             }
         }
