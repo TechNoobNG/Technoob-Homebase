@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "Technoob-Function-Worker",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -10,7 +10,9 @@
     "@azure/storage-queue": "^12.15.0",
     "@honeybadger-io/js": "^6.5.3",
     "dotenv": "^16.3.1",
-    "puppeteer": "^21.2.1"
+    "puppeteer": "^21.7.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "azure-functions-core-tools": "^4.x"
