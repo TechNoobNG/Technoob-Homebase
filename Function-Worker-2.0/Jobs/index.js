@@ -47,47 +47,46 @@ module.exports = {
                 try {
                     result = await automations.scrapeJobsIndeed({
                     searchTag: keyword,
-                    q: q * 1
-                })
+                        q: q * 1
+                    })
+                    result.forEach((scrapedJob) => {
+                        if (scrapedJob.posted * 1 > 5) {
+                            insertJobObj.title = scrapedJob.title;
+                            insertJobObj.company = scrapedJob.company;
+                            insertJobObj.exp = "N/A";
+                            insertJobObj.location = `${scrapedJob.location}, Nigeria`;
+                            insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
+                            insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
+                            insertJobObj.datePosted = new Date();
+                            insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
+                            insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
+                            insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
+                            insertJobObj.poster = scrapedJob.poster;
+                            insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
+                        }
+    
+                        if (JSON.stringify(insertJobObj) !== '{}') dataUpload.push(insertJobObj);
+                    });
+                    let uniqueJobSet = new Set();
+                    dataUpload.forEach((obj) => {
+                        uniqueJobSet.add(JSON.stringify(obj));
+                    });
+                    let uniqueJobsArray = Array.from(uniqueJobSet, JSON.parse);
+                    if (uniqueJobsArray.length) {
+                        await queue.sendMessage({
+                            name: "createScrapedJobs",
+                            import: "../services",
+                            service: "jobs",
+                            method: "createScrapedJobs",
+                            data: {
+                                uniqueJobsArray
+                            },
+                            visibilityTimeout: 40,
+                            delay: 3000
+                    })}
                 } catch (error) {
                     context.log(error)
                 }
-
-                result.forEach((scrapedJob) => {
-                    if (scrapedJob.posted * 1 > 5) {
-                        insertJobObj.title = scrapedJob.title;
-                        insertJobObj.company = scrapedJob.company;
-                        insertJobObj.exp = "N/A";
-                        insertJobObj.location = `${scrapedJob.location}, Nigeria`;
-                        insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
-                        insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
-                        insertJobObj.datePosted = new Date();
-                        insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
-                        insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
-                        insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
-                        insertJobObj.poster = scrapedJob.poster;
-                        insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
-                    }
-
-                    if (JSON.stringify(insertJobObj) !== '{}') dataUpload.push(insertJobObj);
-                });
-                let uniqueJobSet = new Set();
-                dataUpload.forEach((obj) => {
-                    uniqueJobSet.add(JSON.stringify(obj));
-                });
-                let uniqueJobsArray = Array.from(uniqueJobSet, JSON.parse);
-                if (uniqueJobsArray.length) {
-                    await queue.sendMessage({
-                        name: "createScrapedJobs",
-                        import: "../services",
-                        service: "jobs",
-                        method: "createScrapedJobs",
-                        data: {
-                            uniqueJobsArray
-                        },
-                        visibilityTimeout: 40,
-                        delay: 3000
-                })}
 
             }
             honeybadger.notify({
