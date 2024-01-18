@@ -154,7 +154,7 @@ module.exports = {
                     insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
                     insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
                     insertJobObj.poster = scrapedJob.poster;
-                    insertJobObj.uploader_id = "65174f32bf8a942899880d45"
+                    insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
                 }
                 if (insertJobObj && JSON.stringify(insertJobObj) !== '{}'  ) return insertJobObj;
             }).filter((insertJobObj) => insertJobObj && JSON.stringify(insertJobObj) !== '{}');
