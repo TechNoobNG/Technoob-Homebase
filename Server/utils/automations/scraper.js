@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
-
+const { uploadFile } = require('../multer/multer_upload');
+const stream = require('stream');
 const extractIndeedJobs = async function (page) {
   const list = await page.evaluate(() => {
     const listings = [];
@@ -47,6 +48,7 @@ const extractIndeedJobs = async function (page) {
 }
 module.exports = {
   async scrapeJobsIndeed({ searchTag, q }) {
+    let ss;
     try {
       const browser = await puppeteer.launch({
         headless: "new",
@@ -64,6 +66,15 @@ module.exports = {
 
       await page.goto('https://ng.indeed.com', { waitUntil: 'domcontentloaded' });
 
+      const screenShot = await page.screenshot();
+      ss = await uploadFile({
+        mimetype: 'image/jpeg',
+        buffer: screenShot,
+        acl: "public",
+        originalname: "indeedpage.jpeg"
+      })
+
+ 
       await page.waitForSelector('#text-input-what');
 
       await page.type('#text-input-what', searchTag);
@@ -94,6 +105,7 @@ module.exports = {
       return jobArray
     } catch (error) {
       console.warn(error)
+      error.message = error.message + "  " + ss.url
       throw error
     }
   }

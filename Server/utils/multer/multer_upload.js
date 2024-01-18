@@ -30,7 +30,7 @@ module.exports = {
                 const fileName = `${timestamp}-${file.originalname}`;
 
                 if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-                    const resizedImage = await sharp(file.buffer).resize(800).jpeg({ quality: 80 }).toBuffer();
+                    const resizedImage = await sharp(file.buffer).resize(800).jpeg({ quality: 100 }).toBuffer();
 
                     uploadResponse = await storageService.upload({
                         type:'images',
@@ -85,7 +85,7 @@ module.exports = {
 
     },
 
-    async uploadFileAsStream(fileStream, originalname, mimetype,uploaderId) {
+    async uploadFileAsStream(fileStream, originalname, mimetype,uploaderId,acl) {
         return new Promise(async (resolve, reject) => {
             try {
                 const timestamp = new Date().toISOString().replace(/:/g, '-');
@@ -98,7 +98,7 @@ module.exports = {
                         type: 'images',
                         data: resizedImageStream,
                         name: fileName,
-                        acl: file.acl || "private"
+                        acl: acl || "private"
                     });
 
 
