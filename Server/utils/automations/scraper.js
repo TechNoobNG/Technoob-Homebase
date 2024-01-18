@@ -1,5 +1,9 @@
-const puppeteer = require('puppeteer');
-
+const puppeteer = require('puppeteer-extra')
+const {executablePath} = require('puppeteer')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
+puppeteer.use(StealthPlugin())
+const { uploadFile } = require('../multer/multer_upload');
+const stream = require('stream');
 const extractIndeedJobs = async function (page) {
   const list = await page.evaluate(() => {
     const listings = [];
@@ -47,27 +51,51 @@ const extractIndeedJobs = async function (page) {
 }
 module.exports = {
   async scrapeJobsIndeed({ searchTag, q }) {
+    let ss = {};
     try {
       const browser = await puppeteer.launch({
-        headless: "new",
+        executablePath: executablePath(),
         args: [
           '--no-sandbox',
-          '--disable-gpu',
         ],
+    
+        headless: 'new',
       });
-      const page = await browser.newPage();
-
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36');
-
+      //let page = (await browser.pages())[0];
+      let page = await browser.newPage();
       await page.setViewport({ width: 1080, height: 1024 });
+      const url = `https://ng.indeed.com/jobs?q=${searchTag.replace(" ","+")}&l=&from=searchOnHP`
 
-      await page.goto('https://ng.indeed.com', { waitUntil: 'domcontentloaded' });
+      await page.goto(url, { waitUntil: 'load' });
 
-      await page.waitForSelector('#text-input-what');
+      await page.waitForTimeout(5000)
 
-      await page.type('#text-input-what', searchTag);
+      // // try to solve the cloudflare captcha 
+      // await page.click('body')
+      // await page.waitForTimeout(500)
 
-      await page.click('.yosegi-InlineWhatWhere-primaryButton');
+      // await page.keyboard.press('Tab')
+      // await page.waitForTimeout(500)
+
+      // await page.keyboard.press('Space')
+      // await page.waitForTimeout(10000)
+
+      const screenShot = await page.screenshot({
+        fullPage: true
+      });
+      ss = await uploadFile({
+        mimetype: 'image/jpeg',
+        buffer: screenShot,
+        acl: "public",
+        originalname: "indeedpage.jpeg"
+      })
+
+ 
+      // await page.waitForSelector('#text-input-what');
+
+      // await page.type('#text-input-what', searchTag);
+
+      // await page.click('.yosegi-InlineWhatWhere-primaryButton');
 
       await page.waitForSelector('.mosaic-provider-jobcards');
 
@@ -93,6 +121,7 @@ module.exports = {
       return jobArray
     } catch (error) {
       console.warn(error)
+      error.message = error.message + "  " + ss.url
       throw error
     }
   }
