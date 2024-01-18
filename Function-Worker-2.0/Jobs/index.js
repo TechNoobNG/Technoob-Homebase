@@ -54,12 +54,12 @@ module.exports = {
                 }
 
                 result.forEach((scrapedJob) => {
-                    if (scrapedJob.details.posted * 1 > 5) {
+                    if (scrapedJob.posted * 1 > 5) {
                         insertJobObj.title = scrapedJob.title;
                         insertJobObj.company = scrapedJob.company;
                         insertJobObj.exp = "N/A";
                         insertJobObj.location = `${scrapedJob.location}, Nigeria`;
-                        insertJobObj.workplaceType = scrapedJob.workplaceType || "Onsite";
+                        insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
                         insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
                         insertJobObj.datePosted = new Date();
                         insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
@@ -70,7 +70,7 @@ module.exports = {
                     }
 
                     if (JSON.stringify(insertJobObj) !== '{}') dataUpload.push(insertJobObj);
-                })
+                }).filter((insertJobObj) => insertJobObj && JSON.stringify(insertJobObj) !== '{}');
                 let uniqueJobSet = new Set();
                 dataUpload.forEach((obj) => {
                     uniqueJobSet.add(JSON.stringify(obj));

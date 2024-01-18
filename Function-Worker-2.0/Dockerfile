@@ -12,6 +12,4 @@ RUN apt-get update && \
     jar xvf chromium.zip && \
     rm chromium.zip
 
-RUN npm install
-
 COPY . /home/site/wwwroot
