@@ -70,8 +70,6 @@ module.exports = {
       await page.waitForTimeout(5000)
 
       // try to solve the cloudflare captcha 
-      console.log(`Try to solve the captcha manually...`)
-
       await page.click('body')
       await page.waitForTimeout(500)
 
