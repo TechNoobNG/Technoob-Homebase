@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "Technoob-function-worker",
+=======
+  "name": "Technoob-Function-Worker",
+>>>>>>> dc14288cdef10d83151ae4d7fd1ade2b076aaeb0
   "version": "1.0.0",
   "description": "",
   "scripts": {
