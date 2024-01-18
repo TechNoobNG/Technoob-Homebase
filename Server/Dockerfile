@@ -5,10 +5,7 @@ RUN apt-get update && apt-get install gnupg wget libglib2.0-0 libnss3 libatk1.0-
     wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chromium.zip && \
     jar xvf chromium.zip && \
     ls &&\
-    rm chromium.zip && \
-    apt-get update && \
-    apt-get install google-chrome-stable -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    rm chromium.zip
 
 WORKDIR /usr/src/app
 COPY . .
