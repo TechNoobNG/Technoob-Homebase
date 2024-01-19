@@ -56,16 +56,13 @@ module.exports = {
       const browser = await puppeteer.launch({
         executablePath: executablePath(),
         args: [
-          '--no-sandbox',
-          '--proxy-server=127.0.0.1:9876',
-        // Use proxy for localhost URLs
-        '--proxy-bypass-list=<-loopback>',
+          '--no-sandbox'
         ],
     
         headless: 'new',
       });
-      //let page = (await browser.pages())[0];
-      let page = await browser.newPage();
+      let page = (await browser.pages())[0];
+      //let page = await browser.newPage();
       await page.setViewport({ width: 1080, height: 1024 });
       const url = `https://ng.indeed.com/jobs?q=${searchTag.replace(" ","+")}&l=&from=searchOnHP`
 
