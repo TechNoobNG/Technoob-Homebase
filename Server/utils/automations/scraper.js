@@ -57,6 +57,9 @@ module.exports = {
         executablePath: executablePath(),
         args: [
           '--no-sandbox',
+          '--proxy-server=127.0.0.1:9876',
+        // Use proxy for localhost URLs
+        '--proxy-bypass-list=<-loopback>',
         ],
     
         headless: 'new',
@@ -70,15 +73,15 @@ module.exports = {
 
       await page.waitForTimeout(5000)
 
-      // // try to solve the cloudflare captcha 
-      // await page.click('body')
-      // await page.waitForTimeout(500)
+      // try to solve the cloudflare captcha 
+      await page.click('body')
+      await page.waitForTimeout(500)
 
-      // await page.keyboard.press('Tab')
-      // await page.waitForTimeout(500)
+      await page.keyboard.press('Tab')
+      await page.waitForTimeout(500)
 
-      // await page.keyboard.press('Space')
-      // await page.waitForTimeout(10000)
+      await page.keyboard.press('Space')
+      await page.waitForTimeout(10000)
 
       const screenShot = await page.screenshot({
         fullPage: true
@@ -89,6 +92,7 @@ module.exports = {
         acl: "public",
         originalname: "indeedpage.jpeg"
       })
+
 
  
       // await page.waitForSelector('#text-input-what');
