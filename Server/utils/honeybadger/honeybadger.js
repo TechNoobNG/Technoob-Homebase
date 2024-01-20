@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const config = require(`../../config/config`)[env];
+const config = require(`../../config/config`);
 
 module.exports = require('@honeybadger-io/js').configure({
     apiKey: config.HONEYBADGER_KEY,

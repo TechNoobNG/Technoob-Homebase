@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const SESClient = require("@aws-sdk/client-ses").SESClient;
 const SendEmailCommand = require("@aws-sdk/client-ses").SendEmailCommand;
 const REGION = config.AWS_SERVICES.SES.region;

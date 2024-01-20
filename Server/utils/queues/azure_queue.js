@@ -1,6 +1,5 @@
 
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const { QueueClient } = require("@azure/storage-queue");
 const AZURE_STORAGE_CONNECTION_STRING = config.AZURE_STORAGE_CONNECTION_STRING;
 const queueName = config.AZURE_QUEUE_NAME;

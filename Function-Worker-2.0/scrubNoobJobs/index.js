@@ -3,7 +3,7 @@ const q = config.SCRAPER_QUANTITY;
 const posted = config.SCRAPER_OLDEST_JOB_FETCH || 4;
 const expires = config.SCRAPED_JOBS_EXPIRES;
 
-const { deleteExpiredJobs,scrapeJobs } = require("../Jobs/index")
+const { scrapeJobs,scrapeJobsV2 } = require("../Jobs/index")
 const honeybadger = require('../utils/honeybadger');
 
 module.exports = async function (context, myTimer) {
@@ -13,7 +13,7 @@ module.exports = async function (context, myTimer) {
                 name: "Trigger Job scraping",
                 message: myTimer
         })
-    await scrapeJobs(q,posted,expires,context);
+    await scrapeJobsV2();
     } catch (err) {
         context.log(err)
         honeybadger.notify({

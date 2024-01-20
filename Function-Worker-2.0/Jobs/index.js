@@ -98,6 +98,26 @@ module.exports = {
             throw error
         }
 
+    },
+
+    async scrapeJobsV2() {
+        try {
+            const queue = require('../utils/azure_queue');
+            const honeybadger = require('../utils/honeybadger');
+            await queue.sendMessage({
+                name: "scrapeNoobJobs",
+                import: "../services",
+                service: "jobs",
+                method: "scrapeNoobJobs"
+           })
+            honeybadger.notify({
+                name: "scrapeNoobJobs",
+                message: "Initiated Scrape Noob Jobs"
+           })
+        } catch (err) {
+            context.log(err)
+            throw err
+        }
     }
 
 

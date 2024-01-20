@@ -1,6 +1,5 @@
 
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const { SQSClient, SendMessageCommand,  } = require("@aws-sdk/client-sqs"); \
 const REGION = config.AWS_SERVICES.SQS.region;
 const queueClient = new SQSClient({

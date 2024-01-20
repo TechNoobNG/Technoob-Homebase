@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const { S3Client, ListBucketsCommand, CreateBucketCommand,PutPublicAccessBlockCommand,DeletePublicAccessBlockCommand, DeleteBucketCommand, PutObjectAclCommand, PutObjectCommand, DeleteObjectCommand, GetObjectCommand} = require("@aws-sdk/client-s3");
 const REGION = config.AWS_SERVICES.SQS.region;
 const credentials = {

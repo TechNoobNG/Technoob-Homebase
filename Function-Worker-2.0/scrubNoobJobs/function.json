@@ -1,10 +1,10 @@
 {
   "bindings": [
     {
-      "name": "myTimer",
+      "name": "scrubNoobJobs",
       "type": "timerTrigger",
       "direction": "in",
-      "schedule": "0 30 12 * * *"
+      "schedule": "0 30 12 */7 * *"
     }
   ]
 }
