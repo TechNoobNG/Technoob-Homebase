@@ -1,10 +1,9 @@
-const config = require('../utils/config');
+const config = require('../utils/config')['production'];
 const q = config.SCRAPER_QUANTITY;
 const posted = config.SCRAPER_OLDEST_JOB_FETCH || 4;
 const expires = config.SCRAPED_JOBS_EXPIRES;
 
-const { scrapeJobs,scrapeJobsV2 } = require("../Jobs/index")
-
+const { deleteExpiredJobs,scrapeJobs,scrapeJobsV2 } = require("../Jobs/index")
 module.exports = async function (context, req) {
    let responseMessage = `Triggered Succesfully`
     try {
