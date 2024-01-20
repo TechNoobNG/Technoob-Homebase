@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 require('dotenv').config({ path: './.env' });
-const config = require('../config/config')[process.env.NODE_ENV || 'development'];
+const config = require('../config/config')
 const app = require('../app');
 const debug = require('debug')('server:server');
 const http = require('http');
@@ -28,7 +28,7 @@ const { client, redisSubscriber } = require("../utils/connectors/redishelper")
 
 if (cluster.isMaster && HOST !== 'heroku') {
   console.log(`Master ${process.pid} is running`);
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
     }
     cluster.on('exit', (worker, code, signal) => {
