@@ -4,6 +4,17 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 const { uploadFile } = require('../multer/multer_upload');
 const axios = require('axios').default
+
+const tunnel = require('tunnel');
+
+const agent = tunnel.httpsOverHttp({
+  proxy: {
+    host: 'smartproxy.crawlbase.com',
+    port: 8012,
+    proxyAuth: `${process.env.SMART_PROXY_KEY}:`,
+  },
+});
+
 puppeteer.use(StealthPlugin());
 const { XMLParser } = require("fast-xml-parser");
 const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
@@ -193,13 +204,20 @@ module.exports = {
         if (currentIndex < searchTags.length) {
           const searchTag = searchTags[currentIndex];
           const indeedUrl = `https://rss.indeed.com/rss?q=${encodeURI(searchTag)}&fromage=${age}&l=remote`;
-  
+
           try {
-            const response = await axios.get(indeedUrl, {
+            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; 
+            const response = await axios({
+                method: 'get',
+                url: indeedUrl,
+                httpsAgent:agent,
+                port: 443,
+                rejectUnauthorized: false,
                 headers: {
                   "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15'
                 }
-            });
+            })
+            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 1; 
             const parser = new XMLParser();
             let indeedSearchResultArray = parser.parse(response.data).rss?.channel?.item;
             if (!indeedSearchResultArray || !indeedSearchResultArray.length) {
