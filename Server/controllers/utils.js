@@ -1,7 +1,7 @@
 const services = require('../services/index');
 const resource = services.utils;
 const { redisSubscriber } = require('../utils/connectors/redishelper');
-
+const automations = require("../utils/automations/scraper")
 
 module.exports = {
     async upload_file(req, res, next) {
@@ -89,6 +89,28 @@ module.exports = {
                 status: "success",
                 message: `Defaults set`,
                 data: setDefaults
+            })
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+    },
+
+    async createScrapperLog(req, res) {
+        try {
+            const { searchTags, age, platform, scrapeResultLog, status } = req.body;
+
+            if (!Array.isArray(searchTags) || !platform || !scrapeResultLog || !status) {
+                throw new Error("Invalid request body")
+            }
+
+            const createLog = await automations.createScrapperLog({ searchTags, age, platform, scrapeResultLog, status })
+            res.ok({
+                status: "success",
+                message: `Logs recorded`,
+                data: createLog._id
             })
         } catch (err) {
             res.fail({

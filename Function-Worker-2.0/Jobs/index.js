@@ -1,5 +1,5 @@
 
-
+const scraperLog = require("../utils/scraperLog")
 module.exports = {
 
     async deleteExpiredJobs(context) {
@@ -40,15 +40,18 @@ module.exports = {
 
             let result = []
             let insertJobObj = {}
-             let dataUpload = []
+            let dataUpload = []
+            const scraperLogger = new scraperLog(stackKeywords,expires,"indeedNG")
 
             for (let keyword of stackKeywords) {
 
                 try {
+                    scraperLogger.start(keyword,"initiated")
                     result = await automations.scrapeJobsIndeed({
                     searchTag: keyword,
                         q: q * 1
                     })
+                    scraperLogger.end(keyword,"completed")
                     result.forEach((scrapedJob) => {
                         if (scrapedJob.posted * 1 > 5) {
                             insertJobObj.title = scrapedJob.title;
@@ -85,6 +88,7 @@ module.exports = {
                             delay: 3000
                     })}
                 } catch (error) {
+                    scraperLogger.end(keyword,"completed",error.message)
                     context.log(error)
                 }
 
@@ -92,7 +96,8 @@ module.exports = {
             honeybadger.notify({
                 name: "createScrapedJobs",
                 message: "Initiated Job scraping"
-           })
+            })
+            scraperLogger.complete();
         } catch (error) {
             context.log(error)
             throw error
