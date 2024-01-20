@@ -26,15 +26,39 @@ module.exports = {
         try {
             const queue = require('../utils/azure_queue');
             const honeybadger = require('../utils/honeybadger');
-            const config = require('../utils/config');
+            const config = require('../utils/config')['production'];
             const automations = require('../automations/scraper')
             const stackKeywords = config.SCRAPE_STACK_KEYWORDS || [
-                "junior product ui/ux designer",
-                "junior product project manager scrum master",
-                "junior cloud devops engineer",
-                "junior backend software mobile frontend developer",
+                "junior product designer",
+                "junior ui/ux designer",
+                "junior product manager",
+                "junior project manager",
+                "junior scrum master",
+                "junior cloud engineer",
+                "junior devops engineer",
+                "junior backend",
+                "junior frontend",
+                "junior android developer",
+                "junior ios developer",
+                "junior software engineer",
                 "junior QA",
-                "Junior customer Service support"
+                "Junior customer Service",
+                "Junior customer support",
+                "intern product designer",
+                "intern ui/ux designer",
+                "intern product manager",
+                "intern project manager",
+                "intern scrum master",
+                "intern cloud engineer",
+                "intern devops engineer",
+                "intern backend",
+                "intern frontend",
+                "intern android developer",
+                "intern ios developer",
+                "intern software engineer",
+                "intern QA",
+                "intern customer Service",
+                "intern customer support",
             ]
             const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
 
