@@ -1,7 +1,6 @@
 
 require('dotenv').config();
-const OS = require('os');
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'production';
 const environments = {
     development: {
         NODE_ENV: process.env.NODE_ENV,
