@@ -71,7 +71,9 @@ module.exports = {
 
       await page.click('.yosegi-InlineWhatWhere-primaryButton');
 
-      await page.waitForSelector('.mosaic-provider-jobcards');
+      await page.waitForSelector('.mosaic-provider-jobcards', {
+        timeout: 3000
+      });
 
       const jobArray = [];
       let searchResultPage = 1
@@ -94,6 +96,9 @@ module.exports = {
 
       return jobArray
     } catch (error) {
+      if (error.message.includes('mosaic-provider-jobcards')) {
+        throw new Error(`Job not found for searchtag: ${searchTag}`)
+      }
       throw error
     }
   },

@@ -88,7 +88,7 @@ module.exports = {
                             delay: 3000
                     })}
                 } catch (error) {
-                    scraperLogger.end(keyword,"completed",error.message)
+                    scraperLogger.end(keyword,"failed",error.message)
                     context.log(error)
                 }
 
