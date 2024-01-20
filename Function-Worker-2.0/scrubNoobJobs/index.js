@@ -13,7 +13,8 @@ module.exports = async function (context, myTimer) {
                 name: "Trigger Job scraping",
                 message: myTimer
         })
-    await scrapeJobsV2();
+        await scrapeJobsV2();
+        await scrapeJobs(q,posted,expires,context);
     } catch (err) {
         context.log(err)
         honeybadger.notify({
