@@ -78,7 +78,7 @@ const extractIndeedRSSJobs =  function(inputData) {
       description = description.replace(salary, '').trim();
     }
     const postedAt = new Date(item.pubDate.replace(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun), /, ''));
-    const posted = Math.floor((new Date() - postedAt) / (24 * 60 * 60 * 1000)); // Calculate days difference
+    const posted = Math.floor((new Date() - postedAt) / (24 * 60 * 60 * 1000));
 
 
     return {
@@ -218,11 +218,10 @@ module.exports = {
             process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 1; 
             const parser = new XMLParser();
             let indeedSearchResultArray = parser.parse(response.data).rss?.channel?.item;
-            if (!indeedSearchResultArray || !indeedSearchResultArray.length) {
+            if (!indeedSearchResultArray || !indeedSearchResultArray.length || !Array.isArray(indeedSearchResultArray)) {
               throw new Error("No jobs found")
             }
-            const rssjobsArray = extractIndeedRSSJobs(indeedSearchResultArray);
-            //update log
+            const rssjobsArray = extractIndeedRSSJobs(indeedSearchResultArray.slice(0, 4));
             scraperlog[searchTag] = {
               status: "successful"
             }
