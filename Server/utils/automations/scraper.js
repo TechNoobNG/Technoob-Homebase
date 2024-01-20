@@ -282,5 +282,20 @@ module.exports = {
       throw error;
     }
   },
+
+  async createScrapperLog({ searchTags, age, platform, scrapeResultLog, status }) {
+     try {
+       const logEntry = await scrapingLogs.create({
+         searchTags: searchTags,
+         platform : platform,
+         age: age || 0,
+         scrapeResultLog: scrapeResultLog,
+         status: status
+       })
+       return logEntry
+     } catch (error) {
+        throw error
+     }
+  }
 }
 

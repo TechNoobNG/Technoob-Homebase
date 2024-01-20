@@ -9,6 +9,7 @@
   "dependencies": {
     "@azure/storage-queue": "^12.15.0",
     "@honeybadger-io/js": "^6.5.3",
+    "axios": "^1.6.5",
     "dotenv": "^16.3.1",
     "puppeteer": "^21.7.0",
     "puppeteer-extra": "^3.3.6",

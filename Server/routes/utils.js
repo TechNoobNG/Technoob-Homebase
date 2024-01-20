@@ -8,5 +8,5 @@ router.post('/upload-file',middleware.auth.isAuthenticated, middleware.uploadStr
 router.post('/upload-image',middleware.auth.isAuthenticated, middleware.uploadStrategy.image, utils.upload_file)
 router.get('/defaults',middleware.redisCache.getCache, utils.getPlaceholders)
 router.post('/defaults',middleware.auth.isAuthenticated, middleware.auth.isAdmin, utils.setPlaceholders)
-
+router.post('/scraper/logs',middleware.auth.loggerAuth, utils.createScrapperLog)
 module.exports = router;

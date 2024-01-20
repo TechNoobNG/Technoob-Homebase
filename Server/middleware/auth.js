@@ -99,6 +99,22 @@ module.exports = {
                 })
             }
         };
+    },
+
+    loggerAuth(req, res, next) {
+        const authHeader = req.headers['authorization'];
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Unauthorized - Missing or invalid Bearer token' });
+        }
+        const token = authHeader.split(' ')[1];
+        const authKey = config.HONEYBADGER_KEY;
+
+        if (token !== authKey) {
+            return res.status(401).json({ error: 'Unauthorized - Invalid Bearer token' });
+        }
+
+        next();
     }
 
 };
