@@ -4,7 +4,6 @@ const env = process.env.NODE_ENV || 'production';
 const environments = {
     development: {
         NODE_ENV: process.env.NODE_ENV,
-        UV_THREADPOOL_SIZE: OS.cpus().length,
         DATABASE_URL: process.env.DATABASE_URL,
         PORT: process.env.PORT || 3000,
         JWT_SECRET: process.env.JWT_SECRET,
@@ -13,7 +12,6 @@ const environments = {
         SALT_ROUNDS: process.env.SALT_ROUNDS * 1 || 12,
         TOKEN_EXPIRATION_TIME: process.env.TOKEN_EXPIRATION_TIME || '10m',
         SESSION_SECRET: process.env.SESSION_SECRET || 'technoob',
-        HOST: OS.hostname(),
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
@@ -144,7 +142,6 @@ const environments = {
 
     production: {
         NODE_ENV: process.env.NODE_ENV,
-        UV_THREADPOOL_SIZE: OS.cpus().length,
         DATABASE_URL: process.env.DATABASE_URL,
         PORT: process.env.PORT || 3000,
         JWT_SECRET: process.env.JWT_SECRET,
@@ -153,7 +150,6 @@ const environments = {
         SALT_ROUNDS: process.env.SALT_ROUNDS * 1 || 12,
         TOKEN_EXPIRATION_TIME: process.env.TOKEN_EXPIRATION_TIME || '10m',
         SESSION_SECRET: process.env.SESSION_SECRET || 'technoob',
-        HOST: OS.hostname(),
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
@@ -247,7 +243,6 @@ const environments = {
 
     production_worker: {
             NODE_ENV: process.env.NODE_ENV,
-            UV_THREADPOOL_SIZE: OS.cpus().length,
             DATABASE_URL: process.env.DATABASE_URL,
             PORT: process.env.PORT || 3000,
             JWT_SECRET: process.env.JWT_SECRET,
@@ -256,7 +251,6 @@ const environments = {
             SALT_ROUNDS: process.env.SALT_ROUNDS * 1 || 12,
             TOKEN_EXPIRATION_TIME: process.env.TOKEN_EXPIRATION_TIME || '10m',
             SESSION_SECRET: process.env.SESSION_SECRET,
-            HOST: OS.hostname(),
             GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
             GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
             GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
