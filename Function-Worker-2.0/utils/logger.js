@@ -5,7 +5,7 @@ const config = require(`./config`)[env];
 const apiClient = axios.create({
     baseURL: config.LIVE_BASE_URL || 'https://technoob-staging.azurewebsites.net',
     headers: {
-        "Authorization": `Bearer ${config.production.HONEYBADGER_KEY}`,
+        "Authorization": `Bearer ${config.HONEYBADGER_KEY}`,
         "Content-Type": "application/json"
     }
 });
