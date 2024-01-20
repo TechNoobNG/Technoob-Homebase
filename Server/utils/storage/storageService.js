@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const uuid = require('uuid');
 let storageProvider = config.STORAGE_PROVIDER.provider;
 let useMultipleProviders = config.STORAGE_PROVIDER.useMultipleProviders || false;

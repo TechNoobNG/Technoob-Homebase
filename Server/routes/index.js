@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config')[env];
+const config = require('../config/config')
 const user = require('./users');
 const auth = require('./auth');
 const admin = require('./admin');

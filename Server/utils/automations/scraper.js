@@ -4,19 +4,17 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 const { uploadFile } = require('../multer/multer_upload');
 const axios = require('axios').default
-
+const { XMLParser } = require("fast-xml-parser");
 const tunnel = require('tunnel');
-
+const config = require('../../config/config')
 const agent = tunnel.httpsOverHttp({
   proxy: {
     host: 'smartproxy.crawlbase.com',
     port: 8012,
-    proxyAuth: `${process.env.SMART_PROXY_KEY}:`,
+    proxyAuth: `${config.SMART_PROXY_KEY}:`,
   },
 });
-
 puppeteer.use(StealthPlugin());
-const { XMLParser } = require("fast-xml-parser");
 const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
 const scrapingLogs = require("../../models/scrapingLogs");
 const extractIndeedJobs = async function (page) {
@@ -240,9 +238,9 @@ module.exports = {
           currentIndex++;
           if (currentIndex % 2 == 0) {
             console.log("Delaying for rate limit")
-            setTimeout(processNextSearchTag, 20000);
+            setTimeout(processNextSearchTag, 30000);
           } else {
-            setTimeout(processNextSearchTag, 5000);
+            setTimeout(processNextSearchTag, 8000);
           }
         } else {
           await scrapingLogs.findByIdAndUpdate(createLog._id, {
@@ -280,10 +278,9 @@ module.exports = {
         message: "Job scraping queued successfully",
       };
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
       throw error;
     }
-  }
-
+  },
 }
 

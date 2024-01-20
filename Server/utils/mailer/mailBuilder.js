@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const templates = require('../../models/email_templates');
 let mailProvider = config.MAIL_PROVIDER.provider;
 let useMultipleProviders = config.MAIL_PROVIDER.useMultiple || false;

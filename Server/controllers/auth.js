@@ -1,6 +1,5 @@
 
-const env = process.env.NODE_ENV || 'development';
-const config = require(`../config/config`)[env];
+const config = require(`../config/config`);
 const User = require("../models/contact_us");
 const passport = require('passport');
 const services = require('../services/index');
