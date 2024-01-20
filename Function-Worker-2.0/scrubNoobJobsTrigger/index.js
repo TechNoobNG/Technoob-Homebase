@@ -1,4 +1,4 @@
-const config = require('../utils/config')['production'];
+const config = require('../utils/config');
 const q = config.SCRAPER_QUANTITY;
 const posted = config.SCRAPER_OLDEST_JOB_FETCH || 4;
 const expires = config.SCRAPED_JOBS_EXPIRES;
