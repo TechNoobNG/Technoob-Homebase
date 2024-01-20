@@ -2,7 +2,7 @@ const Jobs = require('../models/jobs.js');
 const Activity = require('../models/activity.js')
 const scraper = require('../utils/automations/scraper');
 const ErrorResponse = require('../utils/error/errorResponse');
-
+const config = require('../config/config.js')
 module.exports = {
 
     get_all: async (query) => {
@@ -326,6 +326,21 @@ module.exports = {
                     err.message
                 )
             }
+        }
+    },
+
+    scrapeNoobJobs: async () => {
+        try {
+            const searchTags = config.SCRAPE_STACK_KEYWORDS;
+            await scraper.scrapeJobsRSS({
+                searchTags,
+                age: 7,
+                expires: 7
+            })
+            return true
+        } catch (error) {
+            console.error(error);
+            return false
         }
     }
 

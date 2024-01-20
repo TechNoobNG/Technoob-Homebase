@@ -2,8 +2,7 @@
 const mongoose = require('mongoose');
 const Admin = require('../models/admin');
 const Permissions = require('../models/permissions');
-const env = process.env.NODE_ENV || 'development';
-const config = require(`${__dirname}/../config/config.js`)[env];
+const config = require(`${__dirname}/../config/config.js`);
 const passport = require('../config/passportConfig')
 
 

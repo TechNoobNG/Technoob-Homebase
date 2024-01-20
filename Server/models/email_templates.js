@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const env = process.env.NODE_ENV || 'development';
-const config = require(`${__dirname}/../config/config.js`)[env];
+const config = require(`${__dirname}/../config/config.js`)
 const Schema = mongoose.Schema;
 
 const email = new Schema({

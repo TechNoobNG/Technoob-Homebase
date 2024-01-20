@@ -4,8 +4,17 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 const { uploadFile } = require('../multer/multer_upload');
 const axios = require('axios').default
-puppeteer.use(StealthPlugin());
 const { XMLParser } = require("fast-xml-parser");
+const tunnel = require('tunnel');
+const config = require('../../config/config')
+const agent = tunnel.httpsOverHttp({
+  proxy: {
+    host: 'smartproxy.crawlbase.com',
+    port: 8012,
+    proxyAuth: `${config.SMART_PROXY_KEY}:`,
+  },
+});
+puppeteer.use(StealthPlugin());
 const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
 const scrapingLogs = require("../../models/scrapingLogs");
 const extractIndeedJobs = async function (page) {
@@ -193,13 +202,20 @@ module.exports = {
         if (currentIndex < searchTags.length) {
           const searchTag = searchTags[currentIndex];
           const indeedUrl = `https://rss.indeed.com/rss?q=${encodeURI(searchTag)}&fromage=${age}&l=remote`;
-  
+
           try {
-            const response = await axios.get(indeedUrl, {
+            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; 
+            const response = await axios({
+                method: 'get',
+                url: indeedUrl,
+                httpsAgent:agent,
+                port: 443,
+                rejectUnauthorized: false,
                 headers: {
-                  "User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'
+                  "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15'
                 }
-            });
+            })
+            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 1; 
             const parser = new XMLParser();
             let indeedSearchResultArray = parser.parse(response.data).rss?.channel?.item;
             if (!indeedSearchResultArray || !indeedSearchResultArray.length) {
@@ -222,9 +238,9 @@ module.exports = {
           currentIndex++;
           if (currentIndex % 2 == 0) {
             console.log("Delaying for rate limit")
-            setTimeout(processNextSearchTag, 20000);
+            setTimeout(processNextSearchTag, 30000);
           } else {
-            setTimeout(processNextSearchTag, 5000);
+            setTimeout(processNextSearchTag, 8000);
           }
         } else {
           await scrapingLogs.findByIdAndUpdate(createLog._id, {
@@ -262,10 +278,9 @@ module.exports = {
         message: "Job scraping queued successfully",
       };
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
       throw error;
     }
-  }
-
+  },
 }
 

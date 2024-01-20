@@ -1,7 +1,6 @@
 const services = require('../services/index');
 const resource = services.resources;
-const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config')[env];
+const config = require('../config/config');
 
 module.exports = {
      async get_all (req, res) { 

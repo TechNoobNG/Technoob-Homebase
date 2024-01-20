@@ -1,5 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/config')[env];
+const config = require('../../config/config')
 const uuid = require('uuid');
 const {
     BlobServiceClient,
