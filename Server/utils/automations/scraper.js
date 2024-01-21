@@ -17,6 +17,8 @@ const agent = tunnel.httpsOverHttp({
 puppeteer.use(StealthPlugin());
 const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
 const scrapingLogs = require("../../models/scrapingLogs");
+
+
 const extractIndeedJobs = async function (page) {
   const list = await page.evaluate(() => {
     const listings = [];
@@ -266,8 +268,8 @@ module.exports = {
             }
             if (insertJobObj && JSON.stringify(insertJobObj) !== '{}'  ) return insertJobObj;
           }).filter((insertJobObj) => insertJobObj && JSON.stringify(insertJobObj) !== '{}');
-          const jobs = require("../../services/jobs")
-          await jobs.createScrapedJobs({ uniqueJobsArray: jobArray })
+          const {createScrapedJobs} = require("../../services/jobs")
+          await createScrapedJobs({ uniqueJobsArray: jobArray })
         }
       };
   

@@ -282,18 +282,36 @@ module.exports = {
         try {
             const dataUpload = data.uniqueJobsArray || [];
             if (dataUpload && dataUpload.length) {
-                const bulkOps = dataUpload.map((job) => ({
-                    updateOne: {
-                        filter: { 
-                            title: job.title,
-                            location: job.location,
-                            company: job.company
-                        },
-                        update: { $set: job },
-                        upsert: true
+                const bulkOps = dataUpload.map((job) => {
+                    job.searchKeywords = [];
+                    const jobTitle = job.title;
+                    const keywords = [];
+                
+                    const words = jobTitle.split(' ');
+
+                    for (let i = 0; i < words.length; i++) {
+                        for (let j = i; j < words.length; j++) {
+                            const keyword = words.slice(i, j + 1).join(' ');
+                            keywords.push(keyword);
+                            keywords.push(keyword.toLowerCase());
+                        }
                     }
-                }));
-    
+                
+                    job.searchKeywords = [...job.searchKeywords, ...keywords];
+
+                    return {
+                        updateOne: {
+                            filter: {
+                                title: job.title,
+                                location: job.location,
+                                company: job.company
+                            },
+                            update: { $set: job },
+                            upsert: true
+                        }
+                    };
+                });
+                
                 await Jobs.bulkWrite(bulkOps);
     
                 const activityPromises = dataUpload.map((jobs) => {
@@ -332,8 +350,6 @@ module.exports = {
         }
     },
     
-    
-
     scrapeNoobJobs: async () => {
         try {
             const searchTags = config.SCRAPE_STACK_KEYWORDS;
