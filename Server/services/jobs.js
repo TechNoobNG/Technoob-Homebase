@@ -282,53 +282,74 @@ module.exports = {
         try {
             const dataUpload = data.uniqueJobsArray || [];
             if (dataUpload && dataUpload.length) {
-                await Jobs.insertMany(dataUpload)
+                const bulkOps = dataUpload.map((job) => {
+                    job.searchKeywords = [];
+                    const jobTitle = job.title;
+                    const keywords = [];
+                
+                    const words = jobTitle.split(' ');
+
+                    for (let i = 0; i < words.length; i++) {
+                        for (let j = i; j < words.length; j++) {
+                            const keyword = words.slice(i, j + 1).join(' ');
+                            keywords.push(keyword);
+                            keywords.push(keyword.toLowerCase());
+                        }
+                    }
+                
+                    job.searchKeywords = [...job.searchKeywords, ...keywords];
+
+                    return {
+                        updateOne: {
+                            filter: {
+                                title: job.title,
+                                location: job.location,
+                                company: job.company
+                            },
+                            update: { $set: job },
+                            upsert: true
+                        }
+                    };
+                });
+                
+                await Jobs.bulkWrite(bulkOps);
+    
                 const activityPromises = dataUpload.map((jobs) => {
                     return Activity.create({
-                    user_id: "64feb85db96fbbd731c42d5f",
-                    module: "job",
-                    activity: {
-                        activity: "Job Upload(Worker)",
-                        title: jobs.title,
-                        location: jobs.location,
-                        company: jobs.company,
-                        datePosted: jobs.datePosted,
-                        expiryDate: jobs.expiryDate,
-                        workplaceType: jobs.workplaceType,
-                        contractType: jobs.contractType,
-                        status: "Successful"
-                    }
+                        user_id: "64feb85db96fbbd731c42d5f",
+                        module: "job",
+                        activity: {
+                            activity: "Job Upload(Worker)",
+                            title: jobs.title,
+                            location: jobs.location,
+                            company: jobs.company,
+                            datePosted: jobs.datePosted,
+                            expiryDate: jobs.expiryDate,
+                            workplaceType: jobs.workplaceType,
+                            contractType: jobs.contractType,
+                            status: "Successful"
+                        }
                     });
                 });
-
+    
                 try {
                     await Promise.all(activityPromises);
-                    return data.uniqueJobsArray
+                    return data.uniqueJobsArray;
                 } catch (err) {
+                    console.error(err)
                 }
             } else {
-                throw new ErrorResponse(
-                    400,
-                    "No jobs found"
-                )
+                throw new ErrorResponse(400, "No jobs found");
             }
-            return dataUpload
-
         } catch (err) {
             if (err.message?.includes("TimeoutError")) {
-                throw new ErrorResponse(
-                    400,
-                    "timeout"
-                )
+                throw new ErrorResponse(400, "timeout");
             } else {
-                throw new ErrorResponse(
-                    400,
-                    err.message
-                )
+                throw new ErrorResponse(400, err.message);
             }
         }
     },
-
+    
     scrapeNoobJobs: async () => {
         try {
             const searchTags = config.SCRAPE_STACK_KEYWORDS;

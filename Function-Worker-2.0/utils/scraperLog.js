@@ -10,14 +10,14 @@ class JobLogger {
   }
 
   start(key, status) {
-    this.jobLog[key] = {
+    this.jobLog[key.replace(" ","_")] = {
       start: Date.now(),
       status: 'initiated'
     };
   }
 
   end(key, status, errMessage) {
-    const entry = this.jobLog[key];
+    const entry = this.jobLog[key.replace(" ","_")];
     if (entry) {
       entry.end = Date.now();
       entry.duration = entry.end - entry.start;
