@@ -4,8 +4,8 @@ const Admin = require('../models/admin');
 const Permissions = require('../models/permissions');
 const config = require(`${__dirname}/../config/config.js`);
 const passport = require('../config/passportConfig')
-
-
+const { createHmac } = require('node:crypto');
+const tsscmp = require("tsscmp")
 
 const authenticateMiddleware = passport.authenticate('local', {
     failureMessage: 'Invalid username or password',
@@ -57,7 +57,7 @@ module.exports = {
             }
         } catch (err) {
             res.isAuthenticated = false;
-            res.status(401).json({
+            return res.status(401).json({
                 status: 'fail',
                 message: 'Unauthorized access'
             })
@@ -115,6 +115,44 @@ module.exports = {
         }
 
         next();
+    },
+
+    slackAuth(req, res, next) {
+        try {
+            const timestamp = req.headers['X-Slack-Request-Timestamp'] || req.headers["x-slack-request-timestamp"];
+            if (Number.isNaN(timestamp)) {
+                throw new Error(`Failed to verify authenticity`)
+            };
+            const body = req.body
+            const currentTimestamp = Math.floor(Date.now() / 1000);
+
+            if (Math.abs(currentTimestamp - timestamp) > 60 * 5) {
+                return res.status(401).json({
+                    status: 'fail',
+                    message: 'Invalid/Unauthorized Request'
+                });
+            }
+            const slackSignature = req.headers['x-slack-signature'] || req.headers['x-slack-signature'];
+            const [signatureVersion, signatureHash] = slackSignature.split('=');
+            if (signatureVersion !== 'v0') {
+                throw new Error(`Unknown signature version`);
+            }
+            const concated = `${signatureVersion}:${timestamp}:${body}`
+            const slackSigningSecret = config.SLACK.SIGNING_SECRET; 
+            const hmac = createHmac('sha256', slackSigningSecret);
+            const mySignature = 'v0=' + hmac.update(concated).digest('hex');
+            if (!signatureHash || !tsscmp(signatureHash, mySignature)) {
+                throw new Error(`Signature mismatch`);
+            } else {
+                next();
+            }
+
+        } catch (err) {
+            return res.status(401).json({
+                status: 'fail',
+                message: 'Invalid/Unauthorized Request'
+            })
+        }
     }
 
 };
