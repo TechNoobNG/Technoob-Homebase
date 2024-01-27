@@ -425,7 +425,7 @@ module.exports = {
 
                 await Activity.create(activity)
                 return {
-                    message: `${activityId}(${job.title}) approved successfully`
+                    message: `${activityTag}(${job.title}) approved successfully`
                 }
             } else {
                 throw new ErrorResponse(
@@ -469,7 +469,7 @@ module.exports = {
 
                 await Activity.create(activity)
                 return {
-                    message: `${activityId}(${job.title}) removed successfully`
+                    message: `${activityTag}(${job.title}) removed successfully`
                 }
             } else {
                 throw new ErrorResponse(

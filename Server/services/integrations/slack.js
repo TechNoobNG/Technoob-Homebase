@@ -1,7 +1,6 @@
 
 const { getSlackNotificationModuleDefaults } = require("../../utils/utils");
 const { sendRequest, respondToAction } = require("../../utils/slack/index");
-const { approveScrapedJob, rejectScrapedJob } = require("../jobs");
  /**
      * @function notifySlack
      * @param {object} { moduleType, notificationData,image }
@@ -73,11 +72,12 @@ async function notifyActionResponse({ text, responseUrl }) {
 }
 
 
-async function moduleExtractor({ action }) {
-    const delimiterSeperation = action.value.split(":");
+function moduleExtractor({ action }) {
+    const delimiterSeperation = action?.value?.split(":");
     const activityTag = delimiterSeperation[0];
     const moduleType = delimiterSeperation[1];
     const reaction = delimiterSeperation[2]
+
     return {
         activityTag,
         moduleType,
@@ -85,26 +85,32 @@ async function moduleExtractor({ action }) {
     }
 }
 
-const moduleActionsServiceMap = {
-    notifyScrapedJobApproval: {
-        approve_scraped_jobs: approveScrapedJob,
-        remove_scraped_jobs: rejectScrapedJob
+function servicePicker({ moduleType, reaction  }) {
+    const { approveScrapedJob, rejectScrapedJob } = require("../jobs");
+    const moduleActionsServiceMap = {
+        notifyScrapedJobApproval: {
+            approve_scraped_jobs: approveScrapedJob,
+            remove_scraped_jobs: rejectScrapedJob
+        }
     }
+    return moduleActionsServiceMap[moduleType]?.[reaction] || null;
 }
+
 
 async function processAction({ body }) {
     try {
         if (!body) {
             throw new Error("No interaction body provided")
         }
-        const { activityTag, moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
+        const {  activityTag,moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
         const userInfo = body.user;
-        const runReaction = await moduleActionsServiceMap[moduleType][reaction]({activityTag,userInfo});
+        const reactionService = await servicePicker({ moduleType, reaction });
+        const runReaction = await reactionService({activityTag,userInfo});
         return {
-            message: runReaction.message || "Run successfully"
+            message: runReaction?.message || "Run successfully"
         }
     } catch (error) {
-        
+        throw new Error(`Failed to run: ${error.message}`)
     }
 }
 module.exports = {
