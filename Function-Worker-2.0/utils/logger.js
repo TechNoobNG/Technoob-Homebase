@@ -2,7 +2,7 @@ const axios = require('axios').default;
 const env = process.env.NODE_ENV || 'development';
 const config = require(`./config`)[env];
 
-const apiClient = axios.create({
+const technoob = axios.create({
     baseURL: config.LIVE_BASE_URL || 'https://technoob-staging.azurewebsites.net',
     headers: {
         "Authorization": `Bearer ${config.HONEYBADGER_KEY}`,
@@ -13,7 +13,7 @@ const apiClient = axios.create({
 module.exports = {
     async createScrapeLog({ searchTags, age, platform, scrapeResultLog, status }) {
         try {
-            const response = await apiClient.post("/api/v1/utils/scraper/logs", {
+            const response = await technoob.post("/api/v1/utils/scraper/logs", {
                 searchTags: searchTags,
                 age: age,
                 platform: platform,

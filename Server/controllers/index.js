@@ -9,7 +9,7 @@ const events = require("./events");
 const jobs = require("./jobs");
 const quizzes = require("./quizzes")
 const experimental = require("./experimental.js")
-
+const slack = require('./slack.js')
 module.exports = {
     users,
     auth,
@@ -19,5 +19,6 @@ module.exports = {
     events,
     jobs,
     quizzes,
-    experimental
+    experimental,
+    slack
 };

@@ -229,6 +229,7 @@ module.exports = {
             }
             jobArray.push(...rssjobsArray);
           } catch (error) {
+            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 1; 
             console.error(`Error processing search tag ${searchTag}:`, error.message);
             scraperlog[searchTag] = {
               status: "failed",
@@ -268,7 +269,7 @@ module.exports = {
             }
             if (insertJobObj && JSON.stringify(insertJobObj) !== '{}'  ) return insertJobObj;
           }).filter((insertJobObj) => insertJobObj && JSON.stringify(insertJobObj) !== '{}');
-          const {createScrapedJobs} = require("../../services/jobs")
+          const { createScrapedJobs } = require("../../services/jobs")
           await createScrapedJobs({ uniqueJobsArray: jobArray })
         }
       };
