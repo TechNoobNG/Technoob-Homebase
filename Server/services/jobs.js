@@ -3,11 +3,15 @@ const Activity = require('../models/activity.js')
 const scraper = require('../utils/automations/scraper');
 const ErrorResponse = require('../utils/error/errorResponse');
 const config = require('../config/config.js')
+const { notifySlack } = require("./integrations/slack")
+const uuid = require("uuid") 
 module.exports = {
 
     get_all: async (query) => {
         try {
-            let prompt = {};
+            let prompt = {
+                approved: true
+            };
             let page = query.page * 1 || 1;
             let limit = query.limit || 10;
             let skip = (page - 1) * limit;
@@ -281,8 +285,13 @@ module.exports = {
     createScrapedJobs: async (data) => {
         try {
             const dataUpload = data.uniqueJobsArray || [];
+            let activityIdMap = {}
             if (dataUpload && dataUpload.length) {
-                const bulkOps = dataUpload.map((job) => {
+                const bulkOps = dataUpload.map((job,index) => {
+                    const activityId = uuid.v4();
+                    job.activityId = activityId;
+                    job.approved = false
+                    activityIdMap[index] = activityId;
                     job.searchKeywords = [];
                     const jobTitle = job.title;
                     const keywords = [];
@@ -313,30 +322,53 @@ module.exports = {
                 });
                 
                 await Jobs.bulkWrite(bulkOps);
-    
-                const activityPromises = dataUpload.map((jobs) => {
+              
+                const activityPromises = dataUpload.map((job) => {
                     return Activity.create({
                         user_id: "64feb85db96fbbd731c42d5f",
                         module: "job",
                         activity: {
                             activity: "Job Upload(Worker)",
-                            title: jobs.title,
-                            location: jobs.location,
-                            company: jobs.company,
-                            datePosted: jobs.datePosted,
-                            expiryDate: jobs.expiryDate,
-                            workplaceType: jobs.workplaceType,
-                            contractType: jobs.contractType,
+                            title: job.title,
+                            location: job.location,
+                            company: job.company,
+                            datePosted: job.datePosted,
+                            expiryDate: job.expiryDate,
+                            workplaceType: job.workplaceType,
+                            contractType: job.contractType,
                             status: "Successful"
                         }
                     });
                 });
+
+                const notifySlackPromise = dataUpload.map((job,index) => {
+                    return notifySlack({
+                        moduleType: "notifyScrapedJobApproval",
+                        notificationData: {
+                            Title: job.title,
+                            Location: job.location,
+                            Company: job.company,
+                            Workplace_Type: job.workplaceType,
+                            Contract_Type: job.contractType,
+                            Experience: job.exp,
+                            Activity_ID: activityIdMap[index],
+                            Approval_status: "pending"
+                        },
+                        image: {
+                            url: job.poster,
+                            altText: job.title
+                        },
+                        activityTag:  activityIdMap[index] || null
+                    })
+                })
     
                 try {
                     await Promise.all(activityPromises);
+                    await Promise.allSettled(notifySlackPromise)
                     return data.uniqueJobsArray;
                 } catch (err) {
-                    console.error(err)
+                    console.error(err.message)
+                    return data.uniqueJobsArray;
                 }
             } else {
                 throw new ErrorResponse(400, "No jobs found");
@@ -363,7 +395,92 @@ module.exports = {
             console.error(error);
             return false
         }
-    }
+    },
+
+    approveScrapedJob: async ({activityTag,userInfo}) => {
+        try {
+            const job = await Jobs.findOne({
+                activityId: activityTag
+            });
+            if (job) {
+                job.approved = true;
+                await job.save();
+                const activity = {
+                    user_id: "64feb85db96fbbd731c42d5f" ,
+                    module: "job",
+                    activity: {
+                        activity: "Job Approval",
+                        title: job.title,
+                        location: job.location,
+                        company: job.company,
+                        datePosted: job.datePosted,
+                        expiryDate: job.expiryDate,
+                        workplaceType: job.workplaceType,
+                        contractType: job.contractType,
+                        triggeredBy: userInfo,
+                        status: "Successful"
+                    }
+                }
+
+                await Activity.create(activity)
+                return {
+                    message: `${activityTag}(${job.title}) approved successfully`
+                }
+            } else {
+                throw new ErrorResponse(
+                    400,
+                    "Job not found"
+                )
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    rejectScrapedJob: async ({activityTag,userInfo}) => {
+        try {
+            const job = await Jobs.findOne({
+                activityId: activityTag
+            });
+
+            if (!job) {
+                return true
+            }
+
+            if (job) {
+                await Jobs.findByIdAndDelete(job._id);
+                const activity = {
+                    user_id: "64feb85db96fbbd731c42d5f" ,
+                    module: "job",
+                    activity: {
+                        activity: "Job Rejection",
+                        title: job.title,
+                        location: job.location,
+                        company: job.company,
+                        datePosted: job.datePosted,
+                        expiryDate: job.expiryDate,
+                        workplaceType: job.workplaceType,
+                        contractType: job.contractType,
+                        triggeredBy: userInfo,
+                        status: "Successful"
+                    }
+                }
+
+                await Activity.create(activity)
+                return {
+                    message: `${activityTag}(${job.title}) removed successfully`
+                }
+            } else {
+                throw new ErrorResponse(
+                    400,
+                    "Job not found"
+                )
+            }
+        } catch (error) {
+            throw error
+        }
+    },
+    
 
 
     // rate: async (id, rating) => {

@@ -77,8 +77,23 @@ const jobs = new Schema({
     searchKeywords: {
         type: Schema.Types.Array,
         default: []
+    },
+
+    activityId: {
+        type: String,
+        required: false
+    },
+
+    meta: {
+        type: Object,
+        required: false
+    },
+
+    approved: {
+        type: Boolean,
+        required: false,
+        default: true
     }
-    
 
 },{
     timestamps: true

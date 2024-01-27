@@ -9,6 +9,7 @@ const events = require('./events')
 const jobs = require('./jobs')
 const quizzes = require('./quizzes')
 const utils = require('./utils')
+const slack = require('./slack.js')
 const experimental = require('./experimental.js')
 const base = `/api/v1`
 const pool = require('../experimental/index')
@@ -65,6 +66,7 @@ router.use(`${base}/jobs`, jobs);
 router.use(`${base}/quizzes`, quizzes)
 router.use(`${base}/experimental`, experimental)
 router.use(`${base}/download`, download)
+router.use(`${base}/slack`, slack)
 
 // Prometheus middleware
 router.get('/metrics', async (req, res) => {
