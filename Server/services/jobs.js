@@ -322,9 +322,8 @@ module.exports = {
                 });
                 
                 await Jobs.bulkWrite(bulkOps);
-                
+              
                 const activityPromises = dataUpload.map((job) => {
-
                     return Activity.create({
                         user_id: "64feb85db96fbbd731c42d5f",
                         module: "job",
