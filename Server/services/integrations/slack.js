@@ -57,16 +57,31 @@ function moduleTypeCreator({ moduleType,image,fields, activityTag}) {
     }
 }
 
-async function notifyActionResponse({ text, responseUrl }) {
+async function notifyActionResponse({ text, responseUrl,messageBlock }) {
     try {
         const resp = await respondToAction({
             responseUrl,
             text,
+            messageBlock,
             replace_original: true
         })
         return resp
     } catch (error) {
         throw error;
+    }
+}
+
+async function notifyActionResponseNoError({ text, responseUrl,messageBlock }) {
+    try {
+        const resp = await respondToAction({
+            responseUrl,
+            text,
+            messageBlock,
+            replace_original: true
+        })
+        return resp
+    } catch (error) {
+        console.error(`Notify Action Response Error:${error.message || error}`)
     }
 }
 
@@ -101,7 +116,7 @@ async function processAction({ body }) {
         if (!body) {
             throw new Error("No interaction body provided")
         }
-        const {  activityTag,moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
+        const { activityTag, moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
         const userInfo = body.user;
         const reactionService = await servicePicker({ moduleType, reaction });
         const runReaction = await reactionService({activityTag,userInfo});
@@ -116,5 +131,6 @@ module.exports = {
     notifySlack,
     moduleTypeCreator,
     notifyActionResponse,
-    processAction
+    processAction,
+    notifyActionResponseNoError
 }
