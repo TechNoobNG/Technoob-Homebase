@@ -40,9 +40,6 @@ module.exports = {
             if (replace_original) {
                 payload.replace_original = true
             }
-            console.log(payload.blocks[1])
-            console.log(payload.blocks[1].fields)
-            console.log(payload.blocks)
             const resp = await axios.post(responseUrl, payload, {
                 headers: {
                     "Content-type": "application/json"

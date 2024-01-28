@@ -428,10 +428,10 @@ module.exports = {
                     message: `${job.title}(${activityTag}) approved successfully`
                 }
             } else {
-                throw new ErrorResponse(
-                    400,
-                    "Job not found"
-                )
+                return {
+                    message: `Job with activityTag(${activityTag}) not found, it could have been removed already`
+                }
+                
             }
         } catch (error) {
             throw error;
@@ -443,10 +443,6 @@ module.exports = {
             const job = await Jobs.findOne({
                 activityId: activityTag
             });
-
-            if (!job) {
-                return true
-            }
 
             if (job) {
                 await Jobs.findByIdAndDelete(job._id);
@@ -472,10 +468,9 @@ module.exports = {
                     message: `${activityTag}(${job.title}) removed successfully`
                 }
             } else {
-                throw new ErrorResponse(
-                    400,
-                    "Job not found"
-                )
+                return {
+                    message: `Job with activityTag(${activityTag}) not found, it could have been removed already`
+                }
             }
         } catch (error) {
             throw error

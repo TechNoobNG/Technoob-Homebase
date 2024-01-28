@@ -89,9 +89,14 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
             })
             const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
             slackPayload = {
-                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock, responseTextBlock].filter((comp) => {
+                    if (comp) {
+                        return comp
+                    }
+                })
             }; 
         } else {
+            console.log(messageBlock)
             //re-render original message block with error
             const { payload } = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
@@ -104,7 +109,11 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
             })
             const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
             slackPayload = {
-                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock].filter((comp) => {
+                    if (comp) {
+                        return comp
+                    }
+                })
             };
         }
         console.log(slackPayload)
@@ -154,7 +163,7 @@ async function processAction({ body }) {
         const { activityTag, moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
         const userInfo = body.user;
         const reactionService = await servicePicker({ moduleType, reaction });
-        const runReaction = await reactionService({activityTag,userInfo});
+        const runReaction = await reactionService({ activityTag, userInfo });
         return {
             message: runReaction?.message || "Run successfully"
         }

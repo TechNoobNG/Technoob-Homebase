@@ -182,7 +182,8 @@ module.exports = {
 
             const hmac = createHmac('sha256', slackSigningSecret);
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
-            console.log(mySignature,slackSignature)
+            console.log(mySignature, slackSignature)
+            console.log(req.body)
             if (!signatureHash || !tsscmp(slackSignature, mySignature)) {
                 next();
                 //throw new Error(`Signature mismatch`);
