@@ -43,6 +43,14 @@ function getSlackNotificationModuleDefaults({moduleType,fields,image, activityTa
             ]),
             sectionBlock: createSectionBlock("Techboob Worker Scraped a new job"),
             fieldsBlock: createFieldsBlock(fields, image)
+        },
+        notifyScrapedJobApprovalResponseRender: ({originalMessageBlock,text,isSuccessful}) => {
+            return {
+                actionsBlock: isSuccessful ? null : originalMessageBlock[2],
+                sectionBlock: isSuccessful ?  createSectionBlock(text) : originalMessageBlock[0],
+                fieldsBlock: originalMessageBlock[1],
+                responseTextBlock: isSuccessful ? null : createSectionBlock(text)
+            }
         }
     }
 

@@ -4,10 +4,11 @@ async function processAction({ body }) {
     let processedAction
     try {
         processedAction = await slack.processAction({ body });
+        processedAction.successful = true
     } catch (error) {
-        console.error(error.message);
         processedAction = {
-            message: error.message
+            message: error.message,
+            successful: false
         } 
     }
 
@@ -15,22 +16,23 @@ async function processAction({ body }) {
         await slack.notifyActionResponseNoError({
             text: processedAction.message,
             responseUrl: body.response_url,
-            messageBlock: null
+            messageBlock: body.message.blocks,
+            isSuccessful: processedAction.successful
         });
     } catch (error) {}
 }
 
 module.exports = {
     async action(req, res) {
-        const body = req.body;
+        const reqBody = req.body;
         try {
-            if (!body) {
+            if (!reqBody || !reqBody.payload) {
                 throw new Error("Invalid request body");
             }
 
-            console.log(body);
-            console.log(req.headers)
-            setTimeout(() => processAction({ body }), 1000);
+            setTimeout(() => {
+                processAction({ body: reqBody.payload })
+            }, 1000);
 
             res.ok({
                 status: "success",
