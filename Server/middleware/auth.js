@@ -162,7 +162,7 @@ module.exports = {
             if (Number.isNaN(timestamp)) {
                 throw new Error(`Failed to verify authenticity`)
             };
-            const body = req.body?.payload;
+            const body = req.body;
             const currentTimestamp = Math.floor(Date.now() / 1000);
 
             if (Math.abs(currentTimestamp - timestamp) > 60 * 5) {
