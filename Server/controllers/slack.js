@@ -11,7 +11,7 @@ async function processAction({ body }) {
             successful: false
         } 
     }
-
+    
     try {
         await slack.notifyActionResponseNoError({
             text: processedAction.message,

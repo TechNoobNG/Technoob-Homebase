@@ -74,28 +74,32 @@ async function notifyActionResponse({ text, responseUrl,messageBlock }) {
 async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isSuccessful }) {
     try {
         let slackPayload;
+        const originalMessageBlock = messageBlock
         if (isSuccessful) {
             //hide buttons from original message block
-            const originalMessageBlock = messageBlock
-            const { payload } = getSlackNotificationModuleDefaults({
+            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock } = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
                 image: null,
-                activityTag: null
+                activityTag: null,
+                originalMessageBlock,
+                text,
+                isSuccessful
             })
-            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = payload({originalMessageBlock,text,isSuccessful})
             slackPayload = {
                 "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
             }; 
         } else {
             //re-render original message block with error
-            const { payload } = getSlackNotificationModuleDefaults({
+            const {  sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
                 image: null,
-                activityTag: null
+                activityTag: null,
+                originalMessageBlock,
+                text,
+                isSuccessful: false
             })
-            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = payload({originalMessageBlock, text, isSuccessful:false})
             slackPayload = {
                 "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
             };
@@ -107,6 +111,7 @@ async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isS
         })
         return resp
     } catch (error) {
+        console.log(error)
         console.error(`Notify Action Response Error:${error.message || error}`)
     }
 }
