@@ -16,10 +16,14 @@ module.exports = {
                 });
             } catch (error) {
                 console.error(error)
-                await slack.notifyActionResponse({
-                    text: error.message,
-                    responseUrl: body.response_url
-                });
+                try {
+                    await slack.notifyActionResponse({
+                        text: error.message,
+                        responseUrl: body.response_url
+                    });
+                } catch (error) {
+                    console.error(error)
+                }
             }
            
         } catch (error) {

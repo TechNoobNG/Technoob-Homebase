@@ -12,8 +12,8 @@ const trafficMetric = new Schema({
   requestBodySize: String,
   queryParameters: String,
   statusCode: String,
-  body: Object
-
+  body: Object,
+  headers: Object
 },{
   timestamps: true
 });

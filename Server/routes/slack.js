@@ -31,7 +31,8 @@ router.post('/action', async (req, res, next) => {
         requestBodySize,
         queryParameters,
         statusCode,
-        body
+        body,
+        headers
     });
 
     await trafficMetric.save();
@@ -41,5 +42,5 @@ router.post('/action', async (req, res, next) => {
     next();
   }
 },middleware.auth.slackVerificationMiddleware ,slack.action)
-
+ 
 module.exports = router;
