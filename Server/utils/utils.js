@@ -34,7 +34,7 @@ function createImageAccessoryBlock(imageUrl, altText) {
     };
 }
 
-function getSlackNotificationModuleDefaults({moduleType,fields,image, activityTag}) {
+function getSlackNotificationModuleDefaults({ moduleType, fields, image, activityTag, originalMessageBlock,text,isSuccessful }) {
     const slackModules = {
         notifyScrapedJobApproval: {
             actionsBlock : createActionsBlock ([
@@ -42,15 +42,13 @@ function getSlackNotificationModuleDefaults({moduleType,fields,image, activityTa
                 { text: "Decline", style: "danger", value: `${activityTag}:notifyScrapedJobApproval:remove_scraped_jobs` }
             ]),
             sectionBlock: createSectionBlock("Techboob Worker Scraped a new job"),
-            fieldsBlock: createFieldsBlock(fields, image)
+            fieldsBlock: fields && image ? createFieldsBlock(fields, image) : []
         },
-        notifyScrapedJobApprovalResponseRender: ({originalMessageBlock,text,isSuccessful}) => {
-            return {
+        notifyScrapedJobApprovalResponseRender: { 
                 actionsBlock: isSuccessful ? null : originalMessageBlock[2],
                 sectionBlock: isSuccessful ?  createSectionBlock(text) : originalMessageBlock[0],
                 fieldsBlock: originalMessageBlock[1],
                 responseTextBlock: isSuccessful ? null : createSectionBlock(text)
-            }
         }
     }
 
@@ -99,7 +97,7 @@ module.exports = {
     },
     removePathSegments(url) {
         const isAdminRoute = url.startsWith('/api/v1/admin');
-    
+
         if (isAdminRoute) {
             const regex = /^\/api\/v1\/admin\/([^/]+)\/?/;
             const match = url.match(regex);
@@ -107,7 +105,7 @@ module.exports = {
         } else {
             const regex = /^\/api\/v1\/[^/]+/;
             const match = url.match(regex);
-    
+
             return match ? match[0] : url;
         }
     },
