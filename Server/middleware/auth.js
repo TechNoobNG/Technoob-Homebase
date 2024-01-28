@@ -32,6 +32,43 @@ const githubCallbackAuthenticateMiddleware = passport.authenticate('github', {
 
 });
 
+function verifySlackRequest(options) {
+    const verifyErrorPrefix = 'Slack request verification failed';
+  
+    const requestTimestampSec = parseInt(options.headers['x-slack-request-timestamp'], 10);
+    const signature = options.headers['x-slack-signature'];
+  
+    if (isNaN(requestTimestampSec)) {
+      throw new Error(
+        `${verifyErrorPrefix}: header x-slack-request-timestamp did not have the expected type (${requestTimestampSec})`,
+      );
+    }
+
+    const nowMs = options.nowMilliseconds || Date.now();
+    const requestTimestampMaxDeltaMin = 5;
+    const fiveMinutesAgoSec = Math.floor(nowMs / 1000) - 60 * requestTimestampMaxDeltaMin;
+  
+
+    if (requestTimestampSec < fiveMinutesAgoSec) {
+      throw new Error(`${verifyErrorPrefix}: x-slack-request-timestamp must differ from system time by no more than ${requestTimestampMaxDeltaMin} minutes or request is stale`);
+    }
+  
+    const [signatureVersion, signatureHash] = signature.split('=');
+    
+    if (signatureVersion !== 'v0') {
+      throw new Error(`${verifyErrorPrefix}: unknown signature version`);
+    }
+  
+    const hmac = createHmac('sha256', options.signingSecret);
+    hmac.update(`${signatureVersion}:${requestTimestampSec}:${options.body}`);
+    const ourSignatureHash = hmac.digest('hex');
+
+
+    if (!signatureHash || !tsscmp(signatureHash, ourSignatureHash)) {
+      throw new Error(`${verifyErrorPrefix}: signature mismatch`);
+    }
+  }
+
 module.exports = {
     authenticateMiddleware,
     googleCallbackAuthenticateMiddleware,
@@ -132,15 +169,20 @@ module.exports = {
                     message: 'Invalid/Unauthorized Request'
                 });
             }
-            const slackSignature = req.headers['x-slack-signature'] || req.headers['x-slack-signature'];
+            const slackSignature = req.headers['x-slack-signature'] || req.headers['X-slack-signature'];
             const [signatureVersion, signatureHash] = slackSignature.split('=');
+  
             if (signatureVersion !== 'v0') {
                 throw new Error(`Unknown signature version`);
             }
             const concated = `${signatureVersion}:${timestamp}:${body}`
             const slackSigningSecret = config.SLACK.SIGNING_SECRET; 
+
             const hmac = createHmac('sha256', slackSigningSecret);
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
+
+            console.log(mySignature,slackSignature)
+        
             if (!signatureHash || !tsscmp(signatureHash, mySignature)) {
                 throw new Error(`Signature mismatch`);
             } else {
@@ -148,11 +190,29 @@ module.exports = {
             }
 
         } catch (err) {
+            console.log(err)
             return res.status(401).json({
                 status: 'fail',
                 message: 'Invalid/Unauthorized Request'
             })
         }
-    }
+    },
+
+    slackVerificationMiddleware(req, res, next) {
+        const options = {
+          headers: req.headers,
+          signingSecret: config.SLACK.SIGNING_SECRET,
+          nowMilliseconds: Date.now(),
+          body: req.body, 
+        };
+      
+        try {
+          verifySlackRequest(options);
+          next();
+        } catch (error) {
+            console.log(error)
+          res.status(401).send('Unauthorized');
+        }
+      }
 
 };

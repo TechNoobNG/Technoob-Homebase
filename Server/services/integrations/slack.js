@@ -22,8 +22,6 @@ const { sendRequest, respondToAction } = require("../../utils/slack/index");
             image,
             activityTag
         })
-
-
         await sendRequest({
             body: slackPayload,
             webhook: {
@@ -34,6 +32,7 @@ const { sendRequest, respondToAction } = require("../../utils/slack/index");
             message: `Notified ${channel}`
         }
     } catch (error) {
+        console.error(error)
         throw error
     }
 }
