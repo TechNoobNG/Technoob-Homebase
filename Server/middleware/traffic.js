@@ -25,7 +25,9 @@ const saveTrafficMetric = (req, res, next) => {
       referer,
       requestBodySize,
       queryParameters,
-      statusCode
+      statusCode,
+      headers: req.headers,
+      body: req.body
     });
 
     trafficMetric.save();
