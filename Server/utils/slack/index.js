@@ -35,13 +35,12 @@ module.exports = {
         }
     },
 
-    respondToAction: async ({responseUrl,text,replace_original }) => {
+    respondToAction: async ({responseUrl,replace_original,payload }) => {
         try {
-            let data = { text }
             if (replace_original) {
-                data.replace_original = true
+                payload.replace_original = true
             }
-            const resp = await axios.post(responseUrl, data, {
+            const resp = await axios.post(responseUrl, payload, {
                 headers: {
                     "Content-type": "application/json"
                 }

@@ -71,12 +71,38 @@ async function notifyActionResponse({ text, responseUrl,messageBlock }) {
     }
 }
 
-async function notifyActionResponseNoError({ text, responseUrl,messageBlock }) {
+async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isSuccessful }) {
     try {
+        let slackPayload;
+        if (isSuccessful) {
+            //hide buttons from original message block
+            const originalMessageBlock = messageBlock
+            const { payload } = getSlackNotificationModuleDefaults({
+                moduleType: "notifyScrapedJobApprovalResponseRender",
+                fields: null,
+                image: null,
+                activityTag: null
+            })
+            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = payload({originalMessageBlock,text,isSuccessful})
+            slackPayload = {
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
+            }; 
+        } else {
+            //re-render original message block with error
+            const { payload } = getSlackNotificationModuleDefaults({
+                moduleType: "notifyScrapedJobApprovalResponseRender",
+                fields: null,
+                image: null,
+                activityTag: null
+            })
+            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = payload({originalMessageBlock, text, isSuccessful:false})
+            slackPayload = {
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
+            };
+        }
         const resp = await respondToAction({
             responseUrl,
-            text,
-            messageBlock,
+            payload: slackPayload,
             replace_original: true
         })
         return resp

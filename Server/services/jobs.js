@@ -425,7 +425,7 @@ module.exports = {
 
                 await Activity.create(activity)
                 return {
-                    message: `${activityTag}(${job.title}) approved successfully`
+                    message: `${job.title}(${activityTag}) approved successfully`
                 }
             } else {
                 throw new ErrorResponse(
