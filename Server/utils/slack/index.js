@@ -48,6 +48,7 @@ module.exports = {
             })
             return resp.data
         } catch (error) {
+            console.log(error.message)
             throw error.message
         }
     }

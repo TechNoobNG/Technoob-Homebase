@@ -71,13 +71,14 @@ async function notifyActionResponse({ text, responseUrl,messageBlock }) {
     }
 }
 
-async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isSuccessful }) {
+async function notifyActionResponseNoError({ text, responseUrl, messageBlock, isSuccessful }) {
     try {
         let slackPayload;
         const originalMessageBlock = messageBlock
         if (isSuccessful) {
             //hide buttons from original message block
-            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock } = getSlackNotificationModuleDefaults({
+            console.log(messageBlock)
+            const { payload} = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
                 image: null,
@@ -86,12 +87,18 @@ async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isS
                 text,
                 isSuccessful
             })
+            const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
             slackPayload = {
-                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock, responseTextBlock].filter((comp) => {
+                    if (comp) {
+                        return comp
+                    }
+                })
             }; 
         } else {
+            console.log(messageBlock)
             //re-render original message block with error
-            const {  sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = getSlackNotificationModuleDefaults({
+            const { payload } = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
                 image: null,
@@ -100,10 +107,16 @@ async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isS
                 text,
                 isSuccessful: false
             })
+            const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
             slackPayload = {
-                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock].filter((comp) => {
+                    if (comp) {
+                        return comp
+                    }
+                })
             };
         }
+        console.log(slackPayload)
         const resp = await respondToAction({
             responseUrl,
             payload: slackPayload,
@@ -150,7 +163,7 @@ async function processAction({ body }) {
         const { activityTag, moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
         const userInfo = body.user;
         const reactionService = await servicePicker({ moduleType, reaction });
-        const runReaction = await reactionService({activityTag,userInfo});
+        const runReaction = await reactionService({ activityTag, userInfo });
         return {
             message: runReaction?.message || "Run successfully"
         }
