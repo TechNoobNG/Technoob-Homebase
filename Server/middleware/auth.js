@@ -32,6 +32,48 @@ const githubCallbackAuthenticateMiddleware = passport.authenticate('github', {
 
 });
 
+const { createHmac } = require('crypto');
+const tsscmp = require('tsscmp');
+
+function verifySlackRequest(options) {
+    const verifyErrorPrefix = 'Slack request verification failed';
+
+    const requestTimestampSec = parseInt(options.headers['x-slack-request-timestamp'], 10);
+    const signature = options.headers['x-slack-signature'];
+
+    if (isNaN(requestTimestampSec)) {
+        throw new Error(
+        `${verifyErrorPrefix}: header x-slack-request-timestamp did not have the expected type (${requestTimestampSec})`,
+        );
+    }
+
+    const nowMs = options.nowMilliseconds || Date.now();
+    const requestTimestampMaxDeltaMin = 5;
+    const fiveMinutesAgoSec = Math.floor(nowMs / 1000) - 60 * requestTimestampMaxDeltaMin;
+
+
+    if (requestTimestampSec < fiveMinutesAgoSec) {
+        throw new Error(`${verifyErrorPrefix}: x-slack-request-timestamp must differ from system time by no more than ${requestTimestampMaxDeltaMin} minutes or request is stale`);
+    }
+
+    const [signatureVersion, signatureHash] = signature.split('=');
+    
+
+    if (signatureVersion !== 'v0') {
+        throw new Error(`${verifyErrorPrefix}: unknown signature version`);
+    }
+
+
+    const hmac = createHmac('sha256', options.signingSecret);
+    hmac.update(`${signatureVersion}:${requestTimestampSec}:${options.body}`);
+    const ourSignatureHash = hmac.digest('hex');
+
+    console.log(signatureHash, ourSignatureHash)
+    if (!signatureHash || !tsscmp(signatureHash, ourSignatureHash)) {
+        throw new Error(`${verifyErrorPrefix}: signature mismatch`);
+    }
+}
+
 module.exports = {
     authenticateMiddleware,
     googleCallbackAuthenticateMiddleware,
@@ -158,6 +200,22 @@ module.exports = {
                 message: 'Invalid/Unauthorized Request'
             })
         }
-    }
+    },
+    slackVerificationMiddleware(req, res, next) {
+        const options = {
+            headers: req.headers,
+            signingSecret: config.SLACK.SIGNING_SECRET, 
+            nowMilliseconds: Date.now(),
+            body: req.body, 
+        };
+  
+        try {
+            verifySlackRequest(options);
+            next();
+        } catch (error) {
+            console.log(error)
+            res.status(401).send('Unauthorized');
+        }
+  }
 
 };
