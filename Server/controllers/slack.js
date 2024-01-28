@@ -30,15 +30,13 @@ module.exports = {
                 throw new Error("Invalid request body");
             }
 
-            setTimeout(() => {
-                processAction({ body: reqBody.payload })
-            }, 1000);
-
             res.ok({
                 status: "success",
                 message: "Action received",
                 statusCode: 200
             });
+            console.log(req.body)
+            await processAction({ body: reqBody.payload })
         } catch (error) {
             res.fail({
                 status: "fail",
