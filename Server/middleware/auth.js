@@ -199,6 +199,7 @@ module.exports = {
     },
 
     slackVerificationMiddleware(req, res, next) {
+        next()
         const options = {
           headers: req.headers,
           signingSecret: config.SLACK.SIGNING_SECRET,
@@ -211,7 +212,10 @@ module.exports = {
           next();
         } catch (error) {
             console.log(error)
-          res.status(401).send('Unauthorized');
+          res.status(401).json({
+            status: 'fail',
+            message: 'Invalid/Unauthorized Request'
+        })
         }
       }
 

@@ -7,10 +7,7 @@ module.exports = {
             if (!body) {
                 throw new Error("Invalid request body")
             }
-            res.ok({
-                status: "success",
-                message: `Request Recieved`
-            })
+            res.status(200).send()
             try {
                 const processedAction = await slack.processAction({ body });
                 await slack.notifyActionResponse({
