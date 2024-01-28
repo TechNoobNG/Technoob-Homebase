@@ -71,13 +71,14 @@ async function notifyActionResponse({ text, responseUrl,messageBlock }) {
     }
 }
 
-async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isSuccessful }) {
+async function notifyActionResponseNoError({ text, responseUrl, messageBlock, isSuccessful }) {
     try {
         let slackPayload;
         const originalMessageBlock = messageBlock
         if (isSuccessful) {
             //hide buttons from original message block
-            const { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock } = getSlackNotificationModuleDefaults({
+            console.log(messageBlock)
+            const { payload} = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
                 image: null,
@@ -86,12 +87,13 @@ async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isS
                 text,
                 isSuccessful
             })
+            const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
             slackPayload = {
                 "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
             }; 
         } else {
             //re-render original message block with error
-            const {  sectionBlock, fieldsBlock, actionsBlock,responseTextBlock  } = getSlackNotificationModuleDefaults({
+            const { payload } = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
                 image: null,
@@ -100,10 +102,12 @@ async function notifyActionResponseNoError({ text, responseUrl,messageBlock, isS
                 text,
                 isSuccessful: false
             })
+            const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
             slackPayload = {
                 "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock]
             };
         }
+        console.log(slackPayload)
         const resp = await respondToAction({
             responseUrl,
             payload: slackPayload,
