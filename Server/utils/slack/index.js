@@ -7,11 +7,11 @@ const slack = axios.create({
     headers: {"Content-type": "application/json"}
 });
   
-const slackClient =  axios.create({
-    baseURL: config.SLACK.BASE_URL,
-    timeout: 5000,
-    headers: {"Content-type": "application/json"}
-});
+// const slackClient =  axios.create({
+//     baseURL: config.SLACK.BASE_URL,
+//     timeout: 5000,
+//     headers: {"Content-type": "application/json"}
+// });
 
 
 module.exports = {
