@@ -32,9 +32,6 @@ const githubCallbackAuthenticateMiddleware = passport.authenticate('github', {
 
 });
 
-const { createHmac } = require('crypto');
-const tsscmp = require('tsscmp');
-
 function verifySlackRequest(options) {
     const verifyErrorPrefix = 'Slack request verification failed';
 
