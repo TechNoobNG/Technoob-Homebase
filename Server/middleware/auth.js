@@ -203,7 +203,7 @@ module.exports = {
             headers: req.headers,
             signingSecret: config.SLACK.SIGNING_SECRET, 
             nowMilliseconds: Date.now(),
-            body: req.body, 
+            body: req.body?.payload, 
         };
   
         try {
