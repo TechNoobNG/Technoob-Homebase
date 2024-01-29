@@ -3,6 +3,7 @@ const slack = require('../services/integrations/slack');
 async function processAction({ body }) {
     let processedAction
     console.log(body)
+    console.log("--------", typeof body)
     try {
         processedAction = await slack.processAction({ body });
         processedAction.successful = true
