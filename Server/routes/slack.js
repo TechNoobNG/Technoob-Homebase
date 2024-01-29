@@ -4,6 +4,7 @@ const controller = require('../controllers/index');
 const slack = controller.slack;
 const middleware = require('../middleware/index');
 
-router.post('/action',middleware.auth.slackAuth ,slack.action)
 
+router.post('/action',slack.action)
+ 
 module.exports = router;

@@ -7,11 +7,11 @@ const slack = axios.create({
     headers: {"Content-type": "application/json"}
 });
   
-const slackClient =  axios.create({
-    baseURL: config.SLACK.BASE_URL,
-    timeout: 5000,
-    headers: {"Content-type": "application/json"}
-});
+// const slackClient =  axios.create({
+//     baseURL: config.SLACK.BASE_URL,
+//     timeout: 5000,
+//     headers: {"Content-type": "application/json"}
+// });
 
 
 module.exports = {
@@ -35,13 +35,12 @@ module.exports = {
         }
     },
 
-    respondToAction: async ({responseUrl,text,replace_original }) => {
+    respondToAction: async ({responseUrl,replace_original,payload }) => {
         try {
-            let data = { text }
             if (replace_original) {
-                data.replace_original = true
+                payload.replace_original = true
             }
-            const resp = await axios.post(responseUrl, data, {
+            const resp = await axios.post(responseUrl, payload, {
                 headers: {
                     "Content-type": "application/json"
                 }
@@ -49,6 +48,7 @@ module.exports = {
             })
             return resp.data
         } catch (error) {
+            console.log(error.message)
             throw error.message
         }
     }

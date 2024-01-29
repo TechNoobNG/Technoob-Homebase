@@ -22,8 +22,6 @@ const { sendRequest, respondToAction } = require("../../utils/slack/index");
             image,
             activityTag
         })
-
-
         await sendRequest({
             body: slackPayload,
             webhook: {
@@ -34,6 +32,7 @@ const { sendRequest, respondToAction } = require("../../utils/slack/index");
             message: `Notified ${channel}`
         }
     } catch (error) {
+        console.error(error)
         throw error
     }
 }
@@ -58,16 +57,82 @@ function moduleTypeCreator({ moduleType,image,fields, activityTag}) {
     }
 }
 
-async function notifyActionResponse({ text, responseUrl }) {
+async function notifyActionResponse({ text, responseUrl,messageBlock }) {
     try {
         const resp = await respondToAction({
             responseUrl,
             text,
+            messageBlock,
             replace_original: true
         })
         return resp
     } catch (error) {
         throw error;
+    }
+}
+
+async function notifyActionResponseNoError({ text, responseUrl, messageBlock, isSuccessful,thread_ts }) {
+    try {
+        let slackPayload;
+        const originalMessageBlock = messageBlock
+        if (isSuccessful) {
+            //hide buttons from original message block
+            console.log(messageBlock)
+            const { payload} = getSlackNotificationModuleDefaults({
+                moduleType: "notifyScrapedJobApprovalResponseRender",
+                fields: null,
+                image: null,
+                activityTag: null,
+                originalMessageBlock,
+                text,
+                isSuccessful
+            })
+            const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
+            slackPayload = {
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock, responseTextBlock].filter((comp) => {
+                    if (comp) {
+                        return comp
+                    }
+                })
+            }; 
+        } else {
+            console.log(messageBlock)
+            //re-render original message block with error
+            const { payload } = getSlackNotificationModuleDefaults({
+                moduleType: "notifyScrapedJobApprovalResponseRender",
+                fields: null,
+                image: null,
+                activityTag: null,
+                originalMessageBlock,
+                text,
+                isSuccessful: false
+            })
+            const  { sectionBlock, fieldsBlock, actionsBlock,responseTextBlock }  = payload
+            slackPayload = {
+                "blocks": [sectionBlock, fieldsBlock, actionsBlock,responseTextBlock].filter((comp) => {
+                    if (comp) {
+                        return comp
+                    }
+                })
+            };
+        }
+        console.log(slackPayload)
+        let respPayload = {
+            responseUrl,
+            payload: slackPayload,
+            replace_original: true,
+            thread_ts
+        }
+        if (thread_ts) {
+            respPayload.replace_original = false
+            respPayload.response_type = "in_channel"
+        }
+        console.log(respPayload)
+        const resp = await respondToAction(respPayload)
+        return resp
+    } catch (error) {
+        console.log(error)
+        console.error(`Notify Action Response Error:${error.message || error}`)
     }
 }
 
@@ -102,10 +167,10 @@ async function processAction({ body }) {
         if (!body) {
             throw new Error("No interaction body provided")
         }
-        const {  activityTag,moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
+        const { activityTag, moduleType, reaction } = moduleExtractor({ action: body.actions[0] });
         const userInfo = body.user;
         const reactionService = await servicePicker({ moduleType, reaction });
-        const runReaction = await reactionService({activityTag,userInfo});
+        const runReaction = await reactionService({ activityTag, userInfo });
         return {
             message: runReaction?.message || "Run successfully"
         }
@@ -117,5 +182,6 @@ module.exports = {
     notifySlack,
     moduleTypeCreator,
     notifyActionResponse,
-    processAction
+    processAction,
+    notifyActionResponseNoError
 }

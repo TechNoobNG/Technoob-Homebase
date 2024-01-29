@@ -105,7 +105,8 @@ const environments = {
                 '/api/v1/admin/invite',
                 '/api/v1/admin/remove',
                 '/api/v1/admin/contact-us',
-                '/api/v1/admin/mailing-list'
+                '/api/v1/admin/mailing-list',
+                '/api/v1/slack'
             ],
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
@@ -261,7 +262,8 @@ const environments = {
                 '/api/v1/admin/invite',
                 '/api/v1/admin/remove',
                 '/api/v1/admin/contact-us',
-                '/api/v1/admin/mailing-list'
+                '/api/v1/admin/mailing-list',
+                '/api/v1/slack'
             ],
         MAX_LOGIN_ATTEMPT: process.env.MAX_LOGIN_ATTEMPT || 3,
         WORKER_BATCH_SIZE: process.env.WORKER_BATCH_SIZE || 5,
@@ -400,7 +402,8 @@ const environments = {
         REDIS_PASSWORD: process.env.REDIS_PASSWORD,
         EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
             [
-                '/api/v1/authenticate'
+                '/api/v1/authenticate',
+                '/api/v1/slack/action'
             ],
         USE_CORS: process.env.USE_CORS ,
         MAIL_PROVIDER: {
