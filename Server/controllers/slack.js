@@ -2,6 +2,8 @@ const slack = require('../services/integrations/slack');
 
 async function processAction({ body }) {
     let processedAction
+    console.log(body)
+    console.log("--------", typeof body)
     try {
         processedAction = await slack.processAction({ body });
         processedAction.successful = true
@@ -17,7 +19,8 @@ async function processAction({ body }) {
             text: processedAction.message,
             responseUrl: body.response_url,
             messageBlock: body.message.blocks,
-            isSuccessful: processedAction.successful
+            isSuccessful: processedAction.successful,
+            thread_ts: body.container.message_ts
         });
     } catch (error) {
         console.error(error,processedAction)

@@ -71,7 +71,7 @@ async function notifyActionResponse({ text, responseUrl,messageBlock }) {
     }
 }
 
-async function notifyActionResponseNoError({ text, responseUrl, messageBlock, isSuccessful }) {
+async function notifyActionResponseNoError({ text, responseUrl, messageBlock, isSuccessful,thread_ts }) {
     try {
         let slackPayload;
         const originalMessageBlock = messageBlock
@@ -117,11 +117,18 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
             };
         }
         console.log(slackPayload)
-        const resp = await respondToAction({
+        let respPayload = {
             responseUrl,
             payload: slackPayload,
-            replace_original: true
-        })
+            replace_original: true,
+            thread_ts
+        }
+        if (thread_ts) {
+            respPayload.replace_original = false
+            respPayload.response_type = "in_channel"
+        }
+        console.log(respPayload)
+        const resp = await respondToAction(respPayload)
         return resp
     } catch (error) {
         console.log(error)
