@@ -162,6 +162,7 @@ module.exports = {
             if (Number.isNaN(timestamp)) {
                 throw new Error(`Failed to verify authenticity`)
             };
+      
             const body = req.body;
             const currentTimestamp = Math.floor(Date.now() / 1000);
 
@@ -182,10 +183,9 @@ module.exports = {
 
             const hmac = createHmac('sha256', slackSigningSecret);
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
-      
+            
             if (!signatureHash || !tsscmp(slackSignature, mySignature)) {
-                next();
-                //throw new Error(`Signature mismatch`);
+                next()
             } else {
                 next();
             }
@@ -203,7 +203,7 @@ module.exports = {
             headers: req.headers,
             signingSecret: config.SLACK.SIGNING_SECRET, 
             nowMilliseconds: Date.now(),
-            body: req.body?.payload, 
+            body: req.body, 
         };
   
         try {

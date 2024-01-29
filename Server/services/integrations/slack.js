@@ -77,7 +77,6 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
         const originalMessageBlock = messageBlock
         if (isSuccessful) {
             //hide buttons from original message block
-            console.log(messageBlock)
             const { payload} = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
                 fields: null,
@@ -96,7 +95,6 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
                 })
             }; 
         } else {
-            console.log(messageBlock)
             //re-render original message block with error
             const { payload } = getSlackNotificationModuleDefaults({
                 moduleType: "notifyScrapedJobApprovalResponseRender",
@@ -116,7 +114,6 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
                 })
             };
         }
-        console.log(slackPayload)
         let respPayload = {
             responseUrl,
             payload: slackPayload,
@@ -127,11 +124,9 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
             respPayload.replace_original = false
             respPayload.response_type = "in_channel"
         }
-        console.log(respPayload)
         const resp = await respondToAction(respPayload)
         return resp
     } catch (error) {
-        console.log(error)
         console.error(`Notify Action Response Error:${error.message || error}`)
     }
 }

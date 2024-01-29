@@ -2,8 +2,6 @@ const slack = require('../services/integrations/slack');
 
 async function processAction({ body }) {
     let processedAction
-    console.log(body)
-    console.log("--------", typeof body)
     try {
         processedAction = await slack.processAction({ body });
         processedAction.successful = true
@@ -23,7 +21,6 @@ async function processAction({ body }) {
             thread_ts: body.container.message_ts
         });
     } catch (error) {
-        console.error(error,processedAction)
     }
 }
 
@@ -31,25 +28,20 @@ module.exports = {
     async action(req, res) {
         const reqBody = req.body;
         try {
+            
             if (!reqBody || !reqBody.payload) {
                 throw new Error("Invalid request body");
             }
 
-            setTimeout(() => {
-                res.ok({
-                    status: "success",
-                    message: "Action received",
-                    statusCode: 200
-                });
-            }, 200)
-            await processAction({ body: reqBody.payload })
+            const parsedBody = JSON.parse(reqBody.payload)
 
-            // res.ok({
-            //     status: "success",
-            //     message: "Action received",
-            //     statusCode: 200
-            // });
-            // console.log(req.body)
+            res.ok({
+                status: "success",
+                message: "Action received",
+                statusCode: 200
+            })
+            
+            await processAction({ body: parsedBody })
             
         } catch (error) {
             console.log(error)
