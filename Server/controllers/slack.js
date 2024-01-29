@@ -32,13 +32,18 @@ module.exports = {
                 throw new Error("Invalid request body");
             }
 
-            res.ok({
+            await Promise.all([res.ok({
                 status: "success",
                 message: "Action received",
                 statusCode: 200
-            });
-            console.log(req.body)
-            await processAction({ body: reqBody.payload })
+            }), processAction({ body: reqBody.payload })])
+            // res.ok({
+            //     status: "success",
+            //     message: "Action received",
+            //     statusCode: 200
+            // });
+            // console.log(req.body)
+            // await processAction({ body: reqBody.payload })
         } catch (error) {
             console.error(error)
             res.fail({
