@@ -6,13 +6,6 @@ const slack = axios.create({
     timeout: 5000,
     headers: {"Content-type": "application/json"}
 });
-  
-// const slackClient =  axios.create({
-//     baseURL: config.SLACK.BASE_URL,
-//     timeout: 5000,
-//     headers: {"Content-type": "application/json"}
-// });
-
 
 module.exports = {
     sendRequest: async ({ body, webhook }) => {
@@ -48,7 +41,6 @@ module.exports = {
             })
             return resp.data
         } catch (error) {
-            console.log(error.message)
             throw error.message
         }
     }

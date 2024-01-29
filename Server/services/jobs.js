@@ -353,6 +353,7 @@ module.exports = {
                             Contract_Type: job.contractType,
                             Experience: job.exp,
                             Activity_ID: activityIdMap[index],
+                            Job_Link: job.link,
                             Approval_status: "pending"
                         },
                         image: {
@@ -425,11 +426,11 @@ module.exports = {
 
                 await Activity.create(activity)
                 return {
-                    message: `${job.title}(${activityTag}) approved successfully`
+                    message: `${job.title} with activityTag (${activityTag}) approved successfully by ${userInfo.username || userInfo.name}`
                 }
             } else {
                 return {
-                    message: `Job with activityTag(${activityTag}) not found, it could have been removed already`
+                    message: `Job with activityTag (${activityTag}) not found, it could have been removed already`
                 }
                 
             }
@@ -465,7 +466,7 @@ module.exports = {
 
                 await Activity.create(activity)
                 return {
-                    message: `${activityTag}(${job.title}) removed successfully`
+                    message: `${job.title} with activityTag (${activityTag})  removed successfully by ${userInfo.username || userInfo.name}`
                 }
             } else {
                 return {
