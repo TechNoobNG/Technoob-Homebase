@@ -19,7 +19,9 @@ async function processAction({ body }) {
             messageBlock: body.message.blocks,
             isSuccessful: processedAction.successful
         });
-    } catch (error) {}
+    } catch (error) {
+        console.error(error,processedAction)
+    }
 }
 
 module.exports = {
@@ -38,6 +40,7 @@ module.exports = {
             console.log(req.body)
             await processAction({ body: reqBody.payload })
         } catch (error) {
+            console.error(error)
             res.fail({
                 status: "fail",
                 message: error.message
