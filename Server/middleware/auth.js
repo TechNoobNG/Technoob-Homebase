@@ -82,7 +82,7 @@ module.exports = {
             const token = req.headers["authorization"]?.split(' ')[1];
             if (req.isAuthenticated()) {
                 return next();
-            } else if(token){
+            } else if (token) {
                 passport.authenticate('authenticate', { session: false }, (err, user) => {
                     if (err || !user) {
                         throw new Error("Unauthorized access");
@@ -117,6 +117,7 @@ module.exports = {
             try {
                 const permission = await Permissions.findOne({ permission: perm });
                 const permissionId = permission ? new mongoose.Types.ObjectId(permission._id) : null;
+               
                 if (!permissionId) {
                     throw new Error('Permission not found')
                 }
@@ -162,7 +163,8 @@ module.exports = {
             if (Number.isNaN(timestamp)) {
                 throw new Error(`Failed to verify authenticity`)
             };
-            const body = req.body;
+      
+            const body = JSON.stringify(req.body);
             const currentTimestamp = Math.floor(Date.now() / 1000);
 
             if (Math.abs(currentTimestamp - timestamp) > 60 * 5) {
@@ -182,10 +184,9 @@ module.exports = {
 
             const hmac = createHmac('sha256', slackSigningSecret);
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
-      
+            
             if (!signatureHash || !tsscmp(slackSignature, mySignature)) {
-                next();
-                //throw new Error(`Signature mismatch`);
+                next()
             } else {
                 next();
             }
@@ -203,7 +204,7 @@ module.exports = {
             headers: req.headers,
             signingSecret: config.SLACK.SIGNING_SECRET, 
             nowMilliseconds: Date.now(),
-            body: req.body?.payload, 
+            body: req.body, 
         };
   
         try {

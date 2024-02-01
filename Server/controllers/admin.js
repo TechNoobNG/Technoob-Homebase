@@ -300,6 +300,36 @@ module.exports = {
 
         }
     },
+    async addToMailingList(req, res) {
+        try {
+            const body = req.body
+            const mailingList = await admin.addToMailingList(body);
+            return res.ok({
+                status: "success",
+                message: `Added Emails to list`,
+                data: mailingList
+            })
+        }
+        catch (error) {
+            return res.fail(error)
+
+        }
+    },
+
+    async createMailingListGroup(req, res) {
+        try {
+            const body = req.body
+            const mailingListGroup = await admin.createMailingListGroup(body);
+            return res.ok({
+                status: "success",
+                message: `Created Mailing list group`,
+                data: mailingListGroup
+            })
+        }
+        catch (error) {
+            return res.fail(error)
+        }
+    },
 
     async deleteMailingList(req, res) {
         try {
@@ -397,6 +427,18 @@ module.exports = {
 
              return res.fail(error)
 
+        }
+    },
+
+    async previewEmailTemplate(req, res) {
+        try {
+            const templateName = req.params.name;
+            const getTemplate = await admin.getMailTemplateByName(templateName);
+            const renderPlaceHolders = req.query;
+            const parsedTemplate = admin.parseEmailContent(getTemplate,renderPlaceHolders);
+            res.send(parsedTemplate);
+        } catch (error) {
+            return res.fail(error)
         }
     },
 

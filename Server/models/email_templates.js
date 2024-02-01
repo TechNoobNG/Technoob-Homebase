@@ -2,6 +2,20 @@ const mongoose = require('mongoose');
 const config = require(`${__dirname}/../config/config.js`)
 const Schema = mongoose.Schema;
 
+const placeholderSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    isRequired: {
+        type: Boolean,
+        default: false
+    },
+    identifier: {
+        type: String,
+        required: true
+    }
+})
 const email = new Schema({
     template: {
         type: String,
@@ -19,6 +33,10 @@ const email = new Schema({
         unique: [true, 'This template id is already taken'],
         trim: true
     },
+    placeholders: {
+        type: [placeholderSchema],
+        default: []
+    }
 },{
     timestamps: true
 });

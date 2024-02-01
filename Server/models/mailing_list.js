@@ -11,6 +11,23 @@ const mailing_list = new Schema({
         trim: true,
         unique: true
     },
+    groupId: {
+        type: String,
+        trim: true,
+        default: "technoob-workspace:web_contact_us"
+    },
+    username: {
+        type: String,
+        trim: true
+    },
+    firstname: {
+        type: String,
+        trim: true,
+    },
+    lastname: {
+        type: String,
+        trim: true
+    }
 
 },{
     timestamps: true
