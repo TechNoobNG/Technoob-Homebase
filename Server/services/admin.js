@@ -4,6 +4,7 @@ const Admin = require('../models/admin');
 const Permissions = require('../models/permissions');
 const User = require('../models/user');
 const mailing_list = require('../models/mailing_list');
+const mailingListGroup = require("../models/mailing_list_grouping");
 const contact_us = require('../models/contact_us');
 const frontend_resources = require('../models/frontend_resources');
 const contributors = require('../models/contributors');
@@ -13,7 +14,7 @@ const traffic = require('../services/traffic');
 const ErrorResponse = require('../utils/error/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
-
+const { extractEmailTemplatePlaceholders } = require("../utils/utils")
 module.exports = {
 
     async adminDashboard() {
@@ -72,14 +73,28 @@ module.exports = {
     },
 
 
-    async saveMailTemplate(data) {
-
-        return await Templates.create({
-            name: data.name,
-            template: data.template,
-            id: uuid.v4()
-        })
+    async  saveMailTemplate(data) {
+        try {
+            if (!data || !data.template) {
+                throw new Error("Kindly provide a template in html format");
+            }
+    
+            const placeholders = extractEmailTemplatePlaceholders(data.template, data.availablePlaceholders);
+            
+            const templateData = {
+                name: data.name,
+                template: data.template,
+                id: uuid.v4(),
+                placeholders: placeholders
+            };
+    
+            return await Templates.create(templateData);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     },
+    
     async inviteAdmin(email,admin_user) {
         try {
             //check if user already exists
@@ -227,6 +242,36 @@ module.exports = {
             return template
         } catch (err) {
             throw err
+        }
+    },
+    async getMailTemplateByName(name) {
+        try {
+           
+            const template = await Templates.findOne({
+                name:name
+            });
+            
+            if (!template) {
+                throw new Error(
+                    "Not found"
+                );
+            }
+            return template
+        } catch (err) {
+            throw err
+        }
+    },
+
+    parseEmailContent(getTemplate,renderPlaceHolders) {
+        try {
+            let content = getTemplate.template.toString();
+            console.log(renderPlaceHolders)
+            Object.keys(renderPlaceHolders).forEach((key) => {
+                content = content.split(`\#{${key.toLowerCase()}}`).join(renderPlaceHolders[key]);
+            });
+            return content
+        } catch (error) {
+            throw error
         }
     },
     async getAdmins() {
@@ -488,6 +533,49 @@ module.exports = {
                 limit,
                 count
             };
+        } catch (err) {
+            throw err
+        }
+    },
+
+    async addToMailingList (body) {
+        try {
+            if (!body.emails || !Array.isArray(body.emails)) {
+                throw new ErrorResponse("400","Invalid emails")
+            }
+
+            const emailsTobeCreated = body.emails.map((email) => {
+                return {
+                    email,
+                    groupId: body.groupId
+                }
+            })
+            
+            const mailingList = await mailing_list.insertMany(emailsTobeCreated);
+
+            return mailingList
+            
+        } catch (err) {
+            throw err
+        }
+    },
+
+    async createMailingListGroup(data) {
+        try {
+            if (!data.groupName) {
+                throw new Error("No group name provided")
+            }
+            const group = await mailingListGroup.create({
+                owner: data.owner || "technoob-workspace",
+                groupName: data.groupName,
+                id: `${data.owner}:${data.groupName}` || `technoob-workspace:${data.groupName}`
+            })
+
+            return {
+                name: group.groupName,
+                owner: group.owner,
+                id: group.id
+            }
         } catch (err) {
             throw err
         }

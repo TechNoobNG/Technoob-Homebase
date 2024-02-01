@@ -1,11 +1,13 @@
-const slack = require('../services/integrations/slack');
+const { processAction, notifyActionResponseNoError,commandMap, fetchMenus, notifyActionResponseV2, retrieveCommandFunction} = require('../services/integrations/slack');
 
-async function processAction({ body }) {
+async function process({ body }) {
     let processedAction
     try {
-        processedAction = await slack.processAction({ body });
+        console.log(body)
+        processedAction = await processAction({ body });
         processedAction.successful = true
     } catch (error) {
+        console.log(error)
         processedAction = {
             message: error.message,
             successful: false
@@ -13,14 +15,25 @@ async function processAction({ body }) {
     }
 
     try {
-        await slack.notifyActionResponseNoError({
-            text: processedAction.message,
-            responseUrl: body.response_url,
-            messageBlock: body.message.blocks,
-            isSuccessful: processedAction.successful,
-            thread_ts: body.container.message_ts
-        });
+        if (processedAction.message && !processedAction.slackPayload && !processedAction.modal_identifier) {
+            await notifyActionResponseNoError({
+                text: processedAction.message,
+                responseUrl: body.response_url,
+                messageBlock: body.message.blocks,
+                isSuccessful: processedAction.successful,
+                thread_ts: body.container.message_ts
+            });
+        } else if (processedAction.slackPayload || processedAction.modal_identifier) {
+            let resp = {
+                "response_action": "update",
+                "view": processedAction.slackPayload,
+            }
+            console.log("pushing p",processedAction)
+            // resp.view.callback_id = processedAction.modal_identifier
+            return resp
+        }
     } catch (error) {
+        console.log(error)
     }
 }
 
@@ -28,21 +41,28 @@ module.exports = {
     async action(req, res) {
         const reqBody = req.body;
         try {
-            
             if (!reqBody || !reqBody.payload) {
                 throw new Error("Invalid request body");
             }
-
             const parsedBody = JSON.parse(reqBody.payload)
-
-            res.ok({
-                status: "success",
-                message: "Action received",
-                statusCode: 200
-            })
-            
-            await processAction({ body: parsedBody })
-            
+            console.log(parsedBody)
+            if (parsedBody.type === "block_actions" && parsedBody.actions[0].type !== "external_select") {
+                res.ok({
+                    status: "success",
+                    message: "Action received",
+                    statusCode: 200
+                })
+                await process({ body: parsedBody })
+            } else if (parsedBody.type === "block_actions" && parsedBody.actions[0].type === "external_select") {
+                res.ok({
+                    status: "success",
+                    message: "Action received",
+                    statusCode: 200
+                })
+            } else if (parsedBody.type === "view_submission") {
+                const resp = await process({ body: parsedBody })
+                res.status(200).send( resp );   
+            }
         } catch (error) {
             console.log(error)
             res.fail({
@@ -51,4 +71,62 @@ module.exports = {
             });
         }
     },
+    async commands(req, res) {
+        const body = req.body;
+        try {
+            res.ok({
+                status: "success",
+                message: "Processing",
+                statusCode: 200
+            })
+
+            const command = body.command;
+            if (!body || !command || !commandMap[command]) {
+                throw new Error("Please provide a valid command")
+            }
+
+            if (!commandMap[command].enabled) {
+                throw new Error("Command is currently not available, please reach out to admin")
+            }
+            const argsCount = body.text.split(" ").length;
+            if (argsCount > commandMap[command].responseHandler.argsCount || argsCount < commandMap[command].responseHandler.requiredArgsCount) {
+                throw new Error(`${commandMap[command].responseHandler.invalidArgsCountMessage || "Invalid arguments provided"}`)
+            }
+
+            const commandToRun = retrieveCommandFunction(commandMap[command].responseHandler.name);
+            const { slackPayload } = await commandToRun(commandMap[command].responseHandler.argsBuilder(body));
+            
+          
+            const resp = await notifyActionResponseV2({
+                trigger_id: body.trigger_id,
+                slackPayload,
+                modal_identifier: commandMap[command].responseHandler.modal_identifier
+            });
+
+            console.log("---resp---",resp)
+      
+        } catch (error) {
+            console.log(error)
+            res.fail({
+                status: "fail",
+                message: error.message
+            });
+        }
+    },
+
+    async menus(req, res) {
+        const reqBody = req.body;
+        try {
+            if (!reqBody || !reqBody.payload) {
+                throw new Error("Invalid request body");
+            }
+            const parsedBody = JSON.parse(reqBody.payload)
+            console.log(parsedBody)
+            const resp = await fetchMenus({body:parsedBody})
+            res.status(200).json(resp)
+        } catch (error) {
+            console.log(error)
+            res.status(404).json([])
+        }
+    }
 };
