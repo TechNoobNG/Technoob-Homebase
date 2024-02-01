@@ -4,7 +4,10 @@ const config = require('../../config/config');
 const slack = axios.create({
     baseURL: config.SLACK.BASE_URL,
     timeout: 5000,
-    headers: {"Content-type": "application/json"}
+    headers: {
+        "Content-type": "application/json",
+        "Authorization": `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+    }
 });
 
 module.exports = {
@@ -19,12 +22,26 @@ module.exports = {
                 requestConfig.baseURL = config.SLACK.CHANNELS[webhook.channel].WEBHOOK
             } else {
                 url = `${config.SLACK.WORKSPACE_ID}/${webhook.channelId ? webhook.channelId : config.SLACK.CHANNELS[webhook.channel].CHANNEL_ID}/${webhook.channelToken ? webhook.channelToken : config.SLACK.CHANNELS[webhook.channel].WEBHOOK_TOKEN}`
+                requestConfig.baseURL = "https://slack.com/api/"
             }
             const resp = await slack.post(url, body,requestConfig);
             return resp.data
         } catch (error) {
             console.error(error)
             throw error
+        }
+    },
+
+    openModal: async ({ trigger_id, view }) => {
+        try {
+            const payload = {
+                trigger_id,
+                view
+            }
+            const resp = await slack.post("https://slack.com/api/views.open", payload)
+            return resp
+        } catch (error) {
+            throw error.message
         }
     },
 
@@ -42,6 +59,27 @@ module.exports = {
             return resp.data
         } catch (error) {
             throw error.message
+        }
+    },
+
+    async sendMessageToUser({ userId, channelId, block: {blocks} }) {
+        const apiUrl = 'https://slack.com/api/chat.postMessage';
+    
+        try {
+
+            const response = await axios.post(apiUrl, {
+                channel: userId || channelId,
+                blocks
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+                }
+            });
+    
+            return response.data
+        } catch (error) {
+            console.log(error)
+            throw error
         }
     }
 }

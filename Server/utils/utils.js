@@ -15,15 +15,20 @@ function createSectionBlock(title) {
     };
 }
 
-function createFieldsBlock(fields,image) {
-    return {
+function createFieldsBlock(fields, image) {
+    let resp = {
         "type": "section",
         "fields": fields.map(field => ({
             "type": "mrkdwn",
             "text": `*${field.label}:*\n${field.value}`
         })),
-        "accessory": createImageAccessoryBlock(image.url, image.altText)
     };
+
+    if (image) {
+        resp[ "accessory"] = createImageAccessoryBlock(image.url, image.altText)
+    }
+    return resp
+    
 }
 
 function createImageAccessoryBlock(imageUrl, altText) {
@@ -91,6 +96,24 @@ function createActionsBlock(buttons) {
     };
 }
 
+function extractEmailTemplatePlaceholders(template,availablePlaceholders = {}) {
+    const placeholderRegex = /#{(\w+)}/g;
+    const placeholders = [];
+    let match;
+
+    while ((match = placeholderRegex.exec(template)) !== null) {
+        const placeholderName = match[1];
+        const placeholderData = {
+            name: availablePlaceholders[placeholderName] || placeholderName.toUpperCase(),
+            isRequired: true,
+            identifier: placeholderName
+        };
+        placeholders.push(placeholderData);
+    }
+
+    return placeholders;
+}
+
 
 module.exports = {
      async hashPassword(password) {
@@ -112,5 +135,7 @@ module.exports = {
         }
     },
     getSlackNotificationModuleDefaults,
-    channelSelector
+    channelSelector,
+    extractEmailTemplatePlaceholders,
+    createFieldsBlock
 }

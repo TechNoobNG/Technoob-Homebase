@@ -6,8 +6,7 @@ const emailClient = new EmailClient(connectionString);
 module.exports = {
     async mailer(options) {
         try {
-
-            mailOptions = {
+            const mailOptions = {
                 senderAddress: config.SENDER_EMAIL_ADDRESS,
                 content: {
                     subject: options.subject,

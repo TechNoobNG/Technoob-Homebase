@@ -24,6 +24,17 @@ function extendResponseObject(req, res, next) {
         }
 
     };
+
+    res.slackok = async function ({ data = undefined, statusCode = 200  } = {}) {
+
+        res.status(statusCode).json(data);
+        try {
+            return processPostExecMiddlewares(req, res, next);
+        } catch (err) {
+            console.warn(err.message)
+        }
+
+    };
     res.customRedirect = function (url) {
         res.status(302).redirect(url);
          try {

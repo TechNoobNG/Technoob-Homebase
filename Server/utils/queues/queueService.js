@@ -20,7 +20,6 @@ module.exports = {
             } else {
                 await sendMessage(data, options);
             }
-
             return { message: 'Action successfully added to job queue' };
         } catch (error) {
             throw error;
