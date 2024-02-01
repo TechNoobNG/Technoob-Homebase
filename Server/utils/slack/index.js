@@ -60,6 +60,27 @@ module.exports = {
         } catch (error) {
             throw error.message
         }
+    },
+
+    async sendMessageToUser({ userId, channelId, block: {blocks} }) {
+        const apiUrl = 'https://slack.com/api/chat.postMessage';
+    
+        try {
+
+            const response = await axios.post(apiUrl, {
+                channel: userId || channelId,
+                blocks
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+                }
+            });
+    
+            return response.data
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
     }
 }
 

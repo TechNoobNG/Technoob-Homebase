@@ -3,11 +3,9 @@ const { processAction, notifyActionResponseNoError,commandMap, fetchMenus, notif
 async function process({ body }) {
     let processedAction
     try {
-        console.log(body)
         processedAction = await processAction({ body });
         processedAction.successful = true
     } catch (error) {
-        console.log(error)
         processedAction = {
             message: error.message,
             successful: false
@@ -74,12 +72,11 @@ module.exports = {
     async commands(req, res) {
         const body = req.body;
         try {
-            res.ok({
-                status: "success",
-                message: "Processing",
-                statusCode: 200
+            res.slackok({
+                data: {
+                    "response_type": "in_channel"
+                }
             })
-
             const command = body.command;
             if (!body || !command || !commandMap[command]) {
                 throw new Error("Please provide a valid command")
@@ -103,8 +100,7 @@ module.exports = {
                 modal_identifier: commandMap[command].responseHandler.modal_identifier
             });
 
-            console.log("---resp---",resp)
-      
+
         } catch (error) {
             console.log(error)
             res.fail({
@@ -120,8 +116,7 @@ module.exports = {
             if (!reqBody || !reqBody.payload) {
                 throw new Error("Invalid request body");
             }
-            const parsedBody = JSON.parse(reqBody.payload)
-            console.log(parsedBody)
+            const parsedBody = JSON.parse(reqBody.payload);
             const resp = await fetchMenus({body:parsedBody})
             res.status(200).json(resp)
         } catch (error) {

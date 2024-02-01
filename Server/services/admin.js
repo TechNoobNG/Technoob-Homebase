@@ -14,7 +14,7 @@ const traffic = require('../services/traffic');
 const ErrorResponse = require('../utils/error/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
-const { extractEmailTemplatePlaceholders } = require("../utils/utils")
+const { extractEmailTemplatePlaceholders } = require("../utils/utils");
 module.exports = {
 
     async adminDashboard() {
@@ -502,7 +502,7 @@ module.exports = {
 
             await mailService.sendEmail({
                 name: "BulkStaticEmail",
-                method: "sendToManyStatic",
+                method: "sendToMany",
                 data: mailOptions
             });
 
@@ -511,6 +511,73 @@ module.exports = {
             }
         } catch (err) {
             throw err
+        }
+    },
+
+    async sendEmailToMailingList(content) {
+        try {
+            const {
+                selectedTemplate,
+                placeHolders,
+                groupName,
+                owner,
+                template_id,
+                subject,
+                source,
+                user
+            } = content;
+
+            const list = await mailing_list.find({
+                groupId: `${owner}:${groupName}`
+            })
+            let emailObjects = []
+            if (list.length && list.length > 1) {
+                emailObjects = list.map((user) => {
+                    return {
+                        address: user.email,
+                        displayName: user.username || user.firstname || user.lastname || ""
+                    }
+                })
+            }
+
+            const constants = {};
+            for (const key in placeHolders) {
+                constants[key.toLowerCase().replace(" ", "_")] = placeHolders[key];
+            } 
+
+            const mailOptions = {
+                emails: emailObjects,
+                subject: subject,
+                constants: constants,
+                template_id: template_id,
+                selectedTemplate: selectedTemplate,
+            }
+
+            if (source === "slack") {
+                await mailService.sendEmailWithSlackUpdate({
+                    name: "BulkStaticEmailWithSlackUpdate",
+                    method: "sendEmailWithSlackUpdate",
+                    data: {
+                        mailOptions,
+                        moduleName: "BulkStaticEmailWithSlackUpdate",
+                        user
+                    }
+                });
+            } else {
+                await mailService.sendEmail({
+                    name: "BulkStaticEmail",
+                    method: "sendToMany",
+                    data: mailOptions
+                });
+            }
+
+
+            return {
+                message: "Email Queued Successfully"
+            }
+            
+        } catch (error) {
+            
         }
     },
 

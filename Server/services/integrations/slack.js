@@ -1,7 +1,7 @@
 
 const { getSlackNotificationModuleDefaults,createFieldsBlock } = require("../../utils/utils");
-const { sendRequest, respondToAction, openModal } = require("../../utils/slack/index");
-const config = require("../../config/config")
+const { sendRequest, respondToAction, openModal, sendMessageToUser } = require("../../utils/slack/index");
+const config = require("../../config/config");
  /**
      * @function notifySlack
      * @param {object} { moduleType, notificationData,image }
@@ -213,6 +213,40 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
             }
         })
 
+        const subject = {
+            "type": "input",
+            "label": {
+                "type": "plain_text",
+                "text": `Email Subject`,
+                "emoji": true
+            },
+            "element": {
+                "type": "plain_text_input",
+                "multiline": true
+            },
+            "optional": false
+        }
+
+        const subjectTitle = {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "The email Subject"
+                }
+            ]
+        }
+
+        const placeHolderTitle = {
+            "type": "context",
+            "elements": [
+                {
+                    "type": "mrkdwn",
+                    "text": "Placeholders to be replaced "
+                }
+            ]
+        }
+
         const promptSectionBlock = {
 			"type": "section",
 			"text": {
@@ -241,11 +275,12 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
                 "text": "Cancel",
                 "emoji": true
             },
-            "blocks": [promptSectionBlock, divider, ...inputBlockArray]
+            "blocks": [promptSectionBlock, subjectTitle, divider, subject, placeHolderTitle,divider, ...inputBlockArray]
         };
 
         slackPayload.private_metadata = JSON.stringify({
-            selectedTemplate: email.name
+            selectedTemplate: email.name,
+            module: "sendemailwithtemplate"
         });
 
 
@@ -507,15 +542,23 @@ async function previewSubmission(body) {
 
 async function processSubmission(body) {
     try {
-        const { view: { blocks, title, state, private_metadata } } = body;
+        const { view: { blocks, title, state, private_metadata,callback_id }, user } = body;
         const processingData = JSON.parse(private_metadata);
 
+        if (processingData.module === "sendemailwithtemplate") {
+            const { sendEmailToMailingList } = require("../admin");
+            processingData.source = "slack"
+            processingData.user = user
+            processingData.subject = processingData.placeHolders["Email Subject"];
+            delete processingData.placeHolders["Email Subject"];
+            await sendEmailToMailingList(processingData)
+        }
         
         return {
             "response_action": "clear"
           }
     } catch (error) {
-        
+        throw error
     }
 }
 
@@ -696,6 +739,81 @@ async function fetchMenus({ body }) {
     }
 }
 
+async function sendEmailWithSlackUpdate(data) {
+    try {
+        const emailService = require("../../utils/mailer/mailBuilder");
+        if (data.moduleName === "BulkStaticEmailWithSlackUpdate") {
+            const runMailer = await emailService.sendToMany(data.mailOptions)
+            if (runMailer.success) {
+                const emailStatusNotificationRender = renderEmailStatusNotification(runMailer)
+                await notifySlackProcessUpdate({
+                    block: emailStatusNotificationRender,
+                    user: data.user
+                })
+            }
+        }
+
+    } catch (error) {
+        throw new Error(`Failed to run: ${error.message || error}`)
+    }
+}
+
+async function notifySlackProcessUpdate({ block,user }) {
+    try {
+        const userId = user.id;
+        const channelId = user.team_id;
+        const sendMessage = await sendMessageToUser({ userId, channelId, block });
+        return {
+            message: sendMessage || "Notified user"
+        }
+
+    } catch (error) {
+        throw error
+    }
+}
+
+function renderEmailStatusNotification(result) {
+    try {
+        const successEmoji = result.success ? ":white_check_mark:" : ":x:";
+
+        const blocks = [
+            {
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: `${successEmoji} *Email Status*`
+                }
+            },
+            {
+                type: "context",
+                elements: [
+                    {
+                        type: "mrkdwn",
+                        text: `*Success:* ${result.success}\n*Message:* ${result.message}`
+                    }
+                ]
+            },
+            {
+                type: "divider"
+            },
+            {
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: `${successEmoji} *Successful Recipients*`
+                },
+                fields: result.successful.map((email) => ({
+                    type: "mrkdwn",
+                    text: `• ${email}`
+                }))
+            }
+        ];
+
+        return { blocks };
+    } catch (error) {
+        throw error;
+    }
+}
 module.exports = {
     notifySlack,
     moduleTypeCreator,
@@ -705,5 +823,6 @@ module.exports = {
     retrieveCommandFunction,
     notifyActionResponseV2,
     commandMap,
-    fetchMenus
+    fetchMenus,
+    sendEmailWithSlackUpdate
 }

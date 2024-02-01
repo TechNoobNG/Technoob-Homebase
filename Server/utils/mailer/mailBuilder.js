@@ -18,6 +18,8 @@ function getMailProvider(provider) {
 }
 
 
+
+
 module.exports = {
     /**
      * @param {object} options
@@ -60,59 +62,79 @@ module.exports = {
      * @return {number}
      */
     async sendToMany(options) {
-        const template = await templates.findById(options.template_id);
-        if(!template) throw new Error ("Invalid template ID")
-        let content = template.template.toString();
-
+        let template;
+        if (options.template_id) {
+            template = await templates.findById(options.template_id);
+        } else if (options.selectedTemplate) {
+            template = await templates.findOne({
+                name: options.selectedTemplate
+            });
+        }
+        if (!template) throw new Error("Invalid template ID");
+    
         let log = {
             successful: [],
             failed: []
-        }
-
-        for (const email of options.emails) {
-            for (const key of Object.keys(options.constants)) {
-                let value = options.constants[key];
-                if (key === "username") value = email.displayName;
-                content = content.split(`\#{${key}}`).join(value);
+        };
+    
+        const promises = options.emails.map(async (email) => {
+            let content = template.template.toString();
+    
+            for (const [key, value] of Object.entries(options.constants)) {
+                if (key === "username") {
+                    content = content.split(`\#{${key}}`).join(email.displayName);
+                } else {
+                    content = content.split(`\#{${key}}`).join(value);
+                }
             }
-
+    
+            options.email = email.address;
+            options.displayName = email.displayName;
             options.content = content;
-
+    
             try {
-                const provider = getMailProvider(mailProvider)
-                await provider.mailer(options)
-                log.successful.push(email.address)
+                const provider = getMailProvider(mailProvider);
+                provider.mailer(options);
+                log.successful.push(email.address);
             } catch (e) {
                 console.log(e);
-                log.failed.push(email.address)
+                log.failed.push({
+                    address: email.address,
+                    message: e.message
+                });
             }
-        }
-
+        });
+    
+        await Promise.all(promises);
+    
         return {
             success: true,
-            Message: `Email successfully sent to ${log.successful.length} users, ${log.failed.length} failed}. `,
+            message: `Email successfully sent to ${log.successful.length} users, ${log.failed.length} failed.`,
             failed: log.failed,
             successful: log.successful
-        }
-    },
+        };
+    }
+    
 
-    async sendToManyStatic(options) {
-        // 1) retrieve email template from database
-        const template = await templates.findById(options.template_id);
-        if(!template) throw new Error ("Invalid template ID")
-        let content = template.template.toString();
-        Object.keys(options.constants).forEach((key) => {
-            content = content.split(`\#{${key}}`).join(options.constants[key]);
-        });
 
-        options.content = content;
+    //Invalid implementation
+    // async sendToManyStatic(options) {
+    //     // 1) retrieve email template from database
+    //     const template = await templates.findById(options.template_id);
+    //     if(!template) throw new Error ("Invalid template ID")
+    //     let content = template.template.toString();
+    //     Object.keys(options.constants).forEach((key) => {
+    //         content = content.split(`\#{${key}}`).join(options.constants[key]);
+    //     });
 
-        try {
-            const provider = getMailProvider(mailProvider)
-            const sendEmail = await provider.mailer(options)
-            return sendEmail
-        } catch (e) {
-            console.log(e);
-        }
-    },
+    //     options.content = content;
+
+    //     try {
+    //         const provider = getMailProvider(mailProvider)
+    //         const sendEmail = await provider.mailer(options)
+    //         return sendEmail
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // },
 }
