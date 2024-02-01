@@ -477,6 +477,44 @@ module.exports = {
         }
     },
     
+    repushForApproval: async () => {
+        const jobs = await Jobs.find({
+            approved: false
+        });
+
+        const notifySlackPromise = jobs.map((job) => {
+            return notifySlack({
+                moduleType: "notifyScrapedJobApproval",
+                notificationData: {
+                    Title: job.title,
+                    Location: job.location,
+                    Company: job.company,
+                    Workplace_Type: job.workplaceType,
+                    Contract_Type: job.contractType,
+                    Experience: job.exp,
+                    Activity_ID: job.activityId,
+                    Job_Link: job.link,
+                    Approval_status: "pending"
+                },
+                image: {
+                    url: job.poster,
+                    altText: job.title
+                },
+                activityTag:  job.activityId || null
+            })
+        })
+
+        try {
+            await Promise.allSettled(notifySlackPromise)
+            return {
+                message: `Successfully re-triggered ${jobs.length} job listings for approval`
+            }
+        } catch (err) {
+            console.error(err.message)
+            return data.uniqueJobsArray;
+        }
+    }
+    
 
 
     // rate: async (id, rating) => {

@@ -159,5 +159,22 @@ module.exports = {
         }
     },
 
+    async repushForApproval(req, res) {
+        try {
+            const triggerRepushForApproval =  await  jobs.repushForApproval()
+           
+            res.ok({
+                    status: "success",
+                    data: triggerRepushForApproval,
+                    statusCode: 201
+                })
+        } catch (err) {
+            res.fail({
+                    status: "fail",
+                    message: err.message
+                })
+        }
+    }
+
 
 }
