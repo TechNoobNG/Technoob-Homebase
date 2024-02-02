@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { clearCacheModelTriggers } = require("../middleware/redisCache");
 
 const jobs = new Schema({
     title: {
@@ -92,7 +93,7 @@ const jobs = new Schema({
     approved: {
         type: Boolean,
         required: false,
-        default: true
+        default: false
     }
 
 },{
@@ -113,52 +114,28 @@ jobs.pre("save", async function(next) {
         }
     }
 
-    this.searchKeywords = [...this.searchKeywords,...keywords];
-
-    try {
-        const { client } = require("../utils/connectors/redishelper");
-        const baseCacheKey = "/api/v1/jobs/";
-        const keys = await client.keys(baseCacheKey + '*');
-        await Promise.all(keys.map(key => client.del(key)));
-    } catch (error) {
-        console.error('Error in clearCache:', error);
-    }
+    this.searchKeywords = [...this.searchKeywords, ...keywords];
+    
+    await clearCacheModelTriggers("jobs")
     next();
 });
 
 jobs.pre("findOneAndUpdate", async function (next) {
-    try {
-        const { client } = require("../utils/connectors/redishelper");
-        const baseCacheKey = "/api/v1/jobs/";
-        const keys = await client.keys(baseCacheKey + '*');
-        await Promise.all(keys.map(key => client.del(key)));
-    } catch (error) {
-        console.error('Error in clearCache:', error);
-    }
+    await clearCacheModelTriggers("jobs")
     next();
 });
 
 jobs.pre("findOneAndDelete", async function (next) {
-    try {
-        const { client } = require("../utils/connectors/redishelper");
-        const baseCacheKey = "/api/v1/jobs/";
-        const keys = await client.keys(baseCacheKey + '*');
-        await Promise.all(keys.map(key => client.del(key)));
-    } catch (error) {
-        console.error('Error in clearCache:', error);
-    }
+    await clearCacheModelTriggers("jobs")
     next();
 });
 
 jobs.pre("deleteMany", async function (next) {
-    try {
-        const { client } = require("../utils/connectors/redishelper");
-        const baseCacheKey = "/api/v1/jobs/";
-        const keys = await client.keys(baseCacheKey + '*');
-        await Promise.all(keys.map(key => client.del(key)));
-    } catch (error) {
-        console.error('Error in clearCache:', error);
-    }
+    await clearCacheModelTriggers("jobs")
+    next();
+});
+jobs.pre("deleteOne", async function (next) {
+    await clearCacheModelTriggers("jobs")
     next();
 });
 
