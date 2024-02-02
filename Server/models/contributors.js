@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { clearCacheModelTriggers } = require("../middleware/redisCache");
 
 const contributor = new Schema({
     first_name: {
@@ -23,6 +24,30 @@ const contributor = new Schema({
     }
 },{
     timestamps: true
+});
+
+contributor.pre("save", async function(next) {
+    await clearCacheModelTriggers("contributors")
+    next();
+});
+
+contributor.pre("findOneAndUpdate", async function (next) {
+    await clearCacheModelTriggers("contributors")
+    next();
+});
+
+contributor.pre("findOneAndDelete", async function (next) {
+    await clearCacheModelTriggers("contributors")
+    next();
+});
+
+contributor.pre("deleteMany", async function (next) {
+    await clearCacheModelTriggers("contributors")
+    next();
+});
+contributor.pre("deleteOne", async function (next) {
+    await clearCacheModelTriggers("contributors")
+    next();
 });
 
 

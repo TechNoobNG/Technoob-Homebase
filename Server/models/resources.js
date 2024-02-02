@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const config = require("../config/config")
 const Schema = mongoose.Schema;
 const User = require('./user');
+const { clearCacheModelTriggers } = require("../middleware/redisCache");
 
 const resources = new Schema({
     name: {
@@ -120,9 +121,6 @@ resources.pre('save', async function (next) {
             stack: user.stack
         }
     }
-    next();
-});
-resources.pre('save', function(next) {
     const ratings = this.ratings;
     const totalRatings = ratings.length;
     let sum = 0;
@@ -130,10 +128,11 @@ resources.pre('save', function(next) {
         sum += ratings[i].rating;
     }
     this.averageRating = totalRatings > 0 ? sum / totalRatings : null;
+    await clearCacheModelTriggers("resources")
     next();
 });
 
-resources.pre('findOneAndUpdate', function(next) {
+resources.pre('findOneAndUpdate', async function(next) {
     const ratings = this.getUpdate().$push.ratings;
     const totalRatings = ratings.length;
     let sum = 0;
@@ -141,13 +140,23 @@ resources.pre('findOneAndUpdate', function(next) {
         sum += ratings[i].rating;
     }
     this.getUpdate().$set = { averageRating: totalRatings > 0 ? sum / totalRatings : null };
+    await clearCacheModelTriggers("resources")
     next();
 });
-resources.pre('findOneAndUpdate', function (next) { 
+resources.pre('findOneAndUpdate', async function (next) { 
     this.updatedAt = Date.now();
+    await clearCacheModelTriggers("resources")
     next();
 });
 
+resources.pre("deleteMany", async function (next) {
+    await clearCacheModelTriggers("resources")
+    next();
+});
+resources.pre("deleteOne", async function (next) {
+    await clearCacheModelTriggers("resources")
+    next();
+});
 
 
 module.exports = mongoose.model('Resources', resources);
