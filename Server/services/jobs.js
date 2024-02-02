@@ -9,70 +9,43 @@ module.exports = {
 
     get_all: async (query) => {
         try {
-            let prompt = {
-                approved: true
+            const filter = {
+                approved: true,
+                ...(query.title && { title: { $regex: query.title, $options: 'i' } }),
+                ...(query.company && { company: query.company }),
+                ...(query.exp && { exp: query.exp }),
+                ...(query.live && { expiryDate: { $gte: new Date() } }),
+                ...(query.expired && { expiryDate: { $lte: new Date() } }),
+                ...(query.workplaceType && { workplaceType: query.workplaceType }),
+                ...(query.location && { location: query.location }),
+                ...(query.stack && { searchKeywords: { $in: query.stack } }),
             };
-            let page = query.page * 1 || 1;
-            let limit = query.limit || 10;
-            let skip = (page - 1) * limit;
-            let count = 0;
-
-            if (query.title) {
-                prompt.title = { $regex: query.title, $options: 'i' };
-            }
-            if (query.company) {
-                prompt.company = query.company;
-            }
-            if (query.exp) {
-                prompt.exp = query.exp;
-            }
-            if (query.live) {
-                prompt.expiryDate =  {
-                    $gte: new Date()
-                }
-            }
-
-            if (query.expired) {
-                prompt.expiryDate =  {
-                    $lte: new Date()
-                }
-            }
-            if (query.workplaceType) {
-                prompt.workplaceType = query.workplaceType
-            }
-            if (query.location) {
-                prompt.location = query.location
-            }
-
-            if (query.stack) {
-                prompt.searchKeywords =  {
-                    $in: query.stack
-                }
-            }
-
-            const jobs = await Jobs.find(prompt)
+    
+            const page = query.page * 1 || 1;
+            const limit = query.limit || 10;
+            const skip = (page - 1) * limit;
+    
+            const jobs = await Jobs.find(filter)
                 .skip(skip)
                 .limit(limit)
-                .sort({createdAt: -1})
-                ;
-            if (jobs) {
-                count = jobs.length
-            }
-            const total  = await Jobs.countDocuments();
+                .sort({ createdAt: -1 });
+    
+            const total = await Jobs.countDocuments(filter);
             const totalPages = Math.ceil(total / limit);
-
+    
             return {
                 jobs,
                 page,
                 limit,
-                count,
+                count: jobs.length,
                 total,
-                totalPages
+                totalPages,
             };
         } catch (error) {
             throw error;
         }
     },
+    
 
     get: async (id,user) => {
         try {

@@ -99,7 +99,7 @@ const jobs = new Schema({
     timestamps: true
 });
 
-jobs.pre("save", function(next) {
+jobs.pre("save", async function(next) {
     const jobTitle = this.title;
     const keywords = [];
 
@@ -114,6 +114,51 @@ jobs.pre("save", function(next) {
     }
 
     this.searchKeywords = [...this.searchKeywords,...keywords];
+
+    try {
+        const { client } = require("../utils/connectors/redishelper");
+        const baseCacheKey = "/api/v1/jobs/";
+        const keys = await client.keys(baseCacheKey + '*');
+        await Promise.all(keys.map(key => client.del(key)));
+    } catch (error) {
+        console.error('Error in clearCache:', error);
+    }
+    next();
+});
+
+jobs.pre("findOneAndUpdate", async function (next) {
+    try {
+        const { client } = require("../utils/connectors/redishelper");
+        const baseCacheKey = "/api/v1/jobs/";
+        const keys = await client.keys(baseCacheKey + '*');
+        await Promise.all(keys.map(key => client.del(key)));
+    } catch (error) {
+        console.error('Error in clearCache:', error);
+    }
+    next();
+});
+
+jobs.pre("findOneAndDelete", async function (next) {
+    try {
+        const { client } = require("../utils/connectors/redishelper");
+        const baseCacheKey = "/api/v1/jobs/";
+        const keys = await client.keys(baseCacheKey + '*');
+        await Promise.all(keys.map(key => client.del(key)));
+    } catch (error) {
+        console.error('Error in clearCache:', error);
+    }
+    next();
+});
+
+jobs.pre("deleteMany", async function (next) {
+    try {
+        const { client } = require("../utils/connectors/redishelper");
+        const baseCacheKey = "/api/v1/jobs/";
+        const keys = await client.keys(baseCacheKey + '*');
+        await Promise.all(keys.map(key => client.del(key)));
+    } catch (error) {
+        console.error('Error in clearCache:', error);
+    }
     next();
 });
 
