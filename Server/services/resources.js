@@ -4,52 +4,41 @@ const ErrorResponse = require('../utils/error/errorResponse');
 module.exports = {
     get_all: async (query) => {
         try {
-            let prompt = {};
-            let page = query.page * 1 || 1;
-            let limit = query.limit || 10;
-            let skip = (page - 1) * limit;
-            let count = 0;
-            if (query.stack) {
-                prompt.stack = { $regex: query.stack, $options: 'i' };
-            }
-            if (query.type) {
-                prompt.type = query.type;
-            }
-            if (query.uploader_id) {
-                prompt.uploader_id = query.uploader_id;
-            }
+            const filter = {
+                ...(query.stack && { stack: { $regex: query.stack, $options: 'i' } }),
+                ...(query.type && { type: query.type }),
+                ...(query.uploader_id && { uploader_id: query.uploader_id }),
+                ...(query.name && { name: { $regex: query.name, $options: 'i' }}),
+                ...(query.username && { 'meta.uploader.username': { $regex: query.username, $options: 'i' } })
+            };
+        
 
-            if (query.name) {
-                prompt.name = { $regex: query.name, $options: 'i' };
-            }
-            if (query.username) {
-                prompt['meta.uploader.username'] = { $regex: query.username, $options: 'i' };
-            }
-
-            let resources = await Resources
-                .find(prompt)
+            const page = query.page * 1 || 1;
+            const limit = query.limit || 10;
+            const skip = (page - 1) * limit;
+    
+            const resources = await Resources
+                .find(filter)
                 .skip(skip)
                 .limit(limit)
                 .sort({ createdAt: -1 });
-            if (resources) {
-                count = resources.length
-            }
-
-            const total  = await Resources.countDocuments();
+    
+            const total = await Resources.countDocuments(filter);
             const totalPages = Math.ceil(total / limit);
-
+    
             return {
                 resources,
                 page,
                 limit,
-                count,
+                count: resources.length,
                 total,
-                totalPages
+                totalPages,
             };
         } catch (error) {
-            throw error;
+            throw error
         }
     },
+    
 
     getMetrics: async () => {
         try {

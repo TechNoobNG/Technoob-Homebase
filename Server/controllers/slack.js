@@ -26,7 +26,6 @@ async function process({ body }) {
                 "response_action": "update",
                 "view": processedAction.slackPayload,
             }
-            console.log("pushing p",processedAction)
             // resp.view.callback_id = processedAction.modal_identifier
             return resp
         }
@@ -43,7 +42,6 @@ module.exports = {
                 throw new Error("Invalid request body");
             }
             const parsedBody = JSON.parse(reqBody.payload)
-            console.log(parsedBody)
             if (parsedBody.type === "block_actions" && parsedBody.actions[0].type !== "external_select") {
                 res.ok({
                     status: "success",
