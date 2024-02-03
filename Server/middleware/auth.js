@@ -164,7 +164,7 @@ module.exports = {
                 throw new Error(`Failed to verify authenticity`)
             };
       
-            const body = JSON.stringify(req.body);
+            const body = req.rawBody;
             const currentTimestamp = Math.floor(Date.now() / 1000);
 
             if (Math.abs(currentTimestamp - timestamp) > 60 * 5) {
@@ -186,7 +186,7 @@ module.exports = {
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
             
             if (!signatureHash || !tsscmp(slackSignature, mySignature)) {
-                next()
+               throw new Error("Invalid Request")
             } else {
                 next();
             }

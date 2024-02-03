@@ -51,6 +51,14 @@ app.use(function(req, res, next) {
   }}
 );
 
+app.use(
+  express.json({
+    verify: (req, _, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
+
 app.set('trust proxy', true);
 app.use(
   cors({
