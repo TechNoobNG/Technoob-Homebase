@@ -52,9 +52,12 @@ app.use(function(req, res, next) {
 );
 
 app.use(
-  express.json({
+  express.urlencoded({
+    extended: true,
     verify: (req, _, buf) => {
-      req.rawBody = buf;
+      if (req.headers['x-slack-request-timestamp'] && req.headers['x-slack-signature']  &&  req.headers['user-agent'].includes("api.slack.com")) {
+        req.rawBody = buf;
+      }
     },
   })
 );

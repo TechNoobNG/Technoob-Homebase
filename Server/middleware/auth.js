@@ -184,7 +184,6 @@ module.exports = {
 
             const hmac = createHmac('sha256', slackSigningSecret);
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
-            
             if (!signatureHash || !tsscmp(slackSignature, mySignature)) {
                throw new Error("Invalid Request")
             } else {
@@ -192,7 +191,6 @@ module.exports = {
             }
 
         } catch (err) {
-            console.log(err)
             return res.status(401).json({
                 status: 'fail',
                 message: 'Invalid/Unauthorized Request'
