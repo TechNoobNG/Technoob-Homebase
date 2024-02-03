@@ -70,29 +70,30 @@ module.exports = {
     async commands(req, res) {
         const body = req.body;
         try {
-            res.slackok({
-                data: {
-                    "response_type": "in_channel"
-                }
-            })
             const command = body.command;
             if (!body || !command || !commandMap[command]) {
-                throw new Error("Please provide a valid command")
+                throw new Error(`"${command}" is not a valid command. Please contact your admin`)
             }
 
             if (!commandMap[command].enabled) {
-                throw new Error("Command is currently not available, please reach out to admin")
+                throw new Error(`"${command}" is disabled. Please contact your admin`)
             }
             const argsCount = body.text.split(" ").length;
             if (argsCount > commandMap[command].responseHandler.argsCount || argsCount < commandMap[command].responseHandler.requiredArgsCount) {
                 throw new Error(`${commandMap[command].responseHandler.invalidArgsCountMessage || "Invalid arguments provided"}`)
             }
 
+            res.slackok({
+                data: {
+                    "response_type": "in_channel"
+                }
+            })
+
             const commandToRun = retrieveCommandFunction(commandMap[command].responseHandler.name);
             const { slackPayload } = await commandToRun(commandMap[command].responseHandler.argsBuilder(body));
             
           
-            const resp = await notifyActionResponseV2({
+            await notifyActionResponseV2({
                 trigger_id: body.trigger_id,
                 slackPayload,
                 modal_identifier: commandMap[command].responseHandler.modal_identifier
@@ -100,11 +101,7 @@ module.exports = {
 
 
         } catch (error) {
-            console.log(error)
-            res.fail({
-                status: "fail",
-                message: error.message
-            });
+            res.slackfail(error.message)
         }
     },
 
@@ -118,7 +115,6 @@ module.exports = {
             const resp = await fetchMenus({body:parsedBody})
             res.status(200).json(resp)
         } catch (error) {
-            console.log(error)
             res.status(404).json([])
         }
     }
