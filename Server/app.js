@@ -51,6 +51,17 @@ app.use(function(req, res, next) {
   }}
 );
 
+app.use(
+  express.urlencoded({
+    extended: true,
+    verify: (req, _, buf) => {
+      if (req.headers['x-slack-request-timestamp'] && req.headers['x-slack-signature']  &&  req.headers['user-agent'].includes("api.slack.com")) {
+        req.rawBody = buf;
+      }
+    },
+  })
+);
+
 app.set('trust proxy', true);
 app.use(
   cors({

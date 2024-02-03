@@ -164,7 +164,7 @@ module.exports = {
                 throw new Error(`Failed to verify authenticity`)
             };
       
-            const body = JSON.stringify(req.body);
+            const body = req.rawBody;
             const currentTimestamp = Math.floor(Date.now() / 1000);
 
             if (Math.abs(currentTimestamp - timestamp) > 60 * 5) {
@@ -184,15 +184,13 @@ module.exports = {
 
             const hmac = createHmac('sha256', slackSigningSecret);
             const mySignature = 'v0=' + hmac.update(concated).digest('hex');
-            
             if (!signatureHash || !tsscmp(slackSignature, mySignature)) {
-                next()
+               throw new Error("Invalid Request")
             } else {
                 next();
             }
 
         } catch (err) {
-            console.log(err)
             return res.status(401).json({
                 status: 'fail',
                 message: 'Invalid/Unauthorized Request'
