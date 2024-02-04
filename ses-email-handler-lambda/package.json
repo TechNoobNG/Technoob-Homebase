@@ -1,0 +1,16 @@
+{
+  "name": "ses-email-handler-lambda",
+  "version": "1.0.0",
+  "description": "ses email handler function",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.504.0",
+    "axios": "^1.6.7",
+    "eml-parser": "^2.0.3"
+  }
+}

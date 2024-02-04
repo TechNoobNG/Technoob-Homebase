@@ -53,7 +53,7 @@ module.exports = {
 
     },
 
-        async downloadSse( generatedId, userId) {
+    async downloadSse( generatedId, userId) {
         try {
             const checkFile = await computedDownloads.findOne({
                 generatedId: generatedId,
@@ -79,7 +79,7 @@ module.exports = {
             throw error
         }
 
-    },
+},
 
     async getPlaceholders(query) {
         try {
@@ -117,7 +117,20 @@ module.exports = {
         } catch (err) {
             throw err;
         }
-    }
+    },
 
+    async downloadEmail({key,bucket}) {
+        try {
+            const { download } = require("../utils/storage/aws_storage")
+            const processDownload = await download({
+                storeName: bucket,
+                region: "eu-west-2",
+                key: key
+            })
+            return processDownload
+        } catch (error) {
+            throw err
+        }
+    }
 
 }
