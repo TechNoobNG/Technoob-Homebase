@@ -90,8 +90,7 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
 
 export async function sendToSlack(blocks) {
     try {
-        console.log(JSON.stringify(blocks))
-      await axios.post(SLACK_WEBHOOK_URL, blocks);
+        await axios.post(SLACK_WEBHOOK_URL, blocks);
     } catch (error) {
       console.error('Error sending to Slack:', error.message);
       throw error;

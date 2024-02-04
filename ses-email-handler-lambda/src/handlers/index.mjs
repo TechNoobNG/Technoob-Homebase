@@ -6,7 +6,8 @@ import  EmlParser from 'eml-parser';
 import { emlToSlackBlock , sendToSlack} from "./utils/slack.mjs"
 
 export const handler = async (event) => {
-    const message = event.Records[0].Sns.Message;
+    let message = event.Records[0].Sns.Message;
+    message = JSON.parse(message);
     const {action: { bucketName, objectKey}} = message.receipt
     const params = {
         Bucket: bucketName,
@@ -18,9 +19,10 @@ export const handler = async (event) => {
         const command = new GetObjectCommand(params);
         const response = await client.send(command);
         const parserInit = new EmlParser(response.Body)
+        
         const result = await parserInit.parseEml();
 
-        if (result.headers.get("x-ses-spam-verdict") === 'PASS' && result.headers.get("x-ses-virus-verdict") === 'PASS' ) {
+        if (result.headers.get("x-ses-spam-verdict") === 'PASS' && result.headers.get("x-ses-virus-verdict") === 'PASS') {
             const slackBlock = emlToSlackBlock({
                 parseEmlContent: result,
                 bucket: params.Bucket,

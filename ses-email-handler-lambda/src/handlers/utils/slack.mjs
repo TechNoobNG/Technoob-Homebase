@@ -11,6 +11,7 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
     const emailContent = parseEmlContent.text;
     const to = parseEmlContent.to.text;
     const url = `${process.env.LIVE_BASE_URL || "https://staging-api.technoob.tech"}/api/v1/download/${objectName}/${bucket}`
+    const activityTag = `${bucket}/${objectName}`
     const slackBlock = {
         "blocks": [
             {
@@ -67,7 +68,8 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
                             "text": "Reply"
                         },
                         "style": "primary",
-                        "action_id": "reply_button"
+                        "action_id": "replyEmail",
+                        "value": `${activityTag}:handleSesEmail:replyEmail` 
                     },
                     {
                         "type": "button",
@@ -76,7 +78,18 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
                             "text": "Mark as Read"
                         },
                         "style": "primary",
-                        "action_id": "mark_as_read_button"
+                        "action_id": "markEmailAsRead",
+                        "value": `${activityTag}:handleSesEmail:markEmailAsRead` 
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Delete"
+                        },
+                        "style": "danger",
+                        "action_id": "deleteEmail",
+                        "value": `${activityTag}:handleSesEmail:deleteEmail` 
                     }
                 ]
             }

@@ -569,10 +569,163 @@ function servicePicker({ moduleType, reaction  }) {
             approve_scraped_jobs: approveScrapedJob,
             remove_scraped_jobs: rejectScrapedJob
         },
-        mailing_list: renderMailingListInfo
+        mailing_list: renderMailingListInfo,
+        handleSesEmail: {
+            replyEmail: replySesEmail,
+            markEmailAsRead: markSesEmailAsRead,
+            deleteEmail: deleteSesEmail
+        }
     }
     return moduleActionsServiceMap[moduleType]?.[reaction] || null;
 }
+
+async function markSesEmailAsRead({ }) {
+    
+}
+
+async function deleteSesEmail({ }) {
+    
+}
+
+async function replySesEmail({ activityTag, userInfo }) {
+    try {
+        const tagSplit = activityTag.split("/");
+        const bucket = tagSplit[0];
+        const key = tagSplit[1];
+
+    } catch (error) {
+        
+    }
+}
+
+
+async function renderEmailBlocksModal({ from, message }) {
+    try {
+
+        const titleSection = {
+            "type": "section",
+            "block_id": "reply_input_section",
+            "text": {
+                "type": "mrkdwn",
+                "text": `Reply to ${from}`
+            }
+        };
+        
+        const messageBlock = {
+			"type": "section",
+			"block_id": "original_message_section",
+			"text": {
+				"type": "mrkdwn",
+				"text": `Original Message:\n ${message.substring(0, 2000)} [Clipped for brevity]`
+			}
+		}
+
+        const ccBlock = {
+			"type": "input",
+			"label": {
+				"type": "plain_text",
+				"text": "CC",
+				"emoji": true
+			},
+			"element": {
+				"type": "plain_text_input",
+				"multiline": false,
+				"placeholder": {
+					"type": "plain_text",
+					"text": "cc@email.com, another_cc@email.com"
+				}
+			},
+			"optional": true
+        }
+        
+        const bccBlock = {
+			"type": "input",
+			"label": {
+				"type": "plain_text",
+				"text": "BCC ",
+				"emoji": true
+			},
+			"element": {
+				"type": "plain_text_input",
+				"multiline": false,
+				"placeholder": {
+					"type": "plain_text",
+					"text": "bcc@email.com, another_bcc@email.com"
+				}
+			},
+			"optional": true
+		}
+
+        const messageInputBlock = {
+			"type": "input",
+			"label": {
+				"type": "plain_text",
+				"text": "Response",
+				"emoji": true
+			},
+			"element": {
+				"type": "plain_text_input",
+				"multiline": true,
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Your email response"
+				}
+			},
+			"optional": false
+		}
+
+        const attachmentBlock = {
+			"type": "input",
+			"label": {
+				"type": "plain_text",
+				"text": "Attachment",
+				"emoji": true
+			},
+			"element": {
+				"type": "file_input"
+			},
+			"optional": true
+		}
+
+
+        const slackPayload = {
+            "type": "modal",
+            "callback_id": "renderEmailBlocksModal",
+            "title": {
+                "type": "plain_text",
+                "text": "Reply To",
+                "emoji": true
+            },
+            "submit": {
+                "type": "plain_text",
+                "text": "Reply",
+                "emoji": true
+            },
+            "close": {
+                "type": "plain_text",
+                "text": "Cancel",
+                "emoji": true
+            },
+            "blocks": [titleSection,messageBlock,ccBlock,bccBlock, messageInputBlock, attachmentBlock]
+        };
+
+        slackPayload.private_metadata = JSON.stringify({
+            module: "renderEmailBlocksModal",
+            from
+        });
+
+        return {
+            slackPayload,
+            modal_identifier: "renderEmailBlocksModal"
+        };
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+
+
 
 function servicePickerExternalSource({ activityTag  }) {
     const moduleActionsServiceMap = {
