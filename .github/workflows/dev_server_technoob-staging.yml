@@ -92,5 +92,5 @@ jobs:
           aws-region: eu-west-2
       - run: sam build 
         working-directory: ses-email-handler-lambda
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-lambda --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-6dvwziimruwe
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
         working-directory: ses-email-handler-lambda
