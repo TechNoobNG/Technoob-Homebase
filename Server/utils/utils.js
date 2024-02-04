@@ -77,6 +77,9 @@ function channelSelector(moduleType) {
     if (["notifyScrapedJobApproval"].includes(moduleType)) {
         return ACTION_CHANNEL_MAP.notifyAdmins
     }
+    if(["handleSesEmail"].includes(moduleType)) {
+        return ACTION_CHANNEL_MAP.testing
+    }
     return null
 }
 
