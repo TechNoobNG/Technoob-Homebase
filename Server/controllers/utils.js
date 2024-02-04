@@ -24,6 +24,19 @@ module.exports = {
         }
     },
 
+    async downloadEmail(req, res) {
+        try {
+            const { key, bucket } = req.params;
+            const file = await resource.downloadEmail({key,bucket})
+            return res.customRedirect(file);
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+    },
+
     async downloadFile(req, res) {
         const { generatedId } = req.params;
         const { _id: userId } = req.user._id;
