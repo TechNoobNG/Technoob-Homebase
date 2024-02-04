@@ -3,7 +3,7 @@ const client = new S3Client({
     region: "eu-west-2"
 });
 import  EmlParser from 'eml-parser';
-import { emlToSlackBlock , sendToSlack} from "./utils/slack.mjs "
+import { emlToSlackBlock , sendToSlack} from "./utils/slack.mjs"
 
 export const handler = async (event) => {
     const message = event.Records[0].Sns.Message;

@@ -142,7 +142,19 @@ jobs:
           docker push oluwatobiiloba/function-worker:latest
         working-directory: Function-Worker-2.0
 
+  deploy-lamda-functions:
+    runs-on: ubuntu-latest
 
-
-
-
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - run: sam build 
+        working-directory: ses-email-handler-lambda
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-lambda --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-6dvwziimruwe
+        working-directory: ses-email-handler-lambda
