@@ -1,6 +1,5 @@
 const config = require('../../config/config')
-const SESClient = require("@aws-sdk/client-ses").SESClient;
-const SendEmailCommand = require("@aws-sdk/client-ses").SendEmailCommand;
+const { SESClient, SendEmailCommand, SendRawEmailCommand } = require("@aws-sdk/client-ses");
 const REGION = config.AWS_SERVICES.SES.region;
 const sesClient = new SESClient({
     region: REGION,
@@ -37,6 +36,26 @@ module.exports = {
         const sendEmailCommand = new SendEmailCommand(mailOptions)
         try {
             const response =  await sesClient.send(sendEmailCommand);
+            if (response) {
+                console.log(`Email sent to ${options.email}`)
+            }
+            return response
+        } catch (e) {
+            console.log(e);
+            throw e
+        }
+    },
+
+    async sendRawEmail(options) {
+        try {
+            const input = {
+                Destinations: options.destinations || [],
+                RawMessage: {
+                    Data: options.rawEmail
+                },
+            };
+            const sendRawEmailCommand = new SendRawEmailCommand(input)
+            const response =  await sesClient.send(sendRawEmailCommand);
             if (response) {
                 console.log(`Email sent to ${options.email}`)
             }

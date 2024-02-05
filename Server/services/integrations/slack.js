@@ -1,7 +1,8 @@
 
-const { getSlackNotificationModuleDefaults,createFieldsBlock } = require("../../utils/utils");
+const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject } = require("../../utils/utils");
 const { sendRequest, respondToAction, openModal, sendMessageToUser } = require("../../utils/slack/index");
 const config = require("../../config/config");
+const { getObjectStream } = require("../../utils/storage/aws_storage");
  /**
      * @function notifySlack
      * @param {object} { moduleType, notificationData,image }
@@ -545,6 +546,7 @@ async function processSubmission(body) {
         const { view: { blocks, title, state, private_metadata,callback_id }, user } = body;
         const processingData = JSON.parse(private_metadata);
 
+
         if (processingData.module === "sendemailwithtemplate") {
             const { sendEmailToMailingList } = require("../admin");
             processingData.source = "slack"
@@ -552,6 +554,27 @@ async function processSubmission(body) {
             processingData.subject = processingData.placeHolders["Email Subject"];
             delete processingData.placeHolders["Email Subject"];
             await sendEmailToMailingList(processingData)
+        }
+
+        if(processingData.module === "renderEmailBlocksModal"){
+            let responseObject = {};
+            if (Array.isArray(blocks)) {
+                blocks.forEach((block) => {
+                    if (block && block.type === "input") {
+                        responseObject[block.label?.text] = state.values[block.block_id][block.element.action_id].type === "file_input" ? state.values[block.block_id][block.element.action_id].files :state.values[block.block_id][block.element.action_id].value;
+                    }
+                })
+            }
+            const payload = {
+                source: "slack",
+                user,
+                adminResponse: responseObject,
+                emailInfo: processingData,
+
+            }
+
+            const { respondToEmail } = require("../admin");
+            await respondToEmail(payload)
         }
         
         return {
@@ -592,14 +615,30 @@ async function replySesEmail({ activityTag, userInfo }) {
         const tagSplit = activityTag.split("/");
         const bucket = tagSplit[0];
         const key = tagSplit[1];
+        const {body} = await getObjectStream({
+            Bucket: bucket,
+            Key: key
+        })
+        const parsedContent = await emailStreamToObject(body);
 
+        const resp = await renderEmailBlocksModal({
+            from: parsedContent.from.text,
+            message: parsedContent.text,
+            references: parsedContent.references,
+            recievedEmailMessageId: parsedContent.inReplyTo,
+            subject: parsedContent.subject,
+            bucket,
+            userInfo,
+            key
+        })
+        return resp
     } catch (error) {
-        
+        throw error
     }
 }
 
 
-async function renderEmailBlocksModal({ from, message }) {
+async function renderEmailBlocksModal({ from, message,userInfo, bucket,key,recievedEmailMessageId,references,subject  }) {
     try {
 
         const titleSection = {
@@ -642,7 +681,7 @@ async function renderEmailBlocksModal({ from, message }) {
 			"type": "input",
 			"label": {
 				"type": "plain_text",
-				"text": "BCC ",
+				"text": "BCC",
 				"emoji": true
 			},
 			"element": {
@@ -711,7 +750,13 @@ async function renderEmailBlocksModal({ from, message }) {
 
         slackPayload.private_metadata = JSON.stringify({
             module: "renderEmailBlocksModal",
-            from
+            bucket,
+            key,
+            from,
+            userInfo,
+            references,
+            recievedEmailMessageId,
+            subject
         });
 
         return {
@@ -777,7 +822,8 @@ const stepOrder = new Map([
     ["renderEmailPlaceholdersModal", "renderEmailPreview"],
     ["renderEmailPreview", "renderInputRecepientsModal"],
     ["renderInputRecepientsModal", "previewSubmission"],
-    ["previewSubmission", "processSubmission"]
+    ["previewSubmission", "processSubmission"],
+    ["renderEmailBlocksModal", "processSubmission"]
 ])
 
 const stepMap = {
@@ -785,7 +831,8 @@ const stepMap = {
     renderEmailPreview,
     renderInputRecepientsModal,
     previewSubmission,
-    processSubmission
+    processSubmission,
+    renderEmailBlocksModal
 }
 
 async function nextStepPickerRunner(body) {
@@ -808,6 +855,13 @@ async function processAction({ body }) {
             const userInfo = body.user;
             const reactionService = await servicePicker({ moduleType, reaction });
             const runReaction = await reactionService({ activityTag, userInfo });
+            if (runReaction.slackPayload) {
+                return {
+                    message: runReaction.message,
+                    slackPayload: runReaction.slackPayload,
+                    modal_identifier: runReaction.modal_identifier
+                }
+            }
             return {
                 message: runReaction?.message || "Run successfully"
             }

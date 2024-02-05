@@ -2,6 +2,8 @@ const config = require('../../config/config')
 const templates = require('../../models/email_templates');
 let mailProvider = config.MAIL_PROVIDER.provider;
 let useMultipleProviders = config.MAIL_PROVIDER.useMultiple || false;
+const { buildRawEmail, tempReplyTemplate } = require("../utils");
+
 function getRandomMailProvider() {
     const providers = ["ses", "azure"];
     const randomIndex = Math.floor(Math.random() * providers.length);
@@ -113,6 +115,58 @@ module.exports = {
             failed: log.failed,
             successful: log.successful
         };
+    },
+
+    async sendRawEmail(options) {
+        try {
+
+            const {
+                from,
+                references,
+                subject,
+                recievedEmailMessageId,
+                name,
+                username,
+                CC,
+                BCC,
+                Response,
+                Attachment
+            } = options;
+
+            const templateReplacements = {
+                sender: from.match(/"([^"]+)"/)?.[1] || "null",
+                content: Response,
+                user: name || username
+            }
+
+            let reply = tempReplyTemplate;
+            for (const [key, value] of Object.entries(templateReplacements)) {
+                reply = reply.split(`\#{${key}}`).join(value);    
+            }
+
+            const rawEmail = await buildRawEmail({
+                from: `${name||username}@technoob.tech`,
+                to: from,
+                subject: subject,
+                inReplyTo: recievedEmailMessageId,
+                references,
+                message: reply,
+                cc: CC,
+                bcc: BCC,
+                attachments: Attachment
+            })
+            
+            const mailOptions = {
+                rawEmail: rawEmail
+            }
+
+            const provider = getMailProvider("ses")
+            const sendEmail = await provider.sendRawEmail(mailOptions)
+            return sendEmail
+        } catch (e) {
+            console.log(e);
+            throw e
+        }
     }
     
 
