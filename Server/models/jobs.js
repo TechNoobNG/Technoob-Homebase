@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { clearCacheModelTriggers } = require("../middleware/redisCache");
 
 const jobs = new Schema({
     title: {
@@ -92,14 +93,14 @@ const jobs = new Schema({
     approved: {
         type: Boolean,
         required: false,
-        default: true
+        default: false
     }
 
 },{
     timestamps: true
 });
 
-jobs.pre("save", function(next) {
+jobs.pre("save", async function(next) {
     const jobTitle = this.title;
     const keywords = [];
 
@@ -113,7 +114,28 @@ jobs.pre("save", function(next) {
         }
     }
 
-    this.searchKeywords = [...this.searchKeywords,...keywords];
+    this.searchKeywords = [...this.searchKeywords, ...keywords];
+    
+    await clearCacheModelTriggers("jobs")
+    next();
+});
+
+jobs.pre("findOneAndUpdate", async function (next) {
+    await clearCacheModelTriggers("jobs")
+    next();
+});
+
+jobs.pre("findOneAndDelete", async function (next) {
+    await clearCacheModelTriggers("jobs")
+    next();
+});
+
+jobs.pre("deleteMany", async function (next) {
+    await clearCacheModelTriggers("jobs")
+    next();
+});
+jobs.pre("deleteOne", async function (next) {
+    await clearCacheModelTriggers("jobs")
     next();
 });
 

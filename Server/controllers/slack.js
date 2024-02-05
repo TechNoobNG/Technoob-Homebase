@@ -43,7 +43,6 @@ module.exports = {
                 throw new Error("Invalid request body");
             }
             const parsedBody = JSON.parse(reqBody.payload)
-            console.log(parsedBody)
             if (parsedBody.type === "block_actions" && parsedBody.actions[0].type !== "external_select") {
 
                 res.ok({

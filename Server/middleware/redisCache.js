@@ -36,6 +36,15 @@ module.exports = {
             console.error('Error in clearCache:', error);
         }
     },
+    clearCacheModelTriggers: async (model) => { 
+        try {
+            const baseCacheKey = `/api/v1/${model}/`;
+            const keys = await client.keys(baseCacheKey + '*');
+            await Promise.all(keys.map(key => client.del(key)));
+        } catch (error) {
+            console.error('Error in clearCacheModelTriggers:', error);
+        }
+    },
 
     addClearCache: (req, res, next) => {
         const clearCache = module.exports.clearCache;

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const config = require('../config/config')
+const { clearCacheModelTriggers } = require("../middleware/redisCache");
 
 const quizzes = new Schema({
     theme: {
@@ -56,6 +57,30 @@ const quizzes = new Schema({
 
 },{
     timestamps: true
+});
+
+quizzes.pre("save", async function(next) {
+    await clearCacheModelTriggers("quizzes")
+    next();
+});
+
+quizzes.pre("findOneAndUpdate", async function (next) {
+    await clearCacheModelTriggers("quizzes")
+    next();
+});
+
+quizzes.pre("findOneAndDelete", async function (next) {
+    await clearCacheModelTriggers("quizzes")
+    next();
+});
+
+quizzes.pre("deleteMany", async function (next) {
+    await clearCacheModelTriggers("quizzes")
+    next();
+});
+quizzes.pre("deleteOne", async function (next) {
+    await clearCacheModelTriggers("quizzes")
+    next();
 });
 
 
