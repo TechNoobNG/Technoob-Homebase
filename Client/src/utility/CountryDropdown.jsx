@@ -1,11 +1,18 @@
-import React from 'react';
-import Select from 'react-select';
-import countries from './countries';
-import _ from 'lodash';
+import React from "react";
+import Select from "react-select";
+import countries from "./countries";
+import _ from "lodash";
 
-const CountryDropdown = ({ onSelect, defaultCountry, className, id, name, propIndex }) => {
-    const handleSelect = (selectedOption) => {
-        onSelect(_.capitalize(selectedOption.value),propIndex,name);
+const CountryDropdown = ({
+  onSelect,
+  defaultCountry,
+  className,
+  id,
+  name,
+  propIndex,
+}) => {
+  const handleSelect = (selectedOption) => {
+    onSelect(_.capitalize(selectedOption.value), propIndex, name);
   };
 
   const uniqueCountries = countries.filter(
@@ -22,7 +29,7 @@ const CountryDropdown = ({ onSelect, defaultCountry, className, id, name, propIn
           alt={country.country}
           className="w-6 h-6 mr-2"
         />
-            <span>{`${_.capitalize(country.country)}${country.code}`}</span>
+        <span>{`${_.capitalize(country.country)}${country.code}`}</span>
       </div>
     ),
   }));
@@ -31,20 +38,21 @@ const CountryDropdown = ({ onSelect, defaultCountry, className, id, name, propIn
     <Select
       options={options}
       onChange={handleSelect}
-      placeholder={defaultCountry}
+      placeholder={defaultCountry ? defaultCountry : "Select a country"}
       className={`w-full ${className}`}
       id={id}
       name={name}
       styles={{
         control: (provided) => ({
           ...provided,
-          border: '1px solid #ced4da',
-          borderRadius: '0.25rem',
-          padding: '0.375rem 0.75rem',
+          border: "1px solid #ced4da",
+          borderRadius: "0.25rem",
+          padding: "0.375rem 0.75rem",
+          width: "fit",
         }),
         option: (provided) => ({
           ...provided,
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: "1px solid #e2e8f0",
         }),
       }}
     />
