@@ -12,8 +12,7 @@ const s3Client = new S3Client({
 });
 const uuid = require('uuid');
 const {
-  getSignedUrl,
-  S3RequestPresigner,
+  getSignedUrl
 } = require("@aws-sdk/s3-request-presigner");
 
 const { Upload } = require('@aws-sdk/lib-storage');
