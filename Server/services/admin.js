@@ -14,7 +14,7 @@ const traffic = require('../services/traffic');
 const ErrorResponse = require('../utils/error/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
-const { extractEmailTemplatePlaceholders } = require("../utils/utils");
+const { extractEmailTemplatePlaceholders, buildRawEmail, tempReplyTemplate } = require("../utils/utils");
 module.exports = {
 
     async adminDashboard() {
@@ -581,6 +581,53 @@ module.exports = {
         }
     },
 
+    async respondToEmail({ source, user, adminResponse, emailInfo }) {
+        try {            
+              
+            const { module, bucket, key, from, references, subject, recievedEmailMessageId } = emailInfo;
+            const { name, username } = user;
+            let { CC, BCC, Response, Attachment } = adminResponse;
+
+            if (source === "slack") {
+                Attachment = Attachment.map((each) => {
+                    return {
+                        filename: each.name,
+                        contentType: each.mimetype,
+                        url: each.url_private_download,
+                        source: "slack"
+                    }
+                });
+            }
+
+            const mailOptions = {
+                from,
+                references,
+                subject,
+                recievedEmailMessageId,
+                name,
+                username,
+                CC,
+                BCC,
+                Response,
+                Attachment
+            }
+
+            await mailService.sendRawEmail({
+                name: "RawEmailReply",
+                method: "sendRawEmail",
+                data: mailOptions
+            });
+
+            return {
+                message: "Email Queued Successfully"
+            }
+
+
+        } catch (error) {
+            throw error
+        }
+    },
+
     async getMailingList(query) {
         try {
             let page = query.page || 1;
@@ -757,4 +804,5 @@ module.exports = {
             throw err
         }
     }
+
 }
