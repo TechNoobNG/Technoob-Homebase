@@ -203,5 +203,5 @@ module.exports = {
         const sasToken = generateBlobSASQueryParameters(sasOptions, storageSharedKeyCredentials).toString();
 
         return sasToken;
-}
+    }
 }

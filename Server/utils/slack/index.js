@@ -20,15 +20,20 @@ module.exports = {
             let url;
             if (webhook && webhook.channel && config.SLACK.CHANNELS[webhook.channel].WEBHOOK) {
                 requestConfig.baseURL = config.SLACK.CHANNELS[webhook.channel].WEBHOOK
+            } else if (webhook && webhook.url) {
+                requestConfig.baseURL = webhook.url
             } else {
                 url = `${config.SLACK.WORKSPACE_ID}/${webhook.channelId ? webhook.channelId : config.SLACK.CHANNELS[webhook.channel].CHANNEL_ID}/${webhook.channelToken ? webhook.channelToken : config.SLACK.CHANNELS[webhook.channel].WEBHOOK_TOKEN}`
                 requestConfig.baseURL = "https://slack.com/api/"
             }
+            console.log(requestConfig.baseURL)
             const resp = await slack.post(url, body,requestConfig);
             return resp.data
         } catch (error) {
-            console.error(error)
-            throw error
+            console.error(error.message)
+            throw {
+                message: error.message
+            }
         }
     },
 

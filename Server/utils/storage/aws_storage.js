@@ -170,6 +170,23 @@ module.exports = {
             key: key,
         });
         return clientUrl;
+    },
+
+    async getObjectStream({ Bucket, Key, region }) {
+        try {
+            const params = {
+                Bucket,
+                Key
+            };
+            const command = new GetObjectCommand(params);
+            const client = new S3Client({ region: region || "eu-west-2" });
+            const response = await client.send(command);
+            return {
+                body: response.Body
+            }
+        } catch (error) {
+            throw error
+        }
     }
 
 }

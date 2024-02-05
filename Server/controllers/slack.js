@@ -1,5 +1,5 @@
 const { processAction, notifyActionResponseNoError,commandMap, fetchMenus, notifyActionResponseV2, retrieveCommandFunction} = require('../services/integrations/slack');
-
+const { openModal } = require("../utils/slack/index")
 async function process({ body }) {
     let processedAction
     try {
@@ -26,7 +26,7 @@ async function process({ body }) {
                 "response_action": "update",
                 "view": processedAction.slackPayload,
             }
-            console.log("pushing p",processedAction)
+            // console.log("pushing p",processedAction)
             // resp.view.callback_id = processedAction.modal_identifier
             return resp
         }
@@ -45,12 +45,20 @@ module.exports = {
             const parsedBody = JSON.parse(reqBody.payload)
             console.log(parsedBody)
             if (parsedBody.type === "block_actions" && parsedBody.actions[0].type !== "external_select") {
+
                 res.ok({
                     status: "success",
                     message: "Action received",
                     statusCode: 200
                 })
-                await process({ body: parsedBody })
+                const resp = await process({ body: parsedBody })
+                if (resp.response_action) {
+                    await openModal({
+                        view: resp.view,
+                        trigger_id: parsedBody.trigger_id
+                    })
+                }
+               
             } else if (parsedBody.type === "block_actions" && parsedBody.actions[0].type === "external_select") {
                 res.ok({
                     status: "success",
