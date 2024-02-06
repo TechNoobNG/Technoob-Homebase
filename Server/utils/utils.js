@@ -154,51 +154,59 @@ async function buildRawEmail({
     attachments,
   }) {
     const boundary = uuidv4();
-  
+
     let rawEmail = `MIME-Version: 1.0\n`;
-  
+
     if (references) {
       rawEmail += `References: ${references}\n`;
     }
-  
+
     if (inReplyTo) {
       rawEmail += `In-Reply-To: ${inReplyTo}\n`;
     }
-  
+
     rawEmail += `From: ${from}\nTo: ${to}\nSubject: ${subject}\n`;
-  
+
     if (cc) {
       rawEmail += `Cc: ${cc}\n`;
     }
-  
+
     if (bcc) {
       rawEmail += `Bcc: ${bcc}\n`;
     }
-  
+
     rawEmail += `Content-Type: multipart/related; boundary="${boundary}"\n\n`;
-  
+
     rawEmail += `--${boundary}\nContent-Type: multipart/alternative; boundary="${boundary}_alt"\n\n`;
-  
+
     rawEmail += `--${boundary}_alt\nContent-Transfer-Encoding: quoted-printable\nContent-Type: text/html; charset=UTF-8\n\n${message}\n`;
-  
+
     rawEmail += `--${boundary}_alt--\n`;
-  
+
+    let totalSize = rawEmail.length;
+
     if (attachments) {
         for (const attachment of attachments) {
           try {
-            const base64Content = await fetchAndEncodeBase64(attachment.url, attachment.source);
-    
-            rawEmail += `--${boundary}\nContent-Type: ${attachment.contentType}; name="${attachment.filename}"\nContent-Transfer-Encoding: base64\nContent-Disposition: attachment; filename="${attachment.filename}"\n\n${base64Content}\n`;
+            let attachmentContent;
+            let attachmentHeader;
+            
+            attachmentContent = await fetchAndEncodeBase64(attachment.url, attachment.source);
+            attachmentHeader = `--${boundary}\nContent-Type: ${attachment.contentType}; name="${attachment.filename}"\nContent-Transfer-Encoding: base64\nContent-Disposition: attachment; filename="${attachment.filename}"\n\n`;
+            rawEmail += attachmentHeader + attachmentContent + '\n';
+              
           } catch (error) {
             console.warn(`Skipping attachment ${attachment.filename} due to error:`, error.message);
           }
         }
       }
-  
+      
+
     rawEmail += `--${boundary}--\n`;
-  
+
     return rawEmail;
 }
+
 
 async function fetchAndEncodeBase64(url,source) {
     try {
@@ -212,9 +220,36 @@ async function fetchAndEncodeBase64(url,source) {
         }
         const response = await axios.get(url, options);
         const base64Content = Buffer.from(response.data).toString('base64');
+  
         return base64Content;
     } catch (error) {
       console.error(`Error fetching or encoding content from ${url}:`, error.message);
+    }
+  }
+
+  async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile}) {
+    try {
+        const options = {
+            responseType: 'stream'
+        }
+        if (source === "slack") {
+            options.headers = {
+                "Authorization": `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+            }
+        }
+        const response = await axios.get(url, options);
+        const { upload } = require("./storage/storageService")
+        const uploadedLink = await upload({
+            type: contentType.split("/")[1],
+            name,
+            data: response.data,
+            isFile,
+            acl: "private"
+        })
+  
+        return uploadedLink;
+    } catch (error) {
+        console.error(`Error fetching or encoding content from ${url}:`, error.message);
     }
   }
   
@@ -265,13 +300,17 @@ const tempReplyTemplate = `<!DOCTYPE html>
         </p>
 
         <p>
+            #{largeAttachmentsHTML}
+        </p>
+
+        <p>
             Best regards,<br>
             #{user}
         </p>
+        
     </div>
 </body>
-</html>
-`
+</html>`
 
 module.exports = {
      async hashPassword(password) {
@@ -299,5 +338,6 @@ module.exports = {
     emailStreamToObject,
     isAttachmentSupported,
     buildRawEmail,
-    tempReplyTemplate
+    tempReplyTemplate,
+    fetchExternalLinkAndUploadToS3
 }

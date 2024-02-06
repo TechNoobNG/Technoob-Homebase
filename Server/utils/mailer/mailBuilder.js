@@ -2,7 +2,7 @@ const config = require('../../config/config')
 const templates = require('../../models/email_templates');
 let mailProvider = config.MAIL_PROVIDER.provider;
 let useMultipleProviders = config.MAIL_PROVIDER.useMultiple || false;
-const { buildRawEmail, tempReplyTemplate } = require("../utils");
+const { buildRawEmail, tempReplyTemplate, fetchExternalLinkAndUploadToS3 } = require("../utils");
 
 function getRandomMailProvider() {
     const providers = ["ses", "azure"];
@@ -144,6 +144,44 @@ module.exports = {
                 reply = reply.split(`\#{${key}}`).join(value);    
             }
 
+            const largeAttachments = [];
+            const filteredAttachments = [];
+            for (const attachment of Attachment) {
+                if (attachment.size > 1 * 1024 * 1024) {
+                    const serviceUpload = await fetchExternalLinkAndUploadToS3({
+                        url: attachment.url,
+                        source: attachment.source,
+                        contentType: attachment.contentType,
+                        name: attachment.filename,
+                        isFile: true
+                    })
+                    largeAttachments.push({
+                        url: serviceUpload.url,
+                        name: serviceUpload.name,
+                    })
+                } else {
+                    filteredAttachments.push(attachment);
+                }
+            }
+
+            if (largeAttachments.length > 0) {
+                const attachmentsHTML = largeAttachments.map(attachment => {
+                    return `<li><a href="${attachment.url}">${attachment.name}</a></li>`;
+                }).join('');
+                
+                let replacement = `
+                <div>
+                <p>This email contains large attachments that could not be directly attached. You can download them using the following links:</p>
+                <ul>
+                    ${attachmentsHTML}
+                </ul>
+                </div>`;
+                reply = reply.split(`\#{largeAttachmentsHTML}`).join(replacement);    
+            } else {
+                reply = reply.split(`\#{largeAttachmentsHTML}`).join("");    
+            }
+           
+
             const rawEmail = await buildRawEmail({
                 from: `${name||username}@technoob.tech`,
                 to: from,
@@ -153,7 +191,7 @@ module.exports = {
                 message: reply,
                 cc: CC,
                 bcc: BCC,
-                attachments: Attachment
+                attachments: filteredAttachments
             })
             
             const mailOptions = {

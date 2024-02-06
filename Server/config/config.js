@@ -128,7 +128,7 @@ const environments = {
                 queueUrl: process.env.AWS_QUEUE_URL
             },
             SES: {
-                region: "eu-north-1",
+                region: "eu-west-2",
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
             },
@@ -285,7 +285,7 @@ const environments = {
                 queueUrl: process.env.AWS_QUEUE_URL
             },
             SES: {
-                region: "eu-north-1",
+                region: "eu-west-2",
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
             },
