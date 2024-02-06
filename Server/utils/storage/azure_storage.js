@@ -15,6 +15,8 @@ const blobServiceClient = BlobServiceClient.fromConnectionString(
     connectionString
 );
 
+const env = process.env.NODE_ENV || "development";
+
 const envMap = {
     "development": "dev",
     "test": "test",

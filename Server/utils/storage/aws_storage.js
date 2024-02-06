@@ -17,6 +17,7 @@ const {
 
 const { Upload } = require('@aws-sdk/lib-storage');
 const { Readable,PassThrough } = require('stream');
+const env = process.env.NODE_ENV || "development";
 
 const envMap = {
     "development": "dev",
