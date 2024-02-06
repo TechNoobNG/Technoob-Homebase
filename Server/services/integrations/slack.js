@@ -632,6 +632,7 @@ async function replySesEmail({ activityTag, userInfo }) {
             userInfo,
             key
         })
+        
         return resp
     } catch (error) {
         throw error
