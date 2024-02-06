@@ -75,7 +75,7 @@ module.exports = {
         }
         return containers;
     },
-    async upload({type, data, name, isFile = false,  acl = "private", generatedId}) {
+    async upload({type, data, name, isFile = false,  acl = "private", generatedId,canAccessedByPublic}) {
         let availableContainers = await this.listContainers();
         let containername = `technoob-${envMap[env]}`;
         if (acl && ["public", "private"].includes(acl)) {
@@ -101,7 +101,8 @@ module.exports = {
             if(!generatedId){
                 generatedId = uuid.v4()
             }
-            blob.url = `https://${config.LIVE_BASE_URL}/api/v1/download/${generatedId}`
+            
+            blob.url = canAccessedByPublic ? `https://${config.LIVE_BASE_URL}/api/v1/download/public/${generatedId}`:`https://${config.LIVE_BASE_URL}/api/v1/download/${generatedId}`
             blob.generatedId = generatedId;
             blob.objectStore = containername;
             blob.key = key;

@@ -148,16 +148,18 @@ module.exports = {
             const filteredAttachments = [];
             for (const attachment of Attachment) {
                 if (attachment.size > 1 * 1024 * 1024) {
-                    const serviceUpload = await fetchExternalLinkAndUploadToS3({
+                    const attachmentUpload = await fetchExternalLinkAndUploadToS3({
                         url: attachment.url,
                         source: attachment.source,
                         contentType: attachment.contentType,
                         name: attachment.filename,
-                        isFile: true
+                        isFile: true,
+                        isRestricted: false,
+                        canAccessedByPublic: true
                     })
                     largeAttachments.push({
-                        url: serviceUpload.url,
-                        name: serviceUpload.name,
+                        url: attachmentUpload.url,
+                        name: attachmentUpload.name,
                     })
                 } else {
                     filteredAttachments.push(attachment);

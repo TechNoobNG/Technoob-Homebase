@@ -19,9 +19,15 @@ module.exports = {
     async download( generatedId, userId) {
         try {
             let checkFile = await fileUploadHistory.findOne({
-                generatedId: generatedId,
-                user_id: userId,
+                generatedId: generatedId
             })
+
+            if (checkFile && checkFile.isRestricted && (checkFile.user_id !== userId || !checkFile.allowedUsers.includes(userId))) {
+                throw new ErrorResponse(
+                    401,
+                    "You are not authorized to view this file"
+                )
+            }
 
             if (!checkFile) {
                 checkFile = await computedDownloads.findOne({
