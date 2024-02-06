@@ -8,13 +8,17 @@ module.exports = {
         const file = req.file
         file.uploaderId = req.user?._id.toString()
         const acl = req.query.acl || "private";
+        const isRestricted = req.query.isRestricted || false;
+        const canAccessedByPublic = req.query.canAccessedByPublic || false;
         file.acl = acl;
+        file.isRestricted = isRestricted;
+        file.canAccessedByPublic = canAccessedByPublic;
         try {
-            const file_uloaded = await resource.upload_file(file)
+            const file_uploaded = await resource.upload_file(file)
             res.ok({
                 status: "success",
                 message: `file uploaded`,
-                data: file_uloaded
+                data: file_uploaded
             })
         } catch (error) {
             res.fail({

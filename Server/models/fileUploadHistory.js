@@ -38,6 +38,14 @@ const fileUploadHistorySchema = new mongoose.Schema({
     objectStore: {
         type: String,
         required: true,
+    },
+    isRestricted: {
+        type: Boolean,
+        default: false
+    },
+    allowedUsers: {
+        type: Array,
+        default: []
     }
 }, {
 timestamps: true,

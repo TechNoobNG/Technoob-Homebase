@@ -227,7 +227,7 @@ async function fetchAndEncodeBase64(url,source) {
     }
   }
 
-  async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile}) {
+  async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile,isRestricted, canAccessedByPublic}) {
     try {
         const options = {
             responseType: 'stream'
@@ -244,7 +244,9 @@ async function fetchAndEncodeBase64(url,source) {
             name,
             data: response.data,
             isFile,
-            acl: "private"
+            acl: "private",
+            isRestricted: isRestricted || false,
+            canAccessedByPublic: canAccessedByPublic || true,
         })
   
         return uploadedLink;

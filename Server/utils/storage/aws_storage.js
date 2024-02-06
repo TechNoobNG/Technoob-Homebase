@@ -89,7 +89,7 @@ module.exports = {
         const response = await s3Client.send(command);
         return response.Buckets;
     },
-    async upload({type, data, name, isFile = false, acl = "private", generatedId}) {
+    async upload({ type, data, name, isFile = false, acl = "private", generatedId, canAccessedByPublic}) {
         let availableBuckets = await this.listBuckets();
         let bucketName = `technoob-${envMap[env]}`;
         if (acl && ["public", "private"].includes(acl)) {
@@ -131,7 +131,7 @@ module.exports = {
             if (!generatedId) {
                 generatedId = uuid.v4()
             }
-            response.url = `https://${config.LIVE_BASE_URL}/api/v1/download/${generatedId}`
+            response.url =  canAccessedByPublic ? `https://${config.LIVE_BASE_URL}/api/v1/download/public/${generatedId}`:`https://${config.LIVE_BASE_URL}/api/v1/download/${generatedId}`
             response.generatedId = generatedId;
             response.key = key;
             response.objectStore = bucketName;
