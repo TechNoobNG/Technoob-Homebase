@@ -2,7 +2,7 @@
 const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject } = require("../../utils/utils");
 const { sendRequest, respondToAction, openModal, sendMessageToUser } = require("../../utils/slack/index");
 const config = require("../../config/config");
-const { getObjectStream } = require("../../utils/storage/aws_storage");
+
  /**
      * @function notifySlack
      * @param {object} { moduleType, notificationData,image }
@@ -612,6 +612,7 @@ async function deleteSesEmail({ }) {
 
 async function replySesEmail({ activityTag, userInfo }) {
     try {
+        const { getObjectStream } = require("../../utils/storage/aws_storage");
         const tagSplit = activityTag.split("/");
         const bucket = tagSplit[0];
         const key = tagSplit[1];

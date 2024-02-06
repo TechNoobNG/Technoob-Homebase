@@ -594,7 +594,8 @@ module.exports = {
                         filename: each.name,
                         contentType: each.mimetype,
                         url: each.url_private_download,
-                        source: "slack"
+                        size: each.size,
+                        source
                     }
                 });
             }

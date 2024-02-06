@@ -48,21 +48,27 @@ module.exports = {
 
     async sendRawEmail(options) {
         try {
-            const input = {
-                Destinations: options.destinations || [],
-                RawMessage: {
-                    Data: options.rawEmail
-                },
-            };
-            const sendRawEmailCommand = new SendRawEmailCommand(input)
-            const response =  await sesClient.send(sendRawEmailCommand);
-            if (response) {
-                console.log(`Email sent to ${options.email}`)
+            if (!options.rawEmail) {
+                throw new Error('Raw email content is missing.');
             }
-            return response
+    
+            const input = {
+                "RawMessage": {
+                    "Data": Buffer.from(options.rawEmail)
+                }
+            };
+            const sendRawEmailCommand = new SendRawEmailCommand(input);
+            const response = await sesClient.send(sendRawEmailCommand);
+    
+            if (response) {
+                console.log(`Email sent`);
+            }
+    
+            return response;
         } catch (e) {
             console.log(e);
-            throw e
+            throw e;
         }
     }
+    
 }

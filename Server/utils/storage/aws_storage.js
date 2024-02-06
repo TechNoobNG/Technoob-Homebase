@@ -12,12 +12,12 @@ const s3Client = new S3Client({
 });
 const uuid = require('uuid');
 const {
-  getSignedUrl,
-  S3RequestPresigner,
+  getSignedUrl
 } = require("@aws-sdk/s3-request-presigner");
 
 const { Upload } = require('@aws-sdk/lib-storage');
 const { Readable,PassThrough } = require('stream');
+const env = process.env.NODE_ENV || "development";
 
 const envMap = {
     "development": "dev",
