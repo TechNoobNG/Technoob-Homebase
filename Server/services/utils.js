@@ -22,20 +22,23 @@ module.exports = {
                 generatedId: generatedId
             })
 
-            if (checkFile && checkFile.isRestricted && (checkFile.user_id !== userId || !checkFile.allowedUsers.includes(userId))) {
-                throw new ErrorResponse(
-                    401,
-                    "You are not authorized to view this file"
-                )
-            }
-
             if (!checkFile) {
                 checkFile = await computedDownloads.findOne({
                     generatedId: generatedId,
-                    user_id: userId,
                     status: "completed"
                 })
             }
+            
+
+            if (checkFile && checkFile.isRestricted) {
+                if (!userId || (checkFile.user_id !== userId && !checkFile.allowedUsers.includes(userId))) {
+                    throw new ErrorResponse(
+                        401,
+                        "You are not authorized to view this file"
+                    );
+                }
+            }
+            
 
             if (!checkFile) {
                 throw new ErrorResponse(
