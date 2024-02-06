@@ -38,6 +38,14 @@ const computedDownloadsSchema = new mongoose.Schema({
         type: String,
         default: "pending",
         enum: ["pending","in-progress", "completed", "failed"],
+    },
+    isRestricted: {
+        type: Boolean,
+        default: false
+    },
+    allowedUsers: {
+        type: Array,
+        default: []
     }
 }, {
 timestamps: true,
