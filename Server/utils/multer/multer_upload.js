@@ -51,7 +51,9 @@ module.exports = {
                         data: uploadedFile,
                         name: fileName,
                         isFile: true,
-                        acl: file.acl || "private"
+                        acl: file.acl || "private",
+                        isRestricted: file.isRestricted,
+                        canAccessedByPublic: file.canAccessedByPublic || false
                     });
                 }
 
@@ -98,7 +100,9 @@ module.exports = {
                         type: 'images',
                         data: resizedImageStream,
                         name: fileName,
-                        acl: acl || "private"
+                        acl: acl || "private",
+                        isRestricted: file.isRestricted,
+                        canAccessedByPublic: file.canAccessedByPublic || false
                     });
 
 
