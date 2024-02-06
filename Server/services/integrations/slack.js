@@ -626,8 +626,8 @@ async function replySesEmail({ activityTag, userInfo }) {
             from: parsedContent.from.text,
             message: parsedContent.text,
             references: parsedContent.references,
-            recievedEmailMessageId: parsedContent.inReplyTo,
-            subject: parsedContent.subject,
+            recievedEmailMessageId: parsedContent.messageId || parsedContent.inReplyTo ,
+            subject: parsedContent.inReplyTo || parsedContent.references.length ? parsedContent.subject : `Re: ${parsedContent.subject}`,
             bucket,
             userInfo,
             key
