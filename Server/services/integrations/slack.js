@@ -627,11 +627,12 @@ async function replySesEmail({ activityTag, userInfo }) {
             message: parsedContent.text,
             references: parsedContent.references,
             recievedEmailMessageId: parsedContent.messageId || parsedContent.inReplyTo ,
-            subject: parsedContent.inReplyTo || parsedContent.references.length ? parsedContent.subject : `Re: ${parsedContent.subject}`,
+            subject: parsedContent.inReplyTo || parsedContent.references?.length ? parsedContent.subject : `Re: ${parsedContent.subject}`,
             bucket,
             userInfo,
             key
         })
+
         return resp
     } catch (error) {
         throw error
