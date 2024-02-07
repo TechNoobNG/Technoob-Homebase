@@ -3,8 +3,7 @@ import axios from "axios";
 const SLACK_WEBHOOK_URL = process.env.DEV_TESTING_WEBHOOK
 
 
-export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
-    console.log(parseEmlContent);
+export function emlToSlackBlock({parseEmlContent,bucket,objectName,attachements}) {
     const from = parseEmlContent.from.text;
     const subject = parseEmlContent.subject;
     const date = parseEmlContent.date;
@@ -12,6 +11,13 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
     const to = parseEmlContent.to.text;
     const url = `${process.env.LIVE_BASE_URL || "https://staging-api.technoob.tech"}/api/v1/download/${objectName}/${bucket}`
     const activityTag = `${bucket}/${objectName}`
+    const attachmentBlocks = attachements.map((attachment, index) => ({
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": `*Attachment ${index + 1}:* [${attachment.name}](${attachment.url})\nSize: ${attachment.size/(1026 * 1026)} MB`
+        }
+      })) || [];
     const slackBlock = {
         "blocks": [
             {
@@ -58,6 +64,7 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
                     }
                 ]
             },
+            ...attachmentBlocks,
             {
                 "type": "actions",
                 "elements": [
