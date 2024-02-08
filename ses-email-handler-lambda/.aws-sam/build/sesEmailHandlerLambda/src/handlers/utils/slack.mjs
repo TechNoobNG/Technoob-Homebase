@@ -3,14 +3,22 @@ import axios from "axios";
 const SLACK_WEBHOOK_URL = process.env.DEV_TESTING_WEBHOOK
 
 
-export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
-    console.log(parseEmlContent);
+export function emlToSlackBlock({parseEmlContent,bucket,objectName,attachements}) {
     const from = parseEmlContent.from.text;
     const subject = parseEmlContent.subject;
     const date = parseEmlContent.date;
     const emailContent = parseEmlContent.text;
     const to = parseEmlContent.to.text;
     const url = `${process.env.LIVE_BASE_URL || "https://staging-api.technoob.tech"}/api/v1/download/${objectName}/${bucket}`
+    const activityTag = `${bucket}/${objectName}`;
+
+    const attachmentBlocks = attachements.map((attachment, index) => ({
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": `*Attachment ${attachment.name}:* <${attachment.url}|View Attachment> \nSize: ${attachment.size/(1026 * 1026).toFixed(3)} MB`
+        }
+      })) || [];
     const slackBlock = {
         "blocks": [
             {
@@ -57,6 +65,7 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
                     }
                 ]
             },
+            ...attachmentBlocks,
             {
                 "type": "actions",
                 "elements": [
@@ -67,7 +76,8 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
                             "text": "Reply"
                         },
                         "style": "primary",
-                        "action_id": "reply_button"
+                        "action_id": "replyEmail",
+                        "value": `${activityTag}:handleSesEmail:replyEmail` 
                     },
                     {
                         "type": "button",
@@ -76,7 +86,18 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName}) {
                             "text": "Mark as Read"
                         },
                         "style": "primary",
-                        "action_id": "mark_as_read_button"
+                        "action_id": "markEmailAsRead",
+                        "value": `${activityTag}:handleSesEmail:markEmailAsRead` 
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Delete"
+                        },
+                        "style": "danger",
+                        "action_id": "deleteEmail",
+                        "value": `${activityTag}:handleSesEmail:deleteEmail` 
                     }
                 ]
             }
