@@ -5,12 +5,43 @@ const ErrorResponse = require('../utils/error/errorResponse');
 const storageService = require('../utils/storage/storageService')
 const fileUploadHistory = require('../models/fileUploadHistory')
 const computedDownloads = require('../models/computedDownloads')
+const config = require('../config/config')
+const uuid = require('uuid');
+
 module.exports = {
     async upload_file(file) {
         try {
             const upload = await uploader.uploadFile(file)
             //const upload = await pool.exec('uploadFile', [file]);
             return upload
+        } catch (error) {
+            throw error
+        }
+    },
+
+    async uploadFileExternal({ key, bucket, size,mimetype,provider }) {
+        try {
+            if(!key || !bucket){
+                throw new ErrorResponse(400, "key and bucket are required")
+            }
+    
+            const  generatedId = uuid.v4();
+            const params = {
+                fileName: key,
+                generatedId,
+                size:   Number.parseInt(size),
+                mimetype: mimetype,
+                user_id: "64feb85db96fbbd731c42d5f",
+                key: key,
+                objectStore: bucket,
+                provider: provider || "aws",
+                url:  `https://${config.LIVE_BASE_URL}/api/v1/download/public/${generatedId}`
+            }
+            await fileUploadHistory.create(params)
+            return {
+                generatedId,
+                url: params.url
+            }
         } catch (error) {
             throw error
         }
