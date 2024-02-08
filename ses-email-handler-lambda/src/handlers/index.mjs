@@ -31,18 +31,39 @@ export const handler = async (event) => {
                         Body: attachment.content,
                         Bucket: bucketName,
                         Key: `attachments/${objectKey + "_" + index + "_"}${attachment.filename}`,
-                        ContentLength: attachment.size,
-                        ACL: "public-read"
+                        ContentLength: attachment.size
                     }
                     const command = new PutObjectCommand(putParams)
 
                     try {
                         await client.send(command)
-                        attachements.push({
+                        const params = {
                             name: attachment.filename,
                             size: attachment.size,
-                            url: `https://${bucketName}.s3.eu-west-2.amazonaws.com/attachments/${putParams.Key}`
-                        })
+                            url: null,
+                            key: putParams.Key,
+                            bucket: putParams.Bucket,
+                            mimetype: attachment.mimetype,
+                            acl: "public-read",
+                            provider: "aws"
+                        }
+
+                        var myHeaders = new Headers();
+                        myHeaders.append("Content-Type", "application/json");
+
+                        var raw = JSON.stringify(params);
+
+                        var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                        };
+
+                        const response = await fetch("https://technoob-staging.azurewebsites.net/api/v1/utils/upload-file/external", requestOptions)
+                        const result = await response.json();
+                        params.url = result.data.url;
+                        attachements.push(params)
                     } catch (error) {
                         console.log(error)
                     }

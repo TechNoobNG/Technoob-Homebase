@@ -157,6 +157,9 @@ const environments = {
             SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
             BOT_USER_OAUTH_TOKEN: process.env.SLACK_BOT_USER_OAUTH_TOKEN ,
             API_BASE_URL: process.env.SLACK_API_BASE_URL || "https://slack.com/api"
+        },
+        LAMBDA: {
+            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET || "your_lambda_signing_secret_here"
         }
 
     },
@@ -314,6 +317,9 @@ const environments = {
             SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
             BOT_USER_OAUTH_TOKEN: process.env.SLACK_BOT_USER_OAUTH_TOKEN ,
             API_BASE_URL: process.env.SLACK_API_BASE_URL || "https://slack.com/api"
+        },
+        LAMBDA: {
+            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET
         }
     },
 

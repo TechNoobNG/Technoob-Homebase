@@ -67,7 +67,8 @@ module.exports = {
                         url: uploadResponse.url,
                         provider: uploadResponse.provider,
                         key: uploadResponse.key,
-                        objectStore: uploadResponse.objectStore
+                        objectStore: uploadResponse.objectStore,
+                        isRestricted: file.isRestricted
                     })
                 }
 
@@ -87,7 +88,7 @@ module.exports = {
 
     },
 
-    async uploadFileAsStream(fileStream, originalname, mimetype,uploaderId,acl) {
+    async uploadFileAsStream(fileStream, originalname, mimetype,uploaderId,acl, isRestricted, canAccessedByPublic) {
         return new Promise(async (resolve, reject) => {
             try {
                 const timestamp = new Date().toISOString().replace(/:/g, '-');
@@ -101,8 +102,8 @@ module.exports = {
                         data: resizedImageStream,
                         name: fileName,
                         acl: acl || "private",
-                        isRestricted: file.isRestricted,
-                        canAccessedByPublic: file.canAccessedByPublic || false
+                        isRestricted: isRestricted,
+                        canAccessedByPublic: canAccessedByPublic || false
                     });
 
 
@@ -110,13 +111,14 @@ module.exports = {
                     await userService.addUploads({
                         generatedId: uploadResponse.generatedId,
                         fileName: fileName,
-                        size: file.size,
-                        mimetype: file.mimetype,
+                        size: null,
+                        mimetype: mimetype,
                         uploaderId: uploaderId,
                         url: uploadResponse.url,
                         provider: uploadResponse.provider,
                         key: uploadResponse.key,
-                        objectStore: uploadResponse.objectStore
+                        objectStore: uploadResponse.objectStore,
+                        isRestricted: isRestricted
                     })
                 }
 

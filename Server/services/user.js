@@ -155,7 +155,7 @@ module.exports = {
       return response
 
   },
-    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider, key, objectStore}) {
+    async addUploads({ generatedId, fileName, size, mimetype, uploaderId, url,provider, key, objectStore, isRestricted}) {
       try {
         let userId = uploaderId
         const userExists = await User.userExist(userId);
@@ -170,7 +170,8 @@ module.exports = {
           url,
           provider,
           key,
-          objectStore
+          objectStore,
+          isRestricted
         });
 
       return upload;

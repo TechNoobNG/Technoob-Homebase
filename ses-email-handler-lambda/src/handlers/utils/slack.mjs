@@ -104,10 +104,6 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName,attachements}
         ]
     };
 
-    console.log(attachmentBlocks)
-    console.log("--------------------------------------------------------")
-    console.log(slackBlock)
-
     return slackBlock;
 
 }
