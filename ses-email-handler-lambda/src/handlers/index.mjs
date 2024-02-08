@@ -4,6 +4,7 @@ const client = new S3Client({
 });
 import  EmlParser from 'eml-parser';
 import { emlToSlackBlock , sendToSlack} from "./utils/slack.mjs"
+import { createHmac } from "node:crypto";
 
 export const handler = async (event) => {
     let message = event.Records[0].Sns.Message;
@@ -48,8 +49,17 @@ export const handler = async (event) => {
                             provider: "aws"
                         }
 
+                        const timestamp = Math.floor(Date.now() / 1000);
+                        const signatureVersion = 'v0'
+                        const concated = `${signatureVersion}:${timestamp}:${params}`
+                        const lambdaSigningSecret = process.env.lambdaSigningSecret || "your_lambda_signing_secret_here";
+                        const hmac = createHmac('sha256', lambdaSigningSecret)
+                        const mySignature = 'v0=' + hmac.update(concated).digest('hex');
+
                         var myHeaders = new Headers();
                         myHeaders.append("Content-Type", "application/json");
+                        myHeaders.append("x-lambda-request-timestamp", timestamp);
+                        myHeaders.append("x-lambda-signature", mySignature);
 
                         var raw = JSON.stringify(params);
 
