@@ -59,7 +59,7 @@ import Table from '../../../components/Table';
              <p className='text-2xl text-[#3a3a3a] '>Statistics</p>
              <p className='text-base text-[#3a3a3a] opacity-50 '>See Metrics</p>
 
-             <div className='flex mt-3 p-3 gap-3 bg-slate-50 rounded-sm flex-wrap'>
+             <div className='flex mt-3 p-3 gap-3 rounded-sm flex-wrap'>
              <div className="flex w-[100%] justify-start flex-wrap gap-4 rounded-sm">
               {statistics.map((opt, i) => (
                 <div
@@ -79,8 +79,8 @@ import Table from '../../../components/Table';
                       <span className="font-bold text-3xl">{opt.amount}</span>{" "}
                       {opt.amtlabel}{" "}
                     </p>
-                    <p className=" p-2 text-[#35BA83] flex gap-4 items-center">
-                      <span className="text-xl ">{opt.icon2}</span> {opt.tracks}
+                    <p className=" p-2 text-[#35BA83] flex gap-4 items-center justify-center">
+                      {/* <span className={`${opt.style} text-xl `}>{opt.icon}</span> {opt.tracks} */}
                     </p>
                   </div>
                 </div>

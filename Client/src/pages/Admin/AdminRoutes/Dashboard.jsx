@@ -4,24 +4,27 @@
 import { MdOutlineNoteAdd, MdPermIdentity } from 'react-icons/md';
 import { BsFileEarmarkSpreadsheet } from 'react-icons/bs';
 import { HiArrowsRightLeft } from 'react-icons/hi2';
+import serverApi from '../../../utility/server';
+import { useEffect, useState } from 'react';
 // import img from '../img/Annotation 2023-05-22 185307.jpg'
 // import { AppContext } from '../../../AppContext/AppContext';
 // import Cookies from "universal-cookie";
 // const cookies = new Cookies();
 
 const Dashboard = () => {
+  const [data, setData] = useState(null)
   const statistics = [
     {
       name : 'Uploads',
-      amount : 345,
+      amount : data?.resourceMetrics?.uploads,
       amtlabel : 'Documents',
-      tracks : '36 New viewers',
+      tracks :` ${data?.resourceMetrics?.uploads }+ downloads`,
       icon : <MdOutlineNoteAdd/>,
       style : 'bg-green-100 text-tgreen'
     },
     {
       name : 'Users',
-      amount : 800,
+      amount : data?.userMetrics?.total,
       amtlabel : 'Total Users',
       tracks : '80 New Users',
       icon : <MdPermIdentity/>,
@@ -29,15 +32,15 @@ const Dashboard = () => {
     },
     {
       name : 'Downloads',
-      amount : 750,
+      amount : data?.resourceMetrics?.downloads,
       amtlabel : 'Downloads',
-      tracks : '+ 400',
+      tracks : `${data?.resourceMetrics?.downloads } downloads`,
       icon : <BsFileEarmarkSpreadsheet/>,
       style : 'text-[#114FF580] bg-blue-100'
     },
     {
       name : 'Traffic',
-      amount : '375,455',
+      amount : data?.trafficMetric?.totalCount,
       amtlabel : 'Views',
       tracks : '3600 views',
       icon : <HiArrowsRightLeft/>,
@@ -46,6 +49,20 @@ const Dashboard = () => {
   ];
 
   const username = null;
+
+  useEffect(() => {
+    
+    const AdminStats = async () => {
+      serverApi.requiresAuth(true)
+      const result = await serverApi("/admin/dashboard")
+      setData(result?.data?.data)
+      console.log(result);
+    }
+
+    AdminStats()
+  
+  }, [])
+  
 
   return (
     <section>
