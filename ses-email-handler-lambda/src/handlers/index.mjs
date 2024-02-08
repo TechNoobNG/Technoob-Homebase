@@ -44,7 +44,7 @@ export const handler = async (event) => {
                             url: null,
                             key: putParams.Key,
                             bucket: putParams.Bucket,
-                            mimetype: attachment.mimetype,
+                            mimetype: attachment.contentType,
                             acl: "public-read",
                             provider: "aws"
                         }
@@ -52,7 +52,7 @@ export const handler = async (event) => {
                         const timestamp = Math.floor(Date.now() / 1000);
                         const signatureVersion = 'v0'
                         const concated = `${signatureVersion}:${timestamp}:${params}`
-                        const lambdaSigningSecret = process.env.lambdaSigningSecret || "your_lambda_signing_secret_here";
+                        const lambdaSigningSecret = process.env.LAMBDA_SIGNING_SECRET;
                         const hmac = createHmac('sha256', lambdaSigningSecret)
                         const mySignature = 'v0=' + hmac.update(concated).digest('hex');
 
