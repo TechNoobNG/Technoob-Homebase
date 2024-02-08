@@ -10,7 +10,8 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName,attachements}
     const emailContent = parseEmlContent.text;
     const to = parseEmlContent.to.text;
     const url = `${process.env.LIVE_BASE_URL || "https://staging-api.technoob.tech"}/api/v1/download/${objectName}/${bucket}`
-    const activityTag = `${bucket}/${objectName}`
+    const activityTag = `${bucket}/${objectName}`;
+    console.log(attachements)
     const attachmentBlocks = attachements.map((attachment, index) => ({
         "type": "section",
         "text": {
@@ -102,6 +103,10 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName,attachements}
             }
         ]
     };
+
+    console.log(attachmentBlocks)
+    console.log("--------------------------------------------------------")
+    console.log(slackBlock)
 
     return slackBlock;
 
