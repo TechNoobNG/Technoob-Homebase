@@ -28,6 +28,23 @@ module.exports = {
         }
     },
 
+    async uploadFileExternal(req, res) { 
+        try {
+            const { key, bucket, size,mimetype, acl, provider } = req.body;
+            const uploadedFile = await resource.uploadFileExternal({key,bucket, size, mimetype, acl, provider})
+            res.ok({
+                status: "success",
+                message: `file uploaded`,
+                data: uploadedFile
+            })
+        } catch (error) {
+            res.fail({
+                status: "fail",
+                message: error.message
+            })
+        }
+    },
+
     async downloadEmail(req, res) {
         try {
             const { key, bucket } = req.params;

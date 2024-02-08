@@ -197,6 +197,50 @@ module.exports = {
             })
         }
     },
+
+    authLambda(req, res, next) {
+        try {
+            const timestamp = req.headers['x-lambda-request-timestamp'] ;
+            if (Number.isNaN(timestamp)) {
+                throw new Error(`Failed to verify authenticity`)
+            };
+            const body = req.body;
+            const currentTimestamp = Math.floor(Date.now() / 1000);
+
+            if (Math.abs(currentTimestamp - timestamp) > 60 * 5) {
+                return res.status(401).json({
+                    status: 'fail',
+                    message: 'Invalid/Unauthorized Request'
+                });
+            }
+            const lambdaSignature = req.headers['x-lambda-signature'];
+           
+            const [signatureVersion, signatureHash] = lambdaSignature.split('=');
+
+            if (signatureVersion !== 'v0') {
+                throw new Error(`Unknown signature version`);
+            }
+  
+            const concated = `${signatureVersion}:${timestamp}:${body}`
+            const lambdaSigningSecret = config.LAMBDA.SIGNING_SECRET; 
+            
+
+            const hmac = createHmac('sha256', lambdaSigningSecret);
+            const mySignature = 'v0=' + hmac.update(concated).digest('hex');
+            if (!signatureHash || !tsscmp(lambdaSignature, mySignature)) {
+               throw new Error("Invalid Request")
+            } else {
+                next();
+            }
+
+        } catch (err) {
+            return res.status(401).json({
+                status: 'fail',
+                message: 'Invalid/Unauthorized Request'
+            })
+        }
+    },
+
     slackVerificationMiddleware(req, res, next) {
         const options = {
             headers: req.headers,
