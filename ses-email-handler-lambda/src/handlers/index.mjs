@@ -34,7 +34,7 @@ export const handler = async (event) => {
                         ContentLength: attachment.size,
                         ACL: "public-read"
                     }
-                    const command = PutObjectCommand(putParams)
+                    const command = new PutObjectCommand(putParams)
 
                     try {
                         await client.send(command)
