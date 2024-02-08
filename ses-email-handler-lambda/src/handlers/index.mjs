@@ -72,6 +72,7 @@ export const handler = async (event) => {
 
                         const response = await fetch("https://technoob-staging.azurewebsites.net/api/v1/utils/upload-file/external", requestOptions)
                         const result = await response.json();
+                        console.log(result)
                         params.url = result.data.url;
                         attachements.push(params)
                     } catch (error) {
