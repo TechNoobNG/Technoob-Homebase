@@ -42,3 +42,4 @@ email.html
 Server/package-lock.json
 Server/package-lock.json
 Function-Worker/cache
+node_modules
