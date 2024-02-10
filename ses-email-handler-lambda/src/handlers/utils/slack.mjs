@@ -16,7 +16,7 @@ export function emlToSlackBlock({parseEmlContent,bucket,objectName,attachements}
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": `*Attachment ${attachment.name}:* <${attachment.url}|View Attachment> \nSize: ${attachment.size/(1026 * 1026).toFixed(3)} MB`
+          "text": `*${attachment.name} |* <${attachment.url}|View Attachment> \nSize: ${attachment.size/(1026 * 1026).toFixed(3)} MB`
         }
       })) || [];
     const slackBlock = {
