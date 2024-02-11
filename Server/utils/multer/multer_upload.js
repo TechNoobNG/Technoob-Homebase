@@ -4,8 +4,6 @@ const sharp = require('sharp');
 const storageService = require('../storage/storageService');
 const stream = require('stream');
 const userService = require('../../services/user');
-const user = require('../../services/user');
-
 
 const uploadParams = {
     limits: {

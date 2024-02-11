@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer-extra')
-const {executablePath} = require('puppeteer')
-const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
-puppeteer.use(StealthPlugin())
+// const puppeteer = require('puppeteer-extra')
+// const {executablePath} = require('puppeteer')
+// const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
+// puppeteer.use(StealthPlugin())
 const { uploadFile } = require('../multer/multer_upload');
 const axios = require('axios').default
 const { XMLParser } = require("fast-xml-parser");
@@ -14,7 +14,7 @@ const agent = tunnel.httpsOverHttp({
     proxyAuth: `${config.SMART_PROXY_KEY}:`,
   },
 });
-puppeteer.use(StealthPlugin());
+// puppeteer.use(StealthPlugin());
 const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
 const scrapingLogs = require("../../models/scrapingLogs");
 
@@ -100,82 +100,82 @@ const extractIndeedRSSJobs =  function(inputData) {
 }
 
 module.exports = {
-  async scrapeJobsIndeed({ searchTag, q }) {
-    let ss = {};
-    try {
-      const browser = await puppeteer.launch({
-        executablePath: executablePath(),
-        args: [
-          '--no-sandbox'
-        ],
+  // async scrapeJobsIndeed({ searchTag, q }) {
+  //   let ss = {};
+  //   try {
+  //     const browser = await puppeteer.launch({
+  //       executablePath: executablePath(),
+  //       args: [
+  //         '--no-sandbox'
+  //       ],
     
-        headless: 'new',
-      });
-      let page = (await browser.pages())[0];
-      //let page = await browser.newPage();
-      await page.setViewport({ width: 1080, height: 1024 });
-      const url = `https://ng.indeed.com/jobs?q=${searchTag.replace(" ","+")}&l=&from=searchOnHP`
+  //       headless: 'new',
+  //     });
+  //     let page = (await browser.pages())[0];
+  //     //let page = await browser.newPage();
+  //     await page.setViewport({ width: 1080, height: 1024 });
+  //     const url = `https://ng.indeed.com/jobs?q=${searchTag.replace(" ","+")}&l=&from=searchOnHP`
 
-      await page.goto(url, { waitUntil: 'load' });
+  //     await page.goto(url, { waitUntil: 'load' });
 
-      await page.waitForTimeout(5000)
+  //     await page.waitForTimeout(5000)
 
-      // try to solve the cloudflare captcha 
-      await page.click('body')
-      await page.waitForTimeout(500)
+  //     // try to solve the cloudflare captcha 
+  //     await page.click('body')
+  //     await page.waitForTimeout(500)
 
-      await page.keyboard.press('Tab')
-      await page.waitForTimeout(500)
+  //     await page.keyboard.press('Tab')
+  //     await page.waitForTimeout(500)
 
-      await page.keyboard.press('Space')
-      await page.waitForTimeout(10000)
+  //     await page.keyboard.press('Space')
+  //     await page.waitForTimeout(10000)
 
-      const screenShot = await page.screenshot({
-        fullPage: true
-      });
-      ss = await uploadFile({
-        mimetype: 'image/jpeg',
-        buffer: screenShot,
-        acl: "public",
-        originalname: "indeedpage.jpeg"
-      })
+  //     const screenShot = await page.screenshot({
+  //       fullPage: true
+  //     });
+  //     ss = await uploadFile({
+  //       mimetype: 'image/jpeg',
+  //       buffer: screenShot,
+  //       acl: "public",
+  //       originalname: "indeedpage.jpeg"
+  //     })
 
 
  
-      // await page.waitForSelector('#text-input-what');
+  //     // await page.waitForSelector('#text-input-what');
 
-      // await page.type('#text-input-what', searchTag);
+  //     // await page.type('#text-input-what', searchTag);
 
-      // await page.click('.yosegi-InlineWhatWhere-primaryButton');
+  //     // await page.click('.yosegi-InlineWhatWhere-primaryButton');
 
-      await page.waitForSelector('.mosaic-provider-jobcards');
+  //     await page.waitForSelector('.mosaic-provider-jobcards');
 
-      const jobArray = [];
-      let searchResultPage = 1
+  //     const jobArray = [];
+  //     let searchResultPage = 1
 
-      while (jobArray.length < q) {
-        const extractedJobsArray = await extractIndeedJobs(page)
-        jobArray.push(...extractedJobsArray)
-        searchResultPage++
-        const nextPageSelector = `a[data-testid="pagination-page-${searchResultPage}"]`
-        const nextPageElement = await page.$(nextPageSelector)
-        if (!nextPageElement) {
-            break;
-        }
+  //     while (jobArray.length < q) {
+  //       const extractedJobsArray = await extractIndeedJobs(page)
+  //       jobArray.push(...extractedJobsArray)
+  //       searchResultPage++
+  //       const nextPageSelector = `a[data-testid="pagination-page-${searchResultPage}"]`
+  //       const nextPageElement = await page.$(nextPageSelector)
+  //       if (!nextPageElement) {
+  //           break;
+  //       }
     
-        await page.click(nextPageSelector)
-        await page.waitForSelector('.mosaic-provider-jobcards')
-    }
+  //       await page.click(nextPageSelector)
+  //       await page.waitForSelector('.mosaic-provider-jobcards')
+  //   }
     
-      await browser.close();
+  //     await browser.close();
 
-      return jobArray
-    } catch (error) {
-      console.warn(error)
-      error.message = error.message + "  " + ss.url
-      throw error
-    }
-  },
+  //     return jobArray
+  //   } catch (error) {
+  //     console.warn(error)
+  //     error.message = error.message + "  " + ss.url
+  //     throw error
+  //   }
+  // },
 
   /**
    * 
