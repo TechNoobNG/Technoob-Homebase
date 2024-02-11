@@ -414,9 +414,8 @@ module.exports = {
     },
 
     async getFrontendResources(req, res) {
-        const { name, description, url } = req.body;
         try {
-            const resources = await admin.getFrontendResources({ name, description, url });
+            const resources = await admin.getFrontendResources();
             return res.ok({
                 status: "success",
                 data: resources,

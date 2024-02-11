@@ -65,15 +65,25 @@ jobs:
       - name: Generate Zip Deployment Package
         run: zip -r deploy.zip * -x "**node_modules**"
 
+      # - name: Deploy to Elastic Beanstalk
+      #   uses: einaregilsson/beanstalk-deploy@v21
+      #   with:
+      #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     application_name: Technoob
+      #     environment_name: Technoob-env-prod
+      #     version_label: "technoob-prod-${{ steps.format-time.outputs.replaced }}"
+      #     region: eu-west-2
+      #     deployment_package: ./Server/deploy.zip
+
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: technoobstaging
-          environment_name: TechnoobProd
-          version_label: "docker-app-${{ steps.format-time.outputs.replaced }}"
+          application_name: Technoob-prod
+          environment_name: Technoob-prod-env-test
+          version_label: "technoob-prod-${{ steps.format-time.outputs.replaced }}"
           region: eu-west-2
           deployment_package: ./Server/deploy.zip
-
