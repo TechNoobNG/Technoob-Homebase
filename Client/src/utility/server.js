@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const serverApi = axios.create({
-    baseURL: 'https://technoob-staging.azurewebsites.net/api/v1/',
+    baseURL: 'https://api.technoob.tech/api/v1/',
     withCredentials: true,
 });
 
