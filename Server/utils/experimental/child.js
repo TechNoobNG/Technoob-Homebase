@@ -5,7 +5,7 @@ const childPath = path.join(__dirname, 'child_worker.js');
 
 try {
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 1; i++) {
     const child = fork(childPath, [], { env: process.env });
     pool.push(child);
   }

@@ -16,7 +16,7 @@ module.exports = {
 
             if (data.delay) {
                 const delay = data.delay;
-                setTimeout(async () => await sendMessage(data, options), delay )
+                setTimeout(async () => await sendMessage(data), delay )
             } else {
                 await sendMessage(data, options);
             }

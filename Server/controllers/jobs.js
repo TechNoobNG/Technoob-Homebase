@@ -134,7 +134,7 @@ module.exports = {
 
         try {
             const scraper = require("../utils/automations/scraper")
-            if (!searchTags || !searchTags.length) {
+            if (!searchTags || !Array.isArray(searchTags)) {
                 throw new Error("Search tags should be an array")
             }
             if (!posted) {
