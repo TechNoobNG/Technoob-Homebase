@@ -71,7 +71,7 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: Technoob Worker
+          application_name: Technoob-Staging
           environment_name: TechnoobWorker
           version_label: "staging-${{ steps.format-time.outputs.replaced }}"
           region: eu-west-2
