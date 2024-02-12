@@ -2,12 +2,12 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-        "Name": "oluwatobiiloba/technoobstaging:latest",
+        "Name": "oluwatobiiloba/technoobserver:latest",
         "Update": "true"
     },
     "Ports": [
         {
-            "ContainerPort": "80"
+            "ContainerPort": "3000"
         }
     ],
     "Logging": "/var/log/nginx"
