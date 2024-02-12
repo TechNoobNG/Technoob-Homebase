@@ -62,7 +62,7 @@ app.use(
   })
 );
 
-// d
+// app.set('trust proxy', true);
 app.use(
   cors({
     origin: function (origin, callback) {
