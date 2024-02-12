@@ -64,9 +64,8 @@ jobs:
           flags: 'g'
 
       - name: Generate Zip Deployment Package
-        run: zip -r deploy.zip * -x "**node_modules**"
-
-
+        run: zip -r deploy.zip * .[^.]* -x "**node_modules**"
+    
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
