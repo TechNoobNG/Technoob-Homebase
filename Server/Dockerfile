@@ -21,6 +21,10 @@ RUN apt-get update && apt-get install -y gnupg wget && \
 
 COPY . .
 
+COPY .platform /app/.platform
+
+COPY .ebextensions /app/.ebextensions
+
 RUN npm install
 
 ENV PORT=3000
