@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y gnupg wget && \
 
 COPY . .
 
+RUN ls -al
+
 COPY .platform /app/.platform
 
 COPY .ebextensions /app/.ebextensions
