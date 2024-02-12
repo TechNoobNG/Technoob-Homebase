@@ -42,7 +42,7 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
 // app.use(function(req, res, next) {
-//   if (req.header('X-Forwarded-Proto') == 'https' )
+//   if (req.header('X-Forwarded-Proto') == 'https' || req.header('x-forwarded-proto') == 'https' )
 //   {
 //     next();
 //   }
