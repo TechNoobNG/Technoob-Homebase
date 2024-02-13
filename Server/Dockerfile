@@ -19,7 +19,7 @@ COPY .ebextensions /app/.ebextensions
 
 RUN npm install
 
-EXPOSE $PORT
+EXPOSE 80
 
 USER node
 CMD ["npm", "start"]
