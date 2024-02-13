@@ -227,92 +227,103 @@ async function fetchAndEncodeBase64(url,source) {
     }
   }
 
-  async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile,isRestricted, canAccessedByPublic}) {
-    try {
-        const options = {
-            responseType: 'stream'
-        }
-        if (source === "slack") {
-            options.headers = {
-                "Authorization": `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+    async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile,isRestricted, canAccessedByPublic}) {
+        try {
+            const options = {
+                responseType: 'stream'
             }
+            if (source === "slack") {
+                options.headers = {
+                    "Authorization": `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+                }
+            }
+            const response = await axios.get(url, options);
+            const { upload } = require("./storage/storageService")
+            const uploadedLink = await upload({
+                type: contentType.split("/")[1],
+                name,
+                data: response.data,
+                isFile,
+                acl: "private",
+                isRestricted: isRestricted || false,
+                canAccessedByPublic: canAccessedByPublic || true,
+            })
+
+            return uploadedLink;
+        } catch (error) {
+            console.error(`Error fetching or encoding content from ${url}:`, error.message);
         }
-        const response = await axios.get(url, options);
-        const { upload } = require("./storage/storageService")
-        const uploadedLink = await upload({
-            type: contentType.split("/")[1],
-            name,
-            data: response.data,
-            isFile,
-            acl: "private",
-            isRestricted: isRestricted || false,
-            canAccessedByPublic: canAccessedByPublic || true,
-        })
-  
-        return uploadedLink;
-    } catch (error) {
-        console.error(`Error fetching or encoding content from ${url}:`, error.message);
     }
-  }
   
-const tempReplyTemplate = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Response</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+    const tempReplyTemplate = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Response</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f4f4f4;
+            }
+
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                color: #333333;
+            }
+
+            p {
+                color: #555555;
+            }
+
+            .signature {
+                margin-top: 20px;
+                color: #777777;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <p>Hello #{sender},</p>
+
+            <p>
+                #{content}
+            </p>
+
+            <p>
+                #{largeAttachmentsHTML}
+            </p>
+
+            <p>
+                Best regards,<br>
+                #{user}
+            </p>
+            
+        </div>
+    </body>
+    </html>`
+
+    async function flushLogsToDatabase(logBuffer, model) {
+        if (logBuffer.length === 0) return;
+    
+        try {
+        await model.insertMany(logBuffer);
+        logBuffer.length = 0;
+        } catch (error) {
+        console.error('Error flushing logs to the database:', error);
         }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #333333;
-        }
-
-        p {
-            color: #555555;
-        }
-
-        .signature {
-            margin-top: 20px;
-            color: #777777;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <p>Hello #{sender},</p>
-
-        <p>
-            #{content}
-        </p>
-
-        <p>
-            #{largeAttachmentsHTML}
-        </p>
-
-        <p>
-            Best regards,<br>
-            #{user}
-        </p>
-        
-    </div>
-</body>
-</html>`
+    }
 
 module.exports = {
      async hashPassword(password) {
@@ -329,7 +340,6 @@ module.exports = {
         } else {
             const regex = /^\/api\/v1\/[^/]+/;
             const match = url.match(regex);
-
             return match ? match[0] : url;
         }
     },
@@ -341,5 +351,6 @@ module.exports = {
     isAttachmentSupported,
     buildRawEmail,
     tempReplyTemplate,
-    fetchExternalLinkAndUploadToS3
+    fetchExternalLinkAndUploadToS3,
+    flushLogsToDatabase
 }

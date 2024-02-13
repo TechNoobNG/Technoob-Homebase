@@ -15,7 +15,11 @@ module.exports = {
             await validator.login.validateAsync(req.body);
             passport.authenticate('local', (err, user, info) => {
                 if (err) {
-                    return next(err);
+                    return res.fail({
+                        status: 'Failed',
+                        message:  'Incorrect email or password.',
+                        statusCode: 401
+                    })
                 }
                 if (!user) {
                     return res.status(401).json({
@@ -25,6 +29,13 @@ module.exports = {
                 }
                 if (user) {
                     req.login(user,{ session: true }, async (err) => {
+                        if (err) {
+                            return res.fail({
+                                status: 'Failed',
+                                message:  'Incorrect email or password.',
+                                statusCode: 401
+                            });
+                        }
                         const token = jwt.sign({
                             user: {
                                 _id: user._id,
@@ -34,16 +45,16 @@ module.exports = {
                             expiresIn: config.JWT_EXPIRES,
                             issuer: config.LIVE_BASE_URL,
                         });
-
-                        return res.ok({
+    
+                        res.ok({
                             status: 'success',
                             message: `Welcome to base, ${user.username}!`,
                             data: {
                                 user
                             },
                             token
-                        })
-                    })
+                        });
+                    });
                 } else {
                     return res.fail({
                         status: 'Failed',
@@ -51,8 +62,7 @@ module.exports = {
                         statusCode: 401
                     })
                 }
-            })(req, res, next);
-
+            })(req, res, next); 
         } catch (err) {
             return res.fail({
                 status: 'Failed',
@@ -60,9 +70,8 @@ module.exports = {
                 statusCode: 401
             })
         }
-
-
     },
+    
 
     async register(req, res, next) {
         try {
@@ -222,7 +231,7 @@ module.exports = {
             });
 
 
-            req.login(user, (err) => {
+           return req.login(user, (err) => {
                 if (err) {
                     console.log(err);
                 }

@@ -13,7 +13,7 @@ const logger = require("morgan");
 const Honeybadger = require("./utils/honeybadger/honeybadger");
 const helmet = require("helmet");
 const sanitizer = require("perfect-express-sanitizer");
-const indexRouter = require("./routes/index");
+const configureRoutes = require("./routes/index");
 const app = express();
 const prometheus = require("prom-client");
 const trafficMiddleware = require("./middleware/traffic");
@@ -186,8 +186,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(trafficMiddleware);
 /* GET home page. */
-app.use("/api-docs",limiter,swaggerUI.serve,swaggerUI.setup(swaggerDocument));
-app.use("/",limiter, indexRouter);
+app.use("/api-docs", limiter, swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use(limiter)
+configureRoutes("/api/v1", app);
+// app.use("/",limiter, indexRouter);
 
 
 app.use((req, res, next) => {
@@ -252,6 +254,7 @@ app.use((req, res, next) => {
 
 // error handler
 app.use(errorHandler);
+
 
 const collectDefaultMetrics = prometheus.collectDefaultMetrics;
 collectDefaultMetrics();

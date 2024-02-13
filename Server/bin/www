@@ -1,130 +1,108 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-require('dotenv').config({ path: './.env' });
-const config = require('../config/config')
-const app = require('../app');
-const debug = require('debug')('server:server');
-const http = require('http');
-const db = require('../utils/connectors/db_connector');
+const dotenv = require('dotenv');
 const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
-const queueWorker = require(`../${config.WORKER_QUEUE_PLATFORM}Queue/worker`)
-const WORKERS = process.env.WEB_CONCURRENCY || 1; //HEROKU CONFIG
-const HOST = process.env.HOST;
-const { client, redisSubscriber } = require("../utils/connectors/redishelper")
+const os = require('os');
+const http = require('http');
+const debug = require('debug')('server:server');
+const app = require('../app');
+const workerApp = require('../worker/beanstalk/worker');
+const db = require('../utils/connectors/db_connector');
+const { client, redisSubscriber } = require("../utils/connectors/redishelper");
+const config = require('../config/config');
+const queueWorker = require(`../worker/${config.WORKER_QUEUE_PLATFORM}/worker`);
 
-//const breeRunner = require("../jobs/bree_jobs")
+dotenv.config({ path: './.env' });
 
-    // try {
-    //   breeRunner.runner();
-    //   //breeRunner.stopper();
-    // } catch (err) {
-    //     console.log("bree runner error",err)
-    //     breeRunner.stopper();
-    // }
+const numCPUs = os.cpus().length;
+const HOST = process.env.HOST || 'localhost';
+const PORT = normalizePort(process.env.PORT || '3000');
+const WORKERS = process.env.WEB_CONCURRENCY || 1; // HEROKU CONFIG
 
-if (cluster.isMaster && HOST !== 'heroku') {
-  console.log(`Master ${process.pid} is running`);
-    for (let i = 0; i < numCPUs; i++) {
-      cluster.fork();
+let server;
+
+async function startServer() {
+  try {
+    await initialiseDB();
+    if (HOST !== 'heroku') {
+      await connectToRedis();
     }
-    cluster.on('exit', (worker, code, signal) => {
-      console.log(`Worker ${worker.process.pid} died`);
+
+    server = createServerInstance();
+    server.listen(server.port);
+    
+    server.on('error', onError);
+    server.on('listening', onListening);
+
+    console.log(`${server.type} running at http://${HOST}:${server.port}/`);
+  } catch (error) {
+    console.error("Error starting server:", error);
+    process.exit(1);
+  }
+}
+
+function createServerInstance() {
+  if (config.NODE_ENV === "production_worker") {
+    return createWorkerServer();
+  } else {
+    return createAppServer();
+  }
+}
+
+function createWorkerServer() {
+  const workerServer = http.createServer(workerApp);
+  workerServer.port = 80;
+  workerServer.type = "Worker";
+  return workerServer;
+}
+
+function createAppServer() {
+  const appServer = http.createServer(app);
+  appServer.port = PORT;
+  appServer.type = "Server";
+  return appServer;
+}
+
+function initialiseDB() {
+  return new Promise((resolve, reject) => {
+    db.on('error', (err) => {
+      console.error('Database connection error:', err);
+      reject(err);
     });
-
-} else if (cluster.isMaster && HOST === 'heroku') {
-  for (let i = 0; i < WORKERS; i++) {
-    cluster.fork();
-  }
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died`);
+    db.once('open', () => {
+      console.log("Connected to database");
+      resolve();
+    });
   });
-
-} else {
-  console.log(`Worker ${process.pid} started`);
-  /**
- * Get port from environment and store in Express.
- */
-
-  /**
-   * Run multiple azure subscribers
-   */
-
-
-  if (config.LISTENER) {
-    let scriptCount = config.LISTENER_COUNT * 1 || 5;
-    let i = 0;
-    do {
-      queueWorker();
-      i++
-    }while(i < scriptCount)
-
-  }
-
-let port = normalizePort(config.PORT || '3000');
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-let server = http.createServer(app);
-
-/**
- * Connect to database
- */
-const initialise_db = async () => {
-  db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', function () {
-  });
-
 }
 
-
-  const connectToRedis = async () => {
-    await client
-      .on('error', err => console.log('Redis Client Error', err))
-      .connect();
-    await redisSubscriber.on('error', err => console.log('Redis Subscriber Error', err))
-      .connect();
+async function connectToRedis() {
+  try {
+    await client.connect();
+    await redisSubscriber.connect();
+    console.log("Connected to Redis");
+  } catch (error) {
+    console.error("Error connecting to Redis:", error);
+    throw error;
+  }
 }
-/**
- * Normalize a port into a number, string, or false.
- */
 
 function normalizePort(val) {
-  let port = parseInt(val, 10);
-
+  const port = parseInt(val, 10);
   if (isNaN(port)) {
-    // named pipe
     return val;
   }
-
   if (port >= 0) {
-    // port number
-    return port;
+    return port; 
   }
-
   return false;
 }
-
-/**
- * Event listener for HTTP server "error" event.
- */
 
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
-  let bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
-
-  // handle specific listen errors with friendly messages
+  const bind = typeof server.port === 'string' ? 'Pipe ' + server.port : 'Port ' + server.port;
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -139,42 +117,35 @@ function onError(error) {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
-
 function onListening() {
-  let addr = server.address();
-  let bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  const addr = server.address();
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
 
-
-  /**
- * Listen on provided port, on all network interfaces.
- */
-
-
-(async () => {
-  const promiseArray = [
-    initialise_db(),
-  ]
-
-  if (HOST !== 'heroku') {
-    promiseArray.push(connectToRedis())
+// Cluster logic
+if (cluster.isMaster && HOST !== 'heroku') {
+  console.log(`Master ${process.pid} is running`);
+  for (let i = 0; i < 1; i++) {
+    cluster.fork();
   }
-  await Promise.all(promiseArray)
-
-  const port = config.PORT;
-
-  // Start listening for incoming connections on specified port and log to console when server has started
-  server.listen(port);
-  server.on('error',onError)
-
-})();
-
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else if (cluster.isMaster && HOST === 'heroku') {
+  for (let i = 0; i < WORKERS; i++) {
+    cluster.fork();
+  }
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else {
+  console.log(`Worker ${process.pid} started`);
+  if (config.LISTENER) {
+    const scriptCount = config.LISTENER_COUNT * 1 || 5;
+    for (let i = 0; i < scriptCount; i++) {
+      queueWorker();
+    }
+  }
+  startServer();
 }
-
-

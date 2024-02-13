@@ -10,7 +10,7 @@
     "start-with-worker": "npm run start & sleep 60 && npm run start-worker &"
   },
   "engines": {
-    "node": ">=18.0.0 <21.0.0"
+    "node": ">=18.0.0 <21.9.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.470.0",

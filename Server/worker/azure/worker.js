@@ -1,13 +1,13 @@
 //queue listener for azure queue
-const config = require('../config/config')
+const config = require('../../config/config')
 const azureStorageConnectionString= config.AZURE_STORAGE_CONNECTION_STRING;
 const queueName = config.AZURE_QUEUE_NAME;
 const queueUrl = config.AZURE_QUEUE_URL;
 const subscriber = require('azure-queue-subscriber');
-const worker_logs = require("../models/workerJobLogs")
+const worker_logs = require("../../models/workerJobLogs")
 const logBuffer = [];
-const logBatchSize = config.WORKER_LOG_BATCH_SIZE;
-
+const logBatchSize = config.WORKER_LOG_BATCH_SIZE || 50;
+const { flushLogsToDatabase } = require("../../utils/utils")
 
 //  initialise_db = async () => {
 //   db.on('error', console.error.bind(console, 'connection error:'));
@@ -16,16 +16,16 @@ const logBatchSize = config.WORKER_LOG_BATCH_SIZE;
 
 //  }
 
- async function flushLogsToDatabase() {
-  if (logBuffer.length === 0) return;
+//  async function flushLogsToDatabase() {
+//   if (logBuffer.length === 0) return;
 
-   try {
-    await worker_logs.insertMany(logBuffer);
-    logBuffer.length = 0;
-  } catch (error) {
-    console.error('Error flushing logs to the database:', error);
-  }
- }
+//    try {
+//     await worker_logs.insertMany(logBuffer);
+//     logBuffer.length = 0;
+//   } catch (error) {
+//     console.error('Error flushing logs to the database:', error);
+//   }
+//  }
 
 module.exports = function () {
     try {
@@ -58,7 +58,7 @@ module.exports = function () {
             logBuffer.push(log);
 
             if (logBuffer.length >= logBatchSize) {
-                await flushLogsToDatabase();
+                await flushLogsToDatabase(logBuffer, worker_logs );
             }
           } catch (err) {
                 console.log(err.message);
@@ -70,7 +70,6 @@ module.exports = function () {
                 };
                 logBuffer.push(log);
             }
-
             done();
         },
         blobConnectionString: azureStorageConnectionString,
