@@ -13,14 +13,8 @@ COPY . .
 
 RUN ls -al
 
-COPY .platform /app/.platform
-
-COPY .ebextensions /app/.ebextensions
 
 RUN npm install
-
-ENV PORT=3000
-EXPOSE 3000
 
 USER node
 CMD ["npm", "start"]
