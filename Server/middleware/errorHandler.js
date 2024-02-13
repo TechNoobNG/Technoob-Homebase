@@ -3,7 +3,6 @@ const  errorFormater = require("../utils/error/errorFormater");
 const Honeybadger = require("../utils/honeybadger/honeybadger");
 
 const errorHandler = (err, req, res, next) => {
-
     const filterError = errorFormater.filter(err);
 
     const { message, statusCode, data } = filterError;
@@ -15,13 +14,11 @@ const errorHandler = (err, req, res, next) => {
             data: data || undefined
         });
     } else if (err.message.includes("CORS")) {
-
         res.status(403).json({
             success: false,
             error: err.message
         });
     } else {
-        console.log(err)
         res.status(500).json({
             success: false,
             error: "Internal Server Error"
