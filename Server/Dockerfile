@@ -16,5 +16,7 @@ RUN ls -al
 
 RUN npm install
 
+EXPOSE 80
+
 USER node
 CMD ["npm", "start"]
