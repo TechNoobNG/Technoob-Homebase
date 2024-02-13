@@ -1,10 +1,9 @@
 import serverApi from "./server";
-
+import showToast from "./Toast";
 export function getFilters(data, component) {
     const filters = {};
 
     const excluded_keys = ["ratings","file", "description", "updatedAt", "name", "version","users","url","traffic", "meta","downloads","createdAt","image_placeholder","company","datePosted","expiryDate","link","poster","uploader_id","comments", "_id", "__v", "views"]
-
 
     data[`${component}`].forEach(item => {
         for (const key in item) {
@@ -35,7 +34,6 @@ export async function fetchFilteredData(params, url, setData, component, setPagi
                 params
             });
 
-
         if (response.status === 200) {
             let responseData = response.data.data
             const pagination = {
@@ -47,11 +45,16 @@ export async function fetchFilteredData(params, url, setData, component, setPagi
             setData(responseData[`${component}`])
             if (setPagination) setPagination(pagination);
         } else {
-            alert("No result found")
+            showToast({
+                message: "No result found",
+                type: "error",
+            })
         }
     } catch (err) {
-
-        alert(err.message)
+        showToast({
+            message: err.message || "An error ocurred, please contact support.",
+            type: "error",
+        })
     }
 
 }
@@ -84,7 +87,9 @@ export async function fetchFirstData(url, setData, setFilterOptions, requiresAut
 
         })
         .catch(err => {
-            console.error('error fetching data from endpoint ', err)
-            alert(err.message)
+            showToast({
+                message: err.message || "An error ocurred, please contact support.",
+                type: "error",
+            })
         })
 }

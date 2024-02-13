@@ -98,7 +98,7 @@ const ResourceMng = () => {
           </p>
         </div>
       </div>
-      <div className="lg:mx-4 lg:p-5 md:rounded-md bg-white xl:shadow-md w-full">
+      <div className="lg:p-5 md:rounded-md bg-white xl:shadow-md w-full">
         <div className="w-full">
           <div className="flex flex-col sm:flex-row justify-start sm:justify-between w-full">
             <div>

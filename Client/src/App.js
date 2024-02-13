@@ -11,9 +11,12 @@ import AdminNavBar from "./components/AdminNavBar";
 import AdminSideBar from "./components/AdminSideBar";
 
 import DashSelector from "./utility/DashSelector";
+import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
 import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
@@ -52,10 +55,13 @@ function App() {
   };
   return (
     <BrowserRouter>
+    <ToastContainer/>
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
+
       {toggleValue === "User Dashboard" ? (
-        <div className="bg-primary w-full overflow-auto relative">
+        <div className="bg-primary w-full overflow-y
+        auto relative">
           <div className="flex flex-start w-full top-0 lg:fixed z-50">
             <div className="w-full">
               <NavBar />
@@ -84,18 +90,18 @@ function App() {
         </div>
       ) : (
         <div className="h-full bg-[#f9f9f9] w-full">
-          <div className="flex flex-start h-full w-full top-0  z-50">
-            <div className="w-full h-full">
+          <div className="flex flex-start h-full w-full sticky top-0  z-50">
+            <div className=" w-full h-full">
               <AdminNavBar />
             </div>
           </div>
 
           <div className="flex justify-between h-auto">
-            <div className="hidden sm:block rounded-md shadow-md w-[380px] h-full ">
+            <div className="hidden xl:block rounded-md fixed top-22 left-0 shadow-md w-[360px] h-[100vh]">
               <AdminSideBar />
             </div>
 
-            <div className="bg-[#f9f9f9] w-full grow h-auto pb-16 lg:pr-10 p-5">
+            <div className="bg-[#f9f9f9] xl:ml-[350px] w-full grow h-auto p-5">
               <Routes>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/Job-Management" element={<JobManagement />} />
@@ -105,7 +111,7 @@ function App() {
                   element={<ResourceManagement />}
                 />
                 <Route path="/admin/Event-Management" element={<EventManagement />} />
-                
+
               </Routes>
             </div>
           </div>
