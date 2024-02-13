@@ -19,8 +19,7 @@ COPY .ebextensions /app/.ebextensions
 
 RUN npm install
 
-ENV PORT=3000
-EXPOSE 3000
+EXPOSE $PORT
 
 USER node
 CMD ["npm", "start"]
