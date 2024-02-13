@@ -96,7 +96,7 @@ const environments = {
         AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
         AWS_REGION: process.env.AWS_REGION,
         AWS_QUEUE_URL: process.env.AWS_QUEUE_URL,
-        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'azure',
+        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'aws',
         REDIS_URL: process.env.REDIS_URL,
         REDIS_PASSWORD: process.env.REDIS_PASSWORD,
         EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
@@ -409,8 +409,9 @@ const environments = {
         AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
         AWS_REGION: process.env.AWS_REGION,
         AWS_QUEUE_URL: process.env.AWS_QUEUE_URL,
-        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'azure',
+        WORKER_QUEUE_PLATFORM: process.env.WORKER_QUEUE_PLATFORM || 'aws',
         REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+        REDIS_URL: process.env.REDIS_URL,
         EXCLUDE_CLEAR_CACHE_ROUTES: process.env.EXCLUDE_CLEAR_CACHE_ROUTES ? JSON.parse(process.env.EXCLUDE_CLEAR_CACHE_ROUTES) :
             [
                 '/api/v1/authenticate',
