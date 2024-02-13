@@ -41,15 +41,15 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 //   apis: ['./routes/*.js'],
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
-app.use(function(req, res, next) {
-  if (req.header('X-Forwarded-Proto') == 'https' )
-  {
-    next();
-  }
-  else {
-    res.redirect('https://' + req.hostname + req.url);
-  }}
-);
+// app.use(function(req, res, next) {
+//   if (req.header('X-Forwarded-Proto') == 'https' || req.header('x-forwarded-proto') == 'https' )
+//   {
+//     next();
+//   }
+//   else {
+//     res.redirect('https://' + req.hostname + req.url);
+//   }}
+// );
 
 app.use(
   express.urlencoded({
@@ -62,7 +62,7 @@ app.use(
   })
 );
 
-app.set('trust proxy', true);
+// app.set('trust proxy', true);
 app.use(
   cors({
     origin: function (origin, callback) {

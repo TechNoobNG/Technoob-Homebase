@@ -1,4 +1,4 @@
 Server/node_modules
 Client/node_modules
 npm-debug.log
-*.env
+.env
