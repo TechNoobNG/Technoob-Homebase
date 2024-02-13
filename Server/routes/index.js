@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 const config = require('../config/config')
 const user = require('./users');
 const auth = require('./auth');
@@ -11,80 +10,78 @@ const quizzes = require('./quizzes')
 const utils = require('./utils')
 const slack = require('./slack.js')
 const experimental = require('./experimental.js')
-const base = `/api/v1`
 const pool = require('../experimental/index')
 const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
 const utility = require("../utils/utils");
 const download = require("./download");
+const ErrorResponse = require("../utils/error/errorResponse")
+function configureRoutes(base = `/api/v1`,app) {
+  // const app = express.app();
+  const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
 
-
-router.all('/', (req, res) => {
-  res.render('index', {
-    title: 'TechNoob API',
-    environment: config.NODE_ENV,
-    repo_link: "https://github.com/TechNoobNG/Technoob-Homebase",
-    // activeTasks: pool.stats().activeTasks,
-    // totalWorkers: pool.stats().totalWorkers,
-    // busyWorkers: pool.stats().busyWorkers,
-    // idleWorkers: pool.stats().idleWorkers,
-    // pendingTasks: pool.stats().pendingTasks,
+  app.all('/',(req, res) => {
+    res.render('index', {
+      title: 'TechNoob API',
+      environment: config.NODE_ENV,
+      repo_link: "https://github.com/TechNoobNG/Technoob-Homebase",
+    });
   });
-});
 
+  
 
-const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
-
-const clearCacheMiddleware = (req, res, next) => {
-  if (req.method === 'POST' && !excludeClearCacheRoutes.includes(utility.removePathSegments(req.path))) {
-        middleware.redisCache.addClearCache(req, res, next);
-    } else {
-        next();
+  const clearCacheMiddleware = (req, res, next) => {
+    const path = req.path;
+    if (req.method === 'POST' && !excludeClearCacheRoutes.includes(utility.removePathSegments(path))) {
+      middleware.redisCache.addClearCache(req, res, next);
     }
-};
+    next();
+  };
 
-const sanitizeIfNeeded = (req, res, next) => {
-  if (req.path.startsWith('/email/template')) {
-    return next();
-  } else {
-    return middleware.sanitizer(req, res, next);
-  }
-};
+  const sanitizeIfNeeded = (req, res, next) => {
+    if (req.path.startsWith('/email/template')) {
+      return next();
+    } else {
+      return middleware.sanitizer(req, res, next);
+    }
+  };
 
-router.use(sanitizeIfNeeded);
+  app.use(sanitizeIfNeeded);
+  app.use(clearCacheMiddleware);
+  app.use(`${base}/user`, user);
+  app.use(`${base}/authenticate`, auth);
+  app.use(`${base}/admin`, admin);
+  app.use(`${base}/resources`, resources);
+  app.use(`${base}/utils`, utils);
+  app.use(`${base}/events`, events);
+  app.use(`${base}/jobs`, jobs);
+  app.use(`${base}/quizzes`, quizzes);
+  app.use(`${base}/experimental`, experimental);
+  app.use(`${base}/download`, download);
+  app.use(`${base}/slack`, slack);
 
-router.use(clearCacheMiddleware);
+  app.get('/metrics', async (req, res) => {
+    try {
+      res.set('Content-Type', register.contentType);
+      res.send(await register.metrics());
+    } catch (error) {
+      res.fail(error)
+    }
+  });
 
-router.use(`${base}/user`, user);
-router.use(`${base}/authenticate`, auth);
-router.use(`${base}/admin`, admin);
-router.use(`${base}/resources`, resources);
-router.use(`${base}/utils`, utils);
-router.use(`${base}/events`, events);
-router.use(`${base}/jobs`, jobs);
-router.use(`${base}/quizzes`, quizzes)
-router.use(`${base}/experimental`, experimental)
-router.use(`${base}/download`, download)
-router.use(`${base}/slack`, slack)
+  app.all('*', (req, res) => {
+    console.log(req.method, req.originalUrl)
+    if (!res.headersSent) {
+      throw new ErrorResponse(
+        400,
+      `Can't find (${req.method}) ${req.originalUrl} on this server. Please check the documentation for the correct route.`,
+      {}
+    )
+    }
+  });
 
-// Prometheus middleware
-router.get('/metrics', async (req, res) => {
-  try {
-    res.set('Content-Type', register.contentType);
-    res.send(await register.metrics());
-  } catch (error) {
-    res.fail(error)
-  }
-});
+  return app;
+}
 
-router.all('*', (req, res) => {
-  console.log(req.method, req.originalUrl)
-  return res.status(400).json({
-    status: 'fail',
-    message: `Can't find (${req.method}) ${req.originalUrl} on this server. Please check the documentation for the correct route.`
-  })
-
-});
-
-module.exports = router;
+module.exports = configureRoutes;

@@ -1,7 +1,7 @@
 const { Consumer } = require('sqs-consumer');
 const { SQSClient } = require('@aws-sdk/client-sqs');
-const worker_logs = require("../models/workerJobLogs")
-const config = require('../config/config')
+const worker_logs = require("../../models/workerJobLogs")
+const config = require('../../config/config')
 const accessKeyId= config.AWS_ACCESS_KEY_ID;
 const secretAccessKey = config.AWS_SECRET_ACCESS_KEY;
 const region = config.AWS_REGION;
