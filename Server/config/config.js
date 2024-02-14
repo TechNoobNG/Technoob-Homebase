@@ -185,7 +185,7 @@ const environments = {
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
         COMMUNICATION_SERVICES_CONNECTION_STRING: process.env.COMMUNICATION_SERVICES_CONNECTION_STRING,
-        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'technoob-staging.azurewebsites.net',
+        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'api.technoob.tech',
         HONEYBADGER_KEY: process.env.HONEYBADGER_KEY,
         AZURE_STORAGE_CONNECTION_STRING: process.env.AZURE_STORAGE_CONNECTION_STRING,
         AZURE_QUEUE_NAME: process.env.AZURE_QUEUE_NAME,
@@ -341,7 +341,7 @@ const environments = {
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
         COMMUNICATION_SERVICES_CONNECTION_STRING: process.env.COMMUNICATION_SERVICES_CONNECTION_STRING,
-        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'technoob-staging.azurewebsites.net',
+        LIVE_BASE_URL: process.env.LIVE_BASE_URL || 'api.technoob.tech',
         HONEYBADGER_KEY: process.env.HONEYBADGER_KEY,
         AZURE_STORAGE_CONNECTION_STRING: process.env.AZURE_STORAGE_CONNECTION_STRING,
         AZURE_QUEUE_NAME: process.env.AZURE_QUEUE_NAME,
@@ -353,7 +353,8 @@ const environments = {
         SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS || "no-reply@technoob.tech",
         ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? JSON.parse(process.env.ALLOWED_ORIGINS) :
             [
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "http://localhost:80"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
@@ -417,7 +418,8 @@ const environments = {
                 '/api/v1/authenticate',
                 '/api/v1/slack/action'
             ],
-        USE_CORS: process.env.USE_CORS ,
+        USE_CORS: process.env.USE_CORS,
+        NUMBER_OF_PROXIES: process.env.NUMBER_OF_PROXIES || 1,
         MAIL_PROVIDER: {
             provider: process.env.MAIL_PROVIDER || 'ses',
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE
@@ -428,15 +430,20 @@ const environments = {
         },
         AWS_SERVICES: {
             SQS: {
-                region: process.env.AWS_REGION,
+                region: "eu-west-2",
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
                 queueUrl: process.env.AWS_QUEUE_URL
             },
             SES: {
-                region: "eu-north-1",
+                region: "eu-west-2",
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+            S3: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
             }
         },
         SMART_PROXY_KEY: process.env.SMART_PROXY_KEY,
@@ -458,6 +465,9 @@ const environments = {
             SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
             BOT_USER_OAUTH_TOKEN: process.env.SLACK_BOT_USER_OAUTH_TOKEN ,
             API_BASE_URL: process.env.SLACK_API_BASE_URL || "https://slack.com/api"
+        },
+        LAMBDA: {
+            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET
         }
     }
 }

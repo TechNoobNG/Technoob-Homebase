@@ -19,6 +19,7 @@ module.exports = {
                 MessageBody: JSON.stringify(message),
                 QueueUrl: queueUrl
             })
+            console.log(JSON.stringify(message))
             const response = await queueClient.send(command)
             return response
         } catch (error) {
