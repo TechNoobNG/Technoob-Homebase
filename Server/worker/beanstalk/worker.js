@@ -26,8 +26,9 @@ app.post('/work', async (req, res) => {
         const payload = req.body;
         console.log('Received payload:', payload);
         const data = JSON.parse(payload);
+        console.log('Parsed payload:', data);
         const method = data.method;
-        const importService = data.service ? `../${data.service}` : data.import;
+        const importService = data.service ? `../${data.service}` : `../${data.import}`;
         logBuffer.push({
             action: method,
             importService: importService,
