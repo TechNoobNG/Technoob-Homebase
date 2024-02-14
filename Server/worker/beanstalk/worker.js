@@ -2,7 +2,10 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const config = require('../../config/config');
 const path = require("path");
-
+const worker_logs = require("../../models/workerJobLogs")
+const logBuffer = [];
+const logBatchSize = config.WORKER_LOG_BATCH_SIZE || 50;
+const { flushLogsToDatabase } = require("../../utils/utils")
 const app = express();
 
 app.use(bodyParser.text())
@@ -17,10 +20,42 @@ app.get('/', (req, res) => {
     });
 });
 
-app.post('/work', (req, res) => {
-    const payload = req.body;
-    console.log('Received payload:', payload);
-    res.status(200).send('Payload received successfully.');
+app.post('/work', async (req, res) => {
+    try {
+        const payload = req.body;
+        console.log('Received payload:', payload);
+        const data = JSON.parse(message.messageText);
+        const method = data.method;
+        const importService = data.service ? `../${data.service}` : data.import;
+        logBuffer.push({
+            action: method,
+            importService: importService,
+            payload: data.data ? data.data : null,
+            status: "started"
+        });
+        const importedData = require(importService);
+        await importedData[method](data.data ? data.data : null);
+
+        const log = logBuffer.pop();
+        log.status = "completed";
+        logBuffer.push(log);
+
+        if (logBuffer.length >= logBatchSize) {
+            await flushLogsToDatabase(logBuffer, worker_logs );
+        }
+        res.status(200).send('Payload received successfully.'); 
+    } catch (error) {
+        console.log(err.message);
+        const log = logBuffer.pop();
+        log.status = "failed";
+        log.error_stack = {
+            message: err.message,
+            stack_trace: err
+        };
+        logBuffer.push(log);
+        res.status(422).send(error.message); 
+    }
+
 });
 
 module.exports = app;
