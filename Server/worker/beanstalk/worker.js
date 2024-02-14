@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const config = require('../../config/config');
 const path = require("path");
 const worker_logs = require("../../models/workerJobLogs")
-const logBuffer = [];
 const logBatchSize = config.WORKER_LOG_BATCH_SIZE || 50;
 const { flushLogsToDatabase } = require("../../utils/utils")
 const app = express();
@@ -20,11 +19,13 @@ app.get('/', (req, res) => {
     });
 });
 
+const logBuffer = [];
+
 app.post('/work', async (req, res) => {
     try {
         const payload = req.body;
         console.log('Received payload:', payload);
-        const data = JSON.parse(message.messageText);
+        const data = JSON.parse(payload);
         const method = data.method;
         const importService = data.service ? `../${data.service}` : data.import;
         logBuffer.push({
