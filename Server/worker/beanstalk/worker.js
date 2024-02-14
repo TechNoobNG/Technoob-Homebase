@@ -24,9 +24,11 @@ const logBuffer = [];
 app.post('/work', async (req, res) => {
     try {
         const payload = req.body;
-        console.log('Received payload:', payload);
-        const data = JSON.parse(payload);
-        console.log('Parsed payload:', data);
+        let data = JSON.parse(payload);
+        if (typeof data === "string") {
+            data = JSON.parse(data)
+        }
+ 
         const method = data.method;
         const importService = data.service ? `../${data.service}` : `../${data.import}`;
         logBuffer.push({
