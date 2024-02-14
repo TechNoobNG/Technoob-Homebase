@@ -44,7 +44,7 @@ app.post('/work', async (req, res) => {
             await flushLogsToDatabase(logBuffer, worker_logs );
         }
         res.status(200).send('Payload received successfully.'); 
-    } catch (error) {
+    } catch (err) {
         console.log(err.message);
         const log = logBuffer.pop();
         log.status = "failed";
