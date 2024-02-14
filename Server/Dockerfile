@@ -13,9 +13,6 @@ COPY . .
 
 RUN ls -al
 
-COPY .platform /app/.platform
-
-COPY .ebextensions /app/.ebextensions
 
 RUN npm install
 
