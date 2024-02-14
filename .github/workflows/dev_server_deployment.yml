@@ -1,0 +1,94 @@
+
+name: staging-server-deployment
+on:
+  push:
+    branches:
+      - dev_server
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: Server
+    shell: bash
+
+jobs:
+  build-staging-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm install -g pm2@latest
+          npm run build --if-present
+          npm run test --if-present
+
+      - name: Build and Push to DockerHub
+        run: |
+          ls -al
+          docker build --platform linux/amd64 -t oluwatobiiloba/technoobstaging:latest .
+          docker push oluwatobiiloba/technoobstaging:latest
+
+      - name: Get Timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run String Replace
+        uses: frabert/replace-string-action@master
+        id: format-time
+        with:
+          pattern: '[:\.]+'
+          string: "${{ steps.current-time.outputs.time }}"
+          replace-with: '-'
+          flags: 'g'
+
+      - name: Generate Zip Deployment Package
+        run: zip -r deploy.zip * .[^.]* -x "**node_modules**"
+    
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: Technoob Worker
+          environment_name: Technoob-Staging
+          version_label: "staging-${{ steps.format-time.outputs.replaced }}"
+          region: eu-west-2
+          deployment_package: ./Server/deploy.zip
+  
+
+  deploy-lamda-functions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - run: sam build 
+        working-directory: ses-email-handler-lambda
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+        working-directory: ses-email-handler-lambda
