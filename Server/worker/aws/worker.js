@@ -39,7 +39,7 @@ module.exports = function () {
           }
           const data = JSON.parse(message.messageText);
           const method = data.method;
-          const importService = data.service ? `${data.import}/${data.service}` : data.import;
+          const importService = data.service ? `../${data.import}/${data.service}` : data.import;
           logBuffer.push({
             action: method,
             importService: importService,
