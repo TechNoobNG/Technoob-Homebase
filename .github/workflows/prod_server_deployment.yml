@@ -92,7 +92,7 @@ jobs:
           environment_name: Technoob-Prod
           version_label: "technoob-prod-${{ steps.format-time.outputs.replaced }}"
           region: eu-west-2
-          deployment_package: ./Server/deploy.zip
+          deployment_package: deploy.zip
 
           
         
@@ -109,7 +109,7 @@ jobs:
           environment_name: technoob-worker
           version_label: "technoob-worker-${{ steps.format-time.outputs.replaced }}"
           region: eu-west-2
-          deployment_package: ./Server/deploy.zip
+          deployment_package: deploy.zip
 
 
 
