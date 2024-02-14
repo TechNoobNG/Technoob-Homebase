@@ -21,6 +21,10 @@ app.get('/', (req, res) => {
 
 const logBuffer = [];
 
+setTimeout(() => {
+    
+},500)
+
 app.post('/work', async (req, res) => {
     try {
         const payload = req.body;
@@ -44,9 +48,6 @@ app.post('/work', async (req, res) => {
         log.status = "completed";
         logBuffer.push(log);
 
-        if (logBuffer.length >= logBatchSize) {
-            await flushLogsToDatabase(logBuffer, worker_logs );
-        }
         res.status(200).send('Payload received successfully.'); 
     } catch (err) {
         console.log(err);
@@ -59,6 +60,17 @@ app.post('/work', async (req, res) => {
         logBuffer.push(log);
         res.status(422).send(err.message); 
     }
+
+    setTimeout(async () => {
+        if (logBuffer.length >= 1) {
+            try {
+                await flushLogsToDatabase(logBuffer, worker_logs);
+            } catch (error) {
+                console.log(err," failed to push logs");
+            }
+        }
+    }, 500)
+
 
 });
 
