@@ -85,7 +85,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: deploy-artifact
+          name: bundled_server
           path: ./Server
         
       - name: Deploy to Elastic Beanstalk
@@ -108,7 +108,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: deploy-artifact
+          name: bundled_server
           path: ./Server
 
       - name: Deploy to Elastic Beanstalk
