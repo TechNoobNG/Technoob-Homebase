@@ -46,7 +46,7 @@ app.post('/work', async (req, res) => {
         }
         res.status(200).send('Payload received successfully.'); 
     } catch (err) {
-        console.log(err.message);
+        console.log(err);
         const log = logBuffer.pop();
         log.status = "failed";
         log.error_stack = {
@@ -54,7 +54,7 @@ app.post('/work', async (req, res) => {
             stack_trace: err
         };
         logBuffer.push(log);
-        res.status(422).send(error.message); 
+        res.status(422).send(err.message); 
     }
 
 });
