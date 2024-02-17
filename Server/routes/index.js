@@ -14,12 +14,10 @@ const pool = require('../experimental/index')
 const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
-const utility = require("../utils/utils");
 const download = require("./download");
 const ErrorResponse = require("../utils/error/errorResponse")
 function configureRoutes(base = `/api/v1`,app) {
   // const app = express.app();
-  const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
 
   app.all('/',(req, res) => {
     res.render('index', {
@@ -29,26 +27,9 @@ function configureRoutes(base = `/api/v1`,app) {
     });
   });
 
-  
-
-  const clearCacheMiddleware = (req, res, next) => {
-    const path = req.path;
-    if (req.method === 'POST' && !excludeClearCacheRoutes.includes(utility.removePathSegments(path))) {
-      middleware.redisCache.addClearCache(req, res, next);
-    }
-    next();
-  };
-
-  const sanitizeIfNeeded = (req, res, next) => {
-    if (req.path.startsWith('/email/template')) {
-      return next();
-    } else {
-      return middleware.sanitizer(req, res, next);
-    }
-  };
-
-  app.use(sanitizeIfNeeded);
-  app.use(clearCacheMiddleware);
+  const { sanitizer, redisCache: { addClearCache } } = middleware
+  app.use(sanitizer);
+  app.use(addClearCache);
   app.use(`${base}/user`, user);
   app.use(`${base}/authenticate`, auth);
   app.use(`${base}/admin`, admin);

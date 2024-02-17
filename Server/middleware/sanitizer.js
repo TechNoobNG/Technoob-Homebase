@@ -21,11 +21,12 @@ const xssOptions = {
 };
 
 function sanitize(req, res, next) {
-
+  if (req.path.startsWith('/email/template')) {
+    next();
+  }
   req.body = preventNoSQLInjection(req.body, "body");
   req.params = preventNoSQLInjection(req.params, "params");
   req.query = preventNoSQLInjection(req.query, "query");
-
   next();
 }
 

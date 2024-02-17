@@ -1,6 +1,6 @@
 const { client } = require("../utils/connectors/redishelper");
 const utils = require("../utils/utils")
-
+const config = require("../config/config")
 module.exports = {
     getCache: async (req, res, next) => {
         try {
@@ -48,7 +48,11 @@ module.exports = {
 
     addClearCache: (req, res, next) => {
         const clearCache = module.exports.clearCache;
-        req.postExecMiddlewares = (req.postExecMiddlewares || []).concat(clearCache);
+        const path = req.path;
+        const excludeClearCacheRoutes = config.EXCLUDE_CLEAR_CACHE_ROUTES;
+        if (req.method === 'POST' && !excludeClearCacheRoutes.includes(utils.removePathSegments(path))) {
+            req.postExecMiddlewares = (req.postExecMiddlewares || []).concat(clearCache);
+        }
         next();
     },
 
