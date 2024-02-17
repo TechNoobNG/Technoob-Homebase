@@ -40,7 +40,7 @@ jobs:
           remote_key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
 
       - name: Write SSH Key to File
-        run: echo "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}" > ~/id_rsa
+        run: echo "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}" >> ~/id_rsa
         shell: bash
 
       - name: Set SSH Key Permissions
