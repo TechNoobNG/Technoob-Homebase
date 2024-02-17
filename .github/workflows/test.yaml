@@ -40,4 +40,4 @@ jobs:
           remote_key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
 
       - name: nginx
-        run: ssh -i "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}" ubuntu@${{ secrets.CLIENT_EC2_PUBLIC_IP }} "sudo systemctl restart nginx"
+        run: ssh -i "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}" ubuntu@"${{ secrets.CLIENT_EC2_PUBLIC_IP }}" "sudo systemctl restart nginx"
