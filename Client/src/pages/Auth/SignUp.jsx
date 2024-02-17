@@ -60,11 +60,10 @@ if(form.Password !== form.ConfirmPassword) alert('Passwords do not match')
 else{
   setLoading(true)
       try {
-        const postUser = await fetch("https://technoob-staging.azurewebsites.net/api/v1/authenticate/register", requestOptions)
+        const postUser = await fetch("https://api.technoob.tech/api/v1/authenticate/register", requestOptions)
         const cookies = postUser.headers.get('Set-Cookie');
         if (cookies) {
           const cookie = cookies.split(';')[0].split('=')[1];
-          console.log("cookie",cookie)
           localStorage.setItem('connect-sid', cookie);
           setIsLoggedIn(true);
           navigate('/Dashboard')
@@ -76,7 +75,6 @@ else{
         if(result.status === 'success') navigate('/');
 
       } catch (error) {
-        console.log(error)
         setIsLoggedIn(false)
       }finally{
         setLoading(false);
