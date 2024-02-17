@@ -26,7 +26,11 @@ const errorHandler = (err, req, res, next) => {
         Honeybadger.errorHandler(err,req,res,next)
     }
 
-
+    try {
+        return processPostExecMiddlewares(req, res, next);
+    } catch (err) {
+        console.warn(err.message)
+    }
 };
 
 module.exports = errorHandler;

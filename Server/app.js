@@ -41,15 +41,7 @@ const allowedOrigins = config.ALLOWED_ORIGINS;
 //   apis: ['./routes/*.js'],
 // }
 //const swaggerDocs = swaggerJSDoc(swaggerOptions);
-// app.use(function(req, res, next) {
-//   if (req.header('X-Forwarded-Proto') == 'https' || req.header('x-forwarded-proto') == 'https' )
-//   {
-//     next();
-//   }
-//   else {
-//     res.redirect('https://' + req.hostname + req.url);
-//   }}
-// );
+
 
 app.use(
   express.urlencoded({
@@ -62,7 +54,6 @@ app.use(
   })
 );
 
-// app.set('trust proxy', true);
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -154,7 +145,6 @@ app.use(
       ttl: 60 * 60, // 1 hour
       autoRemove: "native",
     }),
-    proxy: true,
     cookie: cookieConfig
   })
 );
@@ -178,20 +168,6 @@ const limiter = rateLimit({
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
-
-app.use(flash());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use(trafficMiddleware);
-/* GET home page. */
-app.use("/api-docs", limiter, swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-app.use(limiter)
-configureRoutes("/api/v1", app);
-// app.use("/",limiter, indexRouter);
-
-
 app.use((req, res, next) => {
   const start = Date.now();
   res.on("finish", () => {
@@ -203,14 +179,6 @@ app.use((req, res, next) => {
   next();
 });
 
-setInterval(() => {
-  cpuUsageGauge.set(process.cpuUsage().user / 1000000);
-  memoryUsageGauge.set(process.memoryUsage().rss);
-}, 10000);
-
-
-
-// Middleware to update metrics for network traffic
 app.use((req, res, next) => {
   const onData = (chunk) => {
     networkTrafficBytes.inc({ direction: "in" }, chunk.length);
@@ -252,10 +220,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// error handler
+app.use(flash());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(trafficMiddleware);
+app.use("/api-docs", limiter, swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use(limiter)
+configureRoutes("/api/v1", app);
+
+setInterval(() => {
+  cpuUsageGauge.set(process.cpuUsage().user / 1000000);
+  memoryUsageGauge.set(process.memoryUsage().rss);
+}, 10000);
+
 app.use(errorHandler);
-
-
 const collectDefaultMetrics = prometheus.collectDefaultMetrics;
 collectDefaultMetrics();
 

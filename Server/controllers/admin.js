@@ -43,8 +43,7 @@ module.exports = {
 
             })
         } catch (error) {
-
-             return res.fail(error)
+            return res.fail(error)
         }
     },
 
@@ -59,8 +58,7 @@ module.exports = {
                 data: admin_response
             })
         } catch (error) {
-
-             return res.fail(error)
+            return res.fail(error);
         }
     },
 
