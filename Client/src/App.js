@@ -9,7 +9,7 @@ import {AboutUs, ContactUs, FindJobs, Home, Resources, UserLogin,} from "./pages
 import {AppContext} from "./AppContext/AppContext";
 import AdminNavBar from "./components/AdminNavBar";
 import AdminSideBar from "./components/AdminSideBar";
-
+import QuizzesAndCompetition from "./pages/User/QuizzesAndCompetition/index.jsx";
 import DashSelector from "./utility/DashSelector";
 import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
@@ -55,13 +55,15 @@ function App() {
   };
   return (
     <BrowserRouter>
-    <ToastContainer/>
+      <ToastContainer />
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
 
       {toggleValue === "User Dashboard" ? (
-        <div className="bg-primary w-full overflow-y
-        auto relative">
+        <div
+          className="bg-primary w-full overflow-y
+        auto relative"
+        >
           <div className="flex flex-start w-full top-0 lg:fixed z-50">
             <div className="w-full">
               <NavBar />
@@ -79,6 +81,10 @@ function App() {
                 <Route path="/all-resources" element={<AllResources />} />
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
+                <Route
+                  path="/quizzes-and-competition"
+                  element={<QuizzesAndCompetition />}
+                />
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>
@@ -104,14 +110,19 @@ function App() {
             <div className="bg-[#f9f9f9] xl:ml-[350px] w-full grow h-auto p-5">
               <Routes>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/Job-Management" element={<JobManagement />} />
-                <Route path="/admin/profile" element={<Profile/>} />
+                <Route
+                  path="/admin/Job-Management"
+                  element={<JobManagement />}
+                />
+                <Route path="/admin/profile" element={<Profile />} />
                 <Route
                   path="/admin/Resources-Management"
                   element={<ResourceManagement />}
                 />
-                <Route path="/admin/Event-Management" element={<EventManagement />} />
-
+                <Route
+                  path="/admin/Event-Management"
+                  element={<EventManagement />}
+                />
               </Routes>
             </div>
           </div>
