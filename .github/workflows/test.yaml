@@ -3,7 +3,7 @@ name: Client Deployment to Heroku Staging
 on:
   push:
     branches:
-      - main_client
+      - deploy_test
 
 defaults:
   run:
