@@ -21,7 +21,14 @@ function FileUploadSingle({name, setlink, type, setUploading, setFileInfo, setIm
                 if (type === 'image') setUploadingImage(true);
                 if (type === 'image' && type !== selectedFile.type.split("/")[0]) throw new Error(`Invalid file type, placeholder should be an image`)
                 if (type === 'file' && selectedFile.type.split("/")[0] === "image") throw new Error(`Invalid file type, resource cannot be an image`)
-                const response = await uploadFile(selectedFile, type);
+
+                const params = {
+                    canAccessedByPublic: true
+                }
+                if (type === "image") {
+                    params.acl = "public"
+                }
+                const response = await uploadFile(selectedFile, type,params);
                 if (response.status === "success") {
                     const bloblink = response.data.url;
                     setlink(bloblink);
