@@ -11,5 +11,5 @@ sudo certbot --agree-tos --non-interactive --domains ${EBS_CERT_DOMAIN} --email 
 sudo certbot renew --dry-run
 echo "CERTBOT installed!"
 echo "Copying nginx config"
-sudo cp /var/app/current/.platform/hooks/postdeploy/01_client_max_body_size.conf /etc/nginx/conf.d
+sudo cp /var/app/current/.platform/01_client_max_body_size.conf /etc/nginx/conf.d
 sudo systemctl reload nginx
