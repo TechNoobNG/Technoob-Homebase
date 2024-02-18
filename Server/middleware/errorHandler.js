@@ -3,6 +3,11 @@ const  errorFormater = require("../utils/error/errorFormater");
 const Honeybadger = require("../utils/honeybadger/honeybadger");
 
 const errorHandler = (err, req, res, next) => {
+    async function processPostExecMiddlewares(req, res, next) {
+        for (const middleware of req.postExecMiddlewares ?? []) {
+            await middleware(req, res, next);
+        }
+    }
     const filterError = errorFormater.filter(err);
 
     const { message, statusCode, data } = filterError;
