@@ -29,9 +29,9 @@ function FileUploadSingle({name, setlink, type, setUploading, setFileInfo, setIm
                     params.acl = "public"
                 }
                 const response = await uploadFile(selectedFile, type,params);
-                if (response.status === "success") {
-                    const bloblink = response.data.url;
-                    setlink(bloblink);
+                if (response) {
+                    const fileLink = response.data.url;
+                    setlink(fileLink);
                     if (type === 'file') {
                         setUploading(false)
                         setFileInfo({
