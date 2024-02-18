@@ -41,7 +41,8 @@ const environments = {
                 "staging-api.technoob.tech",
                 "http://staging.technoob.tech",
                 "https://localhost:3000",
-                "https://staging.technoob.tech"
+                "https://staging.technoob.tech",
+                "https://staging-api.technoob.tech",
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [
@@ -202,6 +203,7 @@ const environments = {
                 "http://technoob.tech",
                 "http://www.technoob.tech",
                 "technoob-78121a48c9b8.herokuapp.com",
+                "https://api.technoob.tech"
             ],
         SCRAPE_STACK_KEYWORDS: process.env.SCRAPE_STACK_KEYWORDS ? JSON.parse(process.env.SCRAPE_STACK_KEYWORDS) :
             [

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-
+echo "Copying nginx config"
+sudo cp /var/app/current/.platform/01_client_max_body_size.conf /etc/nginx/conf.d
 echo "Installing CERTBOT.."
 CERT_DOMAIN=`/opt/elasticbeanstalk/bin/get-config environment -k DOMAIN_LINK`
 EBS_CERT_DOMAIN=`/opt/elasticbeanstalk/bin/get-config environment -k EBS_DOMAIN_LINK`
