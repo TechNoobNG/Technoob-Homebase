@@ -89,7 +89,7 @@ module.exports = {
         const response = await s3Client.send(command);
         return response.Buckets;
     },
-    async upload({ type, data, name, isFile = false, acl = "private", generatedId, canAccessedByPublic}) {
+    async upload({ type, data, name, isFile = false, acl = "private", generatedId, canAccessedByPublic, mimetype }) {
         let availableBuckets = await this.listBuckets();
         let bucketName = `technoob-${envMap[env]}`;
         if (acl && ["public", "private"].includes(acl)) {
@@ -108,7 +108,7 @@ module.exports = {
                     Bucket: bucketName,
                     Key: key,
                     Body: stream,
-                    ContentType: 'text/plain',
+                    ContentType: mimetype,
                 },
             });
             resp = await upload.done();
