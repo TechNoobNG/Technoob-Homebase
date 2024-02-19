@@ -118,7 +118,7 @@ const environments = {
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE,
         },
         STORAGE_PROVIDER: {
-            provider: process.env.STORAGE_PROVIDER || 'azure',
+            provider: process.env.STORAGE_PROVIDER || 'aws',
             useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
         },
         AWS_SERVICES: {
@@ -134,7 +134,7 @@ const environments = {
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
             },
             S3: {
-                region: process.env.AWS_REGION,
+                region: process.env.AWS_REGION || "eu-west-2",
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                 secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
             }

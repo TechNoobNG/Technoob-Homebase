@@ -1,6 +1,6 @@
 const config = require('../../config/config')
 const { S3Client, ListBucketsCommand, CreateBucketCommand,PutPublicAccessBlockCommand,DeletePublicAccessBlockCommand, DeleteBucketCommand, PutObjectAclCommand, PutObjectCommand, DeleteObjectCommand, GetObjectCommand} = require("@aws-sdk/client-s3");
-const REGION = config.AWS_SERVICES.SQS.region;
+const REGION = config.AWS_SERVICES.S3.region;
 const credentials = {
         accessKeyId: config.AWS_SERVICES.S3.accessKeyId,
         secretAccessKey: config.AWS_SERVICES.S3.secretAccessKey
@@ -89,7 +89,7 @@ module.exports = {
         const response = await s3Client.send(command);
         return response.Buckets;
     },
-    async upload({ type, data, name, isFile = false, acl = "private", generatedId, canAccessedByPublic}) {
+    async upload({ type, data, name, isFile = false, acl = "private", generatedId, canAccessedByPublic, mimetype }) {
         let availableBuckets = await this.listBuckets();
         let bucketName = `technoob-${envMap[env]}`;
         if (acl && ["public", "private"].includes(acl)) {
@@ -108,7 +108,7 @@ module.exports = {
                     Bucket: bucketName,
                     Key: key,
                     Body: stream,
-                    ContentType: 'text/plain',
+                    ContentType: mimetype,
                 },
             });
             resp = await upload.done();
@@ -158,7 +158,7 @@ module.exports = {
     },
 
     async download({ storeName, key }) {
-        const createPresignedUrlWithClient = ({ region, bucket, key }) => {
+        const createPresignedUrlWithClient = ({ region , bucket, key }) => {
             const client = new S3Client({ region });
             const command = new GetObjectCommand({ Bucket: bucket, Key: key });
             return getSignedUrl(client, command, { expiresIn: 3600 });
