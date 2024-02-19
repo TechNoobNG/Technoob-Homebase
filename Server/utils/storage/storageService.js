@@ -32,7 +32,7 @@ module.exports = {
             const res = await getStorageProvider(provider).upload({
                 type,
                 data,
-                name,
+                name: name.replace(/\s/g, "_"),
                 isFile,
                 acl,
                 generatedId,
