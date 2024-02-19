@@ -1,6 +1,6 @@
 const config = require('../../config/config')
 const { S3Client, ListBucketsCommand, CreateBucketCommand,PutPublicAccessBlockCommand,DeletePublicAccessBlockCommand, DeleteBucketCommand, PutObjectAclCommand, PutObjectCommand, DeleteObjectCommand, GetObjectCommand} = require("@aws-sdk/client-s3");
-const REGION = config.AWS_SERVICES.SQS.region;
+const REGION = config.AWS_SERVICES.S3.region;
 const credentials = {
         accessKeyId: config.AWS_SERVICES.S3.accessKeyId,
         secretAccessKey: config.AWS_SERVICES.S3.secretAccessKey
@@ -158,7 +158,7 @@ module.exports = {
     },
 
     async download({ storeName, key }) {
-        const createPresignedUrlWithClient = ({ region, bucket, key }) => {
+        const createPresignedUrlWithClient = ({ region , bucket, key }) => {
             const client = new S3Client({ region });
             const command = new GetObjectCommand({ Bucket: bucket, Key: key });
             return getSignedUrl(client, command, { expiresIn: 3600 });
