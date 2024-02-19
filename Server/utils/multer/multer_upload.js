@@ -18,8 +18,6 @@ const uploadParams = {
     },
 };
 
-
-
 module.exports = {
     async uploadFile(file) {
         return new Promise(async (resolve, reject) => {
@@ -51,7 +49,8 @@ module.exports = {
                         isFile: true,
                         acl: file.acl || "private",
                         isRestricted: file.isRestricted,
-                        canAccessedByPublic: file.canAccessedByPublic || false
+                        canAccessedByPublic: file.canAccessedByPublic || false,
+                        mimetype: file.mimetype,
                     });
                 }
 

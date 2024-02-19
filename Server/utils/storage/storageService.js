@@ -19,7 +19,7 @@ function getStorageProvider(provider) {
 }
 
 module.exports = {
-    upload: async ({ type, data, name, isFile = false, acl,isRestricted, canAccessedByPublic }) => {
+    upload: async ({ type, data, name, isFile = false, acl,isRestricted, canAccessedByPublic, mimetype }) => {
         try {
             if (!type) throw new Error("Missing parameters");
             if (!data) throw new Error("Missing data");
@@ -36,7 +36,8 @@ module.exports = {
                 isFile,
                 acl,
                 generatedId,
-                canAccessedByPublic
+                canAccessedByPublic,
+                mimetype
             })
             res.provider = provider;
             res.isRestricted = isRestricted

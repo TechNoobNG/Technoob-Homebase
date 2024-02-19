@@ -118,7 +118,7 @@ const environments = {
             useMultiple: process.env.MAIL_PROVIDER_USE_MULTIPLE,
         },
         STORAGE_PROVIDER: {
-            provider: process.env.STORAGE_PROVIDER || 'azure',
+            provider: process.env.STORAGE_PROVIDER || 'aws',
             useMultipleProviders: process.env.STORAGE_PROVIDER_USE_MULTIPLE_PROVIDERS,
         },
         AWS_SERVICES: {
