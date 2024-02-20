@@ -1,5 +1,7 @@
 const ErrorResponse = require('../utils/error/errorResponse');
 const errorFormater = require('../utils/error/errorFormater');
+const axios = require('axios');
+
 function extendResponseObject(req, res, next) {
     async function processPostExecMiddlewares(req, res, next) {
         for (const middleware of req.postExecMiddlewares ?? []) {
@@ -52,6 +54,18 @@ function extendResponseObject(req, res, next) {
             return processPostExecMiddlewares(req, res, next);
         } catch (err) {
             console.warn(err.message)
+        }
+    };
+
+    res.contentPipe = async function (url) {
+        try {
+            const externalResponse = await axios.get(url, { responseType: 'stream' });
+            res.set('Content-Type', externalResponse.headers['content-type']);
+            res.set('Content-Length', externalResponse.headers['content-length']);
+            res.set('Cache-Control', 'public, max-age=31557600'); 
+            externalResponse.data.pipe(res);
+        } catch (error) {
+            res.status(500).send('Internal Server Error');
         }
     };
 
