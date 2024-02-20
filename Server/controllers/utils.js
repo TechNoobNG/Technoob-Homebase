@@ -49,7 +49,7 @@ module.exports = {
         try {
             const { key, bucket } = req.params;
             const file = await resource.downloadEmail({key,bucket})
-            return res.customRedirect(file);
+            return res.contentPipe(file);
         } catch (err) {
             res.fail({
                 status: "fail",
@@ -63,7 +63,7 @@ module.exports = {
         const  userId  = req.user?._id;
         try {
             const file = await resource.download( generatedId, userId)
-            return res.customRedirect(file);
+            return res.contentPipe(file);
         } catch (err) {
             res.fail({
                 status: "fail",
