@@ -16,7 +16,7 @@ import {
 import { AppContext } from "./AppContext/AppContext";
 import AdminNavBar from "./components/AdminNavBar";
 import AdminSideBar from "./components/AdminSideBar";
-
+import QuizzesAndCompetition from "./pages/User/QuizzesAndCompetition/index.jsx";
 import DashSelector from "./utility/DashSelector";
 import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
@@ -98,6 +98,10 @@ function App() {
                 <Route path="/all-resources" element={<AllResources />} />
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
+                <Route
+                  path="/quizzes-and-competition"
+                  element={<QuizzesAndCompetition />}
+                />
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>
@@ -131,6 +135,7 @@ function App() {
 
                 <Route path="/admin/profile" element={<Profile />} />
 
+
                 <Route
                   path="/admin/Resources-Management"
                   element={<ResourceManagement />}
@@ -139,7 +144,8 @@ function App() {
                   path="/admin/Event-Management"
                   element={<EventManagement />}
                 />
-                {/* <Route path="/admin/Quizzes" element={<Quizzes />} /> */}
+                <Route path="/admin/Quizzes" element={<Quizzes />} /> 
+
               </Routes>
             </div>
           </div>
