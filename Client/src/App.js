@@ -1,12 +1,19 @@
-import React, {useContext, useEffect, useLayoutEffect} from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import "./App.css";
-import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
-import {Footer, NavBar} from "./components/index.js";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { Footer, NavBar } from "./components/index.js";
 
-import {SignUp} from "./pages/Auth";
-import {AboutUs, ContactUs, FindJobs, Home, Resources, UserLogin,} from "./pages/LandingPage";
+import { SignUp } from "./pages/Auth";
+import {
+  AboutUs,
+  ContactUs,
+  FindJobs,
+  Home,
+  Resources,
+  UserLogin,
+} from "./pages/LandingPage";
 
-import {AppContext} from "./AppContext/AppContext";
+import { AppContext } from "./AppContext/AppContext";
 import AdminNavBar from "./components/AdminNavBar";
 import AdminSideBar from "./components/AdminSideBar";
 import QuizzesAndCompetition from "./pages/User/QuizzesAndCompetition/index.jsx";
@@ -14,21 +21,31 @@ import DashSelector from "./utility/DashSelector";
 import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
-import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  AdminDashboard,
+  EventManagement,
+  JobManagement,
+  ResourceManagement,
+} from "./pages/Admin/AdminRoutes";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Quizzes from "./pages/Admin/AdminRoutes/Quizzes.jsx";
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
-
 function App() {
-  const { isLoggedIn, setIsLoggedIn, setDashboardToggle, dashboardToggle, setUserProfile } =
-    useContext(AppContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    setDashboardToggle,
+    dashboardToggle,
+    setUserProfile,
+  } = useContext(AppContext);
   const { displayToggle, toggleValue } = dashboardToggle;
 
   useEffect(() => {
     const checkUserLogin = sessionStorage.getItem("userData");
-    const checkUserViewPreference = sessionStorage.getItem("viewPreference")
+    const checkUserViewPreference = sessionStorage.getItem("viewPreference");
 
     // const sessionCookie = cookies.get('session')
 
@@ -39,8 +56,8 @@ function App() {
       setIsLoggedIn(false);
     }
 
-    if(checkUserViewPreference) {
-      setDashboardToggle(JSON.parse(checkUserViewPreference))
+    if (checkUserViewPreference) {
+      setDashboardToggle(JSON.parse(checkUserViewPreference));
     }
   }, [isLoggedIn, setDashboardToggle, setIsLoggedIn, setUserProfile]);
 
@@ -110,11 +127,15 @@ function App() {
             <div className="bg-[#f9f9f9] xl:ml-[350px] w-full grow h-auto p-5">
               <Routes>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
                 <Route
                   path="/admin/Job-Management"
                   element={<JobManagement />}
                 />
+
                 <Route path="/admin/profile" element={<Profile />} />
+
+
                 <Route
                   path="/admin/Resources-Management"
                   element={<ResourceManagement />}
@@ -123,6 +144,8 @@ function App() {
                   path="/admin/Event-Management"
                   element={<EventManagement />}
                 />
+                <Route path="/admin/Quizzes" element={<Quizzes />} /> 
+
               </Routes>
             </div>
           </div>
