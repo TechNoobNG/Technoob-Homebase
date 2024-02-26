@@ -65,6 +65,7 @@ function extendResponseObject(req, res, next) {
             res.set('Cache-Control', 'public, max-age=31557600'); 
             externalResponse.data.pipe(res);
         } catch (error) {
+            console.error(error)
             res.status(500).send('Internal Server Error');
         }
     };
