@@ -1,9 +1,9 @@
 import React from "react";
 import { ReactComponent as LinkIcon } from "./link.svg";
 
-const Instructions = ({ type }) => {
+const Instructions = ({ type, setShowQuestion, setShowInstructions }) => {
   return (
-    <div className="rounded-xl quiz-competition-instructions bg-white pl-20 pr-10 py-6">
+    <div className="rounded-xl quiz-competition-instructions bg-white pl-20 pr-10 py-6 mt-[46px]">
       <h4 className="font-bold text-2xl text-[#27AE60] mb-6">
         {type.toUpperCase()} INSTRUCTIONS
       </h4>
@@ -72,16 +72,40 @@ const Instructions = ({ type }) => {
         ) : null}
       </div>
       {type === "Quiz" ? (
-        <button className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white">
+        <button
+          className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white"
+          onClick={() => {
+            setShowQuestion({
+              show: true,
+              no: 1,
+            });
+            setShowInstructions(false);
+          }}
+        >
           Start
         </button>
       ) : type === "Competition" ? (
         <div className="flex items-center gap-1">
-            <div className="flex items-center w-full border border-[#BDBDBD] rounded-[5px] h-[54px] pl-6">
-                <LinkIcon className='mr-2' />
-                <input type="text" name="" id="" className="border-0 outline-0 text-[#3A3A3A] placeholder:text-[#BDBDBD]" placeholder="Add link" />
-            </div>
-          <button className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white">
+          <div className="flex items-center w-full border border-[#BDBDBD] rounded-[5px] h-[54px] pl-6">
+            <LinkIcon className="mr-2" />
+            <input
+              type="text"
+              name=""
+              id=""
+              className="border-0 outline-0 text-[#3A3A3A] placeholder:text-[#BDBDBD]"
+              placeholder="Add link"
+            />
+          </div>
+          <button
+            className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white"
+            onClick={() => {
+              setShowQuestion({
+                show: true,
+                no: 1,
+              });
+              setShowInstructions(false);
+            }}
+          >
             Submit Link
           </button>
         </div>
@@ -91,4 +115,3 @@ const Instructions = ({ type }) => {
 };
 
 export default Instructions;
-// border: 1px solid 
