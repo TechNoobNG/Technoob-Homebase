@@ -8,7 +8,7 @@ Resources:
   DeleteExpiredJobsHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Description: A Lambda function that removes expired jobs from technoob database
+      Description: This removes expired jobs from technoob database at scheduled intervals
       Runtime: nodejs20.x
       Architectures:
       - x86_64
@@ -19,7 +19,7 @@ Resources:
           Properties:
             Schedule: cron(0 * * * ? *)
       MemorySize: 128
-      Timeout: 100
+      Timeout: 20
       Policies:
       - AWSLambdaBasicExecutionRole
       - SQSSendMessagePolicy:
@@ -28,7 +28,7 @@ Resources:
   ScrapeNoobJobs:
     Type: AWS::Serverless::Function
     Properties:
-      Description: A Lambda function that scrapes jobs.
+      Description: This scrapes jobs using preconfigured scripts at a scheduled interval.
       Runtime: nodejs20.x
       Architectures:
       - x86_64
@@ -48,7 +48,7 @@ Resources:
   ScrapeNoobJobsTrigger:
     Type: AWS::Serverless::Function
     Properties:
-      Description: A Lambda function triggered by an HTTP event.
+      Description: This scrapes jobs using preconfigured scripts via an http request.
       Runtime: nodejs20.x
       Architectures:
       - x86_64

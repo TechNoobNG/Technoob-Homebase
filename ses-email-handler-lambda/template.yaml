@@ -14,7 +14,7 @@ Resources:
       - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: A Lambda function that forwards ses emails to slack.
+      Description: This forwards ses emails to slack.
       Policies:
       - AWSLambdaBasicExecutionRole
   ApplicationResourceGroup:
