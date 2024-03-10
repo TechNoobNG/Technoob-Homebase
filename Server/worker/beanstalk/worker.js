@@ -8,15 +8,21 @@ const { flushLogsToDatabase } = require("../../utils/utils")
 const app = express();
 
 app.use(bodyParser.text())
-app.set("views", path.join(__dirname, "..", "..", "views"));
-app.set("view engine", "jade");
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+  
 
 app.get('/', (req, res) => {
-    res.render('index', {
+    const data = {
         title: 'TechNoob Worker',
         environment: config.NODE_ENV,
-        repo_link: "https://github.com/TechNoobNG/Technoob-Homebase",
-    });
+        repo_link: 'https://github.com/TechNoobNG/Technoob-Homebase'
+      };
+    
+      res.send(data);
 });
 
 const logBuffer = [];
@@ -25,7 +31,7 @@ setTimeout(() => {
     
 },500)
 
-app.post('/work', async (req, res) => {
+const processJob = async function (req, res) {
     try {
         const payload = req.body;
         let data = JSON.parse(payload);
@@ -34,7 +40,7 @@ app.post('/work', async (req, res) => {
         }
  
         const method = data.method;
-        const importService = data.service ? `../${data.service}` : `../${data.import}`;
+        const importService = data.service ? `../../services/${data.service}` : `../${data.import}`;
         logBuffer.push({
             action: method,
             importService: importService,
@@ -50,7 +56,7 @@ app.post('/work', async (req, res) => {
 
         res.status(200).send('Payload received successfully.'); 
     } catch (err) {
-        console.log(err);
+        console.log("Job Failed",err);
         const log = logBuffer.pop();
         log.status = "failed";
         log.error_stack = {
@@ -60,18 +66,24 @@ app.post('/work', async (req, res) => {
         logBuffer.push(log);
         res.status(422).send(err.message); 
     }
+}
+app.post('/work', async (req, res) => {
 
-    setTimeout(async () => {
-        if (logBuffer.length >= 1) {
-            try {
-                await flushLogsToDatabase(logBuffer, worker_logs);
-            } catch (error) {
-                console.log(err," failed to push logs");
+    try {
+        await processJob(req, res);
+        setTimeout(async () => {
+            if (logBuffer.length >= 1) {
+                try {
+                    await flushLogsToDatabase(logBuffer, worker_logs);
+                } catch (error) {
+                    console.log(error, " failed to push logs");
+                }
             }
-        }
-    }, 500)
-
-
+        }, 500)
+    } catch (error) {
+        res.status(422).send(error.message);
+    }
+    
 });
 
 module.exports = app;

@@ -91,6 +91,7 @@ module.exports = {
                     dataUpload.forEach((obj) => {
                         uniqueJobSet.add(JSON.stringify(obj));
                     });
+
                     let uniqueJobsArray = Array.from(uniqueJobSet, JSON.parse);
                     if (uniqueJobsArray.length) {
                         await queue.sendMessage({
