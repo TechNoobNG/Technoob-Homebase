@@ -40,7 +40,7 @@ const processJob = async function (req, res) {
         }
  
         const method = data.method;
-        const importService = data.service ? `../${data.service}` : `../${data.import}`;
+        const importService = data.service ? `../../services/${data.service}` : `../${data.import}`;
         logBuffer.push({
             action: method,
             importService: importService,
