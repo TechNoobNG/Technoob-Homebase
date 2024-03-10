@@ -4,17 +4,11 @@ module.exports = {
 
     async deleteExpiredJobs(context) {
         try {
-            const queue = require('../utils/azure_queue');
-            const honeybadger = require('../utils/honeybadger');
+            const queue = require('../utils/aws_queue');
             await queue.sendMessage({
                 name: "deleteExpiredJobs",
-                import: "../services",
-                service: "jobs",
+                import: "../services/jobs",
                 method: "deleteExpiredJobs"
-           })
-            honeybadger.notify({
-                name: "deleteExpiredJobs",
-                message: "Initiated Delete Expired Jobs"
            })
         } catch (err) {
             context.log(err)
@@ -24,8 +18,7 @@ module.exports = {
 
     async scrapeJobs(q, posted, expires,context) {
         try {
-            const queue = require('../utils/azure_queue');
-            const honeybadger = require('../utils/honeybadger');
+            const queue = require('../utils/aws_queue');
             const config = require('../utils/config')['production'];
             const automations = require('../automations/scraper')
             const stackKeywords = config.SCRAPE_STACK_KEYWORDS || [
@@ -102,14 +95,11 @@ module.exports = {
                     if (uniqueJobsArray.length) {
                         await queue.sendMessage({
                             name: "createScrapedJobs",
-                            import: "../services",
-                            service: "jobs",
+                            import: "../services/jobs",
                             method: "createScrapedJobs",
                             data: {
                                 uniqueJobsArray
-                            },
-                            visibilityTimeout: 40,
-                            delay: 3000
+                            }
                     })}
                 } catch (error) {
                     scraperLogger.end(keyword,"failed",error.message)
@@ -117,10 +107,6 @@ module.exports = {
                 }
 
             }
-            honeybadger.notify({
-                name: "createScrapedJobs",
-                message: "Initiated Job scraping"
-            })
             scraperLogger.complete();
         } catch (error) {
             context.log(error)
@@ -131,17 +117,11 @@ module.exports = {
 
     async scrapeJobsV2() {
         try {
-            const queue = require('../utils/azure_queue');
-            const honeybadger = require('../utils/honeybadger');
+            const queue = require('../utils/aws_queue');
             await queue.sendMessage({
                 name: "scrapeNoobJobs",
-                import: "../services",
-                service: "jobs",
+                import: "../services/jobs",
                 method: "scrapeNoobJobs"
-           })
-            honeybadger.notify({
-                name: "scrapeNoobJobs",
-                message: "Initiated Scrape Noob Jobs"
            })
         } catch (err) {
             context.log(err)

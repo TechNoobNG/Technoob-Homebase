@@ -7,6 +7,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.529.1",
     "@azure/storage-queue": "^12.15.0",
     "@honeybadger-io/js": "^6.5.3",
     "axios": "^1.6.5",
