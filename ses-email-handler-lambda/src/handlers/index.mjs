@@ -94,7 +94,7 @@ export const handler = async (event) => {
 
         return "done";
     } catch (err) {
-        console.log(err);
+        console.error(err);
         throw new Error(err.message);
     }
 };
