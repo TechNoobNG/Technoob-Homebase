@@ -151,4 +151,5 @@ if (config.LISTENER) {
   for (let i = 0; i < scriptCount; i++) {
     queueWorker();
   }
+  console.log(`${scriptCount} listeners running`)
 }
