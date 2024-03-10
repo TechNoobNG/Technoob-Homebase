@@ -35,13 +35,17 @@ module.exports = function () {
     queueUrl: queueUrl,
     handleMessage: async (message) => {
       try {
-        if (!message.messageText || !message.messageText.trim()) {
+        if (!message.Body || !message.Body.trim()) {
           return;
         }
 
-        const data = JSON.parse(message.messageText);
+        let data = JSON.parse(message.Body);
+        if (typeof data === 'string') {
+          data = JSON.parse(data)
+        }
         const method = data.method;
-        const importService = data.service ? `../${data.import}/${data.service}` : data.import;
+    
+        const importService = data.service ? `../../services/${data.service}` : data.import;
 
         logBuffer.push({
           action: method,
@@ -61,7 +65,7 @@ module.exports = function () {
           await flushLogsToDatabase();
         }
       } catch (err) {
-        console.log(err.message);
+        console.log(err);
         const log = logBuffer.pop() || {};
         log.status = 'failed';
         log.error_stack = {
@@ -69,6 +73,7 @@ module.exports = function () {
           stack_trace: err
         };
         logBuffer.push(log);
+        throw err
       }
     },
     sqs: new SQSClient({

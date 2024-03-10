@@ -20,6 +20,7 @@ module.exports = {
                 QueueUrl: queueUrl
             }) 
             const response = await queueClient.send(command)
+            console.log(response)
             return response
         } catch (error) {
             throw error
