@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactComponent as UncheckedIcon } from "./unchecked.svg";
 
-const Question = ({ number, total, question, options }) => {
+const Question = ({ number, total, question, options, onNext, onSubmit }) => {
   const getOptionLabel = (index) =>
     index === 0
       ? "A"
@@ -13,7 +13,7 @@ const Question = ({ number, total, question, options }) => {
       ? "D"
       : "";
   return (
-    <div className="rounded-xl quiz-competition-instructions bg-white px-5 py-6">
+    <div className="rounded-xl quiz-competition-instructions bg-white px-5 py-6 mt-[46px]">
       <div className="px-6 pb-5">
         <h4 className="font-bold text-2xl text-[#27AE60] mb-4">
           QUESTION {number} of {total}
@@ -44,7 +44,10 @@ const Question = ({ number, total, question, options }) => {
         <button className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white">
           Previous
         </button>
-        <button className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white">
+        <button
+          className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white"
+          onClick={number === total ? onSubmit : onNext}
+        >
           {number === total ? "Submit" : "Next"}
         </button>
       </div>
