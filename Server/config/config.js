@@ -5,6 +5,7 @@ const env = process.env.NODE_ENV || 'development';
 const environments = {
     development: {
         NODE_ENV: process.env.NODE_ENV,
+        LISTENER: process.env.LISTENER,
         UV_THREADPOOL_SIZE: OS.cpus().length,
         DATABASE_URL: process.env.DATABASE_URL,
         PORT: process.env.PORT || 3000,
@@ -170,6 +171,7 @@ const environments = {
 
     production: {
         NODE_ENV: process.env.NODE_ENV,
+        LISTENER: process.env.LISTENER,
         UV_THREADPOOL_SIZE: OS.cpus().length,
         DATABASE_URL: process.env.DATABASE_URL,
         PORT: process.env.PORT || 3000,
