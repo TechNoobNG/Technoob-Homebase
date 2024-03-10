@@ -1,5 +1,4 @@
-// Retrieve the connection from an environment
-// variable called AZURE_STORAGE_CONNECTION_STRING
+
 const env = process.env.NODE_ENV || 'production';
 const config = require('./config')[env];
 const { QueueClient } = require("@azure/storage-queue");

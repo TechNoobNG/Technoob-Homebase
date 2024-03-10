@@ -70,7 +70,25 @@ module.exports = {
             "Software Testing",
             "DevOps",
             "SEO"
-        ]
+        ],
+        AWS_SERVICES: {
+            SQS: {
+                region: "eu-west-2",
+                accessKeyId: process.env.ACCESS_KEY_ID_AWS || process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.SECRET_ACCESS_KEY_AWS || process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+            S3: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            }
+        },
 
     },
     test: {
@@ -157,7 +175,25 @@ module.exports = {
             "Software Testing",
             "DevOps",
             "SEO"
-        ]
+        ],
+        AWS_SERVICES: {
+            SQS: {
+                region: "eu-west-2",
+                accessKeyId: process.env.ACCESS_KEY_ID_AWS || process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.SECRET_ACCESS_KEY_AWS || process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+            S3: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            }
+        },
 
     },
 
@@ -214,6 +250,24 @@ module.exports = {
             "Software Testing",
             "DevOps",
             "SEO"
-        ]
+        ],
+        AWS_SERVICES: {
+            SQS: {
+                region: "eu-west-2",
+                accessKeyId: process.env.ACCESS_KEY_ID_AWS || process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.SECRET_ACCESS_KEY_AWS || process.env.AWS_SECRET_ACCESS_KEY,
+                queueUrl: process.env.AWS_QUEUE_URL
+            },
+            SES: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+            S3: {
+                region: "eu-west-2",
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            }
+        },
     }
 }

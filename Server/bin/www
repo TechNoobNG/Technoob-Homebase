@@ -131,6 +131,8 @@ if (cluster.isMaster && HOST !== 'heroku') {
   }
   cluster.on('exit', (worker, code, signal) => {
     console.log(`Worker ${worker.process.pid} died`);
+    //spawn new worker
+    cluster.fork();
   });
 } else if (cluster.isMaster && HOST === 'heroku') {
   for (let i = 0; i < WORKERS; i++) {
@@ -141,11 +143,12 @@ if (cluster.isMaster && HOST !== 'heroku') {
   });
 } else {
   console.log(`Worker ${process.pid} started`);
-  if (config.LISTENER) {
-    const scriptCount = config.LISTENER_COUNT * 1 || 5;
-    for (let i = 0; i < scriptCount; i++) {
-      queueWorker();
-    }
-  }
   startServer();
+}
+
+if (config.LISTENER) {
+  const scriptCount = config.LISTENER_COUNT * 1 || 10;
+  for (let i = 0; i < scriptCount; i++) {
+    queueWorker();
+  }
 }

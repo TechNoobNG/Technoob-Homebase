@@ -28,9 +28,10 @@ if (logBuffer.length === 0) return;
 }
 
 module.exports = function () {
+  let app;
   try {
 
-    const app = Consumer.create({
+    app = Consumer.create({
       queueUrl: queueUrl,
       handleMessage: async (message) => {
         try {
@@ -88,5 +89,6 @@ module.exports = function () {
     app.start();
   } catch (err) {
     console.error('Error starting Azure queue listener:', err);
+    app.start();
   }
 }

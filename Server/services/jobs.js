@@ -46,7 +46,6 @@ module.exports = {
         }
     },
     
-
     get: async (id,user) => {
         try {
             const job = await Jobs.findById(id);

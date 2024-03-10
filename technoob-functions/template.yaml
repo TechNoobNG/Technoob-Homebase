@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  technoob-functions
+Transform:
+- AWS::Serverless-2016-10-31
+
+Resources:
+  DeleteExpiredJobsHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: A Lambda function that removes expired jobs from technoob database
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Handler: src/handlers/delete-expired-jobs.deleteExpiredJobsHandler
+      Events:
+        CloudWatchEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 * * * ? *)
+      MemorySize: 128
+      Timeout: 100
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
+
+  ScrapeNoobJobs:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: A Lambda function that scrapes jobs.
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Handler: src/handlers/scrape-noob-jobs.scrapeNoobJobs
+      Events:
+        CloudWatchEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(15 18 * * ? *)
+      MemorySize: 500
+      Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
+
+  ScrapeNoobJobsTrigger:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: A Lambda function triggered by an HTTP event.
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Handler: src/handlers/scrape-noob-jobs-trigger.scrapeNoobJobs
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            Path: /scrape
+            Method: POST
+      MemorySize: 500
+      Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
+
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+Globals:
+  Function:
+    Tracing: Active
+    LoggingConfig:
+      LogFormat: JSON
+  Api:
+    TracingEnabled: true
