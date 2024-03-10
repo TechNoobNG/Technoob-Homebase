@@ -18,6 +18,10 @@ Resources:
             Schedule: cron(0 * * * ? *)
       MemorySize: 128
       Timeout: 100
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
       CodeUri: DeleteExpiredJobsHandler
     Metadata:
       SamResourceId: DeleteExpiredJobsHandler
@@ -36,6 +40,10 @@ Resources:
             Schedule: cron(15 18 * * ? *)
       MemorySize: 500
       Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
       CodeUri: ScrapeNoobJobs
     Metadata:
       SamResourceId: ScrapeNoobJobs
@@ -55,6 +63,10 @@ Resources:
             Method: POST
       MemorySize: 500
       Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
       CodeUri: ScrapeNoobJobsTrigger
     Metadata:
       SamResourceId: ScrapeNoobJobsTrigger

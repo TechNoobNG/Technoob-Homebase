@@ -51,7 +51,7 @@ const extractIndeedJobs = async (page) => {
 };
 
 let puppeteerConfig = {};
-if (config.NODE_ENV === 'production') {
+if (config.NODE_ENV !== 'production') {
   puppeteerConfig = {
         headless: "new",
         args: [
@@ -65,7 +65,19 @@ if (config.NODE_ENV === 'production') {
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
       defaultViewport: chromium.defaultViewport,
-      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+      args: [
+        ...chromium.args,
+        "--hide-scrollbars",
+        "--disable-web-security",
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--single-process",
+        "--incognito",
+        "--disable-client-side-phishing-detection",
+        "--disable-software-rasterizer",
+    ],
       }
 }
 

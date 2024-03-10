@@ -8,12 +8,16 @@ import honeybadger  from '../utils/honeybadger.js';
 export const deleteExpiredJobsHandler = async (event, context) => {
     try {
         await deleteExpiredJobs(context);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Triggered successfully' }),
+        };
     } catch (err) {
         console.error(err)
-        honeybadger.notify({
-            name: "Failed To Trigger Bi-daily Job",
-            message: err
-    })
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Internal Server Error' }),
+        };
     }
 
 }

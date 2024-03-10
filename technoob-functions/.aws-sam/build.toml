@@ -5,7 +5,7 @@ codeuri = "/Users/oluwatobilobaaremu/Projects II/Technoob-Homebase/technoob-func
 runtime = "nodejs20.x"
 architecture = "x86_64"
 handler = "src/handlers/delete-expired-jobs.deleteExpiredJobsHandler"
-manifest_hash = "656588b520668f7c23276bdeedb78175"
+manifest_hash = "092b600da0d5b6a10dd63d2d16bcb308"
 packagetype = "Zip"
 functions = ["DeleteExpiredJobsHandler", "ScrapeNoobJobs", "ScrapeNoobJobsTrigger"]
 

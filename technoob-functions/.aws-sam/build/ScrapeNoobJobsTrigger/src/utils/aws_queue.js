@@ -4,17 +4,14 @@ import  config from './config.js';
 import { SQSClient, SendMessageCommand,  } from "@aws-sdk/client-sqs"; 
 const REGION = config.AWS_SERVICES.SQS.region;
 const queueClient = new SQSClient({
-    region: REGION,
-    credentials: {
-        accessKeyId: config.AWS_SERVICES.SES.accessKeyId,
-        secretAccessKey: config.AWS_SERVICES.SES.secretAccessKey
-    }
+    region: REGION
 })
 const queueUrl = config.AWS_SERVICES.SQS.queueUrl;
 
 export async function sendMessage(data) {
     try {
         let message = data;
+        console.log(config)
         const command = new SendMessageCommand({
             MessageBody: JSON.stringify(message),
             QueueUrl: queueUrl

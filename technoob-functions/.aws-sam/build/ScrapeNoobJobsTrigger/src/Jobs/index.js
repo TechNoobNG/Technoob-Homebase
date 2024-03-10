@@ -57,7 +57,6 @@ export async function scrapeJobs(q, posted, expires) {
         for (const keyword of stackKeywords) {
             try {
                 scraperLogger.start(keyword, "initiated");
-                console.log("debug",keyword)
                 const result = await scrapeJobsIndeed({
                     searchTag: keyword,
                     q: q * 1
@@ -89,28 +88,24 @@ export async function scrapeJobs(q, posted, expires) {
                 const uniqueJobsArray = Array.from(new Set(dataUpload.map(JSON.stringify)), JSON.parse);
 
                 if (uniqueJobsArray.length) {
-                    console.log(uniqueJobsArray)
-                    // await queue.sendMessage({
-                    //     name: "createScrapedJobs",
-                    //     import: "../services",
-                    //     service: "jobs",
-                    //     method: "createScrapedJobs",
-                    //     data: {
-                    //         uniqueJobsArray
-                    //     },
-                    //     visibilityTimeout: 40,
-                    //     delay: 3000
-                    // });
+                    await queue.sendMessage({
+                        name: "createScrapedJobs",
+                        import: "../services/jobs",
+                        method: "createScrapedJobs",
+                        data: {
+                            uniqueJobsArray
+                        }
+                    });
                 }
             } catch (error) {
-                console.log("---77777------",error);
+                console.log("Failed to scrape Job:",error);
                 scraperLogger.end(keyword, "failed", error.message);
             }
         }
 
         scraperLogger.complete();
     } catch (error) {
-        console.log("---2222------",error);
+        scraperLogger.end(keyword, "failed", error.message || JSON.stringify(error));
         throw error;
     }
 }

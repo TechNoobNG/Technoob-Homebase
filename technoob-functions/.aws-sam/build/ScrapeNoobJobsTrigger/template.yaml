@@ -20,6 +20,11 @@ Resources:
             Schedule: cron(0 * * * ? *)
       MemorySize: 128
       Timeout: 100
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
+
   ScrapeNoobJobs:
     Type: AWS::Serverless::Function
     Properties:
@@ -35,6 +40,11 @@ Resources:
             Schedule: cron(15 18 * * ? *)
       MemorySize: 500
       Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
+
   ScrapeNoobJobsTrigger:
     Type: AWS::Serverless::Function
     Properties:
@@ -51,6 +61,11 @@ Resources:
             Method: POST
       MemorySize: 500
       Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSSendMessagePolicy:
+          QueueName: technoob-worker
+
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
@@ -67,7 +82,6 @@ Resources:
 Globals:
   Function:
     Tracing: Active
-    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
   Api:

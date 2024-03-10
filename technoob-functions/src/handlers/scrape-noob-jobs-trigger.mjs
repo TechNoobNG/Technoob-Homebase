@@ -8,7 +8,7 @@ const expires = config.SCRAPED_JOBS_EXPIRES;
 export const scrapeNoobJobs = async (event, context) => {
     try {
         await scrapeJobs(q, posted, expires);
-        //await scrapeJobsV2();
+        await scrapeJobsV2();
 
         return {
             statusCode: 200,
