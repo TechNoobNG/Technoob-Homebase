@@ -4,11 +4,14 @@ const worker_logs = require('../../models/workerJobLogs');
 const config = require('../../config/config');
 
 const {
-  AWS_ACCESS_KEY_ID,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_REGION,
-  AWS_QUEUE_URL,
-  WORKER_LOG_BATCH_SIZE
+  region: AWS_REGION,
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  queueUrl: AWS_QUEUE_URL
+} = config.AWS_SERVICES.SQS;
+
+const {
+  WORKER_LOG_BATCH_SIZE = 50
 } = config;
 
 const accessKeyId = AWS_ACCESS_KEY_ID;

@@ -8,7 +8,7 @@ Resources:
   DeleteExpiredJobsHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Description: This removes expired jobs from technoob database at scheduled intervals
+      Description: A Lambda function that removes expired jobs from technoob database
       Runtime: nodejs20.x
       Architectures:
       - x86_64
@@ -19,16 +19,11 @@ Resources:
           Properties:
             Schedule: cron(0 * * * ? *)
       MemorySize: 128
-      Timeout: 20
-      Policies:
-      - AWSLambdaBasicExecutionRole
-      - SQSSendMessagePolicy:
-          QueueName: technoob-worker
-
+      Timeout: 100
   ScrapeNoobJobs:
     Type: AWS::Serverless::Function
     Properties:
-      Description: This scrapes jobs using preconfigured scripts at a scheduled interval.
+      Description: A Lambda function that scrapes jobs.
       Runtime: nodejs20.x
       Architectures:
       - x86_64
@@ -40,15 +35,10 @@ Resources:
             Schedule: cron(15 18 * * ? *)
       MemorySize: 500
       Timeout: 300
-      Policies:
-      - AWSLambdaBasicExecutionRole
-      - SQSSendMessagePolicy:
-          QueueName: technoob-worker
-
   ScrapeNoobJobsTrigger:
     Type: AWS::Serverless::Function
     Properties:
-      Description: This scrapes jobs using preconfigured scripts via an http request.
+      Description: A Lambda function triggered by an HTTP event.
       Runtime: nodejs20.x
       Architectures:
       - x86_64
@@ -61,11 +51,6 @@ Resources:
             Method: POST
       MemorySize: 500
       Timeout: 300
-      Policies:
-      - AWSLambdaBasicExecutionRole
-      - SQSSendMessagePolicy:
-          QueueName: technoob-worker
-
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
@@ -82,6 +67,7 @@ Resources:
 Globals:
   Function:
     Tracing: Active
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
   Api:

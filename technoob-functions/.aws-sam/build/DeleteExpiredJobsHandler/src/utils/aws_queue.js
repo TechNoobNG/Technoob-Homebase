@@ -4,7 +4,11 @@ import  config from './config.js';
 import { SQSClient, SendMessageCommand,  } from "@aws-sdk/client-sqs"; 
 const REGION = config.AWS_SERVICES.SQS.region;
 const queueClient = new SQSClient({
-    region: REGION
+    region: REGION,
+    credentials: {
+        accessKeyId: config.AWS_SERVICES.SES.accessKeyId,
+        secretAccessKey: config.AWS_SERVICES.SES.secretAccessKey
+    }
 })
 const queueUrl = config.AWS_SERVICES.SQS.queueUrl;
 
