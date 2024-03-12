@@ -39,7 +39,7 @@ import Table from '../../../components/Table';
 
 
        </div>
-       <div className=' lg:mx-4 p-5 rounded-md bg-white sm:shadow-md w-full '>
+       <div className='p-5 rounded-md bg-white sm:shadow-md w-full '>
          <div className='w-full '>
            <div className='flex flex-col sm:flex-row justify-between w-full'>
              <div>
