@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
 puppeteer.use(StealthPlugin())
+
 const extractIndeedJobs = async function (page) {
     const list = await page.evaluate(() => {
     const listings = [];
@@ -70,6 +71,57 @@ module.exports = {
       await page.type('#text-input-what', searchTag);
 
       await page.click('.yosegi-InlineWhatWhere-primaryButton');
+
+      await page.waitForSelector('.mosaic-provider-jobcards', {
+        timeout: 3000
+      });
+
+      const jobArray = [];
+      let searchResultPage = 1
+
+      while (jobArray.length < q) {
+        const extractedJobsArray = await extractIndeedJobs(page)
+        jobArray.push(...extractedJobsArray)
+        searchResultPage++
+        const nextPageSelector = `a[data-testid="pagination-page-${searchResultPage}"]`
+        const nextPageElement = await page.$(nextPageSelector)
+        if (!nextPageElement) {
+            break;
+        }
+    
+        await page.click(nextPageSelector)
+        await page.waitForSelector('.mosaic-provider-jobcards')
+      }
+    
+      await browser.close();
+
+      return jobArray
+    } catch (error) {
+      if (error.message.includes('mosaic-provider-jobcards')) {
+        throw new Error(`Job not found for searchtag: ${searchTag}`)
+      }
+      throw error
+    }
+  },
+
+  async scrapeJobsJobberman({ searchTag, exp, q }) {
+    try {
+      const browser = await puppeteer.launch({
+        headless: "new",
+        args: [
+          '--no-sandbox',
+          '--disable-gpu'
+        ],
+      });
+      const page = await browser.newPage();
+
+      await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15');
+
+      await page.setViewport({ width: 1080, height: 1024 });
+
+      //https://www.jobberman.com/jobs/software-data?q=backend&experience=mid-level
+
+      await page.goto(`https://www.jobberman.com/jobs?q=${searchTag}&experience=${exp}`, { waitUntil: 'domcontentloaded' });
 
       await page.waitForSelector('.mosaic-provider-jobcards', {
         timeout: 3000
