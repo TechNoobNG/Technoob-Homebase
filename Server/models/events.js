@@ -53,6 +53,10 @@ const events = new Schema({
     },
     stack: {
         type: Schema.Types.Array
+    },
+    host: {
+        type: String,
+        required: true
     }
 
 

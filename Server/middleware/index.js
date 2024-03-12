@@ -5,7 +5,7 @@ const traffic = require('./traffic')
 const redisCache = require('./redisCache')
 const errorHandler = require('./errorHandler')
 const wrapper = require('./wrapper')
-
+const utils = require("./utils")
 module.exports = {
     auth,
     uploadStrategy,
@@ -13,5 +13,6 @@ module.exports = {
     traffic,
     redisCache,
     errorHandler,
-    wrapper
+    wrapper,
+    utils
 }

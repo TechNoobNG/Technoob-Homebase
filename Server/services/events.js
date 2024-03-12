@@ -30,6 +30,10 @@ module.exports = {
                 prompt.price = { $lte: query.price}
             }
 
+            if (query.host) {
+                prompt.host = query.host
+            }
+
             const events = await Events.find(prompt)
                 .skip(skip)
                 .limit(limit);
