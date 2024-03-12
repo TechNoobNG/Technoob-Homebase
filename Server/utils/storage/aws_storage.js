@@ -126,7 +126,6 @@ module.exports = {
             requestId: resp.$metadata.requestId,
             message: `Object was uploaded successfully.`
         }
-
         if (acl === "private") {
             if (!generatedId) {
                 generatedId = uuid.v4()
