@@ -6,7 +6,6 @@ const serverApi = axios.create({
     baseURL:   `${serverBaseURL}/api/v1/`
 });
 
-
 serverApi.defaults.headers.common["Content-Type"] = "application/json";
 
 serverApi.requiresAuth = function (requiresAuth){
