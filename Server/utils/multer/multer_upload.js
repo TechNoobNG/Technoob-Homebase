@@ -32,7 +32,10 @@ module.exports = {
                         type:'images',
                         data: resizedImage,
                         name: fileName,
-                        acl: file.acl || "private"
+                        acl: file.acl || "private",
+                        isRestricted: file.isRestricted,
+                        canAccessedByPublic: file.canAccessedByPublic,
+                        mimetype: file.mimetype
                     });
                 } else {
                     const sizeLimit = file.mimetype === 'application/zip' ? 15 * 1024 * 1024 : 30 * 1024 * 1024;
