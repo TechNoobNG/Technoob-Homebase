@@ -33,7 +33,7 @@ import Table from '../../../components/Table';
      <section>
        <div className=' flex justify-between sm:pl-5 pl-1'>
          <div className='flex flex-col sm:flex-row py-1 sm:py-10 justify-start sm:justify-center items-start sm:items-center '>
-           <h1 className='md:text-4xl text-2xl mr-2'>Hey, Esther-</h1>
+           <h1 className='md:text-4xl text-2xl mr-2'>Hey-</h1>
            <p className=' md:pt-2 pt-[3px] '>Welcome your event's page</p>
          </div>
 

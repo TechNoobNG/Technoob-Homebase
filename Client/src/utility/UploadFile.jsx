@@ -44,8 +44,8 @@ const UploadFile = ({ closeModal }) => {
             }
 
             const abortController = new AbortController();
-          setUploading(true);
-          serverApi.requiresAuth(true)
+            setUploading(true);
+            serverApi.requiresAuth(true)
             const response = await serverApi.post(
                 "/resources/create",
                 payload,
