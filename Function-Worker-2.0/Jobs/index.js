@@ -7,8 +7,9 @@ module.exports = {
             const queue = require('../utils/aws_queue');
             await queue.sendMessage({
                 name: "deleteExpiredJobs",
-                import: "../services/jobs",
-                method: "deleteExpiredJobs"
+                import: "../../services/jobs",
+                method: "deleteExpiredJobs",
+                service: "jobs",
            })
         } catch (err) {
             context.log(err)
@@ -96,8 +97,9 @@ module.exports = {
                     if (uniqueJobsArray.length) {
                         await queue.sendMessage({
                             name: "createScrapedJobs",
-                            import: "../services/jobs",
+                            import: "../../services/jobs",
                             method: "createScrapedJobs",
+                            service: "jobs",
                             data: {
                                 uniqueJobsArray
                             }
@@ -121,8 +123,9 @@ module.exports = {
             const queue = require('../utils/aws_queue');
             await queue.sendMessage({
                 name: "scrapeNoobJobs",
-                import: "../services/jobs",
-                method: "scrapeNoobJobs"
+                import: "../../services/jobs",
+                method: "scrapeNoobJobs",
+                service: "jobs",
            })
         } catch (err) {
             context.log(err)
