@@ -116,10 +116,6 @@ export async function scrapeJobs(q, posted, expires, context) {
             }
 
         }
-        honeybadger.notify({
-            name: "createScrapedJobs",
-            message: "Initiated Job scraping"
-        });
         scraperLogger.complete();
     } catch (error) {
         context.log(error);
@@ -136,10 +132,6 @@ export async function scrapeJobsV2() {
             import: "../services",
             service: "jobs",
             method: "scrapeNoobJobs"
-        });
-        honeybadger.notify({
-            name: "scrapeNoobJobs",
-            message: "Initiated Scrape Noob Jobs"
         });
     } catch (err) {
         context.log(err);

@@ -7,7 +7,8 @@ export async function deleteExpiredJobs() {
     try {
         await queue.sendMessage({
             name: "deleteExpiredJobs",
-            import: "../services/jobs",
+            import: "../../services/jobs",
+            service: "jobs",
             method: "deleteExpiredJobs"
         });
     } catch (err) {
@@ -90,7 +91,8 @@ export async function scrapeJobs(q, posted, expires) {
                 if (uniqueJobsArray.length) {
                     await queue.sendMessage({
                         name: "createScrapedJobs",
-                        import: "../services/jobs",
+                        import: "../../services/jobs",
+                        service: "jobs",
                         method: "createScrapedJobs",
                         data: {
                             uniqueJobsArray
@@ -114,7 +116,7 @@ export async function scrapeJobsV2() {
     try {
         await queue.sendMessage({
             name: "scrapeNoobJobs",
-            import: "../services",
+            import: "../../services/jobs",
             service: "jobs",
             method: "scrapeNoobJobs"
         });
