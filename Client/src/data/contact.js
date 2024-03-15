@@ -40,7 +40,7 @@ export const navLinks = [
   },
   {
     id: "impact",
-    title: "Impact",
+    title: "Our Impacts",
     link: "impact"
   },
   {
