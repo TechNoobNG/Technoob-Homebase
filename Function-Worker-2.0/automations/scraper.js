@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth') 
 puppeteer.use(StealthPlugin())
+
 const extractIndeedJobs = async function (page) {
     const list = await page.evaluate(() => {
       const listings = [];
@@ -130,7 +131,6 @@ module.exports = {
 
       const jobArray = [];
       let searchResultPage = 1
-       
 
       while (jobArray.length < q) {
         const extractedJobsArray = await extractIndeedJobs(page)

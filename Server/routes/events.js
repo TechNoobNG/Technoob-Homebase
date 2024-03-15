@@ -5,7 +5,8 @@ const events = controller.events;
 const middleware = require('../middleware/index');
 
 
-router.get('/all',  middleware.auth.isAuthenticated ,middleware.redisCache.getCache, events.get_all)
+router.get('/all', middleware.auth.isAuthenticated, middleware.redisCache.getCache, events.get_all)
+router.get('/public/all', middleware.utils.filterLandingPageEvents , middleware.redisCache.getCache, events.get_all)
 router.get('/metrics',  middleware.auth.isAuthenticated, events.getMetrics)
 router.get('/get/:id',  middleware.auth.isAuthenticated, events.get)
 router.post('/create',  middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:CreateEvents'),events.create)

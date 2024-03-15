@@ -96,6 +96,7 @@ const extractJobbermanJobs = async function (page) {
           });
         }
       }
+
   });
   return listings;
   });
