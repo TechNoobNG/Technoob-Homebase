@@ -62,7 +62,6 @@ module.exports = {
             const scraperLogger = new scraperLog(stackKeywords,expires,"indeedNG")
 
             for (let keyword of stackKeywords) {
-
                 try {
                     scraperLogger.start(keyword,"initiated")
                     result = await automations.scrapeJobsIndeed({
@@ -94,6 +93,104 @@ module.exports = {
                     });
 
                     let uniqueJobsArray = Array.from(uniqueJobSet, JSON.parse);
+                    if (uniqueJobsArray.length) {
+                        await queue.sendMessage({
+                            name: "createScrapedJobs",
+                            import: "../../services/jobs",
+                            method: "createScrapedJobs",
+                            service: "jobs",
+                            data: {
+                                uniqueJobsArray
+                            }
+                    })}
+                } catch (error) {
+                    scraperLogger.end(keyword,"failed",error.message)
+                    context.log(error)
+                }
+
+            }
+            scraperLogger.complete();
+        } catch (error) {
+            context.log(error)
+            throw error
+        }
+
+    },
+
+    async scrapeJobsJobberman(q, posted, expires,context) {
+        try {
+            const queue = require('../utils/aws_queue');
+            const automations = require('../automations/scraper')
+            const stackKeywords = [
+                "product designer",
+                "ui/ux designer",
+                "product manager",
+                "project manager",
+                "scrum master",
+                "cloud ",
+                "devops ",
+                "backend",
+                "frontend",
+                "android developer",
+                "ios developer",
+                "software engineer",
+                "QA",
+                "fullstack",
+                "customer service",
+                "customer support",
+                
+            ]
+            const allowedContractTypes = ["full-time", "contract","internship","part-time","gig"]
+
+            let result = []
+            let insertJobObj = {}
+            let dataUpload = []
+            const scraperLogger = new scraperLog(stackKeywords,expires,"jobberman")
+            
+            const scrapeJobsJobberman = async (keyword, q, exp) => {
+                return automations.scrapeJobsJobberman({
+                    searchTag: keyword,
+                    q: q * 1,
+                    exp: exp
+                });
+            };
+            
+            for (let keyword of stackKeywords) {
+                try {
+                    scraperLogger.start(keyword,"initiated")
+                    const runner = async (keyword, q) => {
+                        const results = [];
+                        results.push(await scrapeJobsJobberman(keyword, q, "graduate-trainee"));
+                        results.push(await scrapeJobsJobberman(keyword, q, "mid-level"));
+                        return results.flat();
+                    };
+                    result = await runner(keyword,q)
+                    scraperLogger.end(keyword,"completed")
+                    result.forEach((scrapedJob) => {
+                        if (scrapedJob.posted * 1 > 5) {
+                            insertJobObj.title = scrapedJob.title;
+                            insertJobObj.company = scrapedJob.company;
+                            insertJobObj.exp = "N/A";
+                            insertJobObj.location = `${scrapedJob.location}, Nigeria`;
+                            insertJobObj.workplaceType = scrapedJob.workplaceType || "onsite";
+                            insertJobObj.contractType = allowedContractTypes.includes(scrapedJob.type?.toLowerCase()) ?  scrapedJob.type?.toLowerCase() : "full-time";
+                            insertJobObj.datePosted = new Date();
+                            insertJobObj.expiryDate = new Date(insertJobObj.datePosted);
+                            insertJobObj.expiryDate.setDate(insertJobObj.datePosted.getDate() + expires);
+                            insertJobObj.link = scrapedJob.link || "https://ng.indeed.com";
+                            insertJobObj.poster = scrapedJob.poster;
+                            insertJobObj.uploader_id = "64feb85db96fbbd731c42d5f"
+                        }
+    
+                        if (JSON.stringify(insertJobObj) !== '{}') dataUpload.push(insertJobObj);
+                    });
+                    let uniqueJobSet = new Set();
+                    dataUpload.forEach((obj) => {
+                        uniqueJobSet.add(JSON.stringify(obj));
+                    });
+
+                    let uniqueJobsArray = Array.from(uniqueJobSet, JSON.parse);
+                 
                     if (uniqueJobsArray.length) {
                         await queue.sendMessage({
                             name: "createScrapedJobs",

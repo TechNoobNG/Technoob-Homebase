@@ -3,7 +3,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(`./config`)[env];
 
 const technoob = axios.create({
-    baseURL: config.LIVE_BASE_URL || 'https://technoob-staging.azurewebsites.net',
+    baseURL: config.LIVE_BASE_URL || 'https://api.technoob.tech',
     headers: {
         "Authorization": `Bearer ${config.HONEYBADGER_KEY}`,
         "Content-Type": "application/json"
