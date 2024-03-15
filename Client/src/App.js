@@ -98,13 +98,10 @@ function App() {
                 <Route path="/all-resources" element={<AllResources />} />
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
-                <Route path="/impact" element={<Impact />} />
-
                 <Route
                   path="/quizzes-and-competition"
                   element={<QuizzesAndCompetition />}
                 />
-                    
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>

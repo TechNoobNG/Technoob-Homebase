@@ -1,6 +1,6 @@
 import serverApi from "./server";
 
-const uploadFile = async (file, type, params) => {
+const uploadFile = async (file, type) => {
     try {
 
         const formData = new FormData();
@@ -14,7 +14,6 @@ const uploadFile = async (file, type, params) => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                params
             }
         );
 
