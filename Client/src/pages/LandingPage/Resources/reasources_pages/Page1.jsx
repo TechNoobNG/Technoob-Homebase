@@ -48,7 +48,7 @@ const Page1 = () => {
         }
     };
 
-    const deleteResource = async (id) => { 
+    const deleteResource = async (id) => {
         try {
             if (UserProfile.role !== 'admin') {
                 throw new Error('You are not authorized to perform this action');
@@ -150,7 +150,7 @@ const Page1 = () => {
             </div>
             <div className='w-full flex justify-center items-start md:justify-center md:items-center mb-[3rem]'>
                 <form onSubmit={handleClick}
-                      className=' w-[95%] flex flex-col sm:flex-row justify-start md:justify-center items-center gap-6 '>
+                    className=' w-[95%] flex flex-col sm:flex-row justify-start md:justify-center items-center gap-6 '>
                     <div
                         className='flex justify-start items-center border border-[#BDBDBD] sm:w-[80%] h-[54px] rounded-lg bg-transparent pl-7 '>
                         <img src={SearchIcon} alt="icon" className='h-5 w-5'/>

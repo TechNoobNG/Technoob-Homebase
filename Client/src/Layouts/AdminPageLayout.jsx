@@ -8,6 +8,7 @@ import { Routes, Route,} from 'react-router-dom';
 
 import AdminNavBar from '../components/AdminNavBar';
 import AdminSideBar from '../components/AdminSideBar';
+import Quizzes from '../pages/Admin/AdminRoutes/Quizzes';
 
 const AdminPageLayout = () => {
   return (
@@ -31,6 +32,7 @@ const AdminPageLayout = () => {
             <Route path='/admin/Job-Management' element={<JobManagement/>}/>
             <Route path='/admin/Resources-Management' element={<ResourceManagement/>}/>
             <Route path='/admin/Event-Management' element={<EventManagement/>}/>
+            <Route path='/admin/Quizzes' element={<Quizzes/>}/>
           </Routes>
          
         </div>

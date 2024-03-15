@@ -1,32 +1,52 @@
-import React, {useContext, useEffect, useLayoutEffect} from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import "./App.css";
-import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
-import {Footer, NavBar} from "./components/index.js";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { Footer, NavBar } from "./components/index.js";
 
-import {SignUp} from "./pages/Auth";
-import {AboutUs, ContactUs, FindJobs, Home, Resources, UserLogin,} from "./pages/LandingPage";
+import { SignUp } from "./pages/Auth";
+import {
+  AboutUs,
+  ContactUs,
+  FindJobs,
+  Home,
+  Resources,
+  UserLogin,
+} from "./pages/LandingPage";
 
-import {AppContext} from "./AppContext/AppContext";
+import { AppContext } from "./AppContext/AppContext";
 import AdminNavBar from "./components/AdminNavBar";
 import AdminSideBar from "./components/AdminSideBar";
-
+import QuizzesAndCompetition from "./pages/User/QuizzesAndCompetition/index.jsx";
 import DashSelector from "./utility/DashSelector";
+import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
-import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
 import { Impact } from "./pages/LandingPage/Impact/Impact.jsx";
+import {
+  AdminDashboard,
+  EventManagement,
+  JobManagement,
+  ResourceManagement,
+} from "./pages/Admin/AdminRoutes";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Quizzes from "./pages/Admin/AdminRoutes/Quizzes.jsx";
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
-
 function App() {
-  const { isLoggedIn, setIsLoggedIn, setDashboardToggle, dashboardToggle, setUserProfile } =
-    useContext(AppContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    setDashboardToggle,
+    dashboardToggle,
+    setUserProfile,
+  } = useContext(AppContext);
   const { displayToggle, toggleValue } = dashboardToggle;
 
   useEffect(() => {
     const checkUserLogin = sessionStorage.getItem("userData");
-    const checkUserViewPreference = sessionStorage.getItem("viewPreference")
+    const checkUserViewPreference = sessionStorage.getItem("viewPreference");
 
     // const sessionCookie = cookies.get('session')
 
@@ -37,8 +57,8 @@ function App() {
       setIsLoggedIn(false);
     }
 
-    if(checkUserViewPreference) {
-      setDashboardToggle(JSON.parse(checkUserViewPreference))
+    if (checkUserViewPreference) {
+      setDashboardToggle(JSON.parse(checkUserViewPreference));
     }
   }, [isLoggedIn, setDashboardToggle, setIsLoggedIn, setUserProfile]);
 
@@ -53,10 +73,15 @@ function App() {
   };
   return (
     <BrowserRouter>
+      <ToastContainer />
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
+
       {toggleValue === "User Dashboard" ? (
-        <div className="bg-primary w-full overflow-auto relative">
+        <div
+          className="bg-primary w-full overflow-y
+        auto relative"
+        >
           <div className="flex flex-start w-full top-0 lg:fixed z-50">
             <div className="w-full">
               <NavBar />
@@ -75,6 +100,10 @@ function App() {
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
                 <Route path="/impact" element={<Impact />} />
+                <Route
+                  path="/quizzes-and-competition"
+                  element={<QuizzesAndCompetition />}
+                />
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>
@@ -86,28 +115,39 @@ function App() {
         </div>
       ) : (
         <div className="h-full bg-[#f9f9f9] w-full">
-          <div className="flex flex-start h-full w-full top-0  z-50">
-            <div className="w-full h-full">
+          <div className="flex flex-start h-full w-full sticky top-0  z-50">
+            <div className=" w-full h-full">
               <AdminNavBar />
             </div>
           </div>
 
           <div className="flex justify-between h-auto">
-            <div className="hidden sm:block rounded-md shadow-md w-[380px] h-full ">
+            <div className="hidden xl:block rounded-md fixed top-22 left-0 shadow-md w-[360px] h-[100vh]">
               <AdminSideBar />
             </div>
 
-            <div className="bg-[#f9f9f9] w-full grow h-auto pb-16 lg:pr-10 p-5">
+            <div className="bg-[#f9f9f9] xl:ml-[350px] w-full grow h-auto p-5">
               <Routes>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/Job-Management" element={<JobManagement />} />
-                <Route path="/admin/profile" element={<Profile/>} />
+
+                <Route
+                  path="/admin/Job-Management"
+                  element={<JobManagement />}
+                />
+
+                <Route path="/admin/profile" element={<Profile />} />
+
+
                 <Route
                   path="/admin/Resources-Management"
                   element={<ResourceManagement />}
                 />
-                <Route path="/admin/Event-Management" element={<EventManagement />} />
-                
+                <Route
+                  path="/admin/Event-Management"
+                  element={<EventManagement />}
+                />
+                <Route path="/admin/Quizzes" element={<Quizzes />} /> 
+
               </Routes>
             </div>
           </div>
