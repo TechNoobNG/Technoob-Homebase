@@ -90,6 +90,21 @@ const NavBar = () => {
             </ul>
           </div>
 
+        <div className="hidden lg:flex w-[800px] justify-center">
+          <ul className="flex font-normal justify-between gap-8">
+            {navLinks.map((nav, i) => (
+              <li key={nav.id} className={`text-lg hover:text-[#27AE60]`}>
+                <Link
+                  className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} ${active === nav.title ? "text-[#27AE60]" : ""}`}
+                  to={`/${nav.link}`}
+                  onClick={nav.id === 'switch-view'? switchView:handleActive }
+                >
+                  {nav.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
 {/* toggle button */}
         <div className="flex xl:hidden h-full items-center justify-center">

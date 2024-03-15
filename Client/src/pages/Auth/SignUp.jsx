@@ -51,11 +51,11 @@ if(form.Password !== form.ConfirmPassword) alert('Passwords do not match')
 else{
   setLoading(true)
       try {
-        const postUser = await serverApi.post('authenticate/register', raw)
+        const postUser = await fetch("https://api.technoob.tech/api/v1/authenticate/register", requestOptions)
+
         const cookies = postUser.headers.get('Set-Cookie');
         if (cookies) {
           const cookie = cookies.split(';')[0].split('=')[1];
-          console.log("cookie",cookie)
           localStorage.setItem('connect-sid', cookie);
           setIsLoggedIn(true);
           navigate('/Dashboard')
@@ -67,7 +67,6 @@ else{
         if(result.status === 'success') navigate('/');
 
       } catch (error) {
-        console.log('this is the error from register',error)
         setIsLoggedIn(false)
       }finally{
         setLoading(false);
