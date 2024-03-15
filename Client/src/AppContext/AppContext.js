@@ -17,8 +17,13 @@ const AppProvider = ({ children }) => {
         toggleValue: "User Dashboard"
     });
 
+    const storedUser =
+      typeof window !== "undefined"
+        ? JSON.parse(sessionStorage.getItem("userData"))
+            : null;
 
-    
+    const [userData, setUserData] = useState(storedUser);
+
     return (
         <AppContext.Provider
         value={{
@@ -31,7 +36,9 @@ const AppProvider = ({ children }) => {
             isAdmin,
             setIsAdmin,
             dashboardToggle,
-            setDashboardToggle
+            setDashboardToggle,
+                userData,
+            setUserData
         }}
         >
         {children}

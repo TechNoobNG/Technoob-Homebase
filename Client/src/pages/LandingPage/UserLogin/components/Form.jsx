@@ -3,17 +3,19 @@ import img from "../img/quino-al-xhGMQ_nYWqU-unsplash 1.png";
 import {useNavigate} from "react-router-dom";
 import {AppContext} from "../../../../AppContext/AppContext";
 import serverApi from "../../../../utility/server";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import showToast from "../../../../utility/Toast";
 
 const Form = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
-    UserName: null,
-    Password: null,
-    error: null,
+    UserName: '',
+    Password: '',
   });
   const {setIsLoggedIn, setUserProfile, setDashboardToggle} =
       useContext(AppContext);
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     setUser({...user, [e.target.name]: e.target.value});
@@ -25,11 +27,13 @@ const Form = () => {
     });
 
     const abortController = new AbortController();
-
+    setLoading(true)
     try {
-
-      const response = await serverApi.post(
-          '/authenticate/login',
+      serverApi.requiresAuth(true);
+      const {data:response} = await showToast({
+        type: "promise",
+        promise: serverApi.post(
+          '/authenticate/login/',
           raw,
           {
             signal: abortController.signal,
@@ -37,32 +41,33 @@ const Form = () => {
               'content-type': 'application/json',
             }
           }
-      )
-      console.log(response);
-    
-      if (response.status === 200) {
-        navigate("/Home");
-        const responseData = response.data;
-        const userInfo = {
-          ...responseData.data,
-        };
-        setUserProfile(userInfo.user);
-        setIsLoggedIn(true);
-        sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
-        sessionStorage.setItem("user_token", response.data.token);
-        //localStorage.setItem("user", JSON.stringify(userInfo));
-        if (userInfo.user.role === "admin") {
-          setDashboardToggle({
-            displayToggle: true,
-            toggleValue: "User Dashboard",
-          });
-        }
+        )
+      })
+
+
+      const responseData = response?.data;
+      const token = response?.token;
+      const userInfo = {
+        ...responseData,
+      };
+      setUserProfile(userInfo.user);
+      setLoading(false)
+      setIsLoggedIn(true);
+      sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
+      sessionStorage.setItem("user_token", token);
+      if (userInfo.user.role === "admin") {
+        setDashboardToggle({
+          displayToggle: true,
+          toggleValue: "User Dashboard",
+        });
       }
-    
     } catch (error) {
-      setUser({ error: error.response?.data?.message || "Failed, Please contact admin", UserName: "", Password: "" });
+      setUser({UserName: "", Password: "" });
+      setLoading(false)
+    } finally{
+      setLoading(false)
     }
-    
+
   }
     const submit = async (e) => {
       e.preventDefault();
@@ -70,14 +75,16 @@ const Form = () => {
     };
 
     const handleClick = () => {
-      navigate("/Sign-Up");
+      navigate("/register");
     };
 
     return (
         <section className=" md:flex flex-auto w-screen block md:px-20 md:py-5 nun mb-20 justify-center">
+          <ToastContainer />
           <img src={img} alt="" className=" lg:block hidden w-[50%]"/>
           <form
               action="get"
+              onSubmit={submit}
               className="block bgcontact lg:p-10 p-5 rounded lg:w-[50%] w-full"
           >
             <label
@@ -90,7 +97,7 @@ const Form = () => {
             <input
                 type="username"
                 name="UserName"
-                value={user.UserName}
+                required
                 placeholder="Username"
                 className=" w-[100%] rounded-xl m-1 border px-5 py-4 my-10 outline-0 ring-1 bg-white"
                 onChange={handleChange}
@@ -104,9 +111,9 @@ const Form = () => {
             <br/>
             <input
                 type="password"
+                required
                 name="Password"
                 placeholder="Password"
-                value={user.Password}
                 className=" w-[100%] rounded-xl m-1 border px-5 py-4 my-10 outline-0 ring-1 bg-white"
                 autoComplete="current-password"
                 onChange={handleChange}
@@ -119,9 +126,9 @@ const Form = () => {
             <div className=" lg:flex">
               <button
                   className=" bg-tblue text-twhite py-[14px] lg:w-[50%] w-[100%] rounded"
-                  onClick={submit}
+
               >
-                Login
+               {loading ? "Loading..." : "Login"}
               </button>
               {" "}
               <p className="py-5 lg:w-[10%] w-[100%] text-center">Or</p>
