@@ -12,7 +12,7 @@ export const ProgrammesSlider = () => {
   const fetchData = async () => {
     try {
       const res = await serverApi.get("/events/public/all");
-      
+
       if(res.status === 200){
         setProgrammes(res.data.data);
       }
@@ -26,7 +26,6 @@ export const ProgrammesSlider = () => {
     fetchData();
   }, []);
 
-  console.log(programmes);
 
   return (
     <div className="w-full h-auto flex flex-col items-center justify-center  ">
