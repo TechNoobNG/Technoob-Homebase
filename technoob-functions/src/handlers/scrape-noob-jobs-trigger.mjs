@@ -1,5 +1,5 @@
 import config from '../utils/config.js';
-import { scrapeJobs, scrapeJobsV2 } from '../Jobs/index.js';
+import { scrapeJobs, scrapeJobsV2, scrapeJobbermanJobs } from '../Jobs/index.js';
 
 const q = config.SCRAPER_QUANTITY;
 const posted = config.SCRAPER_OLDEST_JOB_FETCH || 4;
@@ -8,6 +8,7 @@ const expires = config.SCRAPED_JOBS_EXPIRES;
 export const scrapeNoobJobs = async (event, context) => {
     try {
         await scrapeJobs(q, posted, expires);
+        await scrapeJobbermanJobs(q, posted, expires)
         await scrapeJobsV2();
 
         return {

@@ -49,6 +49,57 @@ const extractIndeedJobs = async function (page) {
   return list
 }
 
+
+const extractJobbermanJobs = async function (page) {
+  const list = await page.evaluate(() => {
+    const listings = [];
+    const liList = document.querySelectorAll('div[data-cy="listing-cards-components"]');
+    liList.forEach((jobElement) => {
+      if (jobElement.className) {
+        const title = jobElement.querySelector('a[title]')?.textContent.trim();
+        const company = jobElement.querySelector('p.text-link-500 a')?.textContent
+          .replace("(Third Party Recruitment)", "")
+          .trim();
+        const tagsArray = Array.from(document.querySelectorAll('.flex-wrap.text-gray-500 span'));
+        const location = tagsArray[0]?.textContent
+          .replace("(Work From Home)", "")
+          .trim();;
+        const type = tagsArray[1]?.textContent
+          .replace("Full Time","full-time")
+          .trim();
+        const link = jobElement.querySelector('a[href]').href;
+
+        const description = jobElement.querySelector('.flex.flex-col.flex-grow-0.flex-shrink-0.justify-start.items-center.px-5.py-3.border-t.border-gray-300.md\\:flex-row.basis-full p.text-sm.font-normal.text-gray-700.md\\:text-gray-500.md\\:pl-5')?.textContent.trim();
+        const poster = 'https://technoob-dev-public-read.s3.amazonaws.com/image/2024-03-15T05-58-42.251Z-jobberman.webp'
+        const timeMapping = {
+          "1 month ago": "30",
+          "Today": "1",
+          "Yesterday": "2",
+          "1 week ago": "7",
+          "2 weeks ago": "14",
+          "3 weeks ago": "21"
+        };
+        let posted = (jobElement.querySelector('.flex-row.items-start.items-center p')?.textContent || '').trim();
+        posted = timeMapping[posted] || posted;
+        if (title && title.length > 0 && company && company.length > 0 && description && description.length > 0) {
+          listings.push({
+            title,
+            company,
+            location,
+            type,
+            description,
+            link,
+            poster,
+            posted
+          });
+        }
+      }
+  });
+  return listings;
+  });
+return list
+}
+
 module.exports = {
   async scrapeJobsIndeed({ searchTag, q = 5 }) {
     try {
@@ -105,6 +156,60 @@ module.exports = {
       throw error
     }
   },
+  async scrapeJobsJobberman({ searchTag, exp, q }) {
+    try {
+      const browser = await puppeteer.launch({
+        headless: "new",
+        args: [
+          '--no-sandbox',
+          '--disable-gpu'
+        ],
+      });
+      const page = await browser.newPage();
 
+      await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15');
+
+      await page.setViewport({ width: 1080, height: 1024 });
+
+      await page.goto(`https://www.jobberman.com/jobs?q=${searchTag}&experience=${exp}`, { waitUntil: 'domcontentloaded' });
+
+      await page.waitForSelector('#onetrust-accept-btn-handler', { visible: true }) 
+      await page.evaluate(() => {
+        document.querySelector('#onetrust-accept-btn-handler').scrollIntoView();
+      });
+  
+      await page.waitForTimeout(500);
+      await page.click('#onetrust-accept-btn-handler');
+      await page.waitForSelector('div[data-cy="listing-cards-components"]', {
+        timeout: 3000
+      });
+
+      const jobArray = [];
+      let searchResultPage = 1
+
+      while (jobArray.length < q) {
+        const extractedJobsArray = await extractJobbermanJobs(page)
+        jobArray.push(...extractedJobsArray)
+        searchResultPage++
+        const nextPageSelector = 'a[aria-label="Next »"]'
+        const nextPageElement = await page.$(nextPageSelector)
+        if (!nextPageElement) {
+            break;
+        }
+    
+        await page.click(nextPageSelector)
+        await page.waitForSelector('div[data-cy="listing-cards-components"]')
+      }
+    
+      await browser.close();
+
+      return jobArray
+    } catch (error) {
+      if (error.message.includes('div[data-cy="listing-cards-components"]')) {
+        throw new Error(`Job not found for searchtag: ${searchTag}`)
+      }
+      throw error
+    }
+  },
 }
 
