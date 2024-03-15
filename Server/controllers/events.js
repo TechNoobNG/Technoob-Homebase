@@ -64,10 +64,12 @@ module.exports = {
 
         try {
             const event = await events.create(payload)
-            res.status(201).json({
+            return res.ok({
                 status: "success",
                 message: `event created`,
-                data: event
+                data: event,
+                statusCode: 201
+
             })
         } catch (error) {
             res.fail({
