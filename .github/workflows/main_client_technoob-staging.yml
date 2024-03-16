@@ -35,6 +35,18 @@ jobs:
           switches: -avzr --delete
           path: ./*
           remote_path: /var/www/technoob/
-          remote_host: "${{ secrets.CLIENT_EC2_PUBLIC_IP }}"
+          remote_host: "18.134.16.113"
           remote_user: ubuntu
           remote_key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
+
+
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: "18.134.16.113"
+          username: "ubuntu"
+          key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
+          script: |
+            cd ~/var/www/technoob/Client
+            npm i -g serve
+            serve -p 3000 build/
