@@ -27,58 +27,61 @@ const EventMng = () => {
       style: "text-[#D4C433] bg-yellow-100",
     },
   ];
+  
+   return (
 
-  return (
-    <section>
-      <div className=" flex justify-between ">
-      <div className="flex  sm:flex-row mb-5 md:mb-0 py-1 sm:py-5 justify-start sm:justify-center items-start sm:items-center ">
-          <h1 className=" md:text-3xl text-xl font-semibold">Hey, {UserProfile.firstname} -</h1>
-          <p className="md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black">
-            Welcome to the resource page.
-          </p>
-        </div>
-      </div>
-    
-      <div className="p-5 rounded-md bg-white sm:shadow-md w-full ">
-        <div className="w-full ">
-          <div className="flex flex-col sm:flex-row justify-between w-full">
-            <div>
-              <h1 className="text-xl font-bold sm:font-normal sm:ml-5 lg:py-4 sm:text-[#3A3A3A] sm:text-4xl">
-                Event Management
-              </h1>
-            </div>
-            <div className="flex items-center gap-3 m-4">
-              <input
-                type="text"
-                placeholder="Search resources"
-                className="placeholder:italic placeholder:text-slate-400 border rounded-md w-[423px] focus:outline-none text-base h-[100%] p-3 mr-2 focus:border-none focus:ring-[0] "
-              />
-              <img
-                src={filtersearch}
-                alt="filter"
-                className="w-[24px] h-[24px]"
-              />
-            </div>
-          </div>
+     <section>
+       <div className=' flex justify-between sm:pl-5 pl-1'>
+         <div className='flex flex-col sm:flex-row py-1 sm:py-10 justify-start sm:justify-center items-start sm:items-center '>
+           <h1 className='md:text-4xl text-2xl mr-2'>Hey-</h1>
+           <p className=' md:pt-2 pt-[3px] '>Welcome your event's page</p>
+         </div>
 
-          <div className="mt-10">
-            <p className="text-2xl text-[#3a3a3a] ">Statistics</p>
-            <p className="text-base text-[#3a3a3a] opacity-50 ">See Metrics</p>
 
-            <div className="flex mt-3 p-3 gap-3 rounded-sm flex-wrap">
-              <div className="flex w-[100%] justify-start flex-wrap gap-4 rounded-sm">
-                {statistics.map((opt, i) => (
-                  <div
-                    key={i}
-                    className=" px-3 pt-5 pb-6 rounded-lg w-[25rem] shadow-md lg:w-[40%] lg:mr-3 "
-                  >
-                    <p className=" pt-3 pb-6 px-2 flex items-center justify-start text-xl text-[#71717A] w-auto">
-                      {opt.name}{" "}
-                      <span
-                        className={`${opt.style} text-2xl p-2 rounded-full ml-3 mt-[-2px]`}
-                      >
-                        {opt.icon}
-                      </span>{" "}
+       </div>
+       <div className='p-5 rounded-md bg-white sm:shadow-md w-full '>
+         <div className='w-full '>
+           <div className='flex flex-col sm:flex-row justify-between w-full'>
+             <div>
+               <h1 className='text-xl font-bold sm:font-normal sm:ml-5 lg:py-4 sm:text-[#3A3A3A] sm:text-4xl'>Event Management</h1>
+             </div>
+             <div className='flex items-center gap-3 m-4'>
+               <input 
+                 type="text"
+                 placeholder='Search resources'
+                 className='placeholder:italic placeholder:text-slate-400 border rounded-md w-[423px] focus:outline-none text-base h-[100%] p-3 mr-2 focus:border-none focus:ring-[0] ' 
+                 />
+               <img src={filtersearch} alt="filter" className='w-[24px] h-[24px]'/>
+             </div>
+           </div>
+
+           <div className='mt-10'>
+             <p className='text-2xl text-[#3a3a3a] '>Statistics</p>
+             <p className='text-base text-[#3a3a3a] opacity-50 '>See Metrics</p>
+
+             <div className='flex mt-3 p-3 gap-3 bg-slate-50 rounded-sm flex-wrap'>
+             <div className="flex w-[100%] justify-start flex-wrap gap-4 rounded-sm">
+              {statistics.map((opt, i) => (
+                <div
+                  key={i}
+                  className=" px-3 pt-5 pb-6 rounded-lg w-[25rem] shadow-md lg:w-[40%] lg:mr-3 "
+                >
+                  <p className=" pt-3 pb-6 px-2 flex items-center justify-start text-xl text-[#71717A] w-auto">
+                    {opt.name}{" "}
+                    <span
+                      className={`${opt.style} text-2xl p-2 rounded-full ml-3 mt-[-2px]`}
+                    >
+                      {opt.icon}
+                    </span>{" "}
+                  </p>
+                  <div className="flex justify-start items-end w-full">
+                    <p className="p-2 mr-6 text-xl">
+                      <span className="font-bold text-3xl">{opt.amount}</span>{" "}
+                      {opt.amtlabel}{" "}
+                    </p>
+                    <p className=" p-2 text-[#35BA83] flex gap-4 items-center">
+                      <span className="text-xl ">{opt.icon2}</span> {opt.tracks}
+
                     </p>
                     <div className="flex justify-start items-end w-full">
                       <p className="p-2 mr-6 text-xl">

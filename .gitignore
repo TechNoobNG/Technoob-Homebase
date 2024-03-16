@@ -41,3 +41,5 @@ email.html
 Server/test.js
 Server/.cache
 
+node_modules
+Function-Worker-2.0/local.settings.json

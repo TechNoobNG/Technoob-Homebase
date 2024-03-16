@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import _ from "lodash";
 import Button from "../../../utility/button";
 import { AppContext } from "../../../AppContext/AppContext";
@@ -8,16 +8,21 @@ import showToast from "../../../utility/Toast";
 import { emptyProfile } from "../../../data/assets/asset/index";
 import { avatar } from "../../../data/assets";
 import ProfileUpdateNotification from "../../../utility/ProfileUpdateNotification";
+import  ImageCropper  from "../../../utility/imageCropper/ImageCropper";
 import CountryDropdown from "../../../utility/CountryDropdown";
 import { AiFillPlusCircle } from "react-icons/ai";
 const Profile = () => {
   // const [roles, setroles] = useState(false);
   // const [permission, setpermission] = useState(true);
   const [edit, setEdit] = useState(false);
+  const [editProfilePicture, setEditProfilePicture] = useState(false);
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [updateParams, setupdateParams] = useState({});
   const [displayConfirmation, setDisplayConfirmation] = useState(false);
-  // const [firstVisit, setFirstVisit] = useState(true);
+  const [displayProfileImageEditModule, setDisplayProfileImageEditModule] = useState(false);
+  const [imageUrl, setImageUrl] = useState(false)
+  const selectImage = useRef(null);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -134,6 +139,14 @@ const Profile = () => {
     }
   };
 
+  const onSelectImage = (e) => {
+    const file = e.target.files[0];
+    if (e.target.files && e.target.files.length > 0) {
+      setImage(file);
+      setImageUrl(URL.createObjectURL(file))
+      setDisplayProfileImageEditModule(true)
+    }
+  }
   useEffect(() => {
     fetchData();
   }, []);
@@ -149,19 +162,46 @@ const Profile = () => {
           sendUpdateRequest={sendUpdateRequest}
         />
       )}
+      {displayProfileImageEditModule && (
+        <ImageCropper
+          title="Crop Image"
+          image={image}
+          setImageUrl={setImageUrl}
+          imageUrl={imageUrl}
+          updateInfo={updateParams}
+          setDisplayProfileImageEditModule={setDisplayProfileImageEditModule}
+          sendUpdateRequest={sendUpdateRequest}
+          displayProfileImageEditModule={displayProfileImageEditModule}
+          setImage={setImage}
+          defaultAspect={1}
+          isCircular={true}
+          allowAspectToggle={false}
+        />
+      )}
       <ToastContainer />
       <div className="bg-slate-50 flex rounded-md flex-col min-h-[100vh] md:gap-8">
         <div className="flex-1 flex flex-col rounded-md max-h-[70vh]">
           <div className="bg-gradient-to-r from-green-400 to-indigo-500 rounded-t-md w-full h-[80px] md:h-[25vh] "></div>
           <div className=" pt-20 pb-10 md:px-20 h-full w-full flex max-sm:gap-4 max-sm:flex-col rounded-b-md bg-white relative">
-            <div className=" absolute -top-[20%] max-sm:left-3 sm:-top-[30%] w-[96px] h-[96px] sm:w-32 sm:h-32 rounded-full bg-white border flex items-center justify-center cursor-pointer">
-              <img
-                src={userData?.photo || avatar}
-                alt="avatar"
-                className="rounded-full w-[95%] h-[95%] object-cover p-1 relative"
+            <button
+              onClick={() => selectImage.current.click()}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                ref={selectImage}
+                onChange={onSelectImage}
               />
-              <AiFillPlusCircle className="absolute bottom-0 right-3 text-2xl text-tblue" />
-            </div>
+              <div className=" absolute -top-[20%] max-sm:left-3 sm:-top-[30%] w-[96px] h-[96px] sm:w-32 sm:h-32 rounded-full bg-white border flex items-center justify-center cursor-pointer">
+                <img
+                  src={userData?.photo || avatar}
+                  alt="avatar"
+                  className="rounded-full w-[95%] h-[95%] object-cover p-1 relative"
+                />
+                <AiFillPlusCircle className="absolute bottom-0 right-3 text-2xl text-tblue" />
+              </div>
+            </button>
             <div className="flex-[1.4] flex flex-col md:gap-3">
               <div className="flex items-center">
                 <h1 className="font-bold text-2xl mr-4 text-black">
@@ -233,7 +273,7 @@ const Profile = () => {
 
         {!edit && (
           <>
-            <div className="flex-1 flex flex-col gap-4 rounded-md h-full bg-white md:px-6 py-8">
+            <div className="flex-1 flex flex-col gap-4 rounded-md h-full bg-white md:px-6 py-5 pl-2">
               <UserProfile userData={userData} />
             </div>
           </>
@@ -361,7 +401,7 @@ const Profile = () => {
 const UserProfile = ({ userData }) => {
   return (
     <div className="pb-5 md:px-6 flex bg-white rounded-md">
-      <div className="py-10 flex flex-col w-full">
+      <div className="pl-2 py-10 flex flex-col w-full">
         <div className="max-sm:flex-col max-sm:gap-3 md:pl-20 flex justify-between items-start w-full">
           <label
             htmlFor="name"
@@ -396,7 +436,7 @@ const UserProfile = ({ userData }) => {
           >
             Tech Stack
           </label>
-          <div className="md:flex-[2] w-full flex gap-2 mb-10">
+          <div className="md:flex-[2] w-full flex flex-wrap gap-2 mb-10 max-w-screen">
             {userData?.stack &&
               userData.stack.map((tech, index) => (
                 <div
