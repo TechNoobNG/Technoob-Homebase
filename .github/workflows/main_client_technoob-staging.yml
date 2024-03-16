@@ -3,7 +3,7 @@ name: Client Deployment to Frontend Prod
 on:
   push:
     branches:
-      - dev_client
+      - Ohiani-patch-4
 
 defaults:
   run:
