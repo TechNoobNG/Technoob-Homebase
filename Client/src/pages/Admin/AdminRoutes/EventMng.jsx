@@ -1,12 +1,12 @@
-import React from 'react'
- import {  filtersearch } from '../../../data/assets'
+import React, { useContext } from "react";
+import { filtersearch } from "../../../data/assets";
 
- 
 import { MdEventAvailable, MdEvent } from "react-icons/md";
-import Table from '../../../components/Table';
+import Table from "../../../components/Table";
+import { AppContext } from "../../../AppContext/AppContext";
 
- const EventMng = () => {
-
+const EventMng = () => {
+  const { UserProfile } = useContext(AppContext);
   const data = null;
   const statistics = [
     {
@@ -23,11 +23,11 @@ import Table from '../../../components/Table';
       amount: 4,
       amtlabel: "Events",
       // tracks: "203 Downloads",
-      icon: <MdEvent/>,
+      icon: <MdEvent />,
       style: "text-[#D4C433] bg-yellow-100",
     },
   ];
-
+  
    return (
 
      <section>
@@ -81,14 +81,23 @@ import Table from '../../../components/Table';
                     </p>
                     <p className=" p-2 text-[#35BA83] flex gap-4 items-center">
                       <span className="text-xl ">{opt.icon2}</span> {opt.tracks}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-             </div>
 
-             {/* <div className='mt-10 w-full flex'>
+                    </p>
+                    <div className="flex justify-start items-end w-full">
+                      <p className="p-2 mr-6 text-xl">
+                        <span className="font-bold text-3xl">{opt.amount}</span>{" "}
+                        {opt.amtlabel}{" "}
+                      </p>
+                      <p className=" p-2 text-[#35BA83] flex gap-4 items-center justify-center">
+                        {/* <span className={`${opt.style} text-xl `}>{opt.icon}</span> {opt.tracks} */}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* <div className='mt-10 w-full flex'>
                <div className='flex flex-col w-full sm:mx-8'>
                  <div>
                    <div className='mb-3'> 
@@ -143,29 +152,27 @@ import Table from '../../../components/Table';
 
                </div>
              </div> */}
-              <div className="mt-16">
-            <div className=" flex justify-between">
-              <div>
-                <h2 className=" text-xl font-semibold pt-4">Recent Jobs</h2>
-                <p className=" text-lg text-[#747272] mb-1">
-                  See list of resent jobs posted
-                </p>
+            <div className="mt-16">
+              <div className=" flex justify-between">
+                <div>
+                  <h2 className=" text-xl font-semibold pt-4">Recent Jobs</h2>
+                  <p className=" text-lg text-[#747272] mb-1">
+                    See list of resent jobs posted
+                  </p>
+                </div>
+                <button className="float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm">
+                  See all
+                </button>
               </div>
-              <button className="float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm">
-                See all
-              </button>
-            </div>
-            <div className="flex overflow-x-auto">
-              {data ? (<Table  data={data} />) : ''}
+              <div className="flex overflow-x-auto">
+                {data ? <Table data={data} /> : ""}
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
-           </div>
-         </div>
-
-       </div>
-     </section>
-   )
- }
-
- export default EventMng
+export default EventMng;
