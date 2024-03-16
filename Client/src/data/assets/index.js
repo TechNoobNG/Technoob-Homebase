@@ -6,6 +6,7 @@ import Hero from '../assets/Hero.png';
 import menu from '../assets/menu.png';
 import close from '../assets/close.png';
 import Vector1 from '../assets/Vector1.png';
+import impact from '../assets/impact.png';
 
 import icon1 from '../assets/icon1.png';
 import icon2 from '../assets/icon2.png';
@@ -36,7 +37,7 @@ export {
     image3,
     image4,
     image5,
-
+    impact,
 
     Hero,
     menu,

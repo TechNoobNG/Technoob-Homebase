@@ -80,8 +80,8 @@ const NavBar = () => {
 
         <div className="hidden lg:flex w-[800px] justify-center">
           <ul className="flex font-normal justify-between gap-8">
-            {navLinks.map((nav, i) => (
-              <li key={i} className={`text-lg hover:text-[#27AE60]`}>
+            {navLinks.map((nav) => (
+              <li key={nav.id} className={`text-lg hover:text-[#27AE60]`}>
                 <Link
                   className={`${UserProfile?.role !== "admin" && nav.id === 'switch-view' ? "hidden":""} ${active === nav.title ? "text-[#27AE60]" : ""}`}
                   to={`/${nav.link}`}
