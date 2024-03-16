@@ -1,10 +1,17 @@
+import { useNavigate } from "react-router-dom";
 import partnership from "../../../data/assets/partnership.png";
 
  export const Partnerships = () => {
+
+  const navigate = useNavigate();
+
+  const navigateToContact = () => {
+    navigate('/Contact-Us')
+  }
    return (
      <div className="flex  justify-center px-5 lg:px-48 pb-20">
        <div className="flex flex-col justify-center w-full ">
-         <h2 className="text-tblue nun text-2xl lg:text-6xl font-black ">
+         <h2 className="text-tblue nun text-2xl my-6 lg:my-0 lg:text-6xl font-black ">
            Partner <span className="text-tgreen">With Us</span>
          </h2>
          <div className="py-3">
@@ -17,6 +24,7 @@ import partnership from "../../../data/assets/partnership.png";
          </p>
          <button
            className={` w-full lg:w-[201px] h-[54px] text-base font-[400] bg-[#5E7CE8] rounded-md text-[#F2F2F2] py-4 px-3.5`}
+           onClick={navigateToContact}
          >
            Contact Us
          </button>
