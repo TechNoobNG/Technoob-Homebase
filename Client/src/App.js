@@ -21,6 +21,7 @@ import DashSelector from "./utility/DashSelector";
 import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
+import { Impact } from "./pages/LandingPage/Impact/Impact.jsx";
 import {
   AdminDashboard,
   EventManagement,
@@ -98,6 +99,7 @@ function App() {
                 <Route path="/all-resources" element={<AllResources />} />
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
+                <Route path="/impact" element={<Impact />} />
                 <Route
                   path="/quizzes-and-competition"
                   element={<QuizzesAndCompetition />}
