@@ -36,7 +36,7 @@ jobs:
           path: ./*
           remote_path: /var/www/technoob/
           remote_host: "18.134.16.113"
-          remote_user: ubuntu
+          remote_user: root
           remote_key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
 
 
@@ -44,7 +44,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: "18.134.16.113"
-          username: "ubuntu"
+          username: "root"
           key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
           script: |
             cd ~/var/www/technoob/Client
