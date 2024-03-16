@@ -1,4 +1,4 @@
-name: Client Deployment to Frontend Prod
+name: Client Deployment to Frontend
 
 on:
   push:
