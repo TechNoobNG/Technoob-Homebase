@@ -3,7 +3,7 @@ name: Client Deployment to Frontend Prod
 on:
   push:
     branches:
-      - main_client
+      - dev_client
 
 defaults:
   run:
