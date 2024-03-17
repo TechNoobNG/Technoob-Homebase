@@ -3,7 +3,7 @@ name: Client Deployment to Frontend Prod
 on:
   push:
     branches:
-      - Ohiani-patch-4
+      - main_client
 
 defaults:
   run:
@@ -35,16 +35,16 @@ jobs:
           switches: -avzr --delete
           path: ./*
           remote_path: /var/www/technoob/
-          remote_host: "18.134.16.113"
-          remote_user: ubuntu
+          remote_host: "${{ secrets.CLIENT_EC2_PUBLIC_IP }}"
+          remote_user: "${{ secrets.CLIENT_EC2_USER }}"
           remote_key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
 
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
-          host: "18.134.16.113"
-          username: "ubuntu"
+          host: "${{ secrets.CLIENT_EC2_PUBLIC_IP }}"
+          username: "${{ secrets.CLIENT_EC2_USER }}"
           key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
           script: |
             cd /var/www/technoob/Client
