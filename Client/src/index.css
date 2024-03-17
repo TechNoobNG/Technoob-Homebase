@@ -96,6 +96,7 @@
   height: 7px; /* Adjust the height of the scrollbar track */
   cursor: pointer;
 }
+
 .no-scrollbar::-webkit-scrollbar {
   -ms-overflow-style: none; 
   scrollbar-width: none;

@@ -25,9 +25,9 @@ function FileUploadSingle({name, setlink, type, setUploading, setFileInfo, setIm
                 const params = {
                     canAccessedByPublic: true
                 }
-                if (type === "image") {
-                    params.acl = "public"
-                }
+                // if (type === "image") {
+                //     params.acl = "public"
+                // }
                 const response = await uploadFile(selectedFile, type,params);
                 if (response) {
                     const fileLink = response.data.url;

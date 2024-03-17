@@ -26,8 +26,6 @@ export const ProgrammesSlider = () => {
     fetchData();
   }, []);
 
-  console.log(programmes);
-
   return (
     <div className="w-full h-auto flex flex-col items-center justify-center  ">
       <h2 className="text-tblue uni text-2xl lg:text-5xl font-black ">
