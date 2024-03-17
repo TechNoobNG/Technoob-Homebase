@@ -48,4 +48,5 @@ jobs:
           key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
           script: |
             cd /var/www/technoob/Client
-            serve -p 3000 build/
+            pm2 restart 0
+            # pm2 serve build/ 3000 --name "react-build" --spa
