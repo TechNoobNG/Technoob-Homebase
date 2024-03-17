@@ -21,16 +21,11 @@ import DashSelector from "./utility/DashSelector";
 import ProfileUpdateNotification from "./utility/ProfileUpdateNotification";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
-import { Impact } from "./pages/LandingPage/Impact/Impact.jsx";
-import {
-  AdminDashboard,
-  EventManagement,
-  JobManagement,
-  ResourceManagement,
-} from "./pages/Admin/AdminRoutes";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Quizzes from "./pages/Admin/AdminRoutes/Quizzes.jsx";
+import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Impact } from "./pages/LandingPage/Impact/Impact.jsx";
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
