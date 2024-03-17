@@ -47,6 +47,5 @@ jobs:
           username: "ubuntu"
           key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
           script: |
-            cd ~/var/www/technoob/Client
-            npm i -g serve
+            cd /var/www/technoob/Client
             serve -p 3000 build/
