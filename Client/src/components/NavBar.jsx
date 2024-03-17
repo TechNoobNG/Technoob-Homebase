@@ -90,7 +90,6 @@ const NavBar = () => {
             </ul>
           </div>
 
-
 {/* toggle button */}
         <div className="flex xl:hidden h-full items-center justify-center">
           <img

@@ -17,6 +17,7 @@ import Profile from "./pages/Admin/AdminRoutes/Profile";
 import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Impact } from "./pages/LandingPage/Impact/Impact.jsx";
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
@@ -79,6 +80,7 @@ function App() {
                 <Route path="/all-resources" element={<AllResources />} />
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
+                <Route path="/impact" element={<Impact />} />
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>
