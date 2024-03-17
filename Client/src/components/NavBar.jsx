@@ -152,7 +152,7 @@ const NavBar = () => {
 
 
 {/* welcom button */}
-          {isLoggedIn ? (
+        {isLoggedIn ? (
           <div className="hidden xl:flex gap-2 items-center">
             <div className="hidden lg:flex items-center gap-2 text-center cursor-pointer" onClick={handleLoggout}>
               <div className="flex">
@@ -171,15 +171,15 @@ const NavBar = () => {
           ) : (
           <div className="hidden gap-2 xl:flex">
             <Link to={"/login"}>
-            <button
+            {/* <button
             name={"Login"}
             className="w-[130px] sm:w-[130px] h-[54px] text-[#111111] bg-[#EFF0F5] rounded-md py-4 px-3.5 text-base font-[600]"
             >
               Login
-            </button>
+            </button> */}
             </Link>
             <Link to={"/register"}>
-            <Button name={"Get Started"} />
+            {/* <Button name={"Get Started"} /> */}
             </Link>
           </div>
           )}
