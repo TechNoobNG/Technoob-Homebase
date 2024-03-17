@@ -124,23 +124,24 @@ const NavBar = () => {
 
             <div className="">
 
-          { isLoggedIn ? <button
-              name={"Logout"}
-              onClick={handleLoggout}
-              className=" bg-red-400 hover:bg-red-500 text-white font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
-              >
-               Logout
-            </button> :
+                {isLoggedIn ?
+                  <button
+                    name={"Logout"}
+                    onClick={handleLoggout}
+                    className=" bg-red-400 hover:bg-red-500 text-white font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
+                    >
+                    Logout
+                  </button> :
              <Link
              onClick={() => setToggle((prev) => !prev)}
              to={"/login"}
            >
-            <button
+            {/* <button
               name={"Login"}
               className=" text-[#111111] bg-tblue font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
               >
                Login
-            </button>
+            </button> */}
              </Link>
             }
             </div>
