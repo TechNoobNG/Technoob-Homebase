@@ -21,7 +21,7 @@ const Page1 = () => {
                   {/*<Link to={'/Sign-Up'}>*/}
                   {/*    <Button name={'Get Started!'}/>*/}
                   {/*</Link>*/}
-                    <a href="https://twitter.com/i/communities/1571774895813689347" target='_blank' rel="noreferrer" >
+                    <a href="/register">
                         <Button name={'Get Started!'}/>
                     </a>
 

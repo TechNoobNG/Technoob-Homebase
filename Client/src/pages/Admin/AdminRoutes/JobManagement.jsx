@@ -6,6 +6,7 @@ import serverApi from "../../../utility/server";
 import {fetchFirstData} from "../../../utility/filterGather";
 import Table from "../../../components/JobActivityTable";
 import FileUploadSingle from "../../../utility/Uploader";
+import showToast from '../../../utility/Toast';
 
 
 const JobManagement = () => {
@@ -51,30 +52,33 @@ const JobManagement = () => {
       serverApi.requiresAuth(true)
       formInput.poster = placeholderImage
       formInput.datePosted = new Date().toISOString()
-      const response = await serverApi.post(
+      await showToast({
+        type: "promise",
+        promise: serverApi.post(
           "/jobs/create",
           formInput
-      )
+        ),
 
-      if(response.status === 201 || 200){
-        setFormInput({
-          title:"",
-          company: "",
-          exp:"" ,
-          location:"",
-          workplaceType:"",
-          expiryDate:"",
-          link:"",
-          poster:"",
-          uploader_id:"",
-          contractType:""
-        });
-        setIsSubmitting(false);
-        // alert("Job added successfully")
-        console.log('Job added successfully');
-      }
+      })
+
+      setFormInput({
+        title:"",
+        company: "",
+        exp:"" ,
+        location:"",
+        workplaceType:"",
+        expiryDate:"",
+        link:"",
+        poster:"",
+        uploader_id:"",
+        contractType:""
+      });
+      setIsSubmitting(false);
     }catch (e) {
-        console.log(e)
+      showToast({
+        message: e.message || "An error ocurred, please contact support.",
+        type: "error",
+      })
     }
 
   };
@@ -98,16 +102,20 @@ const JobManagement = () => {
 
   const fetchJobMetrics = async () => {
 
-    try{
+    try {
+      serverApi.requiresAuth(true)
       const response = await serverApi.get("/jobs/metrics",{
         withCredentials: true
       });
+
       if(response.status === 200){
         setJobMetrics(response.data.data)
-        console.log(response);
       }
     }catch (error) {
-      console.log('job error',error)
+      showToast({
+        message: error.message || "An error ocurred, please contact support.",
+        type: "error",
+      })
     }
 
   }
@@ -115,16 +123,15 @@ const JobManagement = () => {
   useEffect(() => {
     fetchJobMetrics()
     fetchFirstData("/jobs/activity", setJobActivity, null, true, "activity").then(_r => setIsLoading(false))
-    
   }, []);
 
-  return ( 
+  return (
     <section>
-      <div className=' flex py-10 nun justify-start items-center'>
+      <div className='flex py-3 md:py-10 nun justify-start items-center'>
         <h1 className='  md:text-3xl text-xl font-semibold'>Hey,{UserProfile.firstname} -</h1>
         <p className='md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black '>Welcome the  job management console.</p>
       </div>
-      <div className=' lg:mx-4 p-5  rounded-md bg-white shadow-md w-full '>
+      <div className=' p-5  rounded-md bg-white shadow-md w-full '>
         <h1 className='text-xl font-semibold sm:ml-4 lg:py-4 sm:text-[#3A3A3A] sm:text-2xl'>Job Management</h1>
         <div className="md:flex block w-full justify-start pb-3">
           {statistics.map((opt, i) => (
@@ -210,7 +217,7 @@ const JobManagement = () => {
               <button className='float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm'>See all</button>
             </div>
 
-          <div className='flex overflow-x-auto'>
+          <div className=' flex overflow-x-auto'>
                 <Suspense fallback={<p>loading</p>}>
                   {jobActivity.length ? (<Table jobActivity={jobActivity}/>) : ''}
                 </Suspense>
