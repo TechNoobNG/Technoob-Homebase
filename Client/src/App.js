@@ -14,6 +14,10 @@ import DashSelector from "./utility/DashSelector";
 import AllResources from "./pages/LandingPage/Resources/reasources_pages/Page1";
 import Profile from "./pages/Admin/AdminRoutes/Profile";
 import { AdminDashboard, EventManagement, JobManagement, ResourceManagement } from "./pages/Admin/AdminRoutes";
+import UserDashboard from "./pages/User/UserRoutes/UserDashboard.jsx";
+import UserDashboardNavbar from "./components/UserDashboard/UserDashboardNavbar.jsx";
+import UserDashboardSideBar from "./components/UserDashboard/UserDashboardSideBar.jsx";
+
 
 // import JobDetails from "./pages/LandingPage/FindJob/JobDetails"
 
@@ -54,8 +58,9 @@ function App() {
     <BrowserRouter>
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
-      {toggleValue === "User Dashboard" ? (
-        <div className="bg-primary w-full overflow-auto relative">
+      {toggleValue === "User Dashboard" ? !isLoggedIn ? (
+       
+          <div className="bg-primary w-full overflow-auto relative">
           <div className="flex flex-start w-full top-0 lg:fixed z-50">
             <div className="w-full">
               <NavBar />
@@ -73,6 +78,7 @@ function App() {
                 <Route path="/all-resources" element={<AllResources />} />
                 <Route path="/register" element={<SignUp />} />
                 <Route path="/login" element={<UserLogin />} />
+                {/* <Route path="/dashboard" element={<UserDashboard />} /> */}
                 {/*<Route path="/Job-Description" element={<JobDescription />} />*/}
               </Routes>
             </Wrapper>
@@ -82,7 +88,30 @@ function App() {
             <Footer />
           </div>
         </div>
-      ) : (
+       ): (
+        <div className="min-h-screen bg-[#f9f9f9] w-full">
+        <div className="flex flex-start h-full w-full top-0  z-50">
+          <div className="w-full h-full">
+           <UserDashboardNavbar />
+          </div>
+        </div>
+
+        <div className="flex justify-between h-full overflow-hidden">
+          <div className="hidden sm:block rounded-md shadow-md w-[380px] h-full overflow-y-scroll">
+            <UserDashboardSideBar />
+          </div>
+
+          <div className="bg-[#f9f9f9] w-full grow h-auto pb-16 lg:pr-10 p-5 overflow-y-scroll">
+            <Routes>
+              <Route path="/dashboard" element={<UserDashboard />} />
+              
+            </Routes>
+          </div>
+        </div>
+      </div>
+        ) 
+        
+       : (
         <div className="h-full bg-[#f9f9f9] w-full">
           <div className="flex flex-start h-full w-full top-0  z-50">
             <div className="w-full h-full">

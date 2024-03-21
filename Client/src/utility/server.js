@@ -1,8 +1,9 @@
 import axios from "axios";
 
-
+const testBaseUrl = "staging-api.technoob.tech"
+const prodBaseUrl = "api.technoob.tech"
 const serverApi = axios.create({
-    baseURL: 'https://api.technoob.tech/api/v1/',
+    baseURL: `https://${prodBaseUrl}/api/v1/`,
     withCredentials: true,
 });
 

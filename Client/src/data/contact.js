@@ -302,3 +302,28 @@ export const AdminNavs = [
     color: "text-tblue",
  }
 ];
+
+export const UserDashboardNavs = [
+  
+  {
+    id: "2",
+    icon: <FiLayers/>,
+    title: "Resources",
+    link: "/dashboard/Job-Management",
+    color: 'text-purple-500'
+   },
+  {
+    id: "3",
+    icon: <BsBank/>,
+    title: "Events",
+    link: "/dashboard/events",
+    color: "text-tblue",
+   },
+  {
+    id: "5",
+    icon: <BsPuzzle/>,
+    title: "Quizzes and Competition",
+    link: "/dashboard/Quizzes",
+    color: "text-tblue",
+ }
+];
