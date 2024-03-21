@@ -158,9 +158,8 @@ module.exports = {
 
     async download({ storeName, key }) {
         const createPresignedUrlWithClient = ({ region , bucket, key }) => {
-            const client = new S3Client({ region });
             const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-            return getSignedUrl(client, command, { expiresIn: 3600 });
+            return getSignedUrl(s3Client, command, { expiresIn: 3600 });
         };
 
         const clientUrl = await createPresignedUrlWithClient({

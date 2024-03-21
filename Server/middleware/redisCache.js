@@ -13,7 +13,8 @@ module.exports = {
                 return res.ok({
                     status: "success",
                     message: `Data retrieved from cache`,
-                    data: data
+                    data: data,
+                    statusCode: 304
                 });
             } else {
                 res.locals.fromCache = false;
