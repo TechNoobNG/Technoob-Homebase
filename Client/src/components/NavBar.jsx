@@ -1,13 +1,11 @@
 import React, { useState, useContext } from "react";
 import { useNavigate} from "react-router-dom";
-import Cookies from "universal-cookie";
 import Button from "../utility/button";
 import {navLinks} from "../data/contact";
 import {close, menu, TechNoobLogo} from "../data/assets";
 import { AppContext } from "../AppContext/AppContext";
 import {Link} from "react-router-dom";
-const cookies = new Cookies();
-
+import serverApi from "../utility/server";
 const NavBar = () => {
   const { setIsLoggedIn, setUserProfile, isLoggedIn } = useContext(AppContext);
 
@@ -23,36 +21,21 @@ const NavBar = () => {
   };
 
   const logOut = async () => {
-    let myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    let requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      redirect: "follow",
-      credentials: "include",
-    };
-
-    let user = cookies.get("user");
-
-    if (user) {
-      fetch(
-        "https://technoob-staging.azurewebsites.net/api/v1/authenticate/logout",
-        requestOptions
-      )
-        .then((response) => {
-          if (response.status === 200) {
-            setIsLoggedIn(false);
-            setUserProfile(null);
-            cookies.remove("user");
-          }
-          return response.json();
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
+    
+    const response = await serverApi.post("/authenticate/logout");
+   
+    if (response.status === 200) {
+      setIsLoggedIn(false);
+      setUserProfile(null);
+      setDashboardToggle({
+        displayToggle: false,
+        toggleValue: "User Dashboard",
+      });
+      sessionStorage.clear();
+      navigate("/Home");
     }
   };
+
   const handleClick = async () => {
     await logOut();
     navigate("/Home");
