@@ -535,7 +535,7 @@ module.exports = {
                 emailObjects = list.map((user) => {
                     return {
                         address: user.email,
-                        displayName: user.username || user.firstname || user.lastname || ""
+                        displayName: user.username || user.firstname || user.lastname || user.email.split('@')[0] || ""
                     }
                 })
             }

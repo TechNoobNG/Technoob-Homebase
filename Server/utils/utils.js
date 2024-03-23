@@ -110,13 +110,30 @@ function extractEmailTemplatePlaceholders(template,availablePlaceholders = {}) {
         const placeholderName = match[1];
         const placeholderData = {
             name: availablePlaceholders[placeholderName] || placeholderName.toUpperCase(),
+            isImage: placeholderName.toLowerCase().includes("image") ? true : false,
             isRequired: true,
             identifier: placeholderName
         };
         placeholders.push(placeholderData);
     }
 
-    return placeholders;
+    let uniquePlaceholder = filterUniqueObjects(placeholders);
+    return  uniquePlaceholder;
+}
+
+function filterUniqueObjects(array) {
+    const uniqueArray = [];
+    const seenIdentifiers = new Set();
+    for (const obj of array) {
+        const identifier = JSON.stringify(obj);
+
+        if (!seenIdentifiers.has(identifier)) {
+            uniqueArray.push(obj); 
+            seenIdentifiers.add(identifier); 
+        }
+    }
+
+    return uniqueArray;
 }
 
 async function emailStreamToObject(stream) {
