@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const serverBaseURL = process.env.SERVER_BASE_URL || "https://staging-api.technoob.tech";
-
+const testBaseUrl = "staging-api.technoob.tech"
+const prodBaseUrl = "api.technoob.tech"
 const serverApi = axios.create({
-    baseURL:   `${serverBaseURL}/api/v1/`
+    baseURL: `https://${prodBaseUrl}/api/v1/`,
+    withCredentials: true,
 });
 
 serverApi.defaults.headers.common["Content-Type"] = "application/json";

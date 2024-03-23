@@ -52,7 +52,6 @@ else{
   setLoading(true)
       try {
         const postUser = await serverApi.post('authenticate/register', raw)
-
         const cookies = postUser.headers.get('Set-Cookie');
         if (cookies) {
           const cookie = cookies.split(';')[0].split('=')[1];

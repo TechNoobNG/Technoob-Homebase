@@ -11,7 +11,6 @@ import { ToastContainer } from "react-toastify";
 import { AiOutlineLogout } from "react-icons/ai";
 import showToast  from "../utility/Toast";
 
-
 const NavBar = () => {
   const cookies = new Cookies();
   const { setIsLoggedIn, setUserProfile, isLoggedIn, userData } = useContext(AppContext);
@@ -56,10 +55,16 @@ const NavBar = () => {
     }
   };
 
+  const handleClick = async () => {
+    await logOut();
+    navigate("/Home");
+  };
+  
   const handleLoggout  = async (e) => {
     e.preventDefault();
     await logout();
   };
+
   const switchView = async () => {
     setDashboardToggle({
         displayToggle: true,
@@ -121,41 +126,32 @@ const NavBar = () => {
                 </li>
               ))}
             </ul>
-
-            <div className="">
-
-          { isLoggedIn ? <button
-              name={"Logout"}
-              onClick={handleLoggout}
-              className=" bg-red-400 hover:bg-red-500 text-white font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
-              >
-               Logout
-            </button> :
+            <div className="flex flex-col justify-center items-center mt-10 gap-5">
              <Link
-             onClick={() => setToggle((prev) => !prev)}
-             to={"/login"}
-           >
-            <button
-              name={"Login"}
-              className=" text-[#111111] bg-tblue font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
+                onClick={() => setToggle((prev) => !prev)}
+                to={"/User-Login"}
               >
-               Login
-            </button>
-             </Link>
-            }
-            </div>
-            </div>
+                <button
+                  name={"Login"}
+                className=" text-[#111111] bg-[#EFF0F5]   font-[600]  w-[335px] sm:w-[201px] h-[54px] text-base rounded-md py-4 px-3.5"
+                >
+                  Login
+                </button>
+              </Link>
 
+              <p className="text-base font-semibold">Or</p>
 
+              <Link onClick={() => setToggle((prev) => !prev)} to={"/Sign-Up"}>
+                <Button name={"Get Started"} />
+              </Link>
+            </div>
           </div>
-        </div>
+           </div> 
 
-
-{/* welcom button */}
-          {isLoggedIn ? (
-          <div className="hidden xl:flex gap-2 items-center">
-            <div className="hidden lg:flex items-center gap-2 text-center cursor-pointer" onClick={handleLoggout}>
-              <div className="flex">
+           {isLoggedIn ? (
+          <div className="hidden lg:flex gap-2 items-center">
+            <div className="hidden lg:flex w-[20%] gap-2 text-center">
+              <div className="gap-2">
                 {" "}
                {!loading ? <h2 className="lg:text-2xl w-[10rem] font-semibold truncate">
                  Hi {userData?.username}{" "}
@@ -168,26 +164,24 @@ const NavBar = () => {
               </div>
             </div>
           </div>
-          ) : (
-          <div className="hidden gap-2 xl:flex">
+        ) : (
+          <div className="hidden gap-2 lg:flex">
             <Link to={"/login"}>
             <button
-            name={"Login"}
-            className="w-[130px] sm:w-[130px] h-[54px] text-[#111111] bg-[#EFF0F5] rounded-md py-4 px-3.5 text-base font-[600]"
+              name={"Login"}
+              className="w-[130px] sm:w-[130px] h-[54px] text-[#111111] bg-[#EFF0F5] rounded-md py-4 px-3.5 text-base font-[600]"
             >
               Login
             </button>
-            </Link>
-            <Link to={"/register"}>
+          </Link>
+          <Link to={"/register"}>
             <Button name={"Get Started"} />
-            </Link>
-          </div>
-          )}
-
-          </div>
-          </nav>
-
-  )
-}
+          </Link>
+           </div> ) }
+        </div>
+     
+    </nav>
+  );
+};
 
 export default NavBar;
