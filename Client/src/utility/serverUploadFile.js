@@ -1,10 +1,11 @@
 import serverApi from "./server";
 
-const uploadFile = async (file, type) => {
+const uploadFile = async (file, type, params) => {
     try {
 
         const formData = new FormData();
         formData.append(type, file);
+        serverApi.requiresAuth(true)
 
         const response = await serverApi.post(
             type === "image" ? "/utils/upload-image" : "/utils/upload-file",
@@ -13,6 +14,7 @@ const uploadFile = async (file, type) => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                params
             }
         );
 

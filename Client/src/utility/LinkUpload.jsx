@@ -20,6 +20,7 @@ const LinkUpload = ({ closeModal }) => {
             let payload = dataUpload
             payload.image_placeholder = placeholderImage;
             const abortController = new AbortController();
+            serverApi.requiresAuth(true)
             const response = await serverApi.post(
                 "/resources/create",
                 payload,

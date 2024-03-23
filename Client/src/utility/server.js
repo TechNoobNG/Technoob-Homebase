@@ -9,10 +9,11 @@ const serverApi = axios.create({
 
 serverApi.defaults.headers.common["Content-Type"] = "application/json";
 
-serverApi.requiresAuth = function (requiresToken){
-    if(requiresToken){
+serverApi.requiresAuth = function (requiresAuth){
+    if(requiresAuth){
         const userToken = sessionStorage.getItem('user_token');
         serverApi.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
+        serverApi.defaults.withCredentials = true;
         return null
     }
 

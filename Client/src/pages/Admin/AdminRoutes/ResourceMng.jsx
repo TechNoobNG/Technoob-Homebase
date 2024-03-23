@@ -88,18 +88,18 @@ const ResourceMng = () => {
     <section
       className={`w-full overflow-hidden ${
         isModalOpen ? "overflow-hidden" : ""
-      }`}
+      } min-h-screen`}
     >
-      <div className="flex justify-between ">
-        <div className="flex  sm:flex-row mb-5 md:mb-0 py-1 sm:py-10 justify-start sm:justify-center items-start sm:items-center ">
+      <div className="flex justify-between">
+      <div className="flex  sm:flex-row mb-5 md:mb-0 py-1 sm:py-5 justify-start sm:justify-center items-start sm:items-center ">
           <h1 className=" md:text-3xl text-xl font-semibold">Hey, {UserProfile.firstname} -</h1>
           <p className="md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black">
             Welcome to the resource page.
           </p>
         </div>
       </div>
-      <div className="lg:mx-4 lg:p-5 md:rounded-md bg-white xl:shadow-md w-full">
-        <div className="w-full">
+      <div className="lg:p-5 md:rounded-md bg-white h-full xl:shadow-md w-full">
+        <div className="w-full h-full">
           <div className="flex flex-col sm:flex-row justify-start sm:justify-between w-full">
             <div>
               <h1 className="text-xl font-semibold sm:ml-4 lg:py-4 sm:text-[#3A3A3A] sm:text-2xl">

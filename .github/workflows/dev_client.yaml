@@ -1,0 +1,32 @@
+name: Client Deployment 
+
+on:
+  push:
+    branches:
+      - dev_client
+defaults:
+  run:
+    working-directory: Client
+
+jobs:
+   build:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+       with:
+        ref: dev_client
+     - uses: actions/setup-node@v2
+     - name: Install Dependencies
+       run: npm install
+     - name: build
+       run: CI= npm run build
+     - name: Set AWS Credentials
+       uses: aws-actions/configure-aws-credentials@v1
+       with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: eu-west-2 
+     - name: copy to s3
+       run: aws s3 sync ./build/. s3://${{secrets.AWS_S3_BUCKET}}
+      
+ 

@@ -20,7 +20,7 @@ const UploadFile = ({ closeModal }) => {
         stack:"" ,
         description:"",
         type:"",
-          file: ""
+        file: ""
       }
   );
 
@@ -45,6 +45,7 @@ const UploadFile = ({ closeModal }) => {
 
             const abortController = new AbortController();
             setUploading(true);
+            serverApi.requiresAuth(true)
             const response = await serverApi.post(
                 "/resources/create",
                 payload,
@@ -230,8 +231,11 @@ const UploadFile = ({ closeModal }) => {
           </div>
           <div className="flex w-full justify-start items-start gap-3">
               {
-                  !uploading && placeholderImage && uploadedFile && (<button onClick={handlePublish}
-                                                               className="flex justify-center items-center text-sm md:text-lg  md:font-semibold w-[310px] h-[54px] rounded-md bg-tblue text-white mb-4">
+              !uploading &&
+              placeholderImage &&
+              uploadedFile &&
+              (<button onClick={handlePublish}
+                className="flex justify-center items-center text-sm md:text-lg  md:font-semibold w-[310px] h-[54px] rounded-md bg-tblue text-white mb-4">
               Publish Document
                   </button>)
               }
