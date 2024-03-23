@@ -59,7 +59,7 @@ const NavBar = () => {
     await logout();
     navigate("/Home");
   };
-  
+
   const handleLoggout  = async (e) => {
     e.preventDefault();
     await logout();
