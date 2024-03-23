@@ -60,6 +60,8 @@ const Form = () => {
           displayToggle: true,
           toggleValue: "User Dashboard",
         });
+      } else {
+        navigate("/dashboard")
       }
     } catch (error) {
       setUser({UserName: "", Password: "" });

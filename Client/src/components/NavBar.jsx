@@ -55,10 +55,7 @@ const NavBar = () => {
     }
   };
 
-  const handleClick = async () => {
-    await logOut();
-    navigate("/Home");
-  };
+ 
   
   const handleLoggout  = async (e) => {
     e.preventDefault();
@@ -95,7 +92,7 @@ const NavBar = () => {
            </ul>
          </div>
 
-{/* toggle button */}
+          {/* toggle button */}
         <div className="flex xl:hidden h-full items-center justify-center">
           <img
             src={toggle ? close : menu}
@@ -147,6 +144,7 @@ const NavBar = () => {
             </div>
           </div>
            </div> 
+           </div> 
 
            {isLoggedIn ? (
           <div className="hidden lg:flex gap-2 items-center">
@@ -179,6 +177,7 @@ const NavBar = () => {
           </Link>
            </div> ) }
         </div>
+    
      
     </nav>
   );

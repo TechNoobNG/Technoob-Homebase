@@ -10,7 +10,7 @@ import { AppContext } from "../../AppContext/AppContext";
 const UserDashboardSideBar = () => {
     const {pathname} = useLocation()
 
-//   console.log({pathname})
+
 
   return (
     <div className="hidden bg-[#fff] lg:flex flex-col px-5 h-full border-r-[0.5px] w-full  justify-start items-center">

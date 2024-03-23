@@ -64,7 +64,7 @@ function App() {
       setDashboardToggle(JSON.parse(checkUserViewPreference));
     }
   }, [isLoggedIn, setDashboardToggle, setIsLoggedIn, setUserProfile]);
-
+// console.log({isLoggedIn})
   //const [isAdmin] = useContext(AppContext)
 
   const Wrapper = ({ children }) => {
