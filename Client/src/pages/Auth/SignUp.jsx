@@ -60,7 +60,8 @@ if(form.Password !== form.ConfirmPassword) alert('Passwords do not match')
 else{
   setLoading(true)
       try {
-        const postUser = await fetch("https://technoob-staging.azurewebsites.net/api/v1/authenticate/register", requestOptions)
+        const postUser = await fetch("https://api.technoob.tech/api/v1/authenticate/register", requestOptions)
+        
         const cookies = postUser.headers.get('Set-Cookie');
         if (cookies) {
           const cookie = cookies.split(';')[0].split('=')[1];

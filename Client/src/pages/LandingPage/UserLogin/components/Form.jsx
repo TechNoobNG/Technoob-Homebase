@@ -41,7 +41,7 @@ const Form = () => {
       console.log(response);
     
       if (response.status === 200) {
-        navigate("/Home");
+        navigate("/dashboard");
         const responseData = response.data;
         const userInfo = {
           ...responseData.data,
