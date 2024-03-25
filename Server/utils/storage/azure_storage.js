@@ -9,7 +9,7 @@ const {
 const connectionString = config.AZURE_STORAGE_CONNECTION_STRING;
 const azureStorageAccountKey = connectionString.match(/AccountKey=([^;]+)/)[1];
 const storageAccountName = config.AZURE_STORAGE_ACCOUNT_NAME;
-if (!connectionString) throw Error('Azure Storage Service: No keys found');
+// if (!connectionString) throw Error('Azure Storage Service: No keys found');
 const storageSharedKeyCredentials = new StorageSharedKeyCredential(storageAccountName, azureStorageAccountKey);
 const blobServiceClient = BlobServiceClient.fromConnectionString(
     connectionString
@@ -110,6 +110,17 @@ module.exports = {
         blob.key = key
         return blob;
 
+    },
+
+    autogenerateStorageURL({type,name,acl}) {
+        let containername = `technoob-${envMap[env]}`;
+        if (acl && ["public", "private"].includes(acl)) {
+            containername = `${containername}-${aclMap[acl]}`
+        }
+        const key = `${type}/${name}`;
+        let containerClient = blobServiceClient.getContainerClient(containername);
+        const blockBlobClient = containerClient.getBlockBlobClient(key);
+        return blockBlobClient.url
     },
     async download({storeName, key}) {
         const sasToken = await this.getBlobSasUri(storeName, key);

@@ -14,9 +14,14 @@ const traffic = require('../services/traffic');
 const ErrorResponse = require('../utils/error/errorResponse');
 const MailService = require('../utils/mailer/mailService');
 const mailService = new MailService();
-const { extractEmailTemplatePlaceholders, buildRawEmail, tempReplyTemplate } = require("../utils/utils");
-module.exports = {
+const { extractEmailTemplatePlaceholders, buildRawEmail, tempReplyTemplate, createHash } = require("../utils/utils");
+const jobScheduler = require("../utils/queues/jobScheduler");
+const csvtojson = require('csvtojson');
+const { default: axios } = require('axios');
+const { Parser } = require('json2csv');
+const config = require('../config/config')
 
+module.exports = {
     async adminDashboard() {
         try {
             const resourceMetrics = await resources.getMetrics()
@@ -554,9 +559,9 @@ module.exports = {
             }
 
             if (source === "slack") {
-                await mailService.sendEmailWithSlackUpdate({
+                await mailService.actWithSlackUpdate({
                     name: "BulkStaticEmailWithSlackUpdate",
-                    method: "sendEmailWithSlackUpdate",
+                    method: "actWithSlackUpdate",
                     data: {
                         mailOptions,
                         moduleName: "BulkStaticEmailWithSlackUpdate",
@@ -578,6 +583,84 @@ module.exports = {
             
         } catch (error) {
             
+        }
+    },
+
+    async createMailingListCSV(data) {
+        try {
+            const {
+                url,
+                name,
+                owner,
+                user,
+                source
+            } = data;
+
+            const groupId = `${owner}:${name}`
+
+            const setupData = {
+                groupId,
+                url,
+                owner
+            };
+
+            if (source === "slack") {
+                await jobScheduler.addToMailingListCSVWithSlackUpdate({
+                    name: "AddToMailingListCSVWithSlackUpdate",
+                    data: {
+                        setupData,
+                        moduleName: "AddToMailingListCSVWithSlackUpdate",
+                        user
+                    }
+                });
+            } else {
+                await jobScheduler.addToMailingListCSV({
+                    name: "AddToMailingListCSV",
+                    method: "addToMailingListCSV",
+                    data: setupData
+                });
+            }
+
+
+            return {
+                message: "Job Queued Successfully"
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
+    async addToMailingListCSV(data) {
+        try {
+            const { groupId, url, owner } = data;
+            const options = {
+                responseType: 'stream'
+            };
+    
+            const response = await axios.get(url, options);
+            const csvData = response.data;
+            
+            const jsonArray = await csvtojson().fromStream(csvData);
+            const filteredData = jsonArray.map((e) => {
+                const filteredObject = {};
+                for (const key in e) {
+                    if (e[key] !== 'NULL') {
+                        filteredObject[key] = e[key];
+                    }
+                }
+                return filteredObject;
+            })
+
+            const resp = await module.exports.addToMailingList({ emails: filteredData, groupId:groupId  });
+    
+            return {
+                emails: resp,
+                groupId,
+                url
+            };
+        } catch (error) {
+            throw error;
         }
     },
 
@@ -653,7 +736,7 @@ module.exports = {
         }
     },
 
-    async addToMailingList (body) {
+    addToMailingList: async function (body) {
         try {
             if (!body.emails || !Array.isArray(body.emails)) {
                 throw new ErrorResponse("400","Invalid emails")
@@ -661,20 +744,95 @@ module.exports = {
 
             const emailsTobeCreated = body.emails.map((email) => {
                 return {
-                    email,
-                    groupId: body.groupId
+                    email: email.mail,
+                    username: email.username || email.mail.split("@")[0],
+                    firstname: email.firstname,
+                    lastname: email.lastname,
+                    groupId: email.groupId || body.groupId
                 }
             })
-            
             const mailingList = await mailing_list.insertMany(emailsTobeCreated);
-
             return mailingList
-            
         } catch (err) {
+            console.log(err)
             throw err
         }
     },
 
+    generateMailingListCSV: async function ({groupName, owner = "technoob-workspace"}) {
+        try {
+            if (!groupName) {
+                throw new ErrorResponse("400","No group name provided")
+            }
+            const group = await mailingListGroup.findOne({
+                groupName: groupName
+            })
+            if (!group) {
+                throw new ErrorResponse("404",`${groupName} not found`)
+            }
+
+            let mailingList = await mailing_list.find({
+                groupId: group.id
+            })
+            mailingList = mailingList.map(record => record.toJSON());
+            const parser = new Parser();
+            return parser.parse(mailingList);
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    },
+
+    generateMailingListCSVDownloadUrl: async function ({groupName, userId, user, source}) {
+        try {
+
+            if (!groupName || !userId) {
+                throw new ErrorResponse("400", "No group name or user ID provided");
+            }
+    
+            const group = await mailingListGroup.findOne({
+                groupName: groupName
+            });
+            if (!group) {
+                throw new ErrorResponse("404", `${groupName} not found`);
+            }
+    
+            const expiry = Date.now() + (24 * 60 * 60 * 1000);
+            const string = `${groupName}:${userId}:${expiry}`
+            const hash = createHash({
+                string
+            })
+
+            const queryString = `?groupName=${encodeURIComponent(groupName)}&hash=${encodeURIComponent(hash)}&userId=${encodeURIComponent(userId)}&expiry=${expiry}`;
+            const downloadUrl = `${config.LIVE_BASE_URL}/api/v1/admin/mailing-list/download${queryString}`;
+
+            if (source === "slack") {
+                const setupData = {
+                    groupName,
+                    userId: user.id
+                }
+                await jobScheduler.generateMailingListCSVDownloadUrlWithSlackUpdate({
+                    name: "GenerateMailingListCSVDownloadUrlWithSlackUpdate",
+                    data: {
+                        setupData,
+                        moduleName: "GenerateMailingListCSVDownloadUrlWithSlackUpdate",
+                        user
+                    }
+                });
+                return {
+                    message: "Job queued successfully"
+                }
+            } else {
+                return downloadUrl;
+            }
+
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    },
+
+    
     async createMailingListGroup(data) {
         try {
             if (!data.groupName) {

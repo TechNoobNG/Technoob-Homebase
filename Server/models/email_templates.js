@@ -11,10 +11,22 @@ const placeholderSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isImage: {
+        type: Boolean,
+        default: false
+    },
     identifier: {
         type: String,
         required: true
-    }
+    },
+    isContent:  {
+        type: Boolean,
+        default: false
+    },
+    isUrl: {
+        type: Boolean,
+        default: false
+    },
 })
 const email = new Schema({
     template: {

@@ -18,14 +18,20 @@ function createSectionBlock(title) {
 }
 
 function createFieldsBlock(fields, image) {
+    
     let resp = {
         "type": "section",
-        "fields": fields.map(field => ({
-            "type": "mrkdwn",
-            "text": `*${field.label}:*\n${field.value}`
-        })),
+        "fields": fields.map(field => {
+            const fieldValue = decodeURIComponent(field.value);
+            const clippedValue = fieldValue.length > 200 ? `${fieldValue.substring(0, 200)} [Clipped for brevity]` : fieldValue;
+            const fieldValueText = hasHtmlTags(fieldValue) ? `_(This field has special characters, kindly click preview to view)_` : clippedValue;
+            
+            return {
+                "type": "mrkdwn",
+                "text": `*${field.label}:*\n${fieldValueText}`
+            };
+        }),
     };
-
     if (image) {
         resp[ "accessory"] = createImageAccessoryBlock(image.url, image.altText)
     }
@@ -111,7 +117,9 @@ function extractEmailTemplatePlaceholders(template,availablePlaceholders = {}) {
         const placeholderData = {
             name: availablePlaceholders[placeholderName] || placeholderName.toUpperCase(),
             isImage: placeholderName.toLowerCase().includes("image") ? true : false,
-            isRequired: true,
+            isRequired: placeholderName.toLowerCase().includes("optional") ? false : true,
+            isContent: placeholderName.toLowerCase().includes("content") ? true : false,
+            isUrl: placeholderName.toLowerCase().includes("url") || placeholderName.toLowerCase().includes("link") ? true : false,
             identifier: placeholderName
         };
         placeholders.push(placeholderData);
@@ -244,108 +252,188 @@ async function fetchAndEncodeBase64(url,source) {
     }
   }
 
-    async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile,isRestricted, canAccessedByPublic}) {
-        try {
-            const options = {
-                responseType: 'stream'
-            }
-            if (source === "slack") {
-                options.headers = {
-                    "Authorization": `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
-                }
-            }
-            const response = await axios.get(url, options);
-            const { upload } = require("./storage/storageService")
-            const uploadedLink = await upload({
-                type: contentType.split("/")[1],
-                name,
-                data: response.data,
-                isFile,
-                acl: "private",
-                isRestricted: isRestricted || false,
-                canAccessedByPublic: canAccessedByPublic || true,
-            })
-
-            return uploadedLink;
-        } catch (error) {
-            console.error(`Error fetching or encoding content from ${url}:`, error.message);
+async function fetchExternalLinkAndUploadToS3({url,source,contentType,name,isFile,isRestricted, acl = "private" , canAccessedByPublic}) {
+    try {
+        const options = {
+            responseType: 'stream'
         }
+        if (source === "slack") {
+            options.headers = {
+                "Authorization": `Bearer ${config.SLACK.BOT_USER_OAUTH_TOKEN}`
+            }
+        }
+        const response = await axios.get(url, options);
+        const { upload } = require("./storage/storageService")
+
+        const uploadedLink = await upload({
+            type: contentType.split("/")[1],
+            name,
+            data: response.data,
+            isFile,
+            acl,
+            isRestricted: isRestricted || false,
+            canAccessedByPublic: canAccessedByPublic || true,
+        })
+        return uploadedLink;
+    } catch (error) {
+        console.log(error)
+        console.error(`Error fetching or encoding content from ${url}:`, error.message);
     }
+}
   
-    const tempReplyTemplate = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Response</title>
-        <style>
-            body {
-                font-family: 'Arial', sans-serif;
-                margin: 0;
-                padding: 20px;
-                background-color: #f4f4f4;
-            }
-
-            .container {
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: #ffffff;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-
-            h1 {
-                color: #333333;
-            }
-
-            p {
-                color: #555555;
-            }
-
-            .signature {
-                margin-top: 20px;
-                color: #777777;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <p>Hello #{sender},</p>
-
-            <p>
-                #{content}
-            </p>
-
-            <p>
-                #{largeAttachmentsHTML}
-            </p>
-
-            <p>
-                Best regards,<br>
-                #{user}
-            </p>
-            
-        </div>
-    </body>
-    </html>`
-
-    async function flushLogsToDatabase(logBuffer, model) {
-        if (logBuffer.length === 0) return;
-    
-        try {
-        await model.insertMany(logBuffer);
-        logBuffer.length = 0;
-        } catch (error) {
-        console.error('Error flushing logs to the database:', error);
+const tempReplyTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Response</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        p {
+            color: #555555;
+        }
+
+        .signature {
+            margin-top: 20px;
+            color: #777777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Hello #{sender},</p>
+
+        <p>
+            #{content}
+        </p>
+
+        <p>
+            #{largeAttachmentsHTML}
+        </p>
+
+        <p>
+            Best regards,<br>
+            #{user}
+        </p>
+        
+    </div>
+</body>
+</html>`
+
+async function flushLogsToDatabase(logBuffer, model) {
+    if (logBuffer.length === 0) return;
+
+    try {
+    await model.insertMany(logBuffer);
+    logBuffer.length = 0;
+    } catch (error) {
+    console.error('Error flushing logs to the database:', error);
     }
+}
+
+function convertRichTextToHtml(elements) {
+    let html = '';
+
+    elements.forEach(element => {
+        switch (element.type) {
+            case 'rich_text_section':
+                html += '<p>';
+                if (element.elements) {
+                    html += convertRichTextToHtml(element.elements);
+                }
+                html += '</p>';
+                break;
+            case 'text':
+                if (element.text) {
+                    let formattedText = element.text;
+                    if (element.style) {
+                        if (element.style.bold) {
+                            formattedText = `<b>${formattedText}</b>`;
+                        }
+                        if (element.style.italic) {
+                            formattedText = `<i>${formattedText}</i>`;
+                        }
+                        if (element.style.strike) {
+                            formattedText = `<strike>${formattedText}</strike>`;
+                        }
+                    }
+                    html += formattedText;
+                }
+                break;
+            case 'link':
+                if (element.url && element.text) {
+                    html += `<a href="${element.url}">${element.text}</a>`;
+                }
+                break;
+            case 'rich_text_preformatted':
+                if (element.elements) {
+                    html += `<pre>${convertRichTextToHtml(element.elements)}</pre>`;
+                }
+                break;
+            case 'rich_text_quote':
+                if (element.elements) {
+                    html += `<blockquote>${convertRichTextToHtml(element.elements)}</blockquote>`;
+                }
+                break;
+            case 'rich_text_list':
+                if (element.elements) {
+                    const listType = element.style === 'bullet' ? 'ul' : 'ol';
+                    html += `<${listType}>${convertRichTextToHtml(element.elements)}</${listType}>`;
+                }
+                break;
+            default:
+                break;
+        }
+    });
+
+    return html;
+}
+
+function hasHtmlTags(inputString) {
+    const htmlTagPattern = /<[^>]*>/;
+    return htmlTagPattern.test(inputString);
+}
+
+function createHash({string}) {
+    return crypto.createHash('sha256')
+            .update(string, config.JWT_SECRET)
+            .digest('hex');
+}
+
+function validateExpiry(expiry) {
+    const expiryTime = parseInt(expiry)
+    if (isNaN(expiryTime)) {
+        return false;
+    }
+    const currentTime = Date.now();
+    return currentTime <= expiryTime;
+}
+
 
 module.exports = {
      async hashPassword(password) {
         const salt = await bcrypt.genSalt(SALT_ROUNDS);
-        return bcrypt.hash(password, salt);;
+        return bcrypt.hash(password, salt);
     },
     removePathSegments(url) {
         const isAdminRoute = url.startsWith('/api/v1/admin');
@@ -369,5 +457,9 @@ module.exports = {
     buildRawEmail,
     tempReplyTemplate,
     fetchExternalLinkAndUploadToS3,
-    flushLogsToDatabase
+    flushLogsToDatabase,
+    convertRichTextToHtml,
+    hasHtmlTags,
+    validateExpiry,
+    createHash
 }
