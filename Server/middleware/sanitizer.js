@@ -23,11 +23,16 @@ const xssOptions = {
 function sanitize(req, res, next) {
   if (req.path.startsWith('/email/template')) {
     next();
+  } else if (req.path.includes('/admin/mailing-list/download')) {
+    req.body = preventNoSQLInjection(req.body, "body");
+    req.params = preventNoSQLInjection(req.params, "params");
+    next();
+  } else {
+    req.body = preventNoSQLInjection(req.body, "body");
+    req.params = preventNoSQLInjection(req.params, "params");
+    req.query = preventNoSQLInjection(req.query, "query");
+    next();
   }
-  req.body = preventNoSQLInjection(req.body, "body");
-  req.params = preventNoSQLInjection(req.params, "params");
-  req.query = preventNoSQLInjection(req.query, "query");
-  next();
 }
 
 // function sanitizeObject(obj, xssOptions) {

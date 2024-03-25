@@ -5,7 +5,7 @@ const credentials = {
         accessKeyId: config.AWS_SERVICES.S3.accessKeyId,
         secretAccessKey: config.AWS_SERVICES.S3.secretAccessKey
 }
-if(!credentials || !credentials.accessKeyId || !credentials.secretAccessKey) throw Error('AWS S3: credentials not found')
+// if(!credentials || !credentials.accessKeyId || !credentials.secretAccessKey) throw Error('AWS S3: credentials not found')
 const s3Client = new S3Client({
     region: REGION,
     credentials
@@ -64,7 +64,6 @@ module.exports = {
         const response = await s3Client.send(command)
         return response;
     },
-
 
     async createBucket(name, acl) {
         const command = new CreateBucketCommand({
@@ -144,6 +143,15 @@ module.exports = {
         return response
     },
 
+    autogenerateStorageURL({type,name,acl}) {
+        let bucketName = `technoob-${envMap[env]}`;
+        if (acl && ["public", "private"].includes(acl)) {
+            bucketName = `${bucketName}-${aclMap[acl]}`
+        }
+        const key = `${type}/${name}`
+        return `https://${bucketName}.s3.amazonaws.com/${key}`
+    },
+
     async delete(url) {
         const parts = url.replace(/^(https?:\/\/)?/, '').split('/');
         const bucketName = parts[0].split('.')[0];
@@ -158,9 +166,8 @@ module.exports = {
 
     async download({ storeName, key }) {
         const createPresignedUrlWithClient = ({ region , bucket, key }) => {
-            const client = new S3Client({ region });
             const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-            return getSignedUrl(client, command, { expiresIn: 3600 });
+            return getSignedUrl(s3Client, command, { expiresIn: 3600 });
         };
 
         const clientUrl = await createPresignedUrlWithClient({

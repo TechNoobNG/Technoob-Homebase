@@ -47,6 +47,19 @@ module.exports = {
         }
 
     },
+
+    autogenerateURL: async ({type,name,acl}) => {
+        try {
+            let provider = storageProvider;
+            const res = await getStorageProvider(provider).autogenerateStorageURL({
+                type,name,acl
+            })
+            return res
+        } catch (error) {
+            throw error
+        }
+    },
+
     delete: async (url) => {
         try {
             if (!url) {

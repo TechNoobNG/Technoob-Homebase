@@ -26,9 +26,9 @@ const quizzes = new Schema({
     },
 
     questions_answers: {
-        type: Object,
+        type: Array,
         required: [true, 'Please provide the questions'],
-        default: {}
+        default: []
     },
 
     duration: {
