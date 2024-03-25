@@ -17,7 +17,9 @@ jobs:
         ref: dev_client
      - uses: actions/setup-node@v2
      - name: Install Dependencies
-       run: npm install
+       run: |
+        npm cache clean --force
+        npm install
      - name: build
        run: CI= npm run build
      - name: Set AWS Credentials
