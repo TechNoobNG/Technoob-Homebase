@@ -1,20 +1,19 @@
-import React, { useState, useContext } from "react";
-import { useNavigate} from "react-router-dom";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import Button from "../utility/button";
-import {navLinks} from "../data/contact";
-import {close, menu, TechNoobLogo} from "../data/assets";
+import { navLinks } from "../data/contact";
+import { close, menu, TechNoobLogo } from "../data/assets";
 import { AppContext } from "../AppContext/AppContext";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import serverApi from "../utility/server";
-import { ToastContainer } from "react-toastify";
 import { AiOutlineLogout } from "react-icons/ai";
-import showToast  from "../utility/Toast";
+import showToast from "../utility/Toast";
 
 const NavBar = () => {
   const cookies = new Cookies();
   const { setIsLoggedIn, setUserProfile, isLoggedIn, userData } = useContext(AppContext);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [active, setActive] = useState("");
   const { UserProfile, setDashboardToggle } = useContext(AppContext);
@@ -24,33 +23,36 @@ const NavBar = () => {
     setActive(e.target.innerText);
   };
 
-  const logout = async() => {
+  const logout = async () => {
     try {
       const abortController = new AbortController();
       serverApi.requiresAuth(true);
-      setLoading(true)
-      await serverApi.post("/authenticate/logout/",{},
-          {
-            signal: abortController.signal,
-            headers: {'content-type': 'application/json'}
-          });
+      setLoading(true);
+      await serverApi.post(
+        "/authenticate/logout/",
+        {},
+        {
+          signal: abortController.signal,
+          headers: { "content-type": "application/json" },
+        }
+      );
       setIsLoggedIn(false);
       setUserProfile(null);
       cookies.remove("user");
-      sessionStorage.clear()
-      setLoading(false)
-      return
+      sessionStorage.clear();
+      setLoading(false);
+      return;
     } catch (error) {
       showToast({
         message: error.message || "An error ocurred, please contact support.",
-        type: "error"
-      })
-    }finally{
-      setLoading(false)
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
       showToast({
-        message:  "See you soon! 🙂",
-        type: "info"
-      })
+        message: "See you soon! 🙂",
+        type: "info",
+      });
       navigate("/Home");
     }
   };
@@ -67,8 +69,8 @@ const NavBar = () => {
 
   const switchView = async () => {
     setDashboardToggle({
-        displayToggle: true,
-        toggleValue: "Admin Dashboard",
+      displayToggle: true,
+      toggleValue: "Admin Dashboard",
     });
     navigate("/admin/dashboard");
   }
@@ -104,7 +106,7 @@ const NavBar = () => {
           />
           {/* togggle button on the nav bar for small screens */}
           <div
-            className={`rounded-md absolute flex justify-start items-end top-[75px] right-0  my-2 w-full z-10 h-screen ${toggle ? 'sidebar' : 'sidebarClose'} flex-col `}
+            className={`rounded-md absolute flex justify-start items-end top-[75px] right-0  my-2 w-full z-10 h-screen ${toggle ? "sidebar" : "sidebarClose"} flex-col `}
           >
             <div className="bg-slate-300 opacity-50 z-[-2] w-full h-full absolute " onClick={() => setToggle((prev) => !prev)} />
             <div className="flex bg-white w-[50%] h-[75%] rounded-l-xl flex-col p-4">

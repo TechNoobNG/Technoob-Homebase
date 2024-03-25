@@ -8,12 +8,11 @@ export const JumbotronSection = () => {
       </h2>
       <div className="py-8 flex flex-col justify-center items-center w-[300px] lg:w-[900px]">
         <p className="nun text-base lg:text-2xl text-center">
-          At Technoob, we hope to impact hundreds of enthusiast in Tech Careers
-          and sustain their Tech careers.
+          At Technoob, we hope to impact hundreds of enthusiast in Tech Careers and sustain their Tech careers.
         </p>
         <p className="nun text-base lg:text-2xl text-center">
-          Through your donations, sponsorships and partnerships, we'll be able
-          to impact more people and touch more lives.
+          Through your donations, sponsorships and partnerships, we&apos;ll be able to impact more people and touch more
+          lives.
         </p>
       </div>
 

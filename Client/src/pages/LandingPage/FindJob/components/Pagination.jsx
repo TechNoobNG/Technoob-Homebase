@@ -1,17 +1,10 @@
-import React from "react";
-
-
-function Pagination({ data, totalUsers, usersPerPage, paginated, }) {
-
+function Pagination({ data, totalUsers, usersPerPage, paginated }) {
   const pageNumber = [];
   for (let i = 1; i <= Math.ceil(totalUsers / usersPerPage); i++) {
     pageNumber.push(i);
   }
-    
 
   return (
-    
-
     <div>
       {pageNumber.map((number) => (
         <button

@@ -1,8 +1,9 @@
-import React, {Fragment, useContext} from "react";
-import {createPortal} from "react-dom";
+import { Fragment, useContext } from "react";
+import { createPortal } from "react-dom";
 import classes from "./DashSelector.module.css";
-import {AppContext} from "../AppContext/AppContext";
+import { AppContext } from "../AppContext/AppContext";
 import DashSelectorCard from "./DashSelectorCard";
+import { useNavigate } from "react-router-dom";
 
 const Backdrop = (props) => {
   return <div className={classes.selector_overlay} onClick={props.onClick} />;
@@ -17,22 +18,12 @@ const Overlay = (props) => {
           <h2>{title}</h2>
         </header>
         <footer className={classes.actions}>
-          <button
-            className={classes.button}
-            type="submit"
-            value={"admin"}
-            onClick={props.onSelectHandler}
-          >
-            <DashSelectorCard titleText={"Admin Dashboard"} value={"admin"} />
+          <button className={classes.button} type="submit" value="admin" onClick={props.onSelectHandler}>
+            <DashSelectorCard titleText="Admin Dashboard" value="admin" />
           </button>
 
-          <button
-            className={classes.button}
-            type="submit"
-            dashselection={"user"}
-            onClick={props.onSelectHandler}
-          >
-            <DashSelectorCard titleText={"User Dashboard"} />
+          <button className={classes.button} type="submit" onClick={props.onSelectHandler}>
+            <DashSelectorCard titleText="User Dashboard" />
           </button>
         </footer>
       </div>
@@ -42,6 +33,7 @@ const Overlay = (props) => {
 
 const DashSelector = () => {
   const { setDashboardToggle } = useContext(AppContext);
+  const navigate = useNavigate();
   const onClickHandler = () => {
     setDashboardToggle({
       displayToggle: false,
@@ -52,17 +44,21 @@ const DashSelector = () => {
     const selection = {
       displayToggle: false,
       toggleValue: props.target.innerText,
-    }
+    };
     setDashboardToggle(selection);
-    sessionStorage.setItem("viewPreference", JSON.stringify(selection));
 
+    if (selection.toggleValue === "Admin Dashboard") {
+      navigate("/admin/dashboard");
+    }
+
+    if (selection.toggleValue === "User Dashboard") {
+      navigate("/dashboard");
+    }
+    sessionStorage.setItem("viewPreference", JSON.stringify(selection));
   };
   return (
     <Fragment>
-      {createPortal(
-        <Backdrop onClick={onClickHandler} />,
-        document.getElementById("backdrop-root")
-      )}
+      {createPortal(<Backdrop onClick={onClickHandler} />, document.getElementById("backdrop-root"))}
       {createPortal(
         <Overlay title="Select Dashboard" onClick={onSelectHandler}></Overlay>,
         document.getElementById("overlay-root")

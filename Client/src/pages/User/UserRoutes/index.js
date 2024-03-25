@@ -1,6 +1,3 @@
-import UserDashboard from './UserDashboard'
+import UserDashboard from "./UserDashboard";
 
-
-export {
-    UserDashboard,
-}
+export { UserDashboard };

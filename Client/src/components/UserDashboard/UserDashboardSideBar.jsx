@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { UserDashboardNavs } from "../../data/contact";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { MdOutlineDashboard } from "react-icons/md";
@@ -6,24 +6,35 @@ import { FiSettings } from "react-icons/fi";
 import { BiLogOut } from "react-icons/bi";
 import serverApi from "../../utility/server";
 import { AppContext } from "../../AppContext/AppContext";
+import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 
 const UserDashboardSideBar = () => {
-    const {pathname} = useLocation()
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
+  const { setDashboardToggle, UserProfile } = useContext(AppContext);
 
+  const switchView = async () => {
+    if (UserProfile.role !== "admin") return;
+    setDashboardToggle({
+      displayToggle: false,
+      toggleValue: "Admin Dashboard",
+    });
+    // navigate("/admin/dashboard");
+  };
 
   return (
     <div className="hidden bg-[#fff] lg:flex flex-col px-5 h-full border-r-[0.5px] w-full  justify-start items-center">
       <div className=" w-full flex justify-center items-center mb-[10rem] item-between">
         <div className="flex flex-col justify-center items-center w-full space-y-6">
-          <NavLink to={"/dashboard"} className={`${
-                pathname === '/dashboard' ? "bg-tblue text-[#fff] text-lg" : ""
-              } hover:bg-tblue hover:text-white transition-all duration-500 rounded-md w-full flex items-center gap-x-4 px-3 py-2`}
+          <NavLink
+            to={"/dashboard"}
+            className={`${
+              pathname === "/dashboard" ? "bg-tblue text-[#fff] text-lg" : ""
+            } hover:bg-tblue hover:text-white transition-all duration-500 rounded-md w-full flex items-center gap-x-4 px-3 py-2`}
           >
-            
-              <MdOutlineDashboard className=" text-3xl" />
-              <h2 className="font-bold capitalize text-sm">dashboard</h2>
-            
+            <MdOutlineDashboard className=" text-3xl" />
+            <h2 className="font-bold capitalize text-sm">dashboard</h2>
           </NavLink>
 
           <div className="w-[260px] h-[2.3px] opacity-20 bg-gray-400 mb-20" />
@@ -52,6 +63,14 @@ const UserDashboardSideBar = () => {
           <span className="hover:bg-tblue hover:text-white transition-all duration-500 rounded-md w-full flex items-center gap-x-4 px-3 py-2 text-sm">
             <FiSettings className="" /> Settings
           </span>
+
+          {UserProfile.role === "admin" && (
+            <button onClick={switchView}>
+              <span className="flex justify-start items-center gap-4 text-tblue p-3 text-lg cursor-pointer font-semibold">
+                <HiOutlineSwitchHorizontal className="" /> {"Switch to Admin view "}
+              </span>
+            </button>
+          )}
           <SignOut></SignOut>
         </div>
       </div>
@@ -59,13 +78,10 @@ const UserDashboardSideBar = () => {
   );
 };
 
-
-
 function SignOut() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setIsLoggedIn, setUserProfile, setDashboardToggle } =
-    useContext(AppContext);
+  const { setIsLoggedIn, setUserProfile, setDashboardToggle } = useContext(AppContext);
 
   const signOut = async () => {
     setLoading(true);
