@@ -10,8 +10,8 @@ class MailService {
         data.import = "../../utils/mailer/mailBuilder";
         await sendMessage(data);
     }
-    async sendEmailWithSlackUpdate(data) {
-        if (!data.method) data.method = "sendEmailWithSlackUpdate";
+    async actWithSlackUpdate(data) {
+        if (!data.method) data.method = "actWithSlackUpdate";
         data.import = "../../services/integrations/slack";
         await sendMessage(data);
     }

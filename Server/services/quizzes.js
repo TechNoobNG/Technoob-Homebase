@@ -146,11 +146,8 @@ module.exports = {
                     activity: {
                         activity: "quiz Removal",
                         theme: quiz.theme,
-                        location: quiz.location,
-                        ticketing: quiz.ticketing,
-                        date: quiz.date,
-                        price: quiz.price,
-                        currency: quiz.currency,
+                        type: quiz.type,
+                        stack: quiz.stack,
                         status: "Successful"
                     }
                 }
@@ -204,7 +201,6 @@ module.exports = {
             return quiz
 
         } catch (error) {
-            ;
             throw error;
         }
     },
@@ -235,8 +231,9 @@ module.exports = {
                 }
             });
 
+            const scoreInPercentage = Math.round(( score/ quiz.questions_answers?.length) * 100)
             tracker.completed = true;
-            tracker.score = score;
+            tracker.score = scoreInPercentage;
             tracker.attempted = currentQuizTracker.attempted + 1;
 
             await QuizTracker.findOneAndUpdate({ quiz_id: id, user_id: user._id }, tracker);

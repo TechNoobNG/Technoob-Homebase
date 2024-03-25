@@ -329,6 +329,21 @@ module.exports = {
         }
     },
 
+    async generateMailingListCSV(req, res) {
+        try {
+            const { groupName } = req.query
+            const csvData = await admin.generateMailingListCSV({
+                groupName
+            });
+            res.setHeader('Content-Disposition', 'attachment; filename="output.csv"');
+            res.set('Content-Type', 'text/csv');
+            res.status(200).send(csvData);
+        }
+        catch (error) {
+            return res.fail(error)
+        }
+    },
+    
     async deleteMailingList(req, res) {
         try {
             const mailingList = await admin.deleteMailingList(req.params.id);

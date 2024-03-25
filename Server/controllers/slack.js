@@ -88,7 +88,9 @@ module.exports = {
             if (!commandMap[command].enabled) {
                 throw new Error(`"${command}" is disabled. Please contact your admin`)
             }
-            const argsCount = body.text.split(" ").length;
+
+            const argsCount = body.text.trim() === "" ? 0 : body.text.trim().split(" ").length;
+
             if (argsCount > commandMap[command].responseHandler.argsCount || argsCount < commandMap[command].responseHandler.requiredArgsCount) {
                 throw new Error(`${commandMap[command].responseHandler.invalidArgsCountMessage || "Invalid arguments provided"}`)
             }
@@ -111,6 +113,7 @@ module.exports = {
 
 
         } catch (error) {
+            console.log(error)
             res.slackfail(error.message)
         }
     },

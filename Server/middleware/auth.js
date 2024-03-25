@@ -5,7 +5,8 @@ const Permissions = require('../models/permissions');
 const config = require(`${__dirname}/../config/config.js`);
 const passport = require('../config/passportConfig')
 const { createHmac } = require('node:crypto');
-const tsscmp = require("tsscmp")
+const tsscmp = require("tsscmp");
+const { validateHash, validateExpiry, createHash } = require('../utils/utils');
 
 const authenticateMiddleware = passport.authenticate('local', {
     failureMessage: 'Invalid username or password',
@@ -256,6 +257,37 @@ module.exports = {
             console.log(error)
             res.status(401).send('Unauthorized');
         }
-  }
+    },
+
+    validateMailingListHash(req, res, next) {
+        try {
+            const { groupName, userId, expiry, hash } = req.query;
+            const decodedhash = decodeURIComponent(hash)
+            const string =  `${groupName}:${userId}:${expiry}`
+            const recreatedHash = createHash({
+                string
+            })
+            const isValid = recreatedHash === decodedhash
+            if (!isValid) {
+                return res.status(401).json({
+                    status: 'fail',
+                    message: 'Invalid/Unauthorized Request'
+                });
+            }
+
+            const isNotExpired = validateExpiry(expiry)
+
+            if (!isNotExpired) {
+                return res.status(401).json({
+                    status: 'fail',
+                    message: 'Expired Url'
+                });
+            }
+            next()
+        } catch (error) {
+            res.status(401).send('Unauthorized');
+        }
+    }
+
 
 };

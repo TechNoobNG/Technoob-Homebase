@@ -46,6 +46,7 @@ router.post('/permission/remove', middleware.auth.isAuthenticated, middleware.au
 router.get('/mailing-list', middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:ManageMailingList'), admin.getMailingList);
 router.post('/mailing-list', middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:ManageMailingList'), admin.addToMailingList);
 router.post('/mailing-list/groups', middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:ManageMailingList'), admin.createMailingListGroup);
+router.get('/mailing-list/download', middleware.auth.validateMailingListHash, admin.generateMailingListCSV);
 router.get('/contact-us',middleware.auth.isAuthenticated,  middleware.auth.hasPermission('admin:ManageContactUs'), admin.getContactUs);
 router.post('/contact-us/:id/delete',middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:ManageContactUs'), admin.deleteContactUs);
 router.post('/mailing-list/:id/delete',middleware.auth.isAuthenticated, middleware.auth.hasPermission('admin:ManageMailingList'), admin.deleteMailingList);

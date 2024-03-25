@@ -36,8 +36,9 @@ leader_board.pre('save', async function (next) {
       });
 
       const totalScore = quizAttempts.reduce((total, attempt) => total + attempt.score, 0);
+      const averageScore = totalScore / quizAttempts.length;
 
-      this.score = totalScore;
+      this.score = averageScore;
     } catch (error) {
       return next(error);
     }

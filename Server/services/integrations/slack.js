@@ -1,7 +1,8 @@
 
-const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject } = require("../../utils/utils");
+const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject, fetchExternalLinkAndUploadToS3, convertRichTextToHtml } = require("../../utils/utils");
 const { sendRequest, respondToAction, openModal, sendMessageToUser } = require("../../utils/slack/index");
 const config = require("../../config/config");
+const { autogenerateURL } = require("../../utils/storage/storageService");
 
  /**
      * @function notifySlack
@@ -170,6 +171,12 @@ function retrieveCommandFunction(name) {
     if (name === "renderEmailPlaceholdersModal") {
         return renderEmailPlaceholdersModal
     }
+    if (name === "renderCreateMailingListModal") {
+        return renderCreateMailingListModal
+    }
+    if (name === "viewmailinglist") {
+        return viewmailinglist
+    }
     return null
 }
 
@@ -197,8 +204,51 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
             throw new Error(`${identifier} not found`)
         }
         const emailPlaceholders = email.placeholders;
-        
+
         const inputBlockArray = emailPlaceholders.map((placeholder) => {
+            if (placeholder.isImage) {
+                return  {
+                    "type": "input",
+                    "label": {
+                        "type": "plain_text",
+                        "text":  `${placeholder.name}`,
+                        "emoji": true
+                    },
+                    "element": {
+                        "type": "file_input",
+                        "filetypes": ["jpg", "png", "gif"],
+                        "max_files": 1,
+                    },
+                    "optional": placeholder.isRequired ? false : true
+                }
+            }
+            if (placeholder.isContent) {
+                return {
+                    "type": "input",
+                    "element": {
+                        "type": "rich_text_input",
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": `${placeholder.name}`,
+                        "emoji": true
+                    }
+                }
+            }
+            if (placeholder.isUrl) {
+                return {
+                    "type": "input",
+                    "element": {
+                      "type": "url_text_input",
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": `${placeholder.name}`,
+                        "emoji": true
+                    }
+                  }
+                  
+            }
             return  {
                 "type": "input",
                 "label": {
@@ -210,7 +260,7 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
                     "type": "plain_text_input",
                     "multiline": true
                 },
-                "optional": placeholder.isRequired ? true : false
+                "optional": placeholder.isRequired ? false : true
             }
         })
 
@@ -284,7 +334,6 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
             module: "sendemailwithtemplate"
         });
 
-
         return {
             slackPayload,
             modal_identifier: "renderEmailPlaceholdersModal"
@@ -294,20 +343,202 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
     }
 }
 
+async function renderCreateMailingListModal({team_domain,username, user_id}) {
+    try {
+       
+        const inputBlockArray = [
+            {
+                "type": "input",
+                "label": {
+                    "type": "plain_text",
+                    "text": "Name",
+                    "emoji": true
+                },
+                "element": {
+                    "type": "plain_text_input",
+                    "multiline": false
+                },
+                "optional":  false
+            },
+            {
+                "type": "input",
+                "label": {
+                    "type": "plain_text",
+                    "text":  `Mailing List (CSV File)`,
+                    "emoji": true
+                },
+                "element": {
+                    "type": "file_input",
+                    "filetypes": ["csv"],
+                    "max_files": 1,
+                },
+                "optional": false
+            }
+        ]
+
+        const promptSectionBlock = {
+			"type": "section",
+			"text": {
+				"type": "plain_text",
+				"text": `:wave: Hey ${username.split('.')[0]}!\n\n Kindly provide the name of the mailing list and upload the csv file`,
+				"emoji": true
+			}
+        }
+    
+
+        const slackPayload = {
+            "type": "modal",
+            "callback_id": "renderCreateMailingListModal",
+            "title": {
+                "type": "plain_text",
+                "text": `Create Mailing List`,
+                "emoji": true
+            },
+            "submit": {
+                "type": "plain_text",
+                "text": "Preview List",
+                "emoji": true
+            },
+            "close": {
+                "type": "plain_text",
+                "text": "Cancel",
+                "emoji": true
+            },
+            "blocks": [promptSectionBlock,divider, ...inputBlockArray]
+        };
+
+        slackPayload.private_metadata = JSON.stringify({
+            team_domain,
+            uploaderId: user_id,
+            module: "addmailinglistwithcsv"
+        });
+
+
+        return {
+            slackPayload,
+            modal_identifier: "renderCreateMailingListModal"
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 function buildQueryString(params) {
     const queryString = Object.keys(params)
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .map(key => params[key] !== undefined && params[key] !== null ? `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}` : "")
         .join('&');
     const fieldsMap = Object.keys(params).map((key) => {
+        if(!params[key]) return
         return {
             label: key,
             value: params[key]
         }
-    })
+    }).filter(Boolean)
     return {
         queryString,
         fieldsMap
     };
+}
+
+async function previewMailingList(body) {
+    try {
+        const { view: { blocks, title, state, private_metadata } } = body;
+        let inputs = {};
+        if (Array.isArray(blocks)) {
+            blocks.forEach((block) => {
+                if (block && block.type === "input") {
+                    if (state.values[block.block_id][block.element.action_id].type === "file_input") {
+                        inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].files || [];
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "plain_text_input") {
+                        inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "url_text_input") {
+                        inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
+                    }
+                    
+                }
+            })
+        }
+        for (const key of Object.keys(inputs)) {
+            if (key.toLowerCase().includes("csv file") && Array.isArray(inputs[key]) && inputs[key].length) {
+                const csvUrl = inputs[key][0].url_private_download;
+                const csvName = `${inputs[key][0].created}_${inputs[key][0].name}`;
+                const contentType = inputs[key][0].mimetype;
+    
+                setTimeout(async (csvUrl,csvName,contentType) => {
+                    await fetchExternalLinkAndUploadToS3({
+                        url: csvUrl,
+                        name: csvName,
+                        source: 'slack',
+                        contentType: contentType,
+                        isFile: true,
+                        acl: "public"
+                    })
+                }, 50, csvUrl, csvName, contentType)
+                const url = await autogenerateURL({
+                    type:  contentType.split("/")[1],
+                    name: csvName,
+                    acl: "public"
+                })
+                inputs[key] = url
+            }
+
+        }
+
+        const promptSectionBlock = {
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": `:wave: Kindly review the information to be uploaded.`
+			}
+        }
+
+        const fieldsMap =  Object.keys(inputs).map((key) => {
+            if(!inputs[key]) return
+            return {
+                label: key,
+                value: inputs[key]
+            }
+        }).filter(Boolean)
+        
+        const placehOlderFieldBlock = createFieldsBlock(fieldsMap,null)
+
+        const slackPayload = {
+            type: "modal",
+            callback_id: "previewMailingList",
+            title: {
+                type: "plain_text",
+                text: `Step 2/2`
+            },
+            submit: {
+                type: "plain_text",
+                text: "Add",
+                emoji: true
+            },
+            close: {
+                type: "plain_text",
+                text: "Cancel",
+                emoji: true
+            },
+            blocks: [promptSectionBlock,divider,placehOlderFieldBlock]
+        };
+        
+
+        if (private_metadata && Object.keys(inputs).length !== 0) {
+            const prev = JSON.parse(private_metadata);
+            const newMeta = JSON.stringify({ ...prev, ...inputs })
+            slackPayload.private_metadata = newMeta
+        }
+
+        return {
+            slackPayload,
+            modal_identifier: "previewMailingList"
+        }
+
+    } catch (error) {
+        throw error;
+    }
 }
 
 async function renderEmailPreview(body) {
@@ -317,14 +548,54 @@ async function renderEmailPreview(body) {
         if (Array.isArray(blocks)) {
             blocks.forEach((block) => {
                 if (block && block.type === "input") {
-                    placeHolders[block.label?.text] = state.values[block.block_id][block.element.action_id].value;
+                    if (state.values[block.block_id][block.element.action_id].type === "file_input") {
+                        placeHolders[block.label?.text] = state.values[block.block_id][block.element.action_id].files || [];
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "plain_text_input") {
+                        placeHolders[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "rich_text_input") {
+                        placeHolders[block.label?.text] = convertRichTextToHtml(state.values[block.block_id][block.element.action_id].rich_text_value.elements) || "";
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "url_text_input") {
+                        placeHolders[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
+                    }
+                    
                 }
             })
         }
+
         let queryString = ''
         let fieldsMap = []
 
         if (Object.keys(placeHolders).length !== 0) {
+            const placeholderKeys = Object.keys(placeHolders);
+
+            for (const key of placeholderKeys) {
+                if (key.toLowerCase().includes("image") && Array.isArray(placeHolders[key]) && placeHolders[key].length) {
+                    const imageUrl = placeHolders[key][0].url_private_download;
+                    const imageName = `${placeHolders[key][0].created}_${placeHolders[key][0].name}`;
+                    const contentType = placeHolders[key][0].mimetype;
+        
+                    setTimeout(async (imageUrl,imageName,contentType) => {
+                        await fetchExternalLinkAndUploadToS3({
+                            url: imageUrl,
+                            name: imageName,
+                            source: 'slack',
+                            contentType: contentType,
+                            isFile: true,
+                            acl: "public"
+                        })
+                    }, 50, imageUrl, imageName, contentType)
+                    const url = await autogenerateURL({
+                        type:  contentType.split("/")[1],
+                        name: imageName,
+                        acl: "public"
+                    })
+                    placeHolders[key] = url
+                    //placeHolders[key] = encodeURIComponent(placeHolders[key])
+                }
+            }
             let buildQuery= buildQueryString(placeHolders);
             fieldsMap = buildQuery.fieldsMap;
             queryString = buildQuery.queryString;
@@ -379,7 +650,7 @@ async function renderEmailPreview(body) {
 
 async function renderInputRecepientsModal(body) {
     try {
-        const { view: { blocks, title, state, private_metadata }, team } = body;
+        const {step,  view: { blocks, title, state, private_metadata }, team } = body;
         const pickMailingListSectionBlock = {
 			"type": "section",
 			"text": {
@@ -424,6 +695,60 @@ async function renderInputRecepientsModal(body) {
         return {
             slackPayload,
             modal_identifier: "renderEmailPreview"
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function viewmailinglist(body) {
+    try {
+        const {team_domain: team } = body;
+        const pickMailingListSectionBlock = {
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": `Select a mailing list to preview. A link will be generated for you to download as a csv file`
+            },
+            "accessory": {
+                "action_id": `mailing_list:${team}`,
+                "type": "external_select",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select a mailing list to preview."
+                },
+                "min_query_length": 2,
+                "focus_on_load": true
+            }
+        }
+
+        const slackPayload = {
+            type: "modal",
+            callback_id: "viewmailinglist",
+            title: {
+                type: "plain_text",
+                text:`Select Mailing List`
+            },
+            submit: {
+                type: "plain_text",
+                text: "Download List",
+                emoji: true
+            },
+            close: {
+                type: "plain_text",
+                text: "Cancel",
+                emoji: true
+            },
+            blocks: [pickMailingListSectionBlock]
+        };
+
+        slackPayload.private_metadata = JSON.stringify({
+            module: "viewmailinglist"
+        })
+        
+        return {
+            slackPayload,
+            modal_identifier: "viewmailinglist"
         }
     } catch (error) {
         throw error;
@@ -575,6 +900,29 @@ async function processSubmission(body) {
 
             const { respondToEmail } = require("../admin");
             await respondToEmail(payload)
+        }
+
+        if (processingData.module === "addmailinglistwithcsv") {
+            const { createMailingListCSV } = require("../admin");
+            processingData.name = processingData.Name.trim().split(" ").join("_");
+            delete processingData.Name;
+            processingData.url = processingData["Mailing List (CSV File)"]
+            delete processingData["Mailing List (CSV File)"]
+            processingData.source = "slack"
+            processingData.user = user
+            processingData.owner = processingData.team_domain
+            delete processingData.team_domain
+            await createMailingListCSV(processingData)
+        }
+
+        if (processingData.module === "viewmailinglist") {
+            const selectedMailingGroup = state.values[blocks[0].block_id][blocks[0].accessory.action_id].selected_option.value;
+            const { generateMailingListCSVDownloadUrl } = require("../admin");
+            processingData.source = "slack"
+            processingData.userId = user.id
+            processingData.groupName = selectedMailingGroup
+            processingData.user = user
+            await generateMailingListCSVDownloadUrl(processingData)
         }
         
         return {
@@ -771,9 +1119,6 @@ async function renderEmailBlocksModal({ from, message,userInfo, bucket,key,recie
 }
 
 
-
-
-
 function servicePickerExternalSource({ activityTag  }) {
     const moduleActionsServiceMap = {
         mailing_list: renderMailingListInfo
@@ -817,7 +1162,47 @@ const commandMap = {
             stepsCount: 3
         },
         enabled: true
-    } 
+    },
+    "/createmailinglist": {
+        requiresText: true,
+        responseHandler: {
+            argsCount: 0,
+            requiredArgsCount: 0,
+            name: "renderCreateMailingListModal",
+            argsValidator: null,
+            modal_identifier: "renderCreateMailingListModal",
+            invalidArgsCountMessage: `Invalid Request`,
+            stepsCount: 2,
+            argsBuilder: (body) => {
+                return {
+                    team_domain: body.team_domain,
+                    user_id: body.user_id,
+                    username: body.user_name
+                }
+            },
+        },
+        enabled: true
+    },
+    "/viewmailinglist": {
+        requiresText: false,
+        responseHandler: {
+            argsCount: 0,
+            requiredArgsCount: 0,
+            name: "viewmailinglist",
+            argsValidator: null,
+            modal_identifier: "viewmailinglist",
+            invalidArgsCountMessage: `Invalid Request`,
+            stepsCount: 2,
+            argsBuilder: (body) => {
+                return {
+                    team_domain: body.team_domain,
+                    user_id: body.user_id,
+                    username: body.user_name
+                }
+            },
+        },
+        enabled: true
+    }
 }
 
 const stepOrder = new Map([
@@ -825,7 +1210,10 @@ const stepOrder = new Map([
     ["renderEmailPreview", "renderInputRecepientsModal"],
     ["renderInputRecepientsModal", "previewSubmission"],
     ["previewSubmission", "processSubmission"],
-    ["renderEmailBlocksModal", "processSubmission"]
+    ["renderEmailBlocksModal", "processSubmission"],
+    ["renderCreateMailingListModal", "previewMailingList"],
+    ["previewMailingList", "processSubmission"],
+    ["viewmailinglist", "processSubmission"]
 ])
 
 const stepMap = {
@@ -834,7 +1222,10 @@ const stepMap = {
     renderInputRecepientsModal,
     previewSubmission,
     processSubmission,
-    renderEmailBlocksModal
+    renderEmailBlocksModal,
+    renderCreateMailingListModal,
+    previewMailingList,
+    viewmailinglist
 }
 
 async function nextStepPickerRunner(body) {
@@ -948,15 +1339,89 @@ async function fetchMenus({ body }) {
     }
 }
 
-async function sendEmailWithSlackUpdate(data) {
+async function actWithSlackUpdate(data) {
     try {
-        const emailService = require("../../utils/mailer/mailBuilder");
         if (data.moduleName === "BulkStaticEmailWithSlackUpdate") {
+            const emailService = require("../../utils/mailer/mailBuilder");
             const runMailer = await emailService.sendToMany(data.mailOptions)
             if (runMailer.success) {
                 const emailStatusNotificationRender = renderEmailStatusNotification(runMailer)
                 await notifySlackProcessUpdate({
                     block: emailStatusNotificationRender,
+                    user: data.user
+                })
+            }
+        }
+
+        if (data.moduleName === "AddToMailingListCSVWithSlackUpdate") {
+            const adminService = require("../../services/admin");
+            try {
+                const runAct = await adminService.addToMailingListCSV(data.setupData)
+                if ( runAct && runAct.length) {
+                    const runStatusRenderBlock = runActStatusRender({
+                        result: {
+                            completed: true,
+                            success: true,
+                            message: `Successfully added ${runAct.emails.length} emails to ${runAct.groupId.split(':')[1]}  with groupId ${runAct.groupId}`
+                        },
+                        actionModule: "AddMailingList",
+                        act: "Mailing list"
+                    })
+                    await notifySlackProcessUpdate({
+                        block: runStatusRenderBlock,
+                        user: data.user
+                    })
+                }
+            } catch (error) {
+                const runStatusRenderBlock = runActStatusRender({
+                    result: {
+                        completed: false,
+                        success: false,
+                        message: `Failed to add emails ${error.message}`
+                    },
+                    actionModule: "AddMailingList",
+                    act: "Mailing list"
+                })
+                await notifySlackProcessUpdate({
+                    block: runStatusRenderBlock,
+                    user: data.user
+                })
+            }
+        }
+
+        if (data.moduleName === "GenerateMailingListCSVDownloadUrlWithSlackUpdate") {
+            const adminService = require("../../services/admin");
+            try {
+                const runAct = await adminService.generateMailingListCSVDownloadUrl(data.setupData)
+                if ( runAct && runAct.length) {
+                    const runStatusRenderBlock = runActStatusRender({
+                        result: {
+                            completed: true,
+                            success: true,
+                            message: `Hi ${data.user.name}, you requested access to the ${data.setupData?.groupName} mailing list.`,
+                            downloadUrl: runAct,
+                        },
+                        actionModule: "GenerateMailingListUrl",
+                        act: "Fetched Mailing List"
+                    })
+      
+                    await notifySlackProcessUpdate({
+                        block: runStatusRenderBlock,
+                        user: data.user
+                    })
+                }
+            } catch (error) {
+                const runStatusRenderBlock = runActStatusRender({
+                    result: {
+                        completed: false,
+                        success: false,
+                        message: `Failed to fetch the mailing list requested`
+                    },
+                    actionModule: "GenerateMailingListUrl",
+                    act: "Fetched Mailing List"
+                })
+                await notifySlackProcessUpdate({
+                    block: runStatusRenderBlock,
                     user: data.user
                 })
             }
@@ -1023,6 +1488,72 @@ function renderEmailStatusNotification(result) {
         throw error;
     }
 }
+
+function runActStatusRender({result, actionModule, act}) {
+    try {
+        let successEmoji = result.completed ? ":white_check_mark:" : ":x:";
+
+        let blocks = [];
+
+        if (actionModule === "AddMailingList") {
+            blocks = [
+                {
+                    type: "section",
+                    text: {
+                        type: "mrkdwn",
+                        text: `${successEmoji} *${act} Status*`
+                    }
+                },
+                {
+                    type: "context",
+                    elements: [
+                        {
+                            type: "mrkdwn",
+                            text: `*Success:* ${result.success}\n*Message:* ${result.message}`
+                        }
+                    ]
+                },
+                {
+                    type: "divider"
+                }
+            ];
+        }
+
+        if (actionModule === "GenerateMailingListUrl") {
+            blocks = [
+                {
+                    type: "section",
+                    text: {
+                        type: "mrkdwn",
+                        text: `${successEmoji} *${act} Status*`
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `:smile: ${result.message}`
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `:wave: Kindly use this link to download the mailing list as a csv file <https://${result.downloadUrl}|here>`
+                    }
+                },
+                {
+                    type: "divider"
+                }
+                
+            ];
+        }
+
+        return { blocks };
+    } catch (error) {
+        throw error;
+    }
+}
 module.exports = {
     notifySlack,
     moduleTypeCreator,
@@ -1033,5 +1564,6 @@ module.exports = {
     notifyActionResponseV2,
     commandMap,
     fetchMenus,
-    sendEmailWithSlackUpdate
+    actWithSlackUpdate,
+    viewmailinglist
 }
