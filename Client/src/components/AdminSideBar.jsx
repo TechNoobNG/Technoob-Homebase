@@ -1,23 +1,23 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { AdminNavs } from "../data/contact";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { MdOutlineDashboard } from "react-icons/md";
 import { FiSettings, FiUser } from "react-icons/fi";
 import { BiLogOut } from "react-icons/bi";
-import {HiOutlineSwitchHorizontal} from "react-icons/hi"
+import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import serverApi from "../utility/server";
 import { AppContext } from "../AppContext/AppContext";
-import showToast  from "../utility/Toast";
+import showToast from "../utility/Toast";
 const AdminSideBar = () => {
   const isActive = false;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setDashboardToggle, setIsLoggedIn, setUserProfile, } = useContext(AppContext);
+  const { setDashboardToggle, setIsLoggedIn, setUserProfile } = useContext(AppContext);
 
   const switchView = async () => {
-    navigate("/");
+    // navigate("/dashboard");
     setDashboardToggle({
-      displayToggle: true,
+      displayToggle: false,
       toggleValue: "User Dashboard",
     });
   };
@@ -27,11 +27,14 @@ const AdminSideBar = () => {
       setLoading(true);
       const abortController = new AbortController();
       serverApi.requiresAuth(true);
-      await serverApi.post("/authenticate/logout/",{},
-          {
-            signal: abortController.signal,
-            headers: {'content-type': 'application/json'}
-          });
+      await serverApi.post(
+        "/authenticate/logout/",
+        {},
+        {
+          signal: abortController.signal,
+          headers: { "content-type": "application/json" },
+        }
+      );
       setLoading(false);
       navigate("/Home");
       setIsLoggedIn(false);
@@ -45,22 +48,22 @@ const AdminSideBar = () => {
       showToast({
         message: error.message || "An error occurred, please contact support.",
         type: "error",
-      })
-      setLoading(false)
-    }finally{
-      setLoading(false)
+      });
+      setLoading(false);
+    } finally {
+      setLoading(false);
       showToast({
-        message:  "See you soon! 🙂",
-        type: "info"
-      })
+        message: "See you soon! 🙂",
+        type: "info",
+      });
       navigate("/Home");
     }
   };
 
-const submit = async (e) => {
-  e.preventDefault();
-  await signOut();
-}
+  const submit = async (e) => {
+    e.preventDefault();
+    await signOut();
+  };
 
   return (
     <div className=" bg-[#fff] flex flex-col h-full overflow-auto border-r-[0.5px] w-full justify-start items-center">
@@ -101,9 +104,9 @@ const submit = async (e) => {
           </span>
 
           <button onClick={switchView}>
-              <span className="flex justify-start items-center gap-4 text-tblue p-3 text-lg cursor-pointer font-semibold">
-                <HiOutlineSwitchHorizontal className="" /> {"Switch to user view "}
-              </span>
+            <span className="flex justify-start items-center gap-4 text-tblue p-3 text-lg cursor-pointer font-semibold">
+              <HiOutlineSwitchHorizontal className="" /> {"Switch to user view "}
+            </span>
           </button>
           <button onClick={submit}>
             <span className="flex justify-start items-center gap-4 text-red-400 p-3 text-lg cursor-pointer font-semibold">
@@ -164,17 +167,17 @@ const submit = async (e) => {
 //     }
 //   };
 
-  // const submit = async (e) => {
-  //   e.preventDefault();
-  //   await signOut();
-  // };
+// const submit = async (e) => {
+//   e.preventDefault();
+//   await signOut();
+// };
 
-  // return (
-  //   <button onClick={submit}>
-  //     <span className="flex justify-start items-center gap-4 text-red-400 text-lg cursor-pointer font-semibold">
-  //       <BiLogOut className="" /> {loading ? "Logging out..." : "Log Out"}
-  //     </span>
-  //   </button>
-  // );
+// return (
+//   <button onClick={submit}>
+//     <span className="flex justify-start items-center gap-4 text-red-400 text-lg cursor-pointer font-semibold">
+//       <BiLogOut className="" /> {loading ? "Logging out..." : "Log Out"}
+//     </span>
+//   </button>
+// );
 // }
 export default AdminSideBar;
