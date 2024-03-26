@@ -27,6 +27,7 @@ Client/.env.development.local
 Client/.env.test.local
 Client/.env.production.local
 Client/package-lock.json
+Client/yarn.json
 
 Function-Worker
 
