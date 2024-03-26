@@ -31,8 +31,8 @@ export const ProgrammesSlider = () => {
         WHAT WE HAVE <span className="text-tgreen">DONE</span>
       </h2>
       <div className="flex justify-between w-full overflow-auto no-scrollbar items-center bg-[#E1FBF7] lg:pl-[100px] my-8 lg:my-20 lg:p-14 p-6 ">
-        {programmes.events.map((event) => {
-          return <img className="w-auto h-full lg:w-[694px] lg:h-[646px] mr-10" src={event.poster} alt="" />;
+        {programmes.events.map((event, _i) => {
+          return <img className="w-auto h-full lg:w-[694px] lg:h-[646px] mr-10" src={event.poster} alt="" key={_i}/>;
         })}
       </div>
     </div>

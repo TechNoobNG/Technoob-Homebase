@@ -28,7 +28,7 @@ const LinkUpload = ({ closeModal }) => {
         },
       });
 
-      if (response.status === 200 || 201) {
+      if (response.status === 200 || response.status === 201) {
         let message = response.data.message;
 
         setDataUpload({});
