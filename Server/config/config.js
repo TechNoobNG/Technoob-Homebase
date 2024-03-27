@@ -162,7 +162,7 @@ const environments = {
             API_BASE_URL: process.env.SLACK_API_BASE_URL || "https://slack.com/api"
         },
         LAMBDA: {
-            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET || "your_lambda_signing_secret_here"
+            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET || "test_lambda_signing_secret"
         }
 
     },

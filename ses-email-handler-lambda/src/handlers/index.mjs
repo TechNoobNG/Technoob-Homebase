@@ -70,7 +70,7 @@ export const handler = async (event) => {
                             redirect: 'follow'
                         };
 
-                        const response = await fetch("https://technoob-staging.azurewebsites.net/api/v1/utils/upload-file/external", requestOptions)
+                        const response = await fetch("https://api.technoob.tech/api/v1/utils/upload-file/external", requestOptions)
                         const result = await response.json();
                         params.url = result.data.url;
                         attachements.push(params)
