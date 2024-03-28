@@ -77,6 +77,7 @@ const NavBar = () => {
 
   return (
     <nav className="w-full bg-white shadow-md ">
+
       <div className="w-full py-2 px-5 sm:px-20 flex justify-between md:justify-between items-center lg:h-[80px] ">
         <Link to={'/'}>
           <img src={TechNoobLogo} alt="technooblogo" width="150" height="50" />
@@ -97,6 +98,7 @@ const NavBar = () => {
           </ul>
         </div>
         {/* toggle button */}
+
         <div className="flex xl:hidden h-full items-center justify-center">
           <img
             src={toggle ? close : menu}
@@ -141,8 +143,10 @@ const NavBar = () => {
                   <Button name={"Get Started"} />
                 </Link>
               </div>
+
             </div>
           </div>
+
           {isLoggedIn ? (
             <div className="hidden lg:flex gap-2 items-center">
               <div className="hidden lg:flex w-[20%] gap-2 text-center">
@@ -156,9 +160,11 @@ const NavBar = () => {
                   {/* <Button width={'w-20 h-10'} name={loading ? 'Loading...' : "Logout"} handleClick={handleLoggout} /> */}
                   <AiOutlineLogout className="text-xl text-red-500" onClick={handleLoggout} />
                 </div>
+
               </div>
             </div>
           ) : (
+
               <div className="hidden gap-2 lg:flex">
                 <Link to={"/login"}>
                   <button name={"Login"}
@@ -170,6 +176,7 @@ const NavBar = () => {
                   <Button name={"Get Started"} />
                 </Link>
               </div>
+
           )}
         </div>
         </div>
