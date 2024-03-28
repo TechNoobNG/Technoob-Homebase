@@ -1,34 +1,21 @@
-import React from "react";
 import Select from "react-select";
 import countries from "./countries";
 import _ from "lodash";
 
-const CountryDropdown = ({
-  onSelect,
-  defaultCountry,
-  className,
-  id,
-  name,
-  propIndex,
-}) => {
+const CountryDropdown = ({ onSelect, defaultCountry, className, id, name, propIndex }) => {
   const handleSelect = (selectedOption) => {
     onSelect(_.capitalize(selectedOption.value), propIndex, name);
   };
 
   const uniqueCountries = countries.filter(
-    (country, index, self) =>
-      index === self.findIndex((c) => c.isoCodes === country.isoCodes)
+    (country, index, self) => index === self.findIndex((c) => c.isoCodes === country.isoCodes)
   );
 
   const options = uniqueCountries.map((country) => ({
     value: country.country,
     label: (
       <div className="flex items-center">
-        <img
-          src={country.flag}
-          alt={country.country}
-          className="w-6 h-6 mr-2"
-        />
+        <img src={country.flag} alt={country.country} className="w-6 h-6 mr-2" />
         <span>{`${_.capitalize(country.country)}${country.code}`}</span>
       </div>
     ),

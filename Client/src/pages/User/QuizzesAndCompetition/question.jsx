@@ -1,17 +1,8 @@
-import React from "react";
 import { ReactComponent as UncheckedIcon } from "./unchecked.svg";
 
 const Question = ({ number, total, question, options, onNext, onSubmit }) => {
   const getOptionLabel = (index) =>
-    index === 0
-      ? "A"
-      : index === 1
-      ? "B"
-      : index === 2
-      ? "C"
-      : index === 3
-      ? "D"
-      : "";
+    index === 0 ? "A" : index === 1 ? "B" : index === 2 ? "C" : index === 3 ? "D" : "";
   return (
     <div className="rounded-xl quiz-competition-instructions bg-white px-5 py-6 mt-[46px]">
       <div className="px-6 pb-5">
@@ -22,17 +13,8 @@ const Question = ({ number, total, question, options, onNext, onSubmit }) => {
           <p className="mb-6">{question}</p>
           {options.map((option, index) => {
             return (
-              <label
-                htmlFor={`option__${index + 1}`}
-                key={index}
-                className="flex items-center mb-2"
-              >
-                <input
-                  type="radio"
-                  name="option"
-                  id={`option__${index + 1}`}
-                  hidden
-                />
+              <label htmlFor={`option__${index + 1}`} key={index} className="flex items-center mb-2">
+                <input type="radio" name="option" id={`option__${index + 1}`} hidden />
                 <UncheckedIcon className="mr-1" />
                 {getOptionLabel(index)}) {option}
               </label>
@@ -41,9 +23,7 @@ const Question = ({ number, total, question, options, onNext, onSubmit }) => {
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <button className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white">
-          Previous
-        </button>
+        <button className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white">Previous</button>
         <button
           className="w-[287px] h-[54px] rounded-[5px] bg-[#5E7CE8] text-white"
           onClick={number === total ? onSubmit : onNext}

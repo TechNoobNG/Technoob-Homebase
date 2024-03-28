@@ -51,5 +51,5 @@ export {
   people01,
   people02,
   people03,
-  emptyProfile
+  emptyProfile,
 };

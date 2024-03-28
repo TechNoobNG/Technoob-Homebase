@@ -1,4 +1,4 @@
-import React, { Suspense, useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import { MdOutlineNoteAdd } from "react-icons/md";
 import { AppContext } from "../../../AppContext/AppContext";
 import { AiOutlineEye } from "react-icons/ai";
@@ -111,49 +111,30 @@ const JobManagement = () => {
 
   useEffect(() => {
     fetchJobMetrics();
-    fetchFirstData(
-      "/jobs/activity",
-      setJobActivity,
-      null,
-      true,
-      "activity"
-    ).then((_r) => setIsLoading(false));
+    fetchFirstData("/jobs/activity", setJobActivity, null, true, "activity").then((_r) => setIsLoading(false));
   }, []);
 
   return (
     <section>
       <div className="flex justify-between ">
         <div className="flex  sm:flex-row mb-5 md:mb-0 py-1 sm:py-5 justify-start sm:justify-center items-start sm:items-center ">
-          <h1 className=" md:text-3xl text-xl font-semibold">
-            Hey, {UserProfile.firstname} -
-          </h1>
+          <h1 className=" md:text-3xl text-xl font-semibold">Hey, {UserProfile.firstname} -</h1>
           <p className="md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black">
             Welcome to the resource page.
           </p>
         </div>
       </div>
       <div className=" p-5  rounded-md bg-white shadow-md w-full ">
-        <h1 className="text-xl font-semibold sm:ml-4 lg:py-4 sm:text-[#3A3A3A] sm:text-2xl">
-          Job Management
-        </h1>
+        <h1 className="text-xl font-semibold sm:ml-4 lg:py-4 sm:text-[#3A3A3A] sm:text-2xl">Job Management</h1>
         <div className="md:flex block w-full justify-start pb-3">
           {statistics.map((opt, i) => (
-            <div
-              key={i}
-              className=" px-3 pt-5 pb-6 rounded-lg shadow-md lg:w-[40%] mr-6 "
-            >
+            <div key={i} className=" px-3 pt-5 pb-6 rounded-lg shadow-md lg:w-[40%] mr-6 ">
               <p className=" pt-3 pb-6 px-2 flex text-xl text-[#71717A] w-auto">
-                {opt.name}{" "}
-                <span
-                  className={`${opt.style} p-2 rounded-full ml-3 mt-[-2px]`}
-                >
-                  {opt.icon}
-                </span>{" "}
+                {opt.name} <span className={`${opt.style} p-2 rounded-full ml-3 mt-[-2px]`}>{opt.icon}</span>{" "}
               </p>
               <div className=" flex justify-start items-end">
                 <p className=" p-2 mr-6 text-xl">
-                  <span className=" font-bold text-3xl">{opt.amount}</span>{" "}
-                  {opt.amtlabel}{" "}
+                  <span className=" font-bold text-3xl">{opt.amount}</span> {opt.amtlabel}{" "}
                 </p>
               </div>
             </div>
@@ -167,10 +148,7 @@ const JobManagement = () => {
             <div className=" flex justify-between">
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="title"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="title" className=" text-base font-semibold p-1">
                     Job title
                   </label>
                 </div>
@@ -185,10 +163,7 @@ const JobManagement = () => {
               </div>
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="company"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="company" className=" text-base font-semibold p-1">
                     Company
                   </label>
                 </div>
@@ -203,10 +178,7 @@ const JobManagement = () => {
               </div>
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="experience"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="experience" className=" text-base font-semibold p-1">
                     Your experience
                   </label>
                 </div>
@@ -226,10 +198,7 @@ const JobManagement = () => {
             <div className=" flex justify-between">
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="title"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="title" className=" text-base font-semibold p-1">
                     Job Location
                   </label>
                 </div>
@@ -244,10 +213,7 @@ const JobManagement = () => {
               </div>
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="title"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="title" className=" text-base font-semibold p-1">
                     Workplace type
                   </label>
                 </div>
@@ -265,10 +231,7 @@ const JobManagement = () => {
               </div>
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="title"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="title" className=" text-base font-semibold p-1">
                     Expiry-Date / Deadline
                   </label>
                 </div>
@@ -283,10 +246,7 @@ const JobManagement = () => {
               </div>
               <div className=" block py-2 my-4">
                 <div>
-                  <label
-                    htmlFor="title"
-                    className=" text-base font-semibold p-1"
-                  >
+                  <label htmlFor="title" className=" text-base font-semibold p-1">
                     Job type
                   </label>
                 </div>
@@ -313,10 +273,7 @@ const JobManagement = () => {
           ></FileUploadSingle>
           <div className="flex justify-between">
             <div className=" w-[70%]">
-              <label
-                htmlFor="Joblink"
-                className=" text-lg font-semibold py-2 px-4 "
-              >
+              <label htmlFor="Joblink" className=" text-lg font-semibold py-2 px-4 ">
                 Job link
               </label>
               <br />
@@ -329,15 +286,8 @@ const JobManagement = () => {
                 onChange={handleChange}
               />
             </div>
-            <div
-              className={`${
-                !isSubmitting && placeholderImage ? "" : "hidden"
-              } w-[20%]`}
-            >
-              <button
-                type="submit"
-                className=" mt-11 bg-tblue text-twhite py-[12px] lg:w-full w-[100%] rounded"
-              >
+            <div className={`${!isSubmitting && placeholderImage ? "" : "hidden"} w-[20%]`}>
+              <button type="submit" className=" mt-11 bg-tblue text-twhite py-[12px] lg:w-full w-[100%] rounded">
                 Publish Job
               </button>
             </div>
@@ -347,9 +297,7 @@ const JobManagement = () => {
           <div className=" flex justify-between">
             <div>
               <h2 className=" text-xl font-semibold pt-4">Recent Jobs</h2>
-              <p className=" text-lg text-[#747272] mb-1">
-                See list of recently uploaded jobs.
-              </p>
+              <p className=" text-lg text-[#747272] mb-1">See list of recently uploaded jobs.</p>
             </div>
 
             <button className="float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm">

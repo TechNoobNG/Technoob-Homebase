@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import { Fragment } from "react";
 import { createPortal } from "react-dom";
 import classes from "./NotificationModal.module.css";
 
@@ -12,7 +12,7 @@ const renderObject = (obj, keyMap) => {
       {Object.entries(obj).map(([key, value]) => (
         <li key={key}>
           <strong>{key[keyMap]}: </strong>
-          {typeof value === 'object' ? renderObject(value, keyMap) : value}
+          {typeof value === "object" ? renderObject(value, keyMap) : value}
         </li>
       ))}
     </ul>
@@ -23,29 +23,28 @@ const NotificationModal = (props) => {
   const { title, message, updateInfo = {}, onCancel, onConfirm } = props;
 
   const keyMap = {
-    "bio": "Bio",
-    "country": "Country",
-    "stack": "Stack",
-    "firstname": "First Name",
-    "lastname": "Last Name",
-    "email": "Email",
-    "phone": "Phone",
-    "website": "Website",
-    "github": "GitHub",
-    "linkedin": "LinkedIn",
-    "twitter": "Twitter",
-    "instagram": "Instagram",
-    "facebook": "Facebook",
-    "youtube": "YouTube",
-    "employmentHistory": "Employment History",
-    "role": "Role",
-    "company": "Company",
-    "jobType": "Job Type",
-    "country": "Country"
+    bio: "Bio",
+    country: "Country",
+    stack: "Stack",
+    firstname: "First Name",
+    lastname: "Last Name",
+    email: "Email",
+    phone: "Phone",
+    website: "Website",
+    github: "GitHub",
+    linkedin: "LinkedIn",
+    twitter: "Twitter",
+    instagram: "Instagram",
+    facebook: "Facebook",
+    youtube: "YouTube",
+    employmentHistory: "Employment History",
+    role: "Role",
+    company: "Company",
+    jobType: "Job Type",
+    // country: "Country",
+  };
 
-  }
-
-const renderValue = (value) => {
+  const renderValue = (value) => {
     if (Array.isArray(value)) {
       return (
         <ul>
@@ -54,14 +53,14 @@ const renderValue = (value) => {
           ))}
         </ul>
       );
-    } else if (typeof value === 'object' && value !== null) {
+    } else if (typeof value === "object" && value !== null) {
       return (
         <table>
           <tbody>
             {Object.entries(value).map(([nestedKey, nestedValue]) => (
               <tr key={nestedKey}>
                 <td>
-                  <strong>{keyMap[nestedKey]}:  </strong>
+                  <strong>{keyMap[nestedKey]}: </strong>
                 </td>
                 <td>{renderValue(nestedValue)}</td>
               </tr>
@@ -89,7 +88,7 @@ const renderValue = (value) => {
                   <td>
                     <strong>{keyMap[key]} :</strong>
                   </td>
-                  <td>{ renderValue(value)}</td>
+                  <td>{renderValue(value)}</td>
                 </tr>
               ))}
             </tbody>
@@ -106,13 +105,12 @@ const renderValue = (value) => {
       </footer>
     </div>
   );
-
 };
 
 const ProfileUpdateNotification = (props) => {
-  const { title, message, updateInfo = {},setDisplayConfirmation, sendUpdateRequest} = props;
+  const { title, message, updateInfo = {}, setDisplayConfirmation, sendUpdateRequest } = props;
   const onCancelHandler = () => {
-     setDisplayConfirmation(false);
+    setDisplayConfirmation(false);
   };
 
   const onConfirmHandler = () => {
@@ -122,10 +120,7 @@ const ProfileUpdateNotification = (props) => {
 
   return (
     <Fragment>
-      {createPortal(
-        <Backdrop onClick={onCancelHandler} />,
-        document.getElementById("backdrop-root")
-      )}
+      {createPortal(<Backdrop onClick={onCancelHandler} />, document.getElementById("backdrop-root"))}
       {createPortal(
         <NotificationModal
           title={title || "Update Profile"}

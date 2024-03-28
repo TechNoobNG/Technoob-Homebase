@@ -1,26 +1,52 @@
-@import url('https://fonts.cdnfonts.com/css/smack-boom');
-@import url('https://fonts.cdnfonts.com/css/nunito-sans');
+@import url("https://fonts.cdnfonts.com/css/smack-boom");
+@import url("https://fonts.cdnfonts.com/css/nunito-sans");
 
-.uni{
-    font-family: 'Smack Boom', sans-serif;
+.uni {
+  font-family: "Smack Boom", sans-serif;
 }
 
-.nun{
-    font-family: 'Nunito Sans', sans-serif;
-                                                
+.nun {
+  font-family: "Nunito Sans", sans-serif;
 }
 
-.bgcontact{
-    /* background-image: linear-gradient(120deg,  #dbf5df 100%, #F0F4FE 25%); */
-    background-image: linear-gradient(161.75deg, rgba(225, 249, 227, 0.5) 0.2%, rgba(240, 244, 254, 0.25) 109.04%);
+.bgcontact {
+  /* background-image: linear-gradient(120deg,  #dbf5df 100%, #F0F4FE 25%); */
+  background-image: linear-gradient(161.75deg, rgba(225, 249, 227, 0.5) 0.2%, rgba(240, 244, 254, 0.25) 109.04%);
 }
 
 .blur-effect {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(5px); /* Adjust blur intensity as needed */
-    z-index: 1000
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px); /* Adjust blur intensity as needed */
+  z-index: 1000;
+}
+
+/* customized checkbox */
+#myCheckbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #fff; /* Unchecked background color */
+  cursor: pointer;
+  border: 1px solid #525151; /* Outline for the unchecked state */
+  overflow: hidden;
+}
+
+#myCheckbox:checked::before {
+  content: "\2713"; /* Checkmark symbol (Unicode) */
+  color: white; /* Checked color */
+  font-size: 15px;
+  display: block;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  line-height: 20px;
+  background-color: #5e7ce8;
+  border: none;
+  border-radius: 50%;
+  border: 1px solid #5e7ce8;
+}
