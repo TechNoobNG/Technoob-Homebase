@@ -1,6 +1,6 @@
-import { canvasPreview } from './canvasPreview';
+import { canvasPreview } from "./canvasPreview";
 
-let previewUrl = '';
+let previewUrl = "";
 
 function toBlob(canvas) {
   return new Promise((resolve) => {
@@ -8,14 +8,14 @@ function toBlob(canvas) {
   });
 }
 export async function imgPreview(image, crop, scale = 1, rotate = 0) {
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvasPreview(image, canvas, crop, scale, rotate);
 
   const blob = await toBlob(canvas);
 
   if (!blob) {
-    console.error('Failed to create blob');
-    return '';
+    console.error("Failed to create blob");
+    return "";
   }
 
   if (previewUrl) {
