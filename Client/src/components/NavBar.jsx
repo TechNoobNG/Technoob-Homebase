@@ -97,7 +97,7 @@ const NavBar = () => {
           </ul>
         </div>
         {/* toggle button */}
-        <div className="flex lg:hidden h-full items-center justify-center">
+        <div className="flex xl:hidden h-full items-center justify-center">
           <img
             src={toggle ? close : menu}
             alt="menu"
@@ -154,6 +154,7 @@ const NavBar = () => {
             </div>
           </div>
         </div>
+
         {isLoggedIn ? (
           <div className="hidden lg:flex gap-2 items-center">
             <div className="hidden lg:flex w-[20%] gap-2 text-center">

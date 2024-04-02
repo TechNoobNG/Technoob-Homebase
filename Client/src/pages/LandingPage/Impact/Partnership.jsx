@@ -5,6 +5,7 @@ export const Partnerships = () => {
   const navigate = useNavigate();
 
   const navigateToContact = () => {
+
     navigate("/Contact-Us");
   };
   return (
@@ -33,3 +34,4 @@ export const Partnerships = () => {
     </div>
   );
 };
+
