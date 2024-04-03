@@ -68,7 +68,7 @@ else{
 
       } catch (error) {
         console.log('this is the error from register',error)
-        setIsLoggedIn(false)
+    
       }finally{
         setLoading(false);
         setIsLoggedIn(true)
