@@ -1,4 +1,4 @@
-name: Client Deployment to Heroku Staging
+name: Client Deployment to Frontend Prod
 
 on:
   push:
@@ -28,13 +28,25 @@ jobs:
         run: npm run build
         env:
           CI: ""
-
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+          
+      - name: deploy to ec2
+        uses: burnett01/rsync-deployments@5.1
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: technoob
-          heroku_email: ooluwatobiiloba@gmail.com
+          switches: -avzr --delete
+          path: ./*
+          remote_path: /var/www/technoob/
+          remote_host: "${{ secrets.CLIENT_EC2_PUBLIC_IP }}"
+          remote_user: "${{ secrets.CLIENT_EC2_USER }}"
+          remote_key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
 
-      - name: Restart Dyno
-        run: heroku ps:restart --app technoob
+
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: "${{ secrets.CLIENT_EC2_PUBLIC_IP }}"
+          username: "${{ secrets.CLIENT_EC2_USER }}"
+          key: "${{ secrets.CLIENT_EC2_SSH_PRIVATE_KEY }}"
+          script: |
+            cd /var/www/technoob/Client
+            pm2 restart 0
+            # pm2 serve build/ 3000 --name "react-build" --spa

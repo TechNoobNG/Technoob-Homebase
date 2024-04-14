@@ -1,23 +1,27 @@
 import axios from "axios";
 
-const serverBaseURL = process.env.SERVER_BASE_URL || "https://staging-api.technoob.tech";
+
+const testBaseUrl = "staging-api.technoob.tech";
+const prodBaseUrl = "api.technoob.tech";
 
 const serverApi = axios.create({
-    baseURL:   `${serverBaseURL}/api/v1/`
+  baseURL: `https://${testBaseUrl}/api/v1/`,
+  withCredentials: true,
 });
 
 
 serverApi.defaults.headers.common["Content-Type"] = "application/json";
 
-serverApi.requiresAuth = function (requiresAuth){
-    if(requiresAuth){
-        const userToken = sessionStorage.getItem('user_token');
-        serverApi.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
-        serverApi.defaults.withCredentials = true;
-        return null
-    }
+serverApi.requiresAuth = function (requiresAuth) {
+  if (requiresAuth) {
+    const userToken = sessionStorage.getItem("user_token");
+    serverApi.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
+    serverApi.defaults.withCredentials = true;
+    return null;
+  }
 
-    return null
 
-}
-export default serverApi
+  return null;
+};
+export default serverApi;
+

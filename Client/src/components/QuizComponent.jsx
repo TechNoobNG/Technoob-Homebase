@@ -41,7 +41,7 @@ const QuizComponent = ({data, setData, handleChange}) => {
             </div>
         </div>
     </div>
-  )
-}
+  );
+};
 
-export default QuizComponent
+export default QuizComponent;

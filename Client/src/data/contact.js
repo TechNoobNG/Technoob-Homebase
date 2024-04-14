@@ -9,19 +9,18 @@ import {
   people01,
   people02,
   people03,
-  twitter
+  twitter,
 } from "./assets/asset";
-import {Catalog, Circooles, icon1, icon2, icon3, icon4, icon5, icon6, Layers, Sisyphus} from "./assets";
-import {RiBankLine} from 'react-icons/ri';
-import {FiLayers} from 'react-icons/fi'
-import {BsBank, BsPuzzle} from 'react-icons/bs'
-
+import { Catalog, Circooles, icon1, icon2, icon3, icon4, icon5, icon6, Layers, Sisyphus } from "./assets";
+import { RiBankLine } from "react-icons/ri";
+import { FiLayers } from "react-icons/fi";
+import { BsBank, BsPuzzle } from "react-icons/bs";
 
 export const navLinks = [
   {
     id: "home",
     title: "Home",
-    link:     '' ,
+    link: "",
   },
   {
     id: "resources",
@@ -31,12 +30,17 @@ export const navLinks = [
   {
     id: "find-job",
     title: "Jobs",
-    link: "Find-Jobs"
+    link: "Find-Jobs",
   },
   {
     id: "aboutUs",
     title: "About Us",
     link: "About-Us",
+  },
+  {
+    id: "impact",
+    title: "Our Impacts",
+    link: "impact",
   },
   {
     id: "contact-us",
@@ -55,8 +59,7 @@ export const features = [
     id: "feature-1",
     icon: icon3,
     title: "Supportive Learning Environment",
-    content:
-      "Join our  welcoming community where questions are encouraged, and you can learn without judgments.",
+    content: "Join our  welcoming community where questions are encouraged, and you can learn without judgments.",
   },
   {
     id: "feature-2",
@@ -69,22 +72,19 @@ export const features = [
     id: "feature-3",
     icon: icon1,
     title: "Learning Resources",
-    content:
-      "Access a wealth of resources and articles to kickstart your tech journey.",
+    content: "Access a wealth of resources and articles to kickstart your tech journey.",
   },
   {
     id: "feature-4",
     icon: icon4,
     title: "Career Development",
-    content:
-      "Explore a plethora of tech-related job opportunities, and excel in your tech career with us.",
+    content: "Explore a plethora of tech-related job opportunities, and excel in your tech career with us.",
   },
   {
     id: "feature-5",
     icon: icon5,
     title: "Collaboration",
-    content:
-      "Participate in engaging classes and workshops to expand your tech knowledge and skills. ",
+    content: "Participate in engaging classes and workshops to expand your tech knowledge and skills. ",
   },
   {
     id: "feature-6",
@@ -98,24 +98,21 @@ export const features = [
 export const feedback = [
   {
     id: "feedback-1",
-    content:
-      "I’ve been using this platform as my got-to resource center and can’t imagine working without it.",
+    content: "I’ve been using this platform as my got-to resource center and can’t imagine working without it.",
     name: "Candice Wu",
     title: "Product Manager, Meta",
     img: people01,
   },
   {
     id: "feedback-2",
-    content:
-      "Money makes your life easier. If you're lucky to have it, you're lucky.",
+    content: "Money makes your life easier. If you're lucky to have it, you're lucky.",
     name: "Steve Mark",
     title: "Founder & Leader",
     img: people02,
   },
   {
     id: "feedback-3",
-    content:
-      "It is usually people in the money business, finance, and international trade that are really rich.",
+    content: "It is usually people in the money business, finance, and international trade that are really rich.",
     name: "Kenn Gallagher",
     title: "Founder & Leader",
     img: people03,
@@ -210,7 +207,7 @@ export const HomeItems = [
   {
     id: "1",
     title: "Layers",
-    img: Layers ,
+    img: Layers,
   },
   {
     id: "2",
@@ -272,33 +269,56 @@ export const clients = [
 ];
 
 export const AdminNavs = [
-  
   {
     id: "2",
-    icon: <RiBankLine/>,
+    icon: <RiBankLine />,
     title: "Job Management",
     link: "/admin/Job-Management",
-    color: 'text-purple-500'
-   },
+    color: "text-purple-500",
+  },
   {
     id: "3",
-    icon: <FiLayers/>,
+    icon: <FiLayers />,
     title: "Resource Management",
     link: "/admin/Resources-Management",
     color: "text-tblue",
-   },
+  },
   {
     id: "4",
-    icon: <BsBank/>,
+    icon: <BsBank />,
     title: "Event Management",
     link: "/admin/Event-Management",
     color: "text-teal-500",
- },
+  },
   {
     id: "5",
-    icon: <BsPuzzle/>,
+    icon: <BsPuzzle />,
     title: "Quizzes and Competition",
     link: "/admin/Quizzes",
     color: "text-tblue",
- }
+  },
+];
+
+export const UserDashboardNavs = [
+  {
+    id: "2",
+    icon: <FiLayers />,
+    title: "Resources",
+    link: "/dashboard/Job-Management",
+    color: "text-purple-500",
+  },
+  {
+    id: "3",
+    icon: <BsBank />,
+    title: "Events",
+    link: "/dashboard/events",
+    color: "text-tblue",
+  },
+  {
+    id: "5",
+    icon: <BsPuzzle />,
+    title: "Quizzes and Competition",
+    link: "/dashboard/Quizzes",
+    color: "text-tblue",
+  },
 ];

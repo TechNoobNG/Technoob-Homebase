@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import UploadFile from "../utility/UploadFile";
 import LinkUpload from "../utility/LinkUpload";
 
@@ -10,9 +10,7 @@ const AddFile = ({ closeModal }) => {
       <div className="flex justify-center items-center pt-10">
         <div className="w-full overflow-y-auto flex flex-col justify-start items-center h-auto max-h-[40rem] bg-white rounded-md ">
           <div className="flex flex-col justify-center items-center w-[70%] h-[10rem]">
-            <h1 className="text-lg md:text-2xl mb-12 font-bold">
-              What type of file do you want to add?
-            </h1>
+            <h1 className="text-lg md:text-2xl mb-12 font-bold">What type of file do you want to add?</h1>
             <div className="flex justify-center items-center gap-6">
               <span
                 onClick={() => setToggle("Document")}
@@ -28,16 +26,8 @@ const AddFile = ({ closeModal }) => {
               </span>
             </div>
           </div>
-          <div
-            className={`w-full items-center flex justify-center ${
-              !toggle && "hidden"
-            }`}
-          >
-            {toggle === "Document" ? (
-              <UploadFile closeModal={closeModal}/>
-            ) : (
-              <LinkUpload closeModal={closeModal} />
-            )}
+          <div className={`w-full items-center flex justify-center ${!toggle && "hidden"}`}>
+            {toggle === "Document" ? <UploadFile closeModal={closeModal} /> : <LinkUpload closeModal={closeModal} />}
           </div>
         </div>
       </div>

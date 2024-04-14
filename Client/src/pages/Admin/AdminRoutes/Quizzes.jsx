@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import QuizComponent from "../../../components/QuizComponent";
 import { useState } from "react";
 import RecentActivities from "../../../components/Tables/RecentActivities";
@@ -134,15 +134,9 @@ const Quizzes = () => {
       <div className="flex flex-col h-full bg-white lg:shadow-lg w-full p-5 rounded-md">
         <div className="w-full flex max-lg:flex-col gap-3 lg:gap-24 py-5 lg:py-10 nun justify-between lg:items-center">
           <div className="flex ">
-            <h1 className=" font-semibold md:text-3xl text-xl">
-              Quizzes and Competition
-            </h1>
+            <h1 className=" font-semibold md:text-3xl text-xl">Quizzes and Competition</h1>
           </div>
-          <input
-            type="text"
-            placeholder="Search"
-            className="p-3 border w-full lg:w-[400px] rounded-[5px]"
-          />
+          <input type="text" placeholder="Search" className="p-3 border w-full lg:w-[400px] rounded-[5px]" />
         </div>
         <form className="flex flex-col gap-3 mb-5 lg:mb-10">
           <div className="flex border-b gap-2 lg:gap-4">
@@ -178,16 +172,14 @@ const Quizzes = () => {
           <div className="flex border-b gap-2 lg:gap-4">
             <p
               className={`${
-                active === "Quiz" &&
-                "bg-gray-100 text-tblue border-b-2 border-b-tblue"
+                active === "Quiz" && "bg-gray-100 text-tblue border-b-2 border-b-tblue"
               } border px-4 py-2 max-lg:w-[50%]`}
             >
               Multiple choice
             </p>
             <p
               className={`${
-                active === "competition" &&
-                "text-tblue border-b-2 border-b-tblue"
+                active === "competition" && "text-tblue border-b-2 border-b-tblue"
               } border px-4 py-2 max-lg:w-[50%]`}
             >
               Open ended
@@ -237,6 +229,9 @@ const Quizzes = () => {
                 />
               </div>
             </div>
+            <button className="border w-full lg:w-fit rounded-md text-tblue border-tblue px-6 p-4 lg:py-2">
+              Add Question
+            </button>
             <button className="border w-full lg:w-fit rounded-md text-tblue border-tblue px-6 p-4 lg:py-2">
               Add Question
             </button>

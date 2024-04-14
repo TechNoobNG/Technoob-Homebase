@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
 import { filtersearch } from "../../../data/assets";
 
 import { MdEventAvailable, MdEvent } from "react-icons/md";
 import Table from "../../../components/Table";
-import { AppContext } from "../../../AppContext/AppContext";
 
 const EventMng = () => {
-  const { UserProfile } = useContext(AppContext);
   const data = null;
   const statistics = [
     {
@@ -30,15 +27,12 @@ const EventMng = () => {
 
   return (
     <section>
-      <div className=" flex justify-between ">
-      <div className="flex  sm:flex-row mb-5 md:mb-0 py-1 sm:py-5 justify-start sm:justify-center items-start sm:items-center ">
-          <h1 className=" md:text-3xl text-xl font-semibold">Hey, {UserProfile.firstname} -</h1>
-          <p className="md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black">
-            Welcome to the resource page.
-          </p>
+      <div className=" flex justify-between sm:pl-5 pl-1">
+        <div className="flex flex-col sm:flex-row py-1 sm:py-10 justify-start sm:justify-center items-start sm:items-center ">
+          <h1 className="md:text-4xl text-2xl mr-2">Hey, Esther-</h1>
+          <p className="md:pt-2 pt-[3px]">Welcome your event&apos;s page</p>
         </div>
       </div>
-    
       <div className="p-5 rounded-md bg-white sm:shadow-md w-full ">
         <div className="w-full ">
           <div className="flex flex-col sm:flex-row justify-between w-full">
@@ -53,11 +47,7 @@ const EventMng = () => {
                 placeholder="Search resources"
                 className="placeholder:italic placeholder:text-slate-400 border rounded-md w-[423px] focus:outline-none text-base h-[100%] p-3 mr-2 focus:border-none focus:ring-[0] "
               />
-              <img
-                src={filtersearch}
-                alt="filter"
-                className="w-[24px] h-[24px]"
-              />
+              <img src={filtersearch} alt="filter" className="w-[24px] h-[24px]" />
             </div>
           </div>
 
@@ -65,28 +55,20 @@ const EventMng = () => {
             <p className="text-2xl text-[#3a3a3a] ">Statistics</p>
             <p className="text-base text-[#3a3a3a] opacity-50 ">See Metrics</p>
 
-            <div className="flex mt-3 p-3 gap-3 rounded-sm flex-wrap">
+            <div className="flex mt-3 p-3 gap-3 bg-slate-50 rounded-sm flex-wrap">
               <div className="flex w-[100%] justify-start flex-wrap gap-4 rounded-sm">
                 {statistics.map((opt, i) => (
-                  <div
-                    key={i}
-                    className=" px-3 pt-5 pb-6 rounded-lg w-[25rem] shadow-md lg:w-[40%] lg:mr-3 "
-                  >
+                  <div key={i} className=" px-3 pt-5 pb-6 rounded-lg w-[25rem] shadow-md lg:w-[40%] lg:mr-3 ">
                     <p className=" pt-3 pb-6 px-2 flex items-center justify-start text-xl text-[#71717A] w-auto">
                       {opt.name}{" "}
-                      <span
-                        className={`${opt.style} text-2xl p-2 rounded-full ml-3 mt-[-2px]`}
-                      >
-                        {opt.icon}
-                      </span>{" "}
+                      <span className={`${opt.style} text-2xl p-2 rounded-full ml-3 mt-[-2px]`}>{opt.icon}</span>{" "}
                     </p>
                     <div className="flex justify-start items-end w-full">
                       <p className="p-2 mr-6 text-xl">
-                        <span className="font-bold text-3xl">{opt.amount}</span>{" "}
-                        {opt.amtlabel}{" "}
+                        <span className="font-bold text-3xl">{opt.amount}</span> {opt.amtlabel}{" "}
                       </p>
-                      <p className=" p-2 text-[#35BA83] flex gap-4 items-center justify-center">
-                        {/* <span className={`${opt.style} text-xl `}>{opt.icon}</span> {opt.tracks} */}
+                      <p className=" p-2 text-[#35BA83] flex gap-4 items-center">
+                        <span className="text-xl ">{opt.icon2}</span> {opt.tracks}
                       </p>
                     </div>
                   </div>
@@ -153,17 +135,13 @@ const EventMng = () => {
               <div className=" flex justify-between">
                 <div>
                   <h2 className=" text-xl font-semibold pt-4">Recent Jobs</h2>
-                  <p className=" text-lg text-[#747272] mb-1">
-                    See list of resent jobs posted
-                  </p>
+                  <p className=" text-lg text-[#747272] mb-1">See list of resent jobs posted</p>
                 </div>
                 <button className="float-right border py-2 px-8 my-[20px] rounded flex justify-between shadow-sm">
                   See all
                 </button>
               </div>
-              <div className="flex overflow-x-auto">
-                {data ? <Table data={data} /> : ""}
-              </div>
+              <div className="flex overflow-x-auto">{data ? <Table data={data} /> : ""}</div>
             </div>
           </div>
         </div>
