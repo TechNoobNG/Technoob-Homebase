@@ -235,11 +235,12 @@ module.exports = {
               {
                 $lookup: {
                     from: "quizzes",
-                    let: { quizId: "$quiz_records.quiz_id" },
+                    let: { quizId: "$quiz_records.quiz_id" }, 
                     pipeline: [
                         {
                             $match: {
                                 $expr: { $in: ["$_id", "$$quizId"] }, 
+                            },
                         },
                         {
                             $project: {
