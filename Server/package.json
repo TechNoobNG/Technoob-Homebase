@@ -91,8 +91,7 @@
     "validator": "^13.9.0",
     "workerpool": "^6.5.0",
     "xss": "^1.0.14",
-    "yamljs": "^0.3.0",
-    "zlib": "^1.0.5"
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "nodemon": "^1.14.9"
