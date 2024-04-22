@@ -5,19 +5,36 @@ import QuizSection from "./_components/QuizSection";
 import DashboardHeader from "./_components/DashboardHeader";
 import ActiveTask from "./_components/ActiveTask";
 import JobCard from "./_components/JobCard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import serverApi from "../../../utility/server";
 
-const UserDashboard = () => {
-  useEffect(() => {
-    const UserStats = async () => {
-      serverApi.requiresAuth(true);
-      const result = await serverApi("/user/dashboard");
-      //   setData(result?.data?.data)
-      console.log(result);
-    };
 
-    UserStats();
+const fetchUserStats = async () => {
+  serverApi.requiresAuth(true);
+  const result = await serverApi("/user/dashboard");
+  //   setData(result?.data?.data)
+  console.log(result);
+};
+
+const extractdashInfo = ({ userDashboardInfo }) => {
+  let activeTasks = [...userDashboardInfo.pendingQuizzes];
+
+  const currentDateTime = new Date();
+  
+  activeTasks.push(
+      ...userDashboardInfo.recommendations.quiz.filter(quiz => {
+          const deadline = new Date(quiz.deadline);
+          return deadline > currentDateTime;
+      })
+  );
+}
+
+const UserDashboard = () => {
+
+  const [activeTaskss, setActiveTasks] = useState(false);
+
+  useEffect(() => {
+    fetchUserStats();
   }, []);
 
   // console.log({UserProfile})
