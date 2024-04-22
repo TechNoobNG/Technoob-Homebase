@@ -17,7 +17,13 @@ const fetchUserStats = async () => {
 };
 
 const extractdashInfo = ({ userDashboardInfo }) => {
-  let activeTasks = [...userDashboardInfo.pendingQuizzes];
+  let activeTasks = [...userDashboardInfo.pendingQuizzes.map((quiz)=>{
+    return {
+      type: "Quiz",
+      title: quiz.quiz_info.theme,
+      borderColor: "#70D399",
+    }
+  })];
 
   const currentDateTime = new Date();
   
