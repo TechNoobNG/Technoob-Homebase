@@ -231,18 +231,52 @@ module.exports = {
                     foreignField: "user_id",
                     as: "quiz_records",
                   },
+              },
+              {
+                $lookup: {
+                    from: "quizzes",
+                    localField: "quiz_records.quiz_id",
+                    foreignField: "_id",
+                    as: "quiz_infos",
                 },
+            },
                 {
                   $addFields: {
                     pendingQuizzes: {
-                      $filter: {
-                        input: "$quiz_records",
-                        as: "quizRecord",
-                        cond: {
-                          $eq: ["$$quizRecord.completed", false],
-                        },
+                      $map: {
+                          input: {
+                              $filter: {
+                                  input: "$quiz_records",
+                                  as: "quizRecord",
+                                  cond: {
+                                      $eq: ["$$quizRecord.completed", false],
+                                  },
+                              },
+                          },
+                          as: "pendingQuiz",
+                          in: {
+                              $mergeObjects: [
+                                  "$$pendingQuiz",
+                                  {
+                                      quiz_info: {
+                                          $arrayElemAt: [
+                                              {
+                                                  $filter: {
+                                                      input: "$quiz_infos",
+                                                      as: "info",
+                                                      cond: {
+                                                          $eq: ["$$info._id", "$$pendingQuiz.quiz_id"],
+                                                      },
+                                                  },
+                                              },
+                                              0,
+                                          ],
+                                      },
+                                  },
+                              ],
+                          },
                       },
-                    },
+                  },
                     lastCompletedAttempt: {
                       $arrayElemAt: [
                         {
@@ -266,7 +300,7 @@ module.exports = {
                       ],
                     },
                   },
-                },
+              },
                 {
                   $project: {
                     email: 1,
