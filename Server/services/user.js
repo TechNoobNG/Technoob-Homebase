@@ -235,8 +235,24 @@ module.exports = {
               {
                 $lookup: {
                     from: "quizzes",
-                    localField: "quiz_records.quiz_id",
-                    foreignField: "_id",
+                    let: { quizId: "$quiz_records.quiz_id" }, 
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $in: ["$_id", "$$quizId"] }, 
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                deadline: 1,
+                                type: 1,
+                                theme: 1,
+                                stack: 1,
+                                datePosted: 1,
+                            },
+                        },
+                    ],
                     as: "quiz_infos",
                 },
             },
