@@ -50,8 +50,6 @@ function App() {
       {displayToggle && <DashSelector />}
       {displayToggle && <div className="blur-effect" />}
 
-      {/* {toggleValue === "User Dashboard" ?        */}
-
       <Routes>
         {/* landing page */}
         <Route path="/" element={<LandingPageLayout />}>
@@ -65,7 +63,7 @@ function App() {
 
           {/* <Route path="/dashboard" element={<UserDashboard />} /> */}
           <Route path="/impact" element={<Impact />} />
-          <Route path="/quizzes-and-competition" element={<QuizzesAndCompetition />} />
+
         </Route>
 
         {/* auth screen */}
@@ -75,6 +73,9 @@ function App() {
         {/*user dashboard */}
         <Route path="/dashboard" element={<UserDashboardLayout />}>
           <Route index element={<UserDashboard />} />
+          <Route path="/dashboard/quizzes-and-competition" element={<QuizzesAndCompetition />} />
+          <Route path="/dashboard/events" element={<AdminDashboard />} />
+          <Route path="/dashboard/profile" element={<Profile />} />
         </Route>
 
         {/* admin dashboard */}

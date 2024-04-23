@@ -192,12 +192,8 @@ export const footerLinks = [
     title: "Company",
     links: [
       {
-        name: "Our Partner",
-        link: "https://www.hoobank.com/our-partner/",
-      },
-      {
         name: "Become a Partner",
-        link: "https://www.hoobank.com/become-a-partner/",
+        link: "https://www.technoob.tech",
       },
     ],
   },
@@ -304,7 +300,7 @@ export const UserDashboardNavs = [
     id: "2",
     icon: <FiLayers />,
     title: "Resources",
-    link: "/dashboard/Job-Management",
+    link: "/dashboard/resources",
     color: "text-purple-500",
   },
   {
@@ -318,7 +314,7 @@ export const UserDashboardNavs = [
     id: "5",
     icon: <BsPuzzle />,
     title: "Quizzes and Competition",
-    link: "/dashboard/Quizzes",
+    link: "/dashboard/quizzes-and-competition",
     color: "text-tblue",
   },
 ];

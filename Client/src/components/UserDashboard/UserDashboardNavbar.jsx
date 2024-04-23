@@ -27,13 +27,15 @@ const UserDashboardNavbar = () => {
         <div>
           <TbSettings className="sm:text-2xl cursor-pointer" />
         </div>
-        <div className="rounded-full h-5 w-5 sm:w-8 sm:h-8 cursor-pointer">
-          <img
-            src={UserProfile?.photo !== "default.jpg" ? UserProfile?.photo : people01}
-            alt="profile"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <NavLink to={"/dashboard/profile"}>
+          <div className="rounded-full h-5 w-5 sm:w-8 sm:h-8 cursor-pointer">
+            <img
+              src={UserProfile?.photo !== "default.jpg" ? UserProfile?.photo : people01}
+              alt="profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </NavLink>
       </div>
       <div className="flex lg:hidden h-full items-center justify-center">
         <img
