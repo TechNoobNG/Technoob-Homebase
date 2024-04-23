@@ -118,8 +118,7 @@ module.exports = {
         } catch (error) {
             throw error
         }
-
-},
+    },
 
     async getPlaceholders(query) {
         try {
@@ -130,15 +129,36 @@ module.exports = {
                 filter = { name: { $in: names } };
             }
 
-            const placeholders = await defaults.find(filter);
-
-            return placeholders;
+            const placeholdersArray = await defaults.find(filter);
+            const placeholders = placeholdersArray.map(placeholder => placeholder.defaults);
+            return placeholders.reduce((acc, cur) => ({ ...acc, ...cur }), {});
         } catch (err) {
             throw err;
         }
     },
 
-
+    setPlaceholderEnvsV1(defaults) {
+        process.env.AVAILABLE_STACKS = JSON.stringify(defaults.stacks);
+        process.env.AVAILABLE_COUNTRIES = JSON.stringify(defaults.countries);
+        process.env.AVAILABLE_CONTRACT_TYPE = JSON.stringify(defaults.contractType);
+        process.env.AVAILABLE_QUIZ_TYPE = JSON.stringify(defaults.quizType);
+        process.env.AVAILABLE_RESOURCE_TYPE = JSON.stringify(defaults.resourceType);
+        process.env.AVAILABLE_WORK_PLACE_TYPE = JSON.stringify(defaults.workPlaceType);
+        return true;
+    },  
+    
+    setPlaceholderEnvs(defaults) {
+        try {
+            Object.keys(defaults).forEach(key => {
+                const snakeCaseKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
+                process.env[`AVAILABLE_${snakeCaseKey}`] = JSON.stringify(defaults[key]);
+            });
+            return true;
+        } catch (error) {
+            return false;
+        }
+    },
+    
     async setPlaceholders({ placeholders, name }) {
         try {
             if (!name) {

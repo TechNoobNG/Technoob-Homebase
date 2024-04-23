@@ -30,7 +30,7 @@ const resources = new Schema({
         type: String,
         default: true,
         trim: true,
-        enum: ['api','design','props', 'database', 'storage', 'e-book', 'video', 'blog', 'repo', 'documentation','audio' , 'projects','other']
+        enum: config.AVAILABLE_RESOURCE_TYPE
 
     },
 

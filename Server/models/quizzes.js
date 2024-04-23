@@ -11,7 +11,7 @@ const quizzes = new Schema({
 
     type: {
         type: String,
-        enum: ["quiz", "competition"],
+        enum: config.AVAILABLE_QUIZ_TYPE,
         required: true
     },
     stack: {

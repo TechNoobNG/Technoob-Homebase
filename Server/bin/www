@@ -8,6 +8,7 @@ const debug = require('debug')('server:server');
 const app = require('../app');
 const workerApp = require('../worker/beanstalk/worker');
 const db = require('../utils/connectors/db_connector');
+const { getPlaceholders, setPlaceholderEnvs } = require("../services/utils.js");
 const { client, redisSubscriber } = require("../utils/connectors/redishelper");
 const config = require('../config/config');
 const queueWorker = require(`../worker/${config.WORKER_QUEUE_PLATFORM}/worker`);
@@ -69,8 +70,12 @@ function initialiseDB() {
       console.error('Database connection error:', err);
       reject(err);
     });
-    db.once('open', () => {
+    db.once('open', async () => {
       console.log("Connected to database");
+      console.log("Fetching Defaults");
+      const defaults = await getPlaceholders();
+      console.log("Setting Defaults");
+      setPlaceholderEnvs(defaults);
       resolve();
     });
   });

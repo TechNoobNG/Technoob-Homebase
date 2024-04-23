@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const config = require("../config/config");
 const { clearCacheModelTriggers } = require("../middleware/redisCache");
 
 const jobs = new Schema({
@@ -24,12 +25,12 @@ const jobs = new Schema({
 
     workplaceType: {
         type: String,
-        enum: ["onsite", "remote", "hybrid"],
+        enum: config.AVAILABLE_WORK_PLACE_TYPE,
         required: [true, 'Please provide the location'],
     },
     contractType:{
         type: String,
-        enum: ["full-time", "contract","internship","part-time","gig"],
+        enum: config.AVAILABLE_CONTRACT_TYPE,
         required: [true, 'Please provide the contract type'],
     },
 
