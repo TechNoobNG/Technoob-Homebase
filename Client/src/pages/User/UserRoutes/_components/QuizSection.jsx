@@ -25,7 +25,7 @@ const QuizSection = ({ lastCompletedQuizAttempt, rank, leaderboardRecord, leader
           </div>
 
           <div>
-            <p className="text-sm">{ `${lastCompletedQuizAttempt?.quiz?.score}%` || "N/A"}</p>
+            <p className="text-sm">{ `${lastCompletedQuizAttempt?.quiz?.score || "0"}%` }</p>
             <p className="text-xs">Your Score</p>
           </div>
         </div>
@@ -57,27 +57,28 @@ const QuizSection = ({ lastCompletedQuizAttempt, rank, leaderboardRecord, leader
         </div>
       </div>
 
-      <div className="border border-[#27ae60]/40 rounded-lg shadow">
-        <div className="flex px-6 py-4 justify-between items-center">
-          <div className="text-tblackk flex flex-col items-center">
-            <IoMdTime className="text-4xl" />
-            {quizRecommendation && quizRecommendation[0] && <p className="text-sm font-semibold">{`Attempt a ${quizRecommendation[0].type.charAt(0).toUpperCase() + quizRecommendation[0].type.slice(1)}` || "N/A"}</p>}
-            {!quizRecommendation && <p className="text-sm font-semibold">{"No recommended quizzes available" }</p>}
-          </div>
-          <div className="text-tblackk text-center">
-            {quizRecommendation && quizRecommendation[0] && <p className="text-base font-bold">{quizRecommendation[0].theme || "N/A"}</p>}
-            {quizRecommendation && quizRecommendation[0] &&  <p className="text-sm font-semibold">{ quizRecommendation[0].stack || "N/A"}</p>}
-          </div>
-        </div>
+      <div className="border border-[#27ae60]/40 rounded-lg shadow h-full flex flex-col">
+  <div className={`flex-grow-0 flex px-6 py-4 ${quizRecommendation? "justify-between":"justify-center"} items-center`} style={{ height: "55%" }}>
+    <div className="text-tblackk flex flex-col items-center">
+      {quizRecommendation && <IoMdTime className="text-4xl" />}
+      {quizRecommendation && quizRecommendation[0] && <p className="text-sm font-semibold">{`Attempt a ${quizRecommendation[0].type.charAt(0).toUpperCase() + quizRecommendation[0].type.slice(1)}` || "N/A"}</p>}
+      {!quizRecommendation && <p className="text-sm font-semibold items-center text-centre">{"No Recommended Quizzes Available"}</p>}
+    </div>
+    <div className="text-tblackk text-center">
+      {quizRecommendation && quizRecommendation[0] && <p className="text-base font-bold">{quizRecommendation[0].theme || "N/A"}</p>}
+      {quizRecommendation && quizRecommendation[0] && <p className="text-sm font-semibold">{quizRecommendation[0].stack || "N/A"}</p>}
+    </div>
+  </div>
 
-        <div className="flex px-8 py-3 justify-center items-center text-tblackk bg-[#27ae60]/40 text-center">
-          <div>
-            <button className="">
-              Start Now
-            </button>
-          </div>
-        </div>
-      </div>
+  <div className="flex-grow flex px-8 py-3 justify-center items-center text-tblackk bg-[#27ae60]/40 text-center" style={{ height: "45%" }}>
+    <div>
+      {quizRecommendation && <button className="">
+        Start Now
+      </button>}
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };
