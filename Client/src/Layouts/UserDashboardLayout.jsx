@@ -28,12 +28,12 @@ const UserDashboardLayout = () => {
         </div>
       </div>
 
-      <div className="flex justify-between h-full overflow-hidden">
-        <div className="hidden sm:block rounded-md shadow-md w-[380px] h-full overflow-y-scroll">
+      <div className="flex w-full h-full overflow-hidden fixed">
+        <div className="hidden sm:block w-[380px] h-full">
           <UserDashboardSideBar />
         </div>
 
-        <div className="bg-[#f9f9f9] w-full grow h-auto pb-16 lg:pr-10 p-5 overflow-y-scroll">
+        <div className="flex-grow bg-[#f9f9f9] p-5 overflow-y-scroll">
           <Outlet />
         </div>
       </div>

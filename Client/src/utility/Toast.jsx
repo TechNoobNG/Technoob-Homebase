@@ -33,7 +33,6 @@ const Toast = ({ message, type = "info", position, autoClose, promise, promiseMe
       },
       error: {
         render({ data: { err } }) {
-          console.log(err);
           return err?.data?.message || err?.data?.error || error;
         },
         icon: "🚨",

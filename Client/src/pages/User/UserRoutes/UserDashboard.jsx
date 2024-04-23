@@ -5,40 +5,73 @@ import QuizSection from "./_components/QuizSection";
 import DashboardHeader from "./_components/DashboardHeader";
 import ActiveTask from "./_components/ActiveTask";
 import JobCard from "./_components/JobCard";
-import { useEffect } from "react";
+import ResourceCard from "./_components/ResourceCard";
+import { useEffect, useState } from "react";
 import serverApi from "../../../utility/server";
+import showToast from "../../../utility/Toast";
+
+const fetchUserStats = async (setUserDashboardInfo) => {
+  serverApi.requiresAuth(true);
+  try {
+    const { data: response } = await showToast({
+      type: "promise",
+      promise: serverApi("/user/dashboard")
+    });
+    const responseData = response?.data;
+    setUserDashboardInfo(responseData || {});
+  } catch (error) {
+    showToast({
+      message: error.message || "An error ocurred, please contact support.",
+      type: "error",
+    });
+    setUserDashboardInfo({})
+  }
+};
+
+const extractdashInfo = ({ userDashboardInfo, setActiveTasks }) => {
+  if (!Object.keys(userDashboardInfo).length) {
+    return
+  }
+  //add pending quizes to active tasks
+  let activeTasks = [...userDashboardInfo.pendingQuizzes.map((quiz)=>{
+    return {
+      type:  quiz.quiz_info.type.charAt(0).toUpperCase() + quiz.quiz_info.type.slice(1),
+      title: quiz.quiz_info.theme,
+      borderColor: quiz.quiz_info.type === 'quiz' ?  "#70D399": "#EA929A",
+    }
+  })];
+
+  const currentDateTime = new Date();
+  
+  //add quiz recommendations to active tasks
+  activeTasks.push(
+      ...userDashboardInfo.recommendations.quiz.filter(quiz => {
+          const deadline = new Date(quiz.deadline);
+          return deadline > currentDateTime;
+      }).map((quiz) => {
+        return {
+          type: quiz.type.charAt(0).toUpperCase() + quiz.type.slice(1),
+          title: quiz.theme,
+          borderColor:  quiz.quiz_info.type === 'quiz' ?  "#70D399": "#EA929A",
+        }
+      })
+  );
+
+  setActiveTasks(activeTasks);
+}
 
 const UserDashboard = () => {
-  useEffect(() => {
-    const UserStats = async () => {
-      serverApi.requiresAuth(true);
-      const result = await serverApi("/user/dashboard");
-      //   setData(result?.data?.data)
-      console.log(result);
-    };
 
-    UserStats();
+  const [activeTasks, setActiveTasks] = useState([]);
+  const [userDashboardInfo, setUserDashboardInfo] = useState({});
+
+  useEffect(() => {
+    fetchUserStats(setUserDashboardInfo);
+    extractdashInfo({userDashboardInfo, setActiveTasks})
   }, []);
 
-  // console.log({UserProfile})
 
-  const activeTasks = [
-    {
-      type: "Event",
-      title: "Women in tech summit",
-      borderColor: "#5E7CE8",
-    },
-    {
-      type: "Quiz",
-      title: "Front-end web development",
-      borderColor: "#70D399",
-    },
-    {
-      type: "Competition",
-      title: "Task management design",
-      borderColor: "#EA929A",
-    },
-  ];
+  const { recommendations, lastCompletedQuizAttempt, rank, leaderboardRecord, leaderBoardUsers } = userDashboardInfo;
   return (
     <div>
       {/* header */}
@@ -71,12 +104,18 @@ const UserDashboard = () => {
             <span>to rule them all</span>
           </h2>
 
-          <p className="max-w-[290px] font-light  mt-4 text-center">Empowering technoobs with cutting-edge tools</p>
+          <p className="max-w-[290px] font-light  mt-4 text-center">Empowering technoobs</p>
         </div>
       </div>
 
       {/* quiz cards */}
-      <QuizSection />
+      <QuizSection
+        lastCompletedQuizAttempt={lastCompletedQuizAttempt}
+        rank={rank}
+        leaderboardRecord={leaderboardRecord}
+        leaderBoardUsers={leaderBoardUsers}
+        quizRecommendation = {recommendations && recommendations.quiz}
+      />
 
       <div className="grid md:grid-cols-2 grid-cols-1 gap-8 place-items-start w-full lg:mt-16 mt-12">
         {/* active tasks */}
@@ -92,11 +131,23 @@ const UserDashboard = () => {
 
         {/* recent jobs */}
         <div className="w-full">
-          <h2 className="text-tblackk font-bold text-2xl mb-5">Recent Jobs</h2>
+          <h2 className="text-tblackk font-bold text-2xl mb-5">Recommended Jobs</h2>
 
           <div className="space-y-8">
-            {[1, 2].map((t, _i) => (
-              <JobCard key={_i} />
+            {recommendations && recommendations.jobs && recommendations.jobs.map((job, _i) => (
+              <a href={ job.link } key={_i}>
+                <JobCard key={_i} job={job} />
+              </a>
+            ))}
+          </div>
+
+          <h2 className="text-tblackk font-bold text-2xl mb-5 mt-5">Recommended Resources</h2>
+
+          <div className="space-y-8">
+            {recommendations && recommendations.resources && recommendations.resources.map((resource, _i) => (
+             <a href={ resource.url } key={_i}>
+                <ResourceCard key={_i} resource={resource} />
+              </a>
             ))}
           </div>
 
