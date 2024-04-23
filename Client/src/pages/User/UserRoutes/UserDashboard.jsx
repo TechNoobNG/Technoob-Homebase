@@ -15,7 +15,7 @@ const fetchUserStats = async (setUserDashboardInfo) => {
   try {
     const { data: response } = await showToast({
       type: "promise",
-      promise: serverApi("/user/dashboard")
+      promise: serverApi.get("/user/dashboard")
     });
     const responseData = response?.data;
     setUserDashboardInfo(responseData || {});
