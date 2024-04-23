@@ -79,7 +79,7 @@ const environments = {
                 "intern customer Service",
                 "intern customer support",
             ],
-        AVAILABLE_STACKS:  [
+        AVAILABLE_STACKS: process.env.AVAILABLE_STACKS ? JSON.parse(process.env.AVAILABLE_STACKS) : [
             "Frontend Development",
             "UI/UX",
             "Backend Development",
@@ -94,6 +94,42 @@ const environments = {
             "SEO",
             "Product Design"
         ],
+
+        AVAILABLE_CONTRACT_TYPE: process.env.AVAILABLE_CONTRACT_TYPE ? JSON.parse(process.env.AVAILABLE_CONTRACT_TYPE):  [
+            "full-time",
+            "contract",
+            "internship",
+            "part-time",
+            "gig"
+        ],
+
+        AVAILABLE_QUIZ_TYPE: process.env.AVAILABLE_QUIZ_TYPE ? JSON.parse(process.env.AVAILABLE_QUIZ_TYPE):  [
+            "quiz",
+            "competition"
+        ],
+
+        AVAILABLE_RESOURCE_TYPE: process.env.AVAILABLE_RESOURCE_TYPE ? JSON.parse(process.env.AVAILABLE_RESOURCE_TYPE):  [
+            "api",
+            "design",
+            "props",
+            "database",
+            "storage",
+            "e-book",
+            "video",
+            "blog",
+            "repo",
+            "documentation",
+            "audio",
+            "projects",
+            "other"
+        ],
+
+        AVAILABLE_WORK_PLACE_TYPE: process.env.AVAILABLE_WORK_PLACE_TYPE ? JSON.parse(process.env.AVAILABLE_WORK_PLACE_TYPE):   [
+            "onsite",
+            "remote",
+            "hybrid"
+        ],
+
         WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
         AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
         AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
@@ -242,7 +278,7 @@ const environments = {
                 "intern customer Service",
                 "intern customer support",
             ],
-        AVAILABLE_STACKS:  [
+        AVAILABLE_STACKS: process.env.AVAILABLE_STACKS ? JSON.parse(process.env.AVAILABLE_STACKS) : [
             "Frontend Development",
             "UI/UX",
             "Backend Development",
@@ -256,6 +292,41 @@ const environments = {
             "DevOps",
             "SEO",
             "Product Design"
+        ],
+
+        AVAILABLE_CONTRACT_TYPE: process.env.AVAILABLE_CONTRACT_TYPE ? JSON.parse(process.env.AVAILABLE_CONTRACT_TYPE):  [
+            "full-time",
+            "contract",
+            "internship",
+            "part-time",
+            "gig"
+        ],
+
+        AVAILABLE_QUIZ_TYPE: process.env.AVAILABLE_QUIZ_TYPE ? JSON.parse(process.env.AVAILABLE_QUIZ_TYPE):  [
+            "quiz",
+            "competition"
+        ],
+
+        AVAILABLE_RESOURCE_TYPE: process.env.AVAILABLE_RESOURCE_TYPE ? JSON.parse(process.env.AVAILABLE_RESOURCE_TYPE):  [
+            "api",
+            "design",
+            "props",
+            "database",
+            "storage",
+            "e-book",
+            "video",
+            "blog",
+            "repo",
+            "documentation",
+            "audio",
+            "projects",
+            "other"
+        ],
+
+        AVAILABLE_WORK_PLACE_TYPE: process.env.AVAILABLE_WORK_PLACE_TYPE ? JSON.parse(process.env.AVAILABLE_WORK_PLACE_TYPE):   [
+            "onsite",
+            "remote",
+            "hybrid"
         ],
         WORKER_LOG_BATCH_SIZE: process.env.WORKER_LOG_BATCH_SIZE || 10,
         AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
