@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AppContext } from "../../../../AppContext/AppContext";
-import { people01 } from "../../../../data/assets/asset";
+import { emptyProfile } from "../../../../data/assets/asset";
 import { format } from "date-fns";
 
 const DashboardHeader = () => {
@@ -9,7 +9,7 @@ const DashboardHeader = () => {
   return (
     <div className="flex items-center gap-x-4">
       <img
-        src={UserProfile?.photo !== "default.jpg" ? UserProfile?.photo : people01}
+        src={UserProfile?.photo !== "default.jpg" ? UserProfile?.photo : emptyProfile}
         alt="profile"
         className="w-[50px] h-[50px] rounded-full object-cover "
       />

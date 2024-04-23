@@ -2,7 +2,7 @@ const Modal = ({ isOpen, onClose, children, setIsModalOpen }) => {
   const closeModal = (e) => {
     e.preventDefault();
     setIsModalOpen(false);
-    onClose();
+    // onClose();
   };
 
   return (

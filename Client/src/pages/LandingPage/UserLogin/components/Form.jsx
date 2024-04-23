@@ -24,8 +24,6 @@ const Form = () => {
       password: user.Password,
       username: user.UserName,
     });
-    console.log({ raw });
-
     const abortController = new AbortController();
     setLoading(true);
     try {

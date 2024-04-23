@@ -17,7 +17,7 @@ const JobManagement = () => {
   const [, setUploadingImage] = useState(false);
   const [, setImageInfo] = useState({});
   const [jobActivity, setJobActivity] = useState([]);
-  const { UserProfile } = useContext(AppContext);
+  const { UserProfile, defaults: { contractType, workPlaceType } } = useContext(AppContext);
   const [, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -224,9 +224,9 @@ const JobManagement = () => {
                   value={formInput.workplaceType}
                   onChange={handleChange}
                 >
-                  <option value="onsite">On-site</option>
-                  <option value="remote">Hybrid</option>
-                  <option value="hybrid">Remote</option>
+                   {workPlaceType.map(option => (
+                      <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+                    ))}
                 </select>
               </div>
               <div className=" block py-2 my-4">
@@ -257,9 +257,9 @@ const JobManagement = () => {
                   value={formInput.contractType}
                   onChange={handleChange}
                 >
-                  <option value="full-time">Full time</option>
-                  <option value="contract">Contract</option>
-                  <option value="internship">Internship</option>
+                  {contractType.map(option => (
+                      <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1).replace('-', ' ')}</option>
+                  ))}
                 </select>
               </div>
             </div>

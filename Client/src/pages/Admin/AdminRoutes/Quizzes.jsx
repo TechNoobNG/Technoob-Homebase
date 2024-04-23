@@ -126,7 +126,7 @@ const Quizzes = () => {
             Hey, {UserProfile.firstname} -
           </h1>
           <p className="md:pt-2 pt-1 text-sm ml-3 sm:text-lg text-[#3A3A3A66] sm:text-black">
-            Welcome to the resource page.
+            Welcome to the Quizzes/Competitions page.
           </p>
         </div>
       </div>

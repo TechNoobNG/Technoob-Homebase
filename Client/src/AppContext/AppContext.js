@@ -1,9 +1,11 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
+import serverApi from "../utility/server";
 
 const AppContext = createContext({
   Notification: false,
   isLoggedIn: false,
   isAdmin: false,
+  defaults: {}, // Add a defaults state
 });
 
 const AppProvider = ({ children }) => {
@@ -15,10 +17,31 @@ const AppProvider = ({ children }) => {
     displayToggle: false,
     toggleValue: "User Dashboard",
   });
+  const [userData, setUserData] = useState(null);
+  const [defaults, setDefaults] = useState({}); // State to hold defaults
 
-  const storedUser = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("userData")) : null;
+  useEffect(() => {
+    // Fetch defaults from an endpoint
+    const fetchDefaults = async () => {
+      try {
+        const response = await serverApi.get("utils/defaults");
+        if (response.statusText === "OK"){
+          const defaultsData = response.data.data;
+          setDefaults(defaultsData);
+        }
+      } catch (error) {
+        console.error("Error fetching defaults:", error);
+      }
+    };
 
-  const [userData, setUserData] = useState(storedUser);
+    fetchDefaults();
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      sessionStorage.setItem("userData", JSON.stringify(userData));
+    }
+  }, [userData]);
 
   return (
     <AppContext.Provider
@@ -35,6 +58,7 @@ const AppProvider = ({ children }) => {
         setDashboardToggle,
         userData,
         setUserData,
+        defaults,
       }}
     >
       {children}

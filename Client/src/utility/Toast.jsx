@@ -29,10 +29,11 @@ const Toast = ({ message, type = "info", position, autoClose, promise, promiseMe
           return pending;
         },
         icon: "⏳",
-        autoClose: autoClose,
+        autoClose: 1000,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
+        hideProgressBar: false,
       },
       success: {
         render({ data }) {

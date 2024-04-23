@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../AppContext/AppContext";
 import serverApi from "../../utility/server";
+import showToast from "../../utility/Toast";
 
 const SignUp = () => {
-  const { setIsLoggedIn, setUserProfile } = useContext(AppContext);
+  const { setIsLoggedIn, setUserProfile, defaults: { stacks } } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,12 @@ const SignUp = () => {
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name.split(" ").join().replace(",", "")]: e.target.value });
+    if (e.target.name === "Tech Stack") {
+      setForm({ ...form, [e.target.name.split(" ").join().replace(",", "")]: [e.target.value] });
+    } else {
+      setForm({ ...form, [e.target.name.split(" ").join().replace(",", "")]: e.target.value });
+    }
+   
   };
 
   const handleSubmit = async (e) => {
@@ -37,35 +43,62 @@ const SignUp = () => {
       passwordConfirm: form.ConfirmPassword,
       email: form.Email,
       username: form.Username,
-      stack: ["frontend"],
+      stack: form.TechStack,
     };
 
-    if (form.Password !== form.ConfirmPassword) alert("Passwords do not match");
+    if (form.Password !== form.ConfirmPassword) showToast({
+      message: "Passwords do not match",
+      type: "error"
+    });
     else {
       setLoading(true);
+      const abortController = new AbortController();
       try {
-        const postUser = await serverApi.post("authenticate/register", raw);
-        const cookies = postUser.headers.get("Set-Cookie");
-        if (cookies) {
-          const cookie = cookies.split(";")[0].split("=")[1];
-          localStorage.setItem("connect-sid", cookie);
-          setIsLoggedIn(true);
-          navigate("/Dashboard");
-        }
-        const result = postUser?.data;
-        setUserProfile(result);
-        localStorage.setItem("user", JSON.stringify(result));
-
-        if (result.status === "success") navigate("/");
-      } catch (error) {
+        await showToast({
+          type: "promise",
+          promise: serverApi.post("authenticate/register", raw, {
+            signal: abortController.signal,
+            headers: {
+              "content-type": "application/json",
+            },
+          }),
+        });
+        const { data: loginResponse } = await showToast({
+          type: "promise",
+          promise: serverApi.post("/authenticate/login/", 
+            JSON.stringify({
+              password: form.Password,
+              username: form.Username,
+            }), {
+            signal: abortController.signal,
+            headers: {
+              "content-type": "application/json",
+            },
+          }),
+        });
+  
+        const responseData = loginResponse?.data;
+        const token = loginResponse?.token;
+        const userInfo = {
+          ...responseData,
+        };
+        setUserProfile(userInfo.user);
+        setLoading(false);
+        setIsLoggedIn(true);
+        sessionStorage.setItem("userData", JSON.stringify(userInfo.user));
+        sessionStorage.setItem("user_token", token);
+        navigate("/dashboard");
+        
+      } catch ({err}) {
+        showToast({
+          message: err.data?.error,
+          type: "error"
+        });
         setIsLoggedIn(false);
       } finally {
         setLoading(false);
-        setIsLoggedIn(true);
       }
     }
-
-    //navigate('/AdminDashboard')
     setForm({ ...form });
   };
 
@@ -96,22 +129,13 @@ const SignUp = () => {
               placeholder="Tech stack"
               className="w-full text-lg rounded-xl m-1 border placeholder:pl-2 px-2 py-4 outline-0 ring-1 bg-white"
             >
-              <option value="Frontend Development">Frontend Development</option>
-              <option value="UI/UX">UI/UX </option>
-              <option value="Backend Development">Backend Development</option>
-              <option value="Mobile Development">Mobile Development</option>
-              <option value="Product Management">Product Management</option>
-              <option value="Project Management">Project Management</option>
-              <option value="Technical Writing">Technical Writing</option>
-              <option value="Cloud Development">Cloud Development</option>
-              <option value="Cybersecurity">Cybersecurity</option>
-              <option value="Software Testing">Software Testing</option>
-              <option value="DevOps">DevOps</option>
-              <option value="SEO">SEO</option>
+               {stacks.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
             </select>
           </div>
 
-          <div className="mb-5">
+          {/* <div className="mb-5">
             <button
               name={"Login"}
               className="flex justify-center items-center text-[#111111] bg-[#EFF0F5] rounded-md mb-2 py-3 px-3.5 text-base font-[600]"
@@ -119,7 +143,7 @@ const SignUp = () => {
               Take Short Quiz
             </button>
             <p className="text-[#828282] text-sm">This Quiz is to help in choosing Tech Stack</p>
-          </div>
+          </div> */}
           <InputField type={"password"} name={"Password"} placeholder={"Password"} onChange={handleChange} />
           <InputField
             type={"password"}
