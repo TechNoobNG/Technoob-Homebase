@@ -19,23 +19,37 @@ const promisify = (promise) => {
 const Toast = ({ message, type = "info", position, autoClose, promise, promiseMessage }) => {
   if (type === "promise") {
     const {
-      pending = "⏳ Hang tight, getting things ready for you...",
+      pending = "Hang tight, getting things ready for you...",
       success = "🎉 Awesome, it worked like a charm!",
       error = "😓 Uh-oh, we hit a bump in the road!",
     } = promiseMessage || {};
     return toast.promise(promisify(promise), {
-      pending: pending,
+      pending: {
+        render() {
+          return pending;
+        },
+        icon: "⏳",
+        autoClose: autoClose,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      },
       success: {
         render({ data }) {
           return data.data.message || success;
         },
         icon: "🤖",
+        closeOnClick: true,
+        pauseOnHover: true,
       },
       error: {
         render({ data: { err } }) {
           return err?.data?.message || err?.data?.error || error;
         },
         icon: "🚨",
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       },
     });
   } else {
