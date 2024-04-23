@@ -383,7 +383,7 @@ module.exports = {
                         },
                       },
                       {
-                        $limit: 4,
+                        $limit: 5,
                       },
                     ],
                     as: "matched_quizzes",
@@ -460,9 +460,10 @@ module.exports = {
                       type: 1,
                       image_placeholder: 1,
                       stack: 1,
+                      url: 1,
                     },
                     matched_jobs: {
-                      $slice: ["$matched_jobs", 4], // Limit the number of jobs to 4
+                      $slice: ["$matched_jobs", 5], // Limit the number of jobs to 4
                     },
                     matched_quizzes: {
                       _id: 1,
