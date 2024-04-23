@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { image5 } from "../../../../data/assets";
 import Button from "../../../../utility/button";
+import showToast from "../../../../utility/Toast";
+import serverApi from "../../../../utility/server";
 
 const Page6 = () => {
   const [email, setEmail] = useState("");
@@ -13,8 +15,10 @@ const Page6 = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     if (regEx.test(email) === false) {
-      console.log("please enter a valid email");
-      alert("Please enter a valid Email");
+      showToast({
+        message: "Please enter a valid email.",
+        type: "error",
+      });
     } else {
       try {
         var myHeaders = new Headers();
@@ -24,25 +28,20 @@ const Page6 = () => {
           email,
         });
 
-        var requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
-        };
-
-        const response = await fetch(
-          "https://technoob-staging.azurewebsites.net/api/v1/user/mailing-list",
-          requestOptions
-        );
-
-        if (response.status) {
-          const data = await response.json();
-          console.log("Success", data, "Email is valid");
-          alert("Email successfully added");
-        }
+        await serverApi.post("user/mailing-list",raw,{
+          headers: {
+            "content-type": "application/json",
+          },
+        })
+        showToast({
+          message: "Thank you for reaching out, We will revert to you soon.",
+          type: "info",
+        })
       } catch (error) {
-        console.log(error);
+        showToast({
+          message: error.message || "An error ocurred, please contact support.",
+          type: "error",
+        });
       }
 
       setEmail("");

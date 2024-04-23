@@ -11,6 +11,7 @@ import serverApi from "../../../utility/server";
 import { fetchFilteredData, fetchFirstData } from "../../../utility/filterGather.jsx";
 import FilterComponent from "../../../Modals/FilterModal";
 import { AppContext } from "../../../AppContext/AppContext";
+import showToast from "../../../utility/Toast.jsx";
 
 const FindJobs = () => {
   const [selected, setSelected] = useState("Select filter");
@@ -151,10 +152,16 @@ const FindJobs = () => {
         let responseData = response.data?.data?.jobs;
         setJobData(responseData);
       } else {
-        alert("No result found");
+        showToast({
+          message: "No jobs found",
+          type: "info",
+        });
       }
     } catch (e) {
-      console.log(e);
+      showToast({
+        message: "An error Occured, Please contact support",
+        type: "error",
+     })
     }
   };
 

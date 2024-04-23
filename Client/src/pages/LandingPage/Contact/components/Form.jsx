@@ -1,6 +1,8 @@
 import { useState } from "react";
 import img from "../img/quino-al-xhGMQ_nYWqU-unsplash 2.png";
 import Input from "../utility/Input";
+import serverApi from "../../../../utility/server";
+import showToast from "../../../../utility/Toast";
 
 const Form = () => {
   const [form, setForm] = useState({
@@ -18,8 +20,10 @@ const Form = () => {
   //send a responce
   const sendMessage = async () => {
     if (regEx.test(form.Email) === false) {
-      console.log("please enter a valid email");
-      alert("Please enter a valid Email");
+      showToast({
+        message: "Please enter a valid email.",
+        type: "error",
+      });
     } else {
       try {
         var myHeaders = new Headers();
@@ -31,24 +35,20 @@ const Form = () => {
           message: form.Message,
         });
 
-        var requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
-        };
-
-        const userContact = await fetch(
-          "https://technoob-staging.azurewebsites.net/api/v1/user/contact-us",
-          requestOptions
-        );
-        const result = await userContact.json();
-
-        if (result.status === "success") {
-          alert("Message sent successfuly");
-        }
+        await serverApi.post("user/contact-us",raw,{
+          headers: {
+            "content-type": "application/json",
+          },
+        })
+        showToast({
+          message: "Thank you for reaching out, We will revert to you soon.",
+          type: "info",
+        })
       } catch (error) {
-        console.log(error);
+        showToast({
+          message: error.message || "An error ocurred, please contact support.",
+          type: "error",
+        });
       }
     }
   };
@@ -62,7 +62,6 @@ const Form = () => {
 
     //fetchData()
     await sendMessage();
-    console.log(form);
   };
 
   return (
