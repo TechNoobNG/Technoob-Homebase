@@ -9,6 +9,7 @@ import serverApi from "../../../../utility/server";
 import { fetchFilteredData, fetchFirstData } from "../../../../utility/filterGather";
 import FilterComponent from "../../../../Modals/FilterModal";
 import { AppContext } from "../../../../AppContext/AppContext";
+import showToast from "../../../../utility/Toast";
 
 const Page1 = () => {
   const [resources, setResources] = useState([]);
@@ -76,10 +77,16 @@ const Page1 = () => {
         const responseData = response.data?.data?.resources;
         setResources(responseData);
       } else {
-        alert("No result found");
+        showToast({
+          message: "No resources found",
+          type: "info",
+       })
       }
     } catch (e) {
-      console.log(e);
+      showToast({
+        message: "An error Occured, Please contact support",
+        type: "error",
+     })
     }
   };
 

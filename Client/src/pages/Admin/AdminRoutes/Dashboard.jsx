@@ -54,7 +54,6 @@ const Dashboard = () => {
       serverApi.requiresAuth(true);
       const result = await serverApi("/admin/dashboard");
       setData(result?.data?.data);
-      console.log(result);
     };
 
     AdminStats();
