@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { BsBell } from "react-icons/bs";
 import { TbSettings } from "react-icons/tb";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { people01 } from "../../data/assets/asset";
+import { emptyProfile } from "../../data/assets/asset";
 import { menu, close } from "../../data/assets";
 import { MdOutlineDashboard } from "react-icons/md";
 import { UserDashboardNavs } from "../../data/contact";
@@ -30,7 +30,7 @@ const UserDashboardNavbar = () => {
         <NavLink to={"/dashboard/profile"}>
           <div className="rounded-full h-5 w-5 sm:w-8 sm:h-8 cursor-pointer">
             <img
-              src={UserProfile?.photo !== "default.jpg" ? UserProfile?.photo : people01}
+              src={UserProfile?.photo !== "default.jpg" ? UserProfile?.photo : emptyProfile}
               alt="profile"
               className="w-full h-full object-cover"
             />

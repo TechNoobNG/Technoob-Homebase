@@ -5,7 +5,7 @@ import { AppContext } from "../../../AppContext/AppContext";
 import serverApi from "../../../utility/server";
 import { ToastContainer } from "react-toastify";
 import showToast from "../../../utility/Toast";
-import { avatar } from "../../../data/assets";
+import { emptyProfile } from "../../../data/assets/asset";
 import ProfileUpdateNotification from "../../../utility/ProfileUpdateNotification";
 import ImageCropper from "../../../utility/imageCropper/ImageCropper";
 import CountryDropdown from "../../../utility/CountryDropdown";
@@ -124,8 +124,7 @@ const Profile = () => {
     });
   };
 
-  const { userData, setUserData } = useContext(AppContext);
-
+  const { userData, setUserData, defaults: { stacks } } = useContext(AppContext);
   const fetchData = async () => {
     try {
       await fetchProfile();
@@ -188,7 +187,7 @@ const Profile = () => {
               />
               <div className=" absolute -top-[20%] max-sm:left-3 sm:-top-[30%] w-[96px] h-[96px] sm:w-32 sm:h-32 rounded-full bg-white border flex items-center justify-center cursor-pointer">
                 <img
-                  src={userData?.photo || avatar}
+                  src={userData?.photo !== "default.jpg" ? userData?.photo : emptyProfile}
                   alt="avatar"
                   className="rounded-full w-[95%] h-[95%] object-cover p-1 relative"
                 />
@@ -377,6 +376,7 @@ const Profile = () => {
             loading={loading}
             setupdateParams={setupdateParams}
             updateParams={updateParams}
+            stacks={stacks}
           />
         )}
       </div>
@@ -470,7 +470,7 @@ const UserProfile = ({ userData }) => {
   );
 };
 
-const UserProfileForm = ({ userData, handleChange, handleSubmit, loading, setupdateParams, updateParams }) => {
+const UserProfileForm = ({ userData, handleChange, handleSubmit, loading, setupdateParams, updateParams, stacks }) => {
   const [newTechStack, setNewTechStack] = useState(userData?.stack || []);
   const [newEmploymentArray, setNewEmploymentArray] = useState(
     (userData?.employmentHistory || []).map(({ _id, ...rest }) => rest)
@@ -600,18 +600,9 @@ const UserProfileForm = ({ userData, handleChange, handleSubmit, loading, setupd
               <option value="" disabled>
                 Select Tech Stack
               </option>
-              <option value="Frontend Development">Frontend Development</option>
-              <option value="UI/UX">UI/UX </option>
-              <option value="Backend Development">Backend Development</option>
-              <option value="Mobile Development">Mobile Development</option>
-              <option value="Product Management">Product Management</option>
-              <option value="Project Management">Project Management</option>
-              <option value="Technical Writing">Technical Writing</option>
-              <option value="Cloud Development">Cloud Development</option>
-              <option value="Cybersecurity">Cybersecurity</option>
-              <option value="Software Testing">Software Testing</option>
-              <option value="DevOps">DevOps</option>
-              <option value="SEO">SEO</option>
+              {stacks.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
             </select>
           </div>
         </div>

@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import serverApi from "./server";
 import FileUploadSingle from "./Uploader";
+import { AppContext } from "../AppContext/AppContext";
 
 const LinkUpload = ({ closeModal }) => {
+  const { defaults: { stacks, resourceType } } = useContext(AppContext);
   const [dataUpload, setDataUpload] = useState({});
   const [placeholderImage, setplaceholderImage] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -73,14 +75,9 @@ const LinkUpload = ({ closeModal }) => {
             placeholder="select"
             onChange={handleChange}
           >
-            <option>Select a stack</option>
-            <option value="Software Development ">Software Development</option>
-            <option value="Product Design">Product Design</option>
-            <option value="Product Management">Product Management</option>
-            <option value="Data Science">Data Science</option>
-            <option value="Cloud Engineering">Cloud Engineering</option>
-            <option value="Data Engineering">Data Engineering</option>
-            <option value="Project Management">Project Management</option>
+            {stacks.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
           </select>
         </div>
         <span className="text-sm text-gray-300">For resources with links</span>
@@ -94,20 +91,9 @@ const LinkUpload = ({ closeModal }) => {
           placeholder="select"
           onChange={handleChange}
         >
-          <option>Select a type</option>
-          <option value="api">API</option>
-          <option value="design">Design</option>
-          <option value="props">Props</option>
-          <option value="database">Databases</option>
-          <option value="storage">Storage</option>
-          <option value="e-book">E-book/PDF</option>
-          <option value="video">Video</option>
-          <option value="documentation">Documentation</option>
-          <option value="audio">Audio</option>
-          <option value="projects">Projects</option>
-          <option value="other">Others</option>
-          <option value="blog">Blog</option>
-          <option value="repo">Repository</option>
+          {resourceType.map(option => (
+            <option key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1).replace('-', ' ')}</option>
+          ))}
         </select>
       </div>
 
