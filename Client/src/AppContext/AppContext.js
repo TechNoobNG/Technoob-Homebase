@@ -18,10 +18,8 @@ const AppProvider = ({ children }) => {
     toggleValue: "User Dashboard",
   });
   const [userData, setUserData] = useState(null);
-  const [defaults, setDefaults] = useState({}); // State to hold defaults
-
+  const [defaults, setDefaults] = useState({});
   useEffect(() => {
-    // Fetch defaults from an endpoint
     const fetchDefaults = async () => {
       try {
         const response = await serverApi.get("utils/defaults");
