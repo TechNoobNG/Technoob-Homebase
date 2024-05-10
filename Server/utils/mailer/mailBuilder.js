@@ -115,7 +115,7 @@ module.exports = {
             }
         });
     
-        await Promise.all(promises);
+        await Promise.allSettled(promises);
     
         return {
             success: true,

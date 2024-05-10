@@ -31,14 +31,13 @@ function convertTime(timeString) {
     return `${hour}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
 
-function formatDate(dateString) {
+function formatDate(dateString) {   
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const dateParts = dateString.split('-');
     const year = dateParts[0];
     const month = months[parseInt(dateParts[1]) - 1];
     const day = parseInt(dateParts[2]);
 
-    // Add suffix to day
     let daySuffix;
     if (day === 1 || day === 21 || day === 31) {
         daySuffix = 'st';
@@ -48,8 +47,7 @@ function formatDate(dateString) {
         daySuffix = 'rd';
     } else {
         daySuffix = 'th';
-    }
-
+    }   
     return `${day}${daySuffix} ${month}, ${year}`;
 }
 
@@ -400,7 +398,6 @@ const tempReplyTemplate = `<!DOCTYPE html>
 
 async function flushLogsToDatabase(logBuffer, model) {
     if (logBuffer.length === 0) return;
-
     try {
     await model.insertMany(logBuffer);
     logBuffer.length = 0;
@@ -411,7 +408,6 @@ async function flushLogsToDatabase(logBuffer, model) {
 
 function convertRichTextToHtml(elements) {
     let html = '';
-
     elements.forEach(element => {
         switch (element.type) {
             case 'rich_text_section':
@@ -424,6 +420,13 @@ function convertRichTextToHtml(elements) {
             case 'text':
                 if (element.text) {
                     let formattedText = element.text;
+                    if (formattedText.indexOf('\n') !== -1) {
+                        let lines = formattedText.split('\n');
+                        formattedText = '';
+                        lines.forEach(function(line) {
+                            formattedText += '<p>' + line + '</p>';
+                        });
+                    }
                     if (element.style) {
                         if (element.style.bold) {
                             formattedText = `<b>${formattedText}</b>`;
@@ -454,11 +457,22 @@ function convertRichTextToHtml(elements) {
                 }
                 break;
             case 'rich_text_list':
-                if (element.elements) {
+                if (element.style === 'ordered' && element.elements) {
+                    html += "<ol>";
+                    element.elements.forEach(section => {
+                        if (section.type === "rich_text_section" && section.elements) {
+                            section.elements.forEach(element => {
+                                if (element.type === "text" && element.text) {
+                                    html += `<li>${element.text}</li>`;
+                                }
+                            });
+                        }
+                    });
+                    html += "</ol>";
+                } else {
                     const listType = element.style === 'bullet' ? 'ul' : 'ol';
                     html += `<${listType}>${convertRichTextToHtml(element.elements)}</${listType}>`;
                 }
-                break;
             default:
                 break;
         }

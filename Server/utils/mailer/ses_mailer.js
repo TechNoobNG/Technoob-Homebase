@@ -37,7 +37,7 @@ module.exports = {
         try {
             const response =  await sesClient.send(sendEmailCommand);
             if (response) {
-                console.log(`Email sent to ${options.email}`)
+                console.log(`Email sent`)
             }
             return response
         } catch (e) {
