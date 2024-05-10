@@ -2,7 +2,7 @@ const config = require('../../config/config')
 const templates = require('../../models/email_templates');
 let mailProvider = config.MAIL_PROVIDER.provider;
 let useMultipleProviders = config.MAIL_PROVIDER.useMultiple || false;
-const { buildRawEmail, tempReplyTemplate, fetchExternalLinkAndUploadToS3 } = require("../utils");
+const { buildRawEmail, tempReplyTemplate, fetchExternalLinkAndUploadToS3, buildQueryString } = require("../utils");
 
 function getRandomMailProvider() {
     const providers = ["ses", "azure"];
@@ -35,7 +35,11 @@ module.exports = {
     async sendEmail(options) {
         // 1) retrieve email template from database
         const template = await templates.findOne( {id: options.template_id});
-        if(!template) throw new Error ("Invalid template ID");
+        if (!template) throw new Error("Invalid template ID");
+        
+        const {queryString} = buildQueryString(options.constants);
+        const emailPreviewLink = `https://${config.LIVE_BASE_URL}/api/v1/admin/email/preview/${template.name}?${queryString}`
+        options.constants['online_preview_link'] = emailPreviewLink;
 
         //Parse HTML and replace constants
         let content = template.template.toString();

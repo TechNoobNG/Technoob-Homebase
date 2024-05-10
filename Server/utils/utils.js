@@ -17,15 +17,71 @@ function createSectionBlock(title) {
     };
 }
 
-function createFieldsBlock(fields, image) {
+function convertTime(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    let period = 'am';
+    let hour = hours;
+    if (hour >= 12) {
+        period = 'pm';
+        hour = (hour === 12) ? hour : hour - 12;
+    }
+    if (hour === 0) {
+        hour = 12;
+    }
+    return `${hour}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+
+function formatDate(dateString) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dateParts = dateString.split('-');
+    const year = dateParts[0];
+    const month = months[parseInt(dateParts[1]) - 1];
+    const day = parseInt(dateParts[2]);
+
+    // Add suffix to day
+    let daySuffix;
+    if (day === 1 || day === 21 || day === 31) {
+        daySuffix = 'st';
+    } else if (day === 2 || day === 22) {
+        daySuffix = 'nd';
+    } else if (day === 3 || day === 23) {
+        daySuffix = 'rd';
+    } else {
+        daySuffix = 'th';
+    }
+
+    return `${day}${daySuffix} ${month}, ${year}`;
+}
+
+function buildQueryString(params) {
+    const queryString = Object.keys(params)
+        .map(key => params[key] !== undefined && params[key] !== null ? `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}` : "")
+        .join('&');
+    const fieldsMap = Object.keys(params).map((key) => {
+        if(!params[key]) return
+        return {
+            label: key,
+            value: params[key]
+        }
+    }).filter(Boolean)
+    return {
+        queryString,
+        fieldsMap
+    };
+}
+
+function createFieldsBlock(fields, image, emailPreviewLink) {
     
     let resp = {
         "type": "section",
         "fields": fields.map(field => {
             const fieldValue = decodeURIComponent(field.value);
             const clippedValue = fieldValue.length > 200 ? `${fieldValue.substring(0, 200)} [Clipped for brevity]` : fieldValue;
-            const fieldValueText = hasHtmlTags(fieldValue) ? `_(This field has special characters, kindly click preview to view)_` : clippedValue;
+            let fieldValueText = hasHtmlTags(fieldValue) ? `_(This field has special characters, kindly click preview to view)_` : clippedValue;
             
+            if (field.label.toLowerCase() === "online_preview_link") {
+                fieldValueText =  `<${emailPreviewLink}|link>`;
+            }
             return {
                 "type": "mrkdwn",
                 "text": `*${field.label}:*\n${fieldValueText}`
@@ -461,5 +517,8 @@ module.exports = {
     convertRichTextToHtml,
     hasHtmlTags,
     validateExpiry,
-    createHash
+    createHash,
+    convertTime,
+    formatDate,
+    buildQueryString
 }
