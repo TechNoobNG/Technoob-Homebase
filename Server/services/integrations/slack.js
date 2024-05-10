@@ -1,5 +1,5 @@
 
-const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject, fetchExternalLinkAndUploadToS3, convertRichTextToHtml } = require("../../utils/utils");
+const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject, fetchExternalLinkAndUploadToS3, convertRichTextToHtml, buildQueryString } = require("../../utils/utils");
 const { sendRequest, respondToAction, openModal, sendMessageToUser } = require("../../utils/slack/index");
 const config = require("../../config/config");
 const { autogenerateURL } = require("../../utils/storage/storageService");
@@ -249,6 +249,49 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
                   }
                   
             }
+
+
+
+            if (placeholder.isDate) {
+                return {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `Pick a ${placeholder.name}`
+                    },
+                    "accessory": {
+                        "type": "datepicker",
+                        "initial_date": "1990-04-28",
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "Select a date",
+                            "emoji": true
+                        },
+                        "action_id": `${placeholder.name}`
+                    }
+                }   
+            }
+
+            if (placeholder.isTime) {
+                return {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `Pick a ${placeholder.name}`
+                    },
+                    "accessory": {
+                        "type": "timepicker",
+                        "initial_time": "13:37",
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "Select time",
+                            "emoji": true
+                        },
+                        "action_id": `${placeholder.name}`
+                    }
+                }
+            }
+
             return  {
                 "type": "input",
                 "label": {
@@ -423,23 +466,6 @@ async function renderCreateMailingListModal({team_domain,username, user_id}) {
     }
 }
 
-function buildQueryString(params) {
-    const queryString = Object.keys(params)
-        .map(key => params[key] !== undefined && params[key] !== null ? `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}` : "")
-        .join('&');
-    const fieldsMap = Object.keys(params).map((key) => {
-        if(!params[key]) return
-        return {
-            label: key,
-            value: params[key]
-        }
-    }).filter(Boolean)
-    return {
-        queryString,
-        fieldsMap
-    };
-}
-
 async function previewMailingList(body) {
     try {
         const { view: { blocks, title, state, private_metadata } } = body;
@@ -452,6 +478,12 @@ async function previewMailingList(body) {
                     }
                     if (state.values[block.block_id][block.element.action_id].type === "plain_text_input") {
                         inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
+                    }
+                    if (state.values[block.block_id][block.accessory].type === "timepicker") {
+                        inputs[block.accessory?.action_id] = state.values[block.block_id][block.accessory.action_id].selected_time || "12:00";
+                    }
+                    if (state.values[block.block_id][block.accessory].type === "datepicker") {
+                        inputs[block.accessory?.action_id] = state.values[block.block_id][block.accessory.action_id].selected_date || "2024-01-01";
                     }
                     if (state.values[block.block_id][block.element.action_id].type === "url_text_input") {
                         inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
@@ -602,15 +634,17 @@ async function renderEmailPreview(body) {
 
         }
 
+        const emailPreviewLink = `https://${config.LIVE_BASE_URL}/api/v1/admin/email/preview/${title.text}?${queryString}`
+
         const promptSectionBlock = {
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": `:wave: Kindly use this link to preview the email content <https://${config.LIVE_BASE_URL}/api/v1/admin/email/preview/${title.text}?${queryString}|here>`
+				"text": `:wave: Kindly use this link to preview the email content <${emailPreviewLink}|here>`
 			}
         }
         
-        const placehOlderFieldBlock = createFieldsBlock(fieldsMap,null)
+        const placehOlderFieldBlock = createFieldsBlock(fieldsMap,null, emailPreviewLink)
 
         const slackPayload = {
             type: "modal",

@@ -21,12 +21,20 @@ const placeholderSchema = new Schema({
     },
     isContent:  {
         type: Boolean,
-        default: false
+        default: true
     },
     isUrl: {
         type: Boolean,
         default: false
     },
+    isTime: {
+        type: Boolean,
+        default: false,
+    },
+    isDate: {
+        type: Boolean,
+        default: false
+    }
 })
 const email = new Schema({
     template: {
