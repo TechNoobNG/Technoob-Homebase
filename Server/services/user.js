@@ -231,18 +231,68 @@ module.exports = {
                     foreignField: "user_id",
                     as: "quiz_records",
                   },
+              },
+              {
+                $lookup: {
+                    from: "quizzes",
+                    let: { quizId: "$quiz_records.quiz_id" }, 
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $in: ["$_id", "$$quizId"] }, 
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                deadline: 1,
+                                type: 1,
+                                theme: 1,
+                                stack: 1,
+                                datePosted: 1,
+                            },
+                        },
+                    ],
+                    as: "quiz_infos",
                 },
+            },
                 {
                   $addFields: {
                     pendingQuizzes: {
-                      $filter: {
-                        input: "$quiz_records",
-                        as: "quizRecord",
-                        cond: {
-                          $eq: ["$$quizRecord.completed", false],
-                        },
+                      $map: {
+                          input: {
+                              $filter: {
+                                  input: "$quiz_records",
+                                  as: "quizRecord",
+                                  cond: {
+                                      $eq: ["$$quizRecord.completed", false],
+                                  },
+                              },
+                          },
+                          as: "pendingQuiz",
+                          in: {
+                              $mergeObjects: [
+                                  "$$pendingQuiz",
+                                  {
+                                      quiz_info: {
+                                          $arrayElemAt: [
+                                              {
+                                                  $filter: {
+                                                      input: "$quiz_infos",
+                                                      as: "info",
+                                                      cond: {
+                                                          $eq: ["$$info._id", "$$pendingQuiz.quiz_id"],
+                                                      },
+                                                  },
+                                              },
+                                              0,
+                                          ],
+                                      },
+                                  },
+                              ],
+                          },
                       },
-                    },
+                  },
                     lastCompletedAttempt: {
                       $arrayElemAt: [
                         {
@@ -266,7 +316,7 @@ module.exports = {
                       ],
                     },
                   },
-                },
+              },
                 {
                   $project: {
                     email: 1,
@@ -333,7 +383,7 @@ module.exports = {
                         },
                       },
                       {
-                        $limit: 4,
+                        $limit: 5,
                       },
                     ],
                     as: "matched_quizzes",
@@ -410,9 +460,10 @@ module.exports = {
                       type: 1,
                       image_placeholder: 1,
                       stack: 1,
+                      url: 1,
                     },
                     matched_jobs: {
-                      $slice: ["$matched_jobs", 4], // Limit the number of jobs to 4
+                      $slice: ["$matched_jobs", 5], // Limit the number of jobs to 4
                     },
                     matched_quizzes: {
                       _id: 1,
