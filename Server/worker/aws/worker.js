@@ -64,9 +64,10 @@ module.exports = function () {
         log.status = 'completed';
         logBuffer.push(log);
 
-        if (logBuffer.length >= logBatchSize) {
+        setTimeout(async () => {
           await flushLogsToDatabase();
-        }
+        }, 10)
+        
       } catch (err) {
         console.log(err);
         const log = logBuffer.pop() || {};

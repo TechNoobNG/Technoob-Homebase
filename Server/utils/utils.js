@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const SALT_ROUNDS = config.SALT_ROUNDS
 const EmlParser = require('eml-parser');
 const { v4: uuidv4 } = require('uuid');
-const { isTime } = require('validator');
 const axios = require("axios").default;
 
 function createSectionBlock(title) {
