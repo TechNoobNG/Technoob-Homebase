@@ -82,6 +82,11 @@ module.exports = {
             successful: [],
             failed: []
         };
+
+        const {queryString} = buildQueryString(options.constants);
+        const emailPreviewLink = `https://${config.LIVE_BASE_URL}/api/v1/admin/email/preview/${template.name}?${queryString}`
+        options.constants['online_preview_link'] = emailPreviewLink;
+
     
         const promises = options.emails.map(async (email) => {
             let content = template.template.toString();
@@ -103,7 +108,6 @@ module.exports = {
                 provider.mailer(options);
                 log.successful.push(email.address);
             } catch (e) {
-                console.log(e);
                 log.failed.push({
                     address: email.address,
                     message: e.message
@@ -111,7 +115,7 @@ module.exports = {
             }
         });
     
-        await Promise.all(promises);
+        await Promise.allSettled(promises);
     
         return {
             success: true,
