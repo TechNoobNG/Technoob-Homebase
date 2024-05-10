@@ -152,6 +152,13 @@ async function notifyActionResponseNoError({ text, responseUrl, messageBlock, is
 
 
 function moduleExtractor({ action }) {
+    if (action.type === "datepicker" || action.type === "timepicker") {
+        return {
+            activityTag: null,
+            moduleType: null ,
+            reaction: null
+        }
+    }
     const delimiterSeperation = action?.value?.split(":");
     const activityTag = delimiterSeperation[0];
     const moduleType = delimiterSeperation[1];
@@ -250,44 +257,44 @@ async function renderEmailPlaceholdersModal({identifier,username}) {
                   
             }
 
-
-
             if (placeholder.isDate) {
-                return {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": `Pick a ${placeholder.name}`
-                    },
-                    "accessory": {
+                return  {
+                    "type": "input",
+                    "element": {
                         "type": "datepicker",
-                        "initial_date": "1990-04-28",
+                        "initial_date": "2022-04-28",
                         "placeholder": {
                             "type": "plain_text",
-                            "text": "Select a date",
+                            "text": `Pick a ${placeholder.name}`,
                             "emoji": true
                         },
                         "action_id": `${placeholder.name}`
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text":`${placeholder.name}`,
+                        "emoji": true
                     }
-                }   
+                }
             }
 
             if (placeholder.isTime) {
                 return {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": `Pick a ${placeholder.name}`
-                    },
-                    "accessory": {
+                    "type": "input",
+                    "element": {
                         "type": "timepicker",
                         "initial_time": "13:37",
                         "placeholder": {
                             "type": "plain_text",
-                            "text": "Select time",
+                            "text": `Pick a ${placeholder.name}`,
                             "emoji": true
                         },
                         "action_id": `${placeholder.name}`
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text":`${placeholder.name}`,
+                        "emoji": true
                     }
                 }
             }
@@ -470,7 +477,6 @@ async function previewMailingList(body) {
     try {
         const { view: { blocks, title, state, private_metadata } } = body;
         let inputs = {};
-        console.log(blocks)
         if (Array.isArray(blocks)) {
             blocks.forEach((block) => {
                 if (block && block.type === "input") {
@@ -480,11 +486,11 @@ async function previewMailingList(body) {
                     if (state.values[block.block_id][block.element.action_id].type === "plain_text_input") {
                         inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
                     }
-                    if (state.values[block.block_id][block.accessory].type === "timepicker") {
-                        inputs[block.accessory?.action_id] = convertTime(state.values[block.block_id][block.accessory.action_id].selected_time) || "12:00";
+                    if (state.values[block.block_id][block.element.action_id].type === "timepicker") {
+                        inputs[block.label?.text] = convertTime(state.values[block.block_id][block.element.action_id].selected_time) || "12:00";
                     }
-                    if (state.values[block.block_id][block.accessory].type === "datepicker") {
-                        inputs[block.accessory?.action_id] = formatDate(state.values[block.block_id][block.accessory.action_id].selected_date) || "2024-01-01";
+                    if (state.values[block.block_id][block.element.action_id].type === "datepicker") {
+                        inputs[block.label?.text] = formatDate(state.values[block.block_id][block.element.action_id].selected_date) || "2024-01-01";
                     }
                     if (state.values[block.block_id][block.element.action_id].type === "url_text_input") {
                         inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
@@ -493,7 +499,7 @@ async function previewMailingList(body) {
                 }
             })
         }
-        
+
         for (const key of Object.keys(inputs)) {
             if (key.toLowerCase().includes("csv file") && Array.isArray(inputs[key]) && inputs[key].length) {
                 const csvUrl = inputs[key][0].url_private_download;
@@ -590,6 +596,12 @@ async function renderEmailPreview(body) {
                     }
                     if (state.values[block.block_id][block.element.action_id].type === "rich_text_input") {
                         placeHolders[block.label?.text] = convertRichTextToHtml(state.values[block.block_id][block.element.action_id].rich_text_value.elements) || "";
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "timepicker") {
+                        placeHolders[block.label?.text] = convertTime(state.values[block.block_id][block.element.action_id].selected_time) || "12:00";
+                    }
+                    if (state.values[block.block_id][block.element.action_id].type === "datepicker") {
+                        placeHolders[block.label?.text] = formatDate(state.values[block.block_id][block.element.action_id].selected_date) || "2024-01-01";
                     }
                     if (state.values[block.block_id][block.element.action_id].type === "url_text_input") {
                         placeHolders[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
@@ -800,7 +812,9 @@ async function previewSubmission(body) {
         let buildQuery = buildQueryString(placeHolders);
         let queryString = buildQuery.queryString;
         const fieldsMap = buildQuery.fieldsMap;
-        const placehOlderFieldBlock = createFieldsBlock(fieldsMap, null)
+
+        const emailPreviewLink = `https://${config.LIVE_BASE_URL}/api/v1/admin/email/preview/${prev_metadata.selectedTemplate}?${queryString}`
+        const placehOlderFieldBlock = createFieldsBlock(fieldsMap, null, emailPreviewLink)
         
         const selectedMailingGroup = state.values[blocks[0].block_id][blocks[0].accessory.action_id].selected_option.value;
         const owner = blocks[0].accessory.action_id.split(":")[1]
@@ -1281,6 +1295,11 @@ async function processAction({ body }) {
         }
         if (type === "block_actions" ) {
             const { activityTag, moduleType, reaction } = moduleExtractor({ action: actions[0] });
+            if (!activityTag && !moduleType && !reaction) {
+                return {
+                    message:  "Run successfully"
+                }
+            }
             const userInfo = body.user;
             const reactionService = await servicePicker({ moduleType, reaction });
             const runReaction = await reactionService({ activityTag, userInfo });
