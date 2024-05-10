@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const SALT_ROUNDS = config.SALT_ROUNDS
 const EmlParser = require('eml-parser');
 const { v4: uuidv4 } = require('uuid');
+const { isTime } = require('validator');
 const axios = require("axios").default;
 
 function createSectionBlock(title) {
@@ -175,7 +176,9 @@ function extractEmailTemplatePlaceholders(template,availablePlaceholders = {}) {
             isImage: placeholderName.toLowerCase().includes("image") ? true : false,
             isRequired: placeholderName.toLowerCase().includes("optional") ? false : true,
             isContent: placeholderName.toLowerCase().includes("content") ? true : false,
-            isUrl: placeholderName.toLowerCase().includes("url") || placeholderName.toLowerCase().includes("link") ? true : false,
+            isUrl: placeholderName.toLowerCase().includes("url") || placeholderName.toLowerCase().includes("website") || placeholderName.toLowerCase().includes("link") ? true : false,
+            isTime: placeholderName.toLowerCase().includes("time") ? true : false,
+            isDate: placeholderName.toLowerCase().includes("date") ? true : false,
             identifier: placeholderName
         };
         placeholders.push(placeholderData);
