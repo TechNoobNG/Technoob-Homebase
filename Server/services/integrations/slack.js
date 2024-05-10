@@ -1,5 +1,5 @@
 
-const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject, fetchExternalLinkAndUploadToS3, convertRichTextToHtml, buildQueryString } = require("../../utils/utils");
+const { getSlackNotificationModuleDefaults,createFieldsBlock, emailStreamToObject, fetchExternalLinkAndUploadToS3, convertRichTextToHtml, buildQueryString, convertTime, formatDate } = require("../../utils/utils");
 const { sendRequest, respondToAction, openModal, sendMessageToUser } = require("../../utils/slack/index");
 const config = require("../../config/config");
 const { autogenerateURL } = require("../../utils/storage/storageService");
@@ -470,6 +470,7 @@ async function previewMailingList(body) {
     try {
         const { view: { blocks, title, state, private_metadata } } = body;
         let inputs = {};
+        console.log(blocks)
         if (Array.isArray(blocks)) {
             blocks.forEach((block) => {
                 if (block && block.type === "input") {
@@ -480,10 +481,10 @@ async function previewMailingList(body) {
                         inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
                     }
                     if (state.values[block.block_id][block.accessory].type === "timepicker") {
-                        inputs[block.accessory?.action_id] = state.values[block.block_id][block.accessory.action_id].selected_time || "12:00";
+                        inputs[block.accessory?.action_id] = convertTime(state.values[block.block_id][block.accessory.action_id].selected_time) || "12:00";
                     }
                     if (state.values[block.block_id][block.accessory].type === "datepicker") {
-                        inputs[block.accessory?.action_id] = state.values[block.block_id][block.accessory.action_id].selected_date || "2024-01-01";
+                        inputs[block.accessory?.action_id] = formatDate(state.values[block.block_id][block.accessory.action_id].selected_date) || "2024-01-01";
                     }
                     if (state.values[block.block_id][block.element.action_id].type === "url_text_input") {
                         inputs[block.label?.text] = state.values[block.block_id][block.element.action_id].value || "";
@@ -492,6 +493,7 @@ async function previewMailingList(body) {
                 }
             })
         }
+        
         for (const key of Object.keys(inputs)) {
             if (key.toLowerCase().includes("csv file") && Array.isArray(inputs[key]) && inputs[key].length) {
                 const csvUrl = inputs[key][0].url_private_download;
