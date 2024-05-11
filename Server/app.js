@@ -22,26 +22,7 @@ const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
 const errorHandler = require("./middleware/errorHandler");
 const response = require("./middleware/customResponse");
-
-//const swaggerDocument = yamljs.load('./swagger.yaml');
-const swaggerDocument = yamljs.load(path.join(__dirname, 'swagger.yaml'));
-
-
 const allowedOrigins = config.ALLOWED_ORIGINS;
-
-
-// const swaggerOptions = {
-//   failOnErrors: true,
-//   swaggerDefinition: {
-//       info: {
-//           title:'Technoob API',
-//           version:'1.0.0'
-//       }
-//   },
-//   apis: ['./routes/*.js'],
-// }
-//const swaggerDocs = swaggerJSDoc(swaggerOptions);
-
 
 app.use(
   express.urlencoded({
@@ -73,7 +54,35 @@ app.use(
 );
 
 app.use(response);
-//app.use(helmet())
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'data:',
+          'localhost',
+          'main-domain.com',
+          '*.main-domain.com',
+          '*.google.com',
+          '*.google.co.in',
+          '*.google-analytics.com',
+          '*.googlesyndication.com',
+          '*.googleadservices.com',
+          '*.googletagservices.com',
+          '*.googleapis.com',
+          '*.doubleclick.net',
+          '*.gstatic.com',
+          'youtu.be',
+          '*.youtu.be',
+          '*.youtube.com',
+          'localhost:3000'
+        ],
+      },
+    },
+  })
+)
 
 const httpRequestDurationMicroseconds = new prometheus.Histogram({
   name: "http_request_duration_seconds",
@@ -173,7 +182,7 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     httpRequestDurationMicroseconds
-      .labels(req.route.path, req.method, res.statusCode)
+      .labels(req.route?.path, req.method, res.statusCode)
       .observe(duration / 1000);
   });
   next();
@@ -225,7 +234,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(trafficMiddleware);
-app.use("/api-docs", limiter, swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use(limiter)
 configureRoutes("/api/v1", app);
 

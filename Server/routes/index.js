@@ -16,8 +16,9 @@ const prometheus = require('prom-client');
 const { register } = prometheus;
 const download = require("./download");
 const ErrorResponse = require("../utils/error/errorResponse")
+const swaggerUI = require('swagger-ui-express');
+const swagger = require('../utils/swagger/swagger.js')
 function configureRoutes(base = `/api/v1`,app) {
-  // const app = express.app();
 
   app.all('/',(req, res) => {
     res.render('index', {
@@ -48,6 +49,21 @@ function configureRoutes(base = `/api/v1`,app) {
       res.send(await register.metrics());
     } catch (error) {
       res.fail(error)
+    }
+  });
+
+  app.use('/api-docs',swaggerUI.serve, async (req, res, next) => {
+    const collection = await swagger.generateSwaggerJs()
+    if (collection) {
+      collection.servers = [
+        {
+          url: `https://${config.LIVE_BASE_URL}`,
+          description: `${config.NODE_ENV} Server`
+        },
+      ]
+      swaggerUI.setup(collection)(req, res, next);
+    } else {
+      res.send("Not available")
     }
   });
 
