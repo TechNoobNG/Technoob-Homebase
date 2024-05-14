@@ -15,10 +15,8 @@ const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
 const download = require("./download");
-const ErrorResponse = require("../utils/error/errorResponse")
-const swaggerUI = require('swagger-ui-express');
-const swagger = require('../utils/swagger/swagger.js')
-const { serveSwaggerUI } = require("postman-swagger-express");
+const ErrorResponse = require("../utils/error/errorResponse");
+const { serveSwaggerUIDynamic } = require("postman-swagger-express");
 
 async function configureRoutes(base = `/api/v1`,app) {
 
@@ -54,7 +52,7 @@ async function configureRoutes(base = `/api/v1`,app) {
     }
   });
 
-  await serveSwaggerUI(app, "/api-docs", "23034417-e91be4be-1155-41e4-b535-6da058e3d4a8", {
+  serveSwaggerUIDynamic(app, "/api-docs", "23034417-e91be4be-1155-41e4-b535-6da058e3d4a8", {
     postmanApiKey: config.POSTMAN_API_KEY,
     liveBaseUrl: `https://${config.LIVE_BASE_URL}`,
   });
