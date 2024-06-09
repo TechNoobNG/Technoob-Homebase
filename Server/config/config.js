@@ -15,7 +15,7 @@ const environments = {
         JWT_COOKIE_EXPIRES_IN: process.env.JWT_COOKIE_EXPIRES_IN,
         SALT_ROUNDS: process.env.SALT_ROUNDS * 1 || 12,
         TOKEN_EXPIRATION_TIME: process.env.TOKEN_EXPIRATION_TIME || '10m',
-        SESSION_SECRET: process.env.SESSION_SECRET || 'technoob',
+        SESSION_SECRET: process.env.SESSION_SECRET,
         HOST: OS.hostname(),
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
@@ -198,8 +198,9 @@ const environments = {
             API_BASE_URL: process.env.SLACK_API_BASE_URL || "https://slack.com/api"
         },
         LAMBDA: {
-            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET || "your_lambda_signing_secret_here"
-        }
+            SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET || "ccccccc"
+        },
+        POSTMAN_API_KEY: process.env.POSTMAN_API_KEY,
 
     },
     test: {
@@ -397,7 +398,8 @@ const environments = {
         },
         LAMBDA: {
             SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET
-        }
+        },
+        POSTMAN_API_KEY: process.env.POSTMAN_API_KEY,
     },
 
     production_worker: {
@@ -546,7 +548,8 @@ const environments = {
         },
         LAMBDA: {
             SIGNING_SECRET: process.env.LAMBDA_SIGNING_SECRET
-        }
+        },
+        POSTMAN_API_KEY: process.env.POSTMAN_API_KEY,
     }
 }
 module.exports = environments[env]

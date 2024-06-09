@@ -15,9 +15,10 @@ const middleware = require('../middleware/index');
 const prometheus = require('prom-client');
 const { register } = prometheus;
 const download = require("./download");
-const ErrorResponse = require("../utils/error/errorResponse")
-function configureRoutes(base = `/api/v1`,app) {
-  // const app = express.app();
+const ErrorResponse = require("../utils/error/errorResponse");
+const { serveSwaggerUIDynamic } = require("postman-swagger-express");
+
+async function configureRoutes(base = `/api/v1`,app) {
 
   app.all('/',(req, res) => {
     res.render('index', {
@@ -50,6 +51,26 @@ function configureRoutes(base = `/api/v1`,app) {
       res.fail(error)
     }
   });
+
+  serveSwaggerUIDynamic(app, "/api-docs", "23034417-e91be4be-1155-41e4-b535-6da058e3d4a8", {
+    postmanApiKey: config.POSTMAN_API_KEY,
+    liveBaseUrl: `https://${config.LIVE_BASE_URL}`,
+  });
+
+  // app.use('/api-docs',swaggerUI.serve, async (req, res, next) => {
+  //   const collection = await swagger.generateSwaggerJs()
+  //   if (collection) {
+  //     collection.servers = [
+  //       {
+  //         url: `https://${config.LIVE_BASE_URL}`,
+  //         description: `${config.NODE_ENV} Server`
+  //       },
+  //     ]
+  //     swaggerUI.setup(collection)(req, res, next);
+  //   } else {
+  //     res.send("Not available")
+  //   }
+  // });
 
   app.all('*', (req, res) => {
     console.log(req.method, req.originalUrl)

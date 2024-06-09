@@ -147,6 +147,99 @@ module.exports = {
 
     },
 
+    async getCompetitionSubmissions(req, res, next) {
+        const query = req.query
+        const user = req.user
+
+        try {
+            if (query.user_id && query.user_id !== user._id && user.role !== "admin") {
+                query.user_id = user._id
+            }
+                
+            const submissions =  await Quizzes.getCompetitionSubmissions(query)
+            res.ok({
+                status: "success",
+                data: submissions,
+            })
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+
+    },
+
+    async getCompetitionSubmission(req, res) {
+        const submissionId = req.params.id
+        const user = req.user
+
+        try {
+            if (!submissionId) {
+                throw new Error("Id is required")
+            }
+                
+            const submission =  await Quizzes.getCompetitionSubmission(submissionId,user)
+            res.ok({
+                status: "success",
+                data: submission,
+            })
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+
+    },
+
+    async gradeSubmission(req, res) {
+        const submissionId = req.params.submissionId;
+        const user = req.user;
+        const { score, comment } = req.body;
+
+        try {
+            if (!submissionId) {
+                throw new Error("Id is required")
+            }
+                
+            const grade =  await Quizzes.gradeSubmission({submissionId,user, score, comment})
+            res.ok({
+                status: "success",
+                data: grade,
+            })
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+
+    },
+
+    async gradeCompetitionSubmission(req, res) {
+        const submissionId = req.params.id
+        const user = req.user
+
+        try {
+            if (!submissionId) {
+                throw new Error("Id is required")
+            }
+                
+            const grade =  await Quizzes.gradeSubmission(submissionId,user)
+            res.ok({
+                status: "success",
+                data: grade,
+            })
+        } catch (err) {
+            res.fail({
+                status: "fail",
+                message: err.message
+            })
+        }
+
+    },
+
     async submit(req, res, next) {
         const id = req.params.id
         const answers = req.body.answers

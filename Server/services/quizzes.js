@@ -1,6 +1,7 @@
 const Quizzes = require('../models/quizzes');
 const Activity = require('../models/activity');
 const QuizTracker = require('../models/quizTracker')
+const competitionSubmissions = require("../models/competitionSubmissions");
 const ErrorResponse = require('../utils/error/errorResponse');
 
 module.exports = {
@@ -217,14 +218,34 @@ module.exports = {
                 )
             };
             const totalQuestions = quiz.questions_answers.length;
-
             const currentQuizTracker = await QuizTracker.findOne({ quiz_id: id, user_id: user._id });
             if (!currentQuizTracker) throw new Error("Quiz not Started")
             if (currentQuizTracker && currentQuizTracker.completed) throw new Error("Quiz already completed");
             if (!(currentQuizTracker && Date.now() < currentQuizTracker.createdAt.getTime() + (currentQuizTracker.duration_in_secs * 1000))) throw new Error("Quiz time has elapsed");
             if (currentQuizTracker.attempted >= currentQuizTracker.maxAttempts) throw new Error("Maximum number of attempts reached");
-            if (currentQuizTracker.attempted === undefined || Number.isNaN(currentQuizTracker.attempted)) currentQuizTracker.attempted  = 0
-            await answerObj.forEach(async (userAnswer, index) => {
+            if (currentQuizTracker.attempted === undefined || Number.isNaN(currentQuizTracker.attempted)) currentQuizTracker.attempted = 0
+            if (quiz.type === "competition") {
+                const compSubmission = {
+                    date_submitted: Date.now(),
+                    user_id: user._id,
+                    quiz_id: quiz._id,
+                    answers: answerObj?.map(answer => {
+                        return {
+                            questionId: answer.questionId,
+                            answer: answer.answer,
+                            comment: answer.comment
+                        }
+                    })
+
+                }
+                await competitionSubmissions.create(compSubmission)
+                return {
+                    score: "Pending Grading",
+                    totalQuestions,
+                }
+            }
+
+            answerObj.forEach( (userAnswer, index) => {
                 const question = quiz.questions_answers.find((q) => q.id === userAnswer.questionId);
                 if (question && userAnswer.selectedAnswerId === question.correctAnswerId) {
                     score++;
@@ -244,10 +265,105 @@ module.exports = {
             };
 
         } catch (error) {
-            console.log
             throw error;
         }
     },
+
+    getCompetitionSubmissions: async (options) => {
+        try {
+            let filter = {};
+            let page = options.page || 1;
+            let limit = options.limit || 5;
+            let skip = (page - 1) * limit;
+            let count = 0;
+    
+            if (options.competitionId) {
+                filter.quiz_id = options.competitionId;
+            }
+            if (options.user_id) {
+                filter.user_id = options.user_id
+            }
+            if (options.grader_id) {
+                filter.grader_id = options.grader_id
+            }
+    
+            const submissions = await competitionSubmissions.find(filter)
+                .skip(skip)
+                .limit(limit);
+    
+            if (submissions) {
+                count = submissions.length;
+            }
+    
+            return {
+                submissions,
+                page,
+                limit,
+                count
+            };
+        } catch (error) {
+            throw error;
+        }
+    },  
+    
+    getCompetitionSubmission: async (submissionId, user) => {
+        try {
+            const submission = await competitionSubmissions.findById(submissionId);
+            if (submission && submission.user_id !== user._id && user.role !== "admin") {
+                throw new Error("You can't do that, curious little cat");
+            }
+            return {
+                submission
+            };
+        } catch (error) {
+            throw error;
+        }
+    },  
+
+    gradeSubmission: async ({submissionId, user, score, comment}) => {
+        try {
+            if ( user.role !== "admin") {
+                throw new Error("You can't do that, curious little cat");
+            }
+            if (score < 0 || score > 100) {
+                throw new Error("Score should be between 0 - 100 percent");
+            }
+            let tracker = {};
+            const submission = await competitionSubmissions.findById(submissionId).populate('quiz_id');
+            if (!submission) {
+                throw new Error("Submission record not found");
+            }
+            const currentQuizTracker = await QuizTracker.findOne({
+                quiz_id: submission.quiz_id._id,
+                user_id: submission.user_id
+            });
+            if (!currentQuizTracker) throw new Error("Competition not Started by user");
+            if (currentQuizTracker && currentQuizTracker.completed && submission.graded) throw new Error("Competition already completed and graded");
+            
+            submission.graded = true;
+            submission.gradedBy = user._id;
+            submission.score = score;
+            submission.gradersComment = comment;
+
+            await submission.save();
+
+            tracker.completed = true;
+            tracker.graded = true;
+            tracker.score = score;
+            tracker.attempted = currentQuizTracker.attempted + 1;
+
+            await QuizTracker.findOneAndUpdate({  quiz_id: submission.quiz_id._id,
+                user_id: submission.user_id}, tracker);
+
+            return {
+                score,
+                message: "Succesfully graded competition",
+            };
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    },  
 
     fetchUserRecommendations: async (stack) => {
         try {

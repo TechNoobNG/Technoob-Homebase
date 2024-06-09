@@ -3,10 +3,19 @@ info:
   title: technoob
   version: 1.0.0
 servers:
-  - url: http://dev_server.technoob.tech
-    description: Staging server
-  - url: http://127.0.0.1:3000
-    description: Local server
+  - url: https://staging-api.technoob.tech
+  - url: >-
+      https://technoob-function-worker.salmongrass-affc19a9.eastus.azurecontainerapps.io
+components:
+  securitySchemes:
+    noauthAuth:
+      type: http
+      scheme: noauth
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
 tags:
   - name: auth
   - name: Admin
@@ -17,6 +26,9 @@ tags:
   - name: events
   - name: Jobs
   - name: Quizzes And Competitions
+  - name: Experimental
+  - name: Utils
+  - name: Slack
 paths:
   /api/v1/authenticate/register:
     post:
@@ -30,15 +42,23 @@ paths:
               type: object
               example:
                 firstname: Test
-                lastname: LiveQueue
-                password: testing00
-                passwordConfirm: testing00
-                email: ooluwatobiiloba@gmail.com
-                username: TestWorker2
+                lastname: Testing
+                password: '1234567890'
+                passwordConfirm: '1234567890'
+                email: ooluwatobiiloba+22@gmail.com
+                username: Test Email 22
                 stack:
-                  - Project Management
+                  - Product Management
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
-        '200':
+        '500':
           description: Successful response
           content:
             application/json: {}
@@ -46,15 +66,62 @@ paths:
     post:
       tags:
         - auth
-      summary: login
+      summary: login Copy
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                password: testing000
-                username: oluwatobiiloba
+                password: testing00
+                username: technoobadmin123
+      security:
+        - noauthAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/authenticate/verify-email:
+    get:
+      tags:
+        - auth
+      summary: Verify Email
+      parameters:
+        - name: oslc-core-version
+          in: header
+          schema:
+            type: number
+          example: '2.0'
+        - name: x-requested-with
+          in: header
+          schema:
+            type: string
+          example: XMLHttpRequest
+        - name: token
+          in: query
+          schema:
+            type: integer
+          example: '123547789384'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/authenticate/forgot-password:
+    post:
+      tags:
+        - auth
+      summary: forgot  Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: horlahidey25@gmail.com
+      security:
+        - noauthAuth: []
       parameters:
         - name: oslc-core-version
           in: header
@@ -118,45 +185,46 @@ paths:
             schema:
               type: object
               example:
-                name: Test Welcome 4
+                name: Admin_Invite
                 template: |-
                   <!DOCTYPE html>
                   <html lang="en">
-
                   <head>
-                      <meta charset="UTF-8" />
-                      <link rel="preconnect" href="https://fonts.googleapis.com">
-                      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                      <meta charset="UTF-8">
+                      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <title>Broadcast</title>
                       <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
-                      <title>Welcome to our Community</title>
+                      <link href="https://fonts.cdnfonts.com/css/smack-boom" rel="stylesheet">
                       <style>
-                          /* Email CSS styles */
                           body {
                               font-family: 'Montserrat', sans-serif;
                           }
-
-                          .container {
+                          .container{
                               max-width: 600px;
                               margin: 0 auto;
                               padding: 20px;
-                              background-color: #f7f5f5;
+                              background-image: linear-gradient(60deg, #FFFFFF 0%, #E1F9E3 100%);
                               display: flex;
-                              flex-direction: column;
-                              justify-content: center;
                               align-items: flex-start;
+                              border-radius: 5px;
                           }
-
-                          h1 {
-                              color: #000;
-                              font-size: 18px;
-                              width:100%;
+                          .tech{
+                              color: #5E7CE8;
                           }
-
+                          .noob{
+                              color: #27AE60;
+                          }
+                          h1{
+                              text-align: center;
+                          }
+                          .tech, .noob{
+                              font-family: Smack Boom,"Courier New", Courier, monospace;
+                          }
                           p {
                               font-size: 16px;
                               width:100%;
                           }
-
                           .button {
                               width: 150px;
                               background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
@@ -170,31 +238,28 @@ paths:
                               font-size: larger;
                               font-weight: bolder;
                           }
-
-                          .note {
-                              font-size: 14px;
-                              margin-top: 24px;
-                              text-align: center;
-                              color: #888;
-                          }
                       </style>
                   </head>
-
-                  <body>
-                      <div class="container">
-                          <h1>Welcome to Stacklite ❤️</h1>
-                          <p>Hi${username} 🙂,</p>
-                          <p>Thank you for joining our community! We're excited to have you on board.</p>
-                          <p>To get started, please click the button below to verify your email address:</p>
-                          <a href="${verification_link}" class="button">Verify Email</a>
-                          <p class="note">Note: This verification link will expire in 10 minutes.</p>
-                          <p>If you have any questions or concerns, please don't hesitate to reach out.</p>
-                          <p>Best regards,</p>
-                          <p>The Stacklite Team ✨</p>
-                      </div>
-                  </body>
-
+                      <body>
+                          <table class="container">
+                              <tr  class="head"><td><h1><span class="tech">Tech</span><span class="noob">noob!</span></h1></td></tr>
+                              <tr><td><h2>Hi #{username}</h1></td></tr>
+                              <tr><td><p>#{invitee} just invited you to be an admin. Kindly login and select the admin dashboard.</p></td></tr>
+                              <tr><td><a href="https://www.technoob.tech/User-Login" class="button">Login</a></td></tr>
+                              <tr><td><p>If you have any questions, concerns, or suggestions, please do not hesitate to reach out on any of our channels.,</p></td></tr>
+                              <tr><td><p>Kind regards,</p></td></tr>
+                              <tr><td><p>The Technoob Team 🙂</p></td></tr>
+                          </table>
+                      </body>
                   </html>
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -204,6 +269,130 @@ paths:
       tags:
         - Admin
       summary: Get all templates
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/mailing-list/groups:
+    post:
+      tags:
+        - Admin
+      summary: Create Mailing Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                groupName: testList
+                owner: technoob-workspace
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/mailing-list:
+    post:
+      tags:
+        - Admin
+      summary: Create Mailing List
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                emails:
+                  - mail: Esta.imodu@gmail.com
+                    firstname: Esther
+                    lastname: imodu
+                    username: esther_imodu
+                groupId: technoob-workspace:testList
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/worker/jobs/trigger:
+    post:
+      tags:
+        - Admin
+      summary: Trigger Job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: createScrapedJobs
+                importString: ../services
+                service: jobs
+                method: createScrapedJobs
+                data:
+                  searchTag: junior  developer
+                  q: '7'
+                  posted: '4'
+                  expires: '4'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/contributors:
+    get:
+      tags:
+        - Admin
+      summary: Get Contributors
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/contributors/add:
+    post:
+      tags:
+        - Admin
+      summary: Add Contributors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                first_name: Test
+                last_name: Cache
+                designation: Cloud Engineer
+                image: >-
+                  https://stackliteblob.blob.core.windows.net/image/Nodemailer22_profile_image.png
       responses:
         '200':
           description: Successful response
@@ -225,21 +414,27 @@ paths:
         - Admin
       summary: Get Dashboard Network Metrics
       parameters:
-        - name: year
+        - name: months
           in: query
           schema:
             type: integer
-          example: '2023'
+          example: '2'
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /api/v1/admin/all:
+  /api/v1/admin/manage/view/all:
     get:
       tags:
         - Admin
       summary: Get all Admin
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -260,12 +455,18 @@ paths:
       tags:
         - Admin
       summary: 'Get All Permission '
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /api/v1/admin/643723e2b1d3f2cdcdb3f8c3:
+  /api/v1/admin/manage/view/6526e195f67f72ed322b0674:
     get:
       tags:
         - Admin
@@ -326,12 +527,13 @@ paths:
                   - oluwatobiloba.f.a@gmail.com
                 subject: Retry Broadcast
                 message: Please work on my first try
+                template_id: 65089456f670e1f4a9ef29f8
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /api/v1/admin/invite:
+  /api/v1/admin/manage/invite:
     post:
       tags:
         - Admin
@@ -342,13 +544,13 @@ paths:
             schema:
               type: object
               example:
-                email: oluwatobiloba.f.a@gmail.com
+                email: horlahidey25@gmail.com
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /api/v1/admin/remove:
+  /api/v1/admin/manage/remove:
     post:
       tags:
         - Admin
@@ -376,9 +578,15 @@ paths:
             schema:
               type: object
               example:
-                name: Remove jobs
-                description: Remove jobs
+                name: Manage Mailing List
+                description: Manage Mailing List
                 team: admin
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -396,7 +604,13 @@ paths:
               type: object
               example:
                 email: ooluwatobiiloba@gmail.com
-                permission: admin:Removejobs
+                permission: admin:ManageMailingList
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -433,9 +647,67 @@ paths:
               example:
                 emails:
                   - ooluwatobiiloba@gmail.com
+                  - oluwatobiloba.f.a@gmail.com
                   - gabrielfashedemi@gmail.com
                 subject: Testing Email Template
                 message: This is an attempt to test bulk emails.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/email/preview/Admin_Invite:
+    get:
+      tags:
+        - Admin
+      summary: Template preview
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+        - name: USERNAME
+          in: query
+          schema:
+            type: string
+          example: test
+        - name: INVITEE
+          in: query
+          schema:
+            type: string
+          example: test
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/admin/mailing-list/download:
+    get:
+      tags:
+        - Admin
+      summary: Get Mailing List CSV
+      parameters:
+        - name: groupName
+          in: query
+          schema:
+            type: string
+          example: dev_testing
+        - name: hash
+          in: query
+          schema:
+            type: string
+          example: 36a38947c7c3ecf9c053cb7024f5cd92bd0d8490c6086a70f99c36eb957e8268
+        - name: userId
+          in: query
+          schema:
+            type: string
+          example: U04MDMFGSAD
+        - name: expiry
+          in: query
+          schema:
+            type: integer
+          example: '1711453545245'
       responses:
         '200':
           description: Successful response
@@ -455,7 +727,7 @@ paths:
     post:
       tags:
         - User
-      summary: Dashbaord
+      summary: Dashboard
       requestBody:
         content: {}
       responses:
@@ -463,7 +735,88 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /api/v1/user/643492bb86360e05476576f9:
+    get:
+      tags:
+        - User
+      summary: Get user Dashboard Overview
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '401':
+          description: Unauthorized
+          headers:
+            Content-Length:
+              schema:
+                type: integer
+                example: '49'
+            Content-Type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            Date:
+              schema:
+                type: string
+                example: Fri, 27 Oct 2023 09:59:22 GMT
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+                example: 'true'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                example: Set-Cookie
+            ETag:
+              schema:
+                type: string
+                example: W/"31-MSFNIedeDVTmD1/9plgbyYnEKPM"
+            Vary:
+              schema:
+                type: string
+                example: Origin
+            request-context:
+              schema:
+                type: string
+                example: 'appId=cid-v1:'
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+                example: '500'
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+                example: '497'
+            X-RateLimit-Reset:
+              schema:
+                type: integer
+                example: '1698402093'
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                status: fail
+                message: Unauthorized access
+  /api/v1/user/profile:
+    get:
+      tags:
+        - User
+      summary: Get User Profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/user/652546b560a25e53b9a70b5e:
     get:
       tags:
         - User
@@ -476,17 +829,114 @@ paths:
   /api/v1/user/edit:
     post:
       tags:
-        - User
-      summary: Edit User
+        - General
+      summary: user edit debug
       requestBody:
         content:
-          application/json:
+          '*/*':
             schema:
-              type: object
-              example:
-                update_params:
-                  lastname: Aremu
-                  firstname: Oluwatobiloba
+              type: string
+              example: >-
+                "{\n    \"update_params\": {\n        \"firstname\":
+                \"Oluwatobiloba\",\n        \"stack\": [\n            \"Project
+                Management\",\n            \"Javascript\",\n           
+                \"Product Management\"\n        ],\n        \"bio\": \"Testing
+                profile update\",\n        \"employmentHistory\": [\n           
+                {\n                \"role\": \"Q/A\",\n               
+                \"company\": \"Technoob\",\n                \"jobType\":
+                \"Volunteer\",\n                \"country\":
+                \"Nigeria\"\n            }\n        ]\n    }\n}"
+      parameters:
+        - name: authority
+          in: header
+          schema:
+            type: string
+          example: staging-api.technoob.tech
+        - name: accept
+          in: header
+          schema:
+            type: string
+          example: application/json, text/plain, */*
+        - name: accept-language
+          in: header
+          schema:
+            type: string
+          example: en-US,en;q=0.9
+        - name: authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MTc0ZjMyYmY4YTk0Mjg5OTg4MGQ0NSIsInVzZXJuYW1lIjoiVG9iaWkifSwiaWF0IjoxNzAxOTY4ODk3LCJleHAiOjE3MDE5Njk0OTcsImlzcyI6InRlY2hub29iLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQifQ.CI8qHkmEiBl6C8NWPIqtSqw4Npn7qYuuu5xDCB_mW2s
+        - name: content-type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: cookie
+          in: header
+          schema:
+            type: string
+          example: >-
+            connect.sid=s%3AslNTaF18qlZ8audY1eKjfhh3-INBKqKb.yNQMuAMkS8MS6DaxykgsQPv7OCOcy5E3FIqpRTTpov8
+        - name: dnt
+          in: header
+          schema:
+            type: integer
+          example: '1'
+        - name: origin
+          in: header
+          schema:
+            type: string
+          example: https://localhost:3000
+        - name: referer
+          in: header
+          schema:
+            type: string
+          example: https://localhost:3000/
+        - name: sec-ch-ua
+          in: header
+          schema:
+            type: string
+          example: '"Microsoft Edge";v="119", "Chromium";v="119", "Not?A_Brand";v="24"'
+        - name: sec-ch-ua-mobile
+          in: header
+          schema:
+            type: string
+          example: '?0'
+        - name: sec-ch-ua-platform
+          in: header
+          schema:
+            type: string
+          example: '"macOS"'
+        - name: sec-fetch-dest
+          in: header
+          schema:
+            type: string
+          example: empty
+        - name: sec-fetch-mode
+          in: header
+          schema:
+            type: string
+          example: cors
+        - name: sec-fetch-site
+          in: header
+          schema:
+            type: string
+          example: cross-site
+        - name: user-agent
+          in: header
+          schema:
+            type: string
+          example: >-
+            Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -555,7 +1005,7 @@ paths:
             schema:
               type: object
               example:
-                email: oluwatobiloba.f.a0@gmail.com
+                email: oluwatobiloba.f.a+0@gmail.com
       responses:
         '200':
           description: Successful response
@@ -591,9 +1041,9 @@ paths:
             schema:
               type: object
               example:
-                name: test 3
+                name: test 9
                 version: 3
-                stack: FE
+                stack: Product Management
                 description: A guide to Clean javascript
                 type: e-book
                 file: >
@@ -601,6 +1051,14 @@ paths:
                 image_placeholder: >-
                   https://stackliteblob.blob.core.windows.net/images/2023-04-30T14-30-37.359Z-cover.png
                 url: test.com
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -631,6 +1089,22 @@ paths:
       tags:
         - resources
       summary: Get Resource
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/resources/availablestacks:
+    get:
+      tags:
+        - resources
+      summary: Get Available Stacks
       responses:
         '200':
           description: Successful response
@@ -666,11 +1140,37 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /api/v1/resources/metrics:
+    get:
+      tags:
+        - resources
+      summary: Get Resource Count Copy
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /api/v1/resources/activity:
     get:
       tags:
         - resources
       summary: Get resource Activity
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/resources/delete/64e09183d44f2928ff3f9b70:
+    post:
+      tags:
+        - resources
+      summary: Delete Resource
+      requestBody:
+        content: {}
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Successful response
@@ -687,9 +1187,52 @@ paths:
             schema:
               type: object
               properties:
-                '':
+                file:
                   type: string
                   format: binary
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+        - name: canAccessedByPublic
+          in: query
+          schema:
+            type: boolean
+          example: 'true'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/utils/upload-file/external:
+    post:
+      tags:
+        - uploader
+      summary: Notify Upload External
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                key: test
+                bucket: test
+                size: 1245
+                mimetype: test/test
+                acl: public
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+        - name: X-Lambda-Request-Timestamp
+          in: header
+          schema:
+            type: string
+          example: '{{$timestamp}}'
       responses:
         '200':
           description: Successful response
@@ -698,8 +1241,8 @@ paths:
   /api/v1/utils/upload-image:
     post:
       tags:
-        - uploader
-      summary: Upload Image
+        - Utils
+      summary: upload Image
       requestBody:
         content:
           multipart/form-data:
@@ -709,6 +1252,76 @@ paths:
                 image:
                   type: string
                   format: binary
+      parameters:
+        - name: Accept
+          in: header
+          schema:
+            type: string
+          example: application/json, text/plain, */*
+        - name: Accept-Language
+          in: header
+          schema:
+            type: string
+          example: en-US,en;q=0.9
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            Bearer
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MTc0ZjMyYmY4YTk0Mjg5OTg4MGQ0NSIsInVzZXJuYW1lIjoiVG9iaWkifSwiaWF0IjoxNzAxMTI0NjkyLCJleHAiOjE3MDExMjUyOTIsImlzcyI6InRlY2hub29iLXN0YWdpbmcuYXp1cmV3ZWJzaXRlcy5uZXQifQ.spUCemLOOovGMKDdq9svuSK2qb-6QvmX2eNfNq7H0js
+        - name: Connection
+          in: header
+          schema:
+            type: string
+          example: keep-alive
+        - name: Cookie
+          in: header
+          schema:
+            type: string
+          example: >-
+            _clck=1v9wcg1%7C2%7Cfh2%7C0%7C1395;
+            _clsk=j2yu3%7C1701125237285%7C11%7C1%7Cz.clarity.ms%2Fcollect
+        - name: DNT
+          in: header
+          schema:
+            type: integer
+          example: '1'
+        - name: Origin
+          in: header
+          schema:
+            type: string
+          example: http://staging.technoob.tech
+        - name: Referer
+          in: header
+          schema:
+            type: string
+          example: http://staging.technoob.tech/
+        - name: User-Agent
+          in: header
+          schema:
+            type: string
+          example: >-
+            Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/download/technoob-dev-private/21f4d04e-d088-4280-ac24-ad9b3ed64d62:
+    get:
+      tags:
+        - uploader
+      summary: download
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -717,14 +1330,34 @@ paths:
   /metrics:
     get:
       tags:
-        - Log
-      summary: Get Log
+        - General
+      summary: base
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
   /api/v1/events/all:
+    get:
+      tags:
+        - events
+      summary: Get Events
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/events/public/all:
+    get:
+      tags:
+        - events
+      summary: Get Events Landing Page
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/events/metrics:
     get:
       tags:
         - events
@@ -763,8 +1396,8 @@ paths:
   /api/v1/events/count:
     get:
       tags:
-        - Jobs
-      summary: Get Jobs Count
+        - events
+      summary: Get Event Count
       responses:
         '200':
           description: Successful response
@@ -813,6 +1446,14 @@ paths:
       tags:
         - Jobs
       summary: Get Jobs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -823,6 +1464,16 @@ paths:
       tags:
         - Jobs
       summary: Get Jobs Metrics
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/jobs/activity:
+    get:
+      tags:
+        - Jobs
+      summary: Get Jobs Count
       responses:
         '200':
           description: Successful response
@@ -868,8 +1519,8 @@ paths:
             schema:
               type: object
               example:
-                title: Software Engineer
-                company: Acme Corp
+                title: test 2
+                company: Acmene $ne Corp
                 exp: 3+ years
                 location: San Francisco
                 workplaceType: onsite
@@ -879,7 +1530,96 @@ paths:
                 poster: https://example.com/poster.jpg
                 comments: {}
                 uploader_id: 643492bb86360e05476576f9
+                contractType: full-time
                 views: 0
+                searchKeywords:
+                  - Product Management
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/jobs/automation/scrape:
+    post:
+      tags:
+        - Jobs
+      summary: Scrape Jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                searchTags:
+                  - junior product designer
+                  - junior ui/ux designer
+                  - junior product manager
+                  - junior project manager
+                  - junior scrum master
+                  - junior cloud engineer
+                  - junior devops engineer
+                  - junior backend
+                  - junior frontend
+                  - junior android developer
+                  - junior ios developer
+                  - junior software engineer
+                  - junior QA
+                  - Junior customer Service
+                  - Junior customer support
+                  - intern product designer
+                  - intern ui/ux designer
+                  - intern product manager
+                  - intern project manager
+                  - intern scrum master
+                  - intern cloud engineer
+                  - intern devops engineer
+                  - intern backend
+                  - intern frontend
+                  - intern android developer
+                  - intern ios developer
+                  - intern software engineer
+                  - intern QA
+                  - intern customer Service
+                  - intern customer support
+                age: '7'
+                posted: 3
+                expires: '4'
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/jobs/automation/scrape/trigger/approval:
+    post:
+      tags:
+        - Jobs
+      summary: Retrigger Approval submission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: ''
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -895,11 +1635,55 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /api/v1/quizzes/competition/submissions:
+    get:
+      tags:
+        - Quizzes And Competitions
+      summary: Get Competition Submissions
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/quizzes/competition/submissions/663e98d5472ff5df3983703a:
+    get:
+      tags:
+        - Quizzes And Competitions
+      summary: Get Competition Submission
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/quizzes/competition/663ea9176d8af44bcd2ca85e/grade:
+    post:
+      tags:
+        - Quizzes And Competitions
+      summary: Grade Submission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                score: 40
+                comment: Below par
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /api/v1/quizzes/metrics:
     get:
       tags:
         - Quizzes And Competitions
       summary: Get Quizzes Metrics
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
       responses:
         '200':
           description: Successful response
@@ -915,7 +1699,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /api/v1/quizzes/questions/6499c46713d4b8359523a615:
+  /api/v1/quizzes/questions/652c2185df1b97299816ce98:
     get:
       tags:
         - Quizzes And Competitions
@@ -925,11 +1709,11 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /api/v1/quizzes/attempt/submit/6499adb58bb31bf211b13095:
+  /api/v1/quizzes/attempt/submit/652c2185df1b97299816ce98:
     post:
       tags:
         - Quizzes And Competitions
-      summary: Submit Answer
+      summary: Submit Answer Quiz
       requestBody:
         content:
           application/json:
@@ -938,9 +1722,32 @@ paths:
               example:
                 answers:
                   - questionId: 1
-                    selectedAnswerId: 4
+                    selectedAnswerId: 2
                   - questionId: 2
-                    selectedAnswerId: 4
+                    selectedAnswerId: 2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/quizzes/attempt/submit/663e983e2867f6ce40843c18:
+    post:
+      tags:
+        - Quizzes And Competitions
+      summary: Submit Answer Competition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                answers:
+                  - questionId: 1
+                    answer: 1
+                    comment: 2
+                  - questionId: 2
+                    answer: 1
+                    comment: 2
       responses:
         '200':
           description: Successful response
@@ -960,16 +1767,16 @@ paths:
     post:
       tags:
         - Quizzes And Competitions
-      summary: Create Quiz
+      summary: Create Competition
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                theme: JavaScript Basics
-                type: quiz
-                stack: JavaScript
+                theme: JavaScript Sampple
+                type: competition
+                stack: Product Management
                 instructions: Answer the following questions about JavaScript basics.
                 questions_answers:
                   - id: 1
@@ -979,19 +1786,7 @@ paths:
                       ```javascript
                       console.log(2 + 2);
                       ```
-                    answers:
-                      - id: 1
-                        answer: '3'
-                      - id: 2
-                        answer: '4'
-                        isCorrect: true
-                      - id: 3
-                        answer: '5'
-                      - id: 4
-                        answer: '6'
-                      - id: 5
-                        answer: '7'
-                    correctAnswerId: 2
+                    answerType: url
                   - id: 2
                     question: |-
                       What is the result of the following expression?
@@ -999,24 +1794,9 @@ paths:
                       ```javascript
                       2 * '3'
                       ```
-                    answers:
-                      - id: 1
-                        answer: '6'
-                        isCorrect: true
-                      - id: 2
-                        answer: '8'
-                      - id: 3
-                        answer: '9'
-                      - id: 4
-                        answer: '10'
-                      - id: 5
-                        answer: '12'
-                    correctAnswerId: 1
+                    answerType: text
                 duration: 3600
-                deadline: '2023-07-10T18:00:00.000Z'
-                datePosted: '2023-06-25T12:00:00.000Z'
-                uploader_id: 643492bb86360e05476576f9
-                leader_Board: {}
+                deadline: '2023-12-10T18:00:00.000Z'
       responses:
         '200':
           description: Successful response
@@ -1046,6 +1826,303 @@ paths:
             type: string
           required: true
           example: 6499adb58bb31bf211b13095
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/experimental/compress:
+    post:
+      tags:
+        - Experimental
+      summary: Compress File
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/experimental/mockJob:
+    post:
+      tags:
+        - Experimental
+      summary: MockJob
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+      parameters:
+        - name: Cache-Control
+          in: header
+          schema:
+            type: string
+          example: no-cache
+        - name: Postman-Token
+          in: header
+          schema:
+            type: string
+          example: <calculated when request is sent>
+        - name: Content-Length
+          in: header
+          schema:
+            type: integer
+          example: '0'
+        - name: Host
+          in: header
+          schema:
+            type: string
+          example: <calculated when request is sent>
+        - name: User-Agent
+          in: header
+          schema:
+            type: string
+          example: PostmanRuntime/7.32.1
+        - name: Accept
+          in: header
+          schema:
+            type: string
+          example: '*/*'
+        - name: Accept-Encoding
+          in: header
+          schema:
+            type: string
+          example: gzip, deflate, br
+        - name: Connection
+          in: header
+          schema:
+            type: string
+          example: keep-alive
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/download/status/{fileId}:
+    get:
+      tags:
+        - Experimental
+      summary: Download SSE
+      parameters:
+        - name: Cache-Control
+          in: header
+          schema:
+            type: string
+          example: no-cache
+        - name: Postman-Token
+          in: header
+          schema:
+            type: string
+          example: <calculated when request is sent>
+        - name: Content-Length
+          in: header
+          schema:
+            type: integer
+          example: '0'
+        - name: Host
+          in: header
+          schema:
+            type: string
+          example: <calculated when request is sent>
+        - name: User-Agent
+          in: header
+          schema:
+            type: string
+          example: PostmanRuntime/7.32.1
+        - name: Accept
+          in: header
+          schema:
+            type: string
+          example: '*/*'
+        - name: Accept-Encoding
+          in: header
+          schema:
+            type: string
+          example: gzip, deflate, br
+        - name: Connection
+          in: header
+          schema:
+            type: string
+          example: keep-alive
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+        - name: fileId
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 844d8482-3ade-4793-bc60-4d89a7105762
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/utils/defaults:
+    get:
+      tags:
+        - Utils
+      summary: Get Defaults
+      parameters:
+        - name: enums
+          in: query
+          schema:
+            type: integer
+          example: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Utils
+      summary: Create Defaults
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: enums
+                placeholders:
+                  contractType:
+                    - full-time
+                    - contract
+                    - internship
+                    - part-time
+                    - gig
+                  quizType:
+                    - quiz
+                    - competition
+                  resourceType:
+                    - api
+                    - design
+                    - props
+                    - database
+                    - storage
+                    - e-book
+                    - video
+                    - blog
+                    - repo
+                    - documentation
+                    - audio
+                    - projects
+                    - other
+                  workPlaceType:
+                    - onsite
+                    - remote
+                    - hybrid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v1/slack/action/commands:
+    post:
+      tags:
+        - Slack
+      summary: Approve/Decline Scraped jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                type: block_actions
+                user:
+                  id: U04MDMFGSAD
+                  username: oluwatobiloba.f.a
+                  name: oluwatobiloba.f.a
+                  team_id: T04MDJX221F
+                api_app_id: A02
+                token: Shh_its_a_seekrit
+                container:
+                  type: message
+                  text: >-
+                    The contents of the original message where the action
+                    originated
+                trigger_id: '12466734323.1395872398'
+                team:
+                  id: T04MDJX221F
+                  domain: technoob-workspace
+                enterprise: null
+                is_enterprise_install: false
+                state:
+                  values: {}
+                response_url: >-
+                  https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+                actions:
+                  - type: button
+                    block_id: WdWgS
+                    action_id: dNolC
+                    text:
+                      type: plain_text
+                      text: Approve
+                      emoji: true
+                    value: >-
+                      adee1eec-bd7a-4dd4-b813-8532215faf6f:notifyScrapedJobApproval:approve_scraped_jobs
+                    style: primary
+                    action_ts: '1706378463.459832'
+      parameters:
+        - name: X-Forwarded-Proto
+          in: header
+          schema:
+            type: string
+          example: https
+        - name: x-slack-request-timestamp
+          in: header
+          schema:
+            type: string
+          example: '{{$timestamp}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/scrubNoobJobsTrigger:
+    get:
+      tags:
+        - General
+      summary: >-
+        https://technoob-function-worker.salmongrass-affc19a9.eastus.azurecontainerapps.io/api/scrubNoobJobsTrigger
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /work:
+    post:
+      tags:
+        - General
+      summary: worker base
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: >
+                "{\"data\":{\"email\":\"ooluwatobiiloba+402@gmail.com\",\"subject\":\"Welcome
+                to
+                TechNoob!\",\"constants\":{\"username\":\"Tobi402\",\"verification_link\":\"https://staging-api.technoob.tech/api/v1/authenticate/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1Y2M2OGIxNWJlZWE0MWIzOWRmOTNhNCIsInRva2VuIjpudWxsLCJpYXQiOjE3MDc4OTQ5NjEsImV4cCI6MTcwNzg5NTU2MX0.VkYF-ImwkZK5sSulrPfQx3liUgAc9clp9q7ehcrOZ4Y\",\"message\":\"
+                Welcome to Technoob! We're thrilled to have you as a part of our
+                community. ðŸ˜Š Kindly hit the button below to verify your
+                account\"},\"template_id\":\"7ef0d446-c456-487c-93e2-572e67849f6f\",\"username\":\"Tobi402\"},\"method\":\"sendEmail\",\"import\":\"../utils/mailer/mailBuilder\"}"
       responses:
         '200':
           description: Successful response

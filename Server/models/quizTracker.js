@@ -37,8 +37,11 @@ const quizTracker = new Schema({
     score: {
       type: Number,
       default: 0
-      },
-      
+    }, 
+    graded: {
+      type: Boolean,
+      default: false
+    },
     completed: {
       type: Boolean,
       default: false

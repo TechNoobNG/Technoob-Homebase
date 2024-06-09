@@ -270,7 +270,6 @@ module.exports = {
     parseEmailContent(getTemplate,renderPlaceHolders) {
         try {
             let content = getTemplate.template.toString();
-            console.log(renderPlaceHolders)
             Object.keys(renderPlaceHolders).forEach((key) => {
                 content = content.split(`\#{${key.toLowerCase()}}`).join(renderPlaceHolders[key]);
             });
