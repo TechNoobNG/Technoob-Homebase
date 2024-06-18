@@ -740,6 +740,7 @@ module.exports = {
             if (!body.emails || !Array.isArray(body.emails)) {
                 throw new ErrorResponse("400","Invalid emails")
             }
+            
 
             const emailsTobeCreated = body.emails.map((email) => {
                 return {
