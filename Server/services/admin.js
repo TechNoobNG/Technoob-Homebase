@@ -751,6 +751,7 @@ module.exports = {
                 }
             })
             const mailingList = await mailing_list.insertMany(emailsTobeCreated);
+            
             return mailingList
         } catch (err) {
             console.log(err)
